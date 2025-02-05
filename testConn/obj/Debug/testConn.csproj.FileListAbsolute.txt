@@ -1,0 +1,7 @@
+C:\Users\user\source\repos\DuplexSpyCS\testConn\bin\Debug\testConn.exe.config
+C:\Users\user\source\repos\DuplexSpyCS\testConn\bin\Debug\testConn.exe
+C:\Users\user\source\repos\DuplexSpyCS\testConn\bin\Debug\testConn.pdb
+C:\Users\user\source\repos\DuplexSpyCS\testConn\obj\Debug\testConn.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\testConn\obj\Debug\testConn.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\testConn\obj\Debug\testConn.exe
+C:\Users\user\source\repos\DuplexSpyCS\testConn\obj\Debug\testConn.pdb

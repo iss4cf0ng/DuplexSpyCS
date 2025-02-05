@@ -1,0 +1,10 @@
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.Form1.resources
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.frmChat.resources
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.frmLockScreen.resources
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.Properties.Resources.resources
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.csproj.GenerateResource.cache
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.exe
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\obj\Debug\winClient48.pdb
+C:\Users\user\source\repos\DuplexSpyCS\winClient48\bin\Debug\winClient48.exe.config

@@ -1,0 +1,7 @@
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\bin\Debug\wmi_test.exe.config
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\bin\Debug\wmi_test.exe
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\bin\Debug\wmi_test.pdb
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\obj\Debug\wmi_test.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\obj\Debug\wmi_test.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\obj\Debug\wmi_test.exe
+C:\Users\user\source\repos\DuplexSpyCS\wmi_test\obj\Debug\wmi_test.pdb

@@ -1,0 +1,14 @@
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\webcam48test.exe.config
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\webcam48test.exe
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\webcam48test.pdb
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\obj\Debug\webcam48test.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\obj\Debug\webcam48test.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\obj\Debug\webcam48test.exe
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\obj\Debug\webcam48test.pdb
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.dll
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.Video.DirectShow.dll
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.Video.dll
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.xml
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.Video.xml
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\bin\Debug\AForge.Video.DirectShow.xml
+C:\Users\user\source\repos\DuplexSpyCS\webcam48test\obj\Debug\webcam48.74159120.Up2Date

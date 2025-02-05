@@ -1,0 +1,14 @@
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\bin\Debug\net8.0\WindowCapture.exe
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\bin\Debug\net8.0\WindowCapture.deps.json
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\bin\Debug\net8.0\WindowCapture.runtimeconfig.json
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\bin\Debug\net8.0\WindowCapture.dll
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\bin\Debug\net8.0\WindowCapture.pdb
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.AssemblyInfo.cs
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.dll
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\refint\WindowCapture.dll
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.pdb
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\WindowCapture.genruntimeconfig.cache
+C:\Users\user\source\repos\DuplexSpyCS\WindowCapture\obj\Debug\net8.0\ref\WindowCapture.dll

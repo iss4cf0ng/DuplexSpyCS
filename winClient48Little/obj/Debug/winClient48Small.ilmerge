@@ -1,0 +1,7 @@
+winClient48Small.exe
+AForge.dll
+AForge.Video.DirectShow.dll
+AForge.Video.dll
+Microsoft.Win32.Registry.dll
+System.Security.AccessControl.dll
+System.Security.Principal.Windows.dll

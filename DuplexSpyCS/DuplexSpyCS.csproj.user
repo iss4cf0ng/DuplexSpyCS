@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmAudio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBoxHelper.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBoxMsg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBuild.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBuildIconPicker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmBuildMsgbox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmClientConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileArchive.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileDelState.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileFind.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileFindEntry.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileMgrExec.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileMgrNew.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFilePaste.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileShowImg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFileTransferState.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmFunStuff.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmKeyLogger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmListViewFind.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmLogs.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMisc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMultiDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmListen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMultiRunScript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMultiWebcam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMultiLockScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmMultiFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmNewVictim.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmPower.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegAddKey.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegEditBinary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegEditMultiString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegEditString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegEditWord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegFind.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegKeyRename.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegValAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRegValRename.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmRunScript.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmShell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmShowImgSave.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmSystem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmTaskStart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmTextEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmWebcam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmWindowCapture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmWMI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

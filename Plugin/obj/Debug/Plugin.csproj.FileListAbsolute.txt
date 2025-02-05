@@ -1,0 +1,6 @@
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\bin\Debug\Plugin.dll
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\bin\Debug\Plugin.pdb
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\obj\Debug\Plugin.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\obj\Debug\Plugin.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\obj\Debug\Plugin.dll
+C:\Users\user\source\repos\DuplexSpyCS\Plugin\obj\Debug\Plugin.pdb

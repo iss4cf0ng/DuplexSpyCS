@@ -1,0 +1,6 @@
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.csproj.ResolveComReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.AssemblyInfo.cs
+C:\Users\user\source\repos\DuplexSpyCS\Client\obj\Debug\net48\Client.csproj.CoreCompileInputs.cache

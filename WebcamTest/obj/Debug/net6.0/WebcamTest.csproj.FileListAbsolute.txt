@@ -1,0 +1,14 @@
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\bin\Debug\net6.0\WebcamTest.exe
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\bin\Debug\net6.0\WebcamTest.deps.json
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\bin\Debug\net6.0\WebcamTest.runtimeconfig.json
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\bin\Debug\net6.0\WebcamTest.dll
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\bin\Debug\net6.0\WebcamTest.pdb
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.AssemblyInfo.cs
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.dll
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\refint\WebcamTest.dll
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.pdb
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\WebcamTest.genruntimeconfig.cache
+C:\Users\user\source\repos\DuplexSpyCS\WebcamTest\obj\Debug\net6.0\ref\WebcamTest.dll

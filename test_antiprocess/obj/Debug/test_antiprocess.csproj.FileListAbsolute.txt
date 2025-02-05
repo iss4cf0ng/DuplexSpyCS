@@ -1,0 +1,7 @@
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\bin\Debug\test_antiprocess.exe.config
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\bin\Debug\test_antiprocess.exe
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\bin\Debug\test_antiprocess.pdb
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\obj\Debug\test_antiprocess.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\obj\Debug\test_antiprocess.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\obj\Debug\test_antiprocess.exe
+C:\Users\user\source\repos\DuplexSpyCS\test_antiprocess\obj\Debug\test_antiprocess.pdb
