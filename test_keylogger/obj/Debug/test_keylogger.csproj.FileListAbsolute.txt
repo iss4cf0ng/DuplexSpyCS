@@ -1,7 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\bin\Debug\test_keylogger.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\bin\Debug\test_keylogger.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\bin\Debug\test_keylogger.pdb
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\obj\Debug\test_keylogger.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\obj\Debug\test_keylogger.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\obj\Debug\test_keylogger.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_keylogger\obj\Debug\test_keylogger.pdb

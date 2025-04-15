@@ -1,9 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\key_test\bin\Debug\key_test.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\key_test\bin\Debug\key_test.exe
-C:\Users\user\source\repos\DuplexSpyCS\key_test\bin\Debug\key_test.pdb
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.exe
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.pdb
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.Form1.resources
-C:\Users\user\source\repos\DuplexSpyCS\key_test\obj\Debug\key_test.csproj.GenerateResource.cache

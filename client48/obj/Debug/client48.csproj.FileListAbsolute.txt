@@ -1,5 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\client48\bin\Debug\client48.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\client48\obj\Debug\client48.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\client48\obj\Debug\client48.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\client48\obj\Debug\client48.exe
-C:\Users\user\source\repos\DuplexSpyCS\client48\obj\Debug\client48.pdb

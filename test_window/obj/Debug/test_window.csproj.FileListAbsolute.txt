@@ -1,7 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\test_window\bin\Debug\test_window.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\test_window\bin\Debug\test_window.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_window\bin\Debug\test_window.pdb
-C:\Users\user\source\repos\DuplexSpyCS\test_window\obj\Debug\test_window.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_window\obj\Debug\test_window.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_window\obj\Debug\test_window.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_window\obj\Debug\test_window.pdb

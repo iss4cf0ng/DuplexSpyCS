@@ -1,7 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\bin\Debug\test_UAC.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\bin\Debug\test_UAC.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\bin\Debug\test_UAC.pdb
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\obj\Debug\test_UAC.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\obj\Debug\test_UAC.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\obj\Debug\test_UAC.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_UAC\obj\Debug\test_UAC.pdb

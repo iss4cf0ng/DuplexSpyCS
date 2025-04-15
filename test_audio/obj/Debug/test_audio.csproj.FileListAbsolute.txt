@@ -1,7 +1,0 @@
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\obj\Debug\test_audio.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\obj\Debug\test_audio.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\bin\Debug\test_audio.exe.config
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\bin\Debug\test_audio.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\bin\Debug\test_audio.pdb
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\obj\Debug\test_audio.exe
-C:\Users\user\source\repos\DuplexSpyCS\test_audio\obj\Debug\test_audio.pdb
