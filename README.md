@@ -1,6 +1,13 @@
 # Introduction
 DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
+# Feature
+- Windows RAT
+- Encrypted TCP socket communication (AES-256-CBC + RSA-4096)
+
+# Anticipation (Coming soon)
+- Remote plugin (Browser dumper, Active Directory, Vulneribility, etc...)
+
 # Function
 - Information
 - File Manager
