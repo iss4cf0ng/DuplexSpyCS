@@ -49,3 +49,7 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
 ## Multi Desktop
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/multidesktop.png)
+
+# Ethical Purpose only
+This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
+And do not execute it on target without authorization
