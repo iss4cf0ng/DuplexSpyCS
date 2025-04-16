@@ -7,6 +7,9 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
 # Anticipation (Coming soon)
 - Remote plugin (Browser dumper, Active Directory, Vulneribility, etc...)
+- Debug
+- More stable
+- More user friendly
 
 # Function
 - Information
