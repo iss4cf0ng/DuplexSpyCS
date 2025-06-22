@@ -1,0 +1,221 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using static WinAPI;
+
+namespace winClient48
+{
+    public class FuncWindow
+    {
+        private Icon GetAppIcon(IntPtr hWnd)
+        {
+            IntPtr hIcon = SendMessage(hWnd, WM_GETICON, ICON_SMALL2, 0);
+            if (IntPtr.Zero == hIcon)
+                hIcon = SendMessage(hWnd, WM_GETICON, ICON_SMALL, 0);
+            if (IntPtr.Zero == hIcon)
+                hIcon = SendMessage(hWnd, WM_GETICON, ICON_BIG, 0);
+            if (IntPtr.Zero == hIcon)
+                hIcon = GetClassLongPtr(hWnd, GCL_HICON);
+            if (IntPtr.Zero == hIcon)
+                hIcon = GetClassLongPtr(hWnd, GCL_HICONSM);
+
+            if (IntPtr.Zero == hIcon)
+                return null;
+
+            Icon icon = Icon.FromHandle(hIcon);
+
+            return icon;
+        }
+
+        public (int, string, List<WindowInfo>) GetWindow()
+        {
+            int code = 1;
+            string msg = string.Empty;
+            List<WindowInfo> result = new List<WindowInfo>();
+
+            try
+            {
+                EnumWindows((hWnd, lParam) =>
+                {
+                    if (IsWindowVisible(hWnd))
+                    {
+                        StringBuilder lpWindowTitle = new StringBuilder(256);
+                        GetWindowText(hWnd, lpWindowTitle, lpWindowTitle.Capacity);
+
+                        if (lpWindowTitle.Length > 0)
+                        {
+                            int nProcessId;
+                            GetWindowThreadProcessId(hWnd, out nProcessId);
+                            Process proc = Process.GetProcessById(nProcessId);
+
+                            Icon iWindow = null;
+                            try
+                            {
+                                iWindow = GetAppIcon(hWnd);
+                            }
+                            catch (Exception ex)
+                            {
+                                //MessageBox.Show(ex.Message, ex.GetType().Name);
+                            }
+
+                            string szFilePath = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}")[0];
+
+                            WindowInfo info = new WindowInfo()
+                            {
+                                szTitle = lpWindowTitle == null ? "[Access Denial]" : lpWindowTitle.ToString(),
+                                szProcessName = proc.ProcessName,
+                                szFilePath = szFilePath == null ? "[Access Denial]" : szFilePath,
+                                nProcessId = nProcessId,
+                                nHandle = (int)hWnd,
+                                iWindow = iWindow,
+                            };
+
+                            result.Add(info);
+                        }
+                    }
+                    return true;
+                }, IntPtr.Zero);
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+                code = 0;
+            }
+
+            return (code, msg, result);
+
+            /*
+            EnumWindows((hWnd, lParam) =>
+            {
+                int length = GetWindowTextLength(hWnd);
+                if (length > 0)
+                {
+                    if (IsWindowVisible(hWnd))
+                    {
+                        StringBuilder sb = new StringBuilder(length + 1);
+                        GetWindowText(hWnd, sb, sb.Capacity);
+                        string window_title = sb.ToString();
+
+                        uint process_id;
+                        GetWindowThreadProcessId(hWnd, out process_id);
+
+                        try
+                        {
+                            Process process = Process.GetProcessById((int)process_id);
+
+                            bool is_Wow64;
+                            IsWow64Process(process.Handle, out is_Wow64);
+                            string exe_path = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {process_id}")[0];
+                            result.Add($"" +
+                                $"{Crypto.b64E2Str(window_title)}," + //WINDOW TITLE
+                                $"{Path.GetFileName(exe_path)}," + //PROCESS FILE NAME
+                                $"{process_id}," + //PROCESS ID
+                                $"{process.Handle}," + //PROCESS HANDLE
+                                $"{Crypto.b64E2Str(exe_path)}," + //PROCESS EXECUTABLE PATH
+                                $"{ExtractIcon(exe_path)}" //ICON GetAppIcon(process.Handle)
+                                );
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+                return true;
+            }, IntPtr.Zero);
+
+            return string.Join(";", result.ToArray());
+
+            */
+
+        }
+
+        public (int, string, Bitmap) CaptureWindowWithAPI(IntPtr hWnd)
+        {
+            int code = 1;
+            string msg = string.Empty;
+            Bitmap ret = null;
+
+            try
+            {
+                if (!GetWindowRect(hWnd, out RECT rect))
+                    throw new Exception("GetWindowRect() error.");
+
+                int nWidth = rect.Right - rect.Left;
+                int nHeight = rect.Bottom - rect.Top;
+
+                using (Bitmap bmp = new Bitmap(nWidth, nHeight))
+                {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        IntPtr hdcWindow = GetDC(hWnd);
+                        IntPtr hdcBitmap = g.GetHdc();
+                        BitBlt(hdcBitmap, 0, 0, nWidth, nHeight, hdcWindow, 0, 0, SRCCOPY);
+                        g.ReleaseHdc(hdcBitmap);
+                        ReleaseDC(hWnd, hdcWindow);
+                    }
+
+                    if (bmp == null)
+                        throw new Exception("Bitmap is null");
+
+                    ret = (Bitmap)bmp.Clone();
+                }
+            }
+            catch (Exception ex)
+            {
+                code = 0;
+                msg = ex.Message;
+            }
+
+            return (code, msg, ret);
+        }
+        public (int, string, Bitmap) CaptureWindowWithFore(IntPtr hWnd)
+        {
+            int code = 1;
+            string msg = string.Empty;
+            Bitmap ret = null;
+
+            try
+            {
+                if (!GetWindowRect(hWnd, out RECT rect))
+                    throw new Exception("GetWindowRect() error.");
+
+                int nWidth = rect.Right - rect.Left;
+                int nHeight = rect.Bottom - rect.Top;
+
+                using (Bitmap bmp = new Bitmap(nWidth, nHeight))
+                {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        IntPtr hCurrentWnd = GetForegroundWindow();
+
+                        SetForegroundWindow(hWnd);
+                        g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(nWidth, nHeight));
+
+                        if (bmp == null)
+                            throw new Exception("Bitmap is null");
+
+                        ret = (Bitmap)bmp.Clone();
+
+                        SetForegroundWindow(hCurrentWnd);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                code = 0;
+                msg = ex.Message;
+            }
+
+            return (code, msg, ret);
+        }
+    }
+}
