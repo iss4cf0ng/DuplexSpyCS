@@ -140,6 +140,7 @@ namespace DuplexSpyCS
                 v.SendCommand("file|df|stop");
             }
         }
+
         //Victim Download Folder
         private void toolStripButton4_Click(object sender, EventArgs e)
         {

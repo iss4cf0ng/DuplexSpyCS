@@ -68,6 +68,10 @@
             toolStripMenuItem19 = new ToolStripMenuItem();
             toolStripMenuItem30 = new ToolStripMenuItem();
             toolStripMenuItem31 = new ToolStripMenuItem();
+            toolStripMenuItem37 = new ToolStripMenuItem();
+            toolStripMenuItem38 = new ToolStripMenuItem();
+            toolStripMenuItem39 = new ToolStripMenuItem();
+            toolStripMenuItem41 = new ToolStripMenuItem();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
@@ -96,10 +100,6 @@
             toolStripLabel2 = new ToolStripLabel();
             toolStripLabel3 = new ToolStripLabel();
             timer2 = new System.Windows.Forms.Timer(components);
-            toolStripMenuItem37 = new ToolStripMenuItem();
-            toolStripMenuItem38 = new ToolStripMenuItem();
-            toolStripMenuItem39 = new ToolStripMenuItem();
-            toolStripMenuItem41 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -110,7 +110,7 @@
             contextMenuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem11, toolStripMenuItem6, toolStripSeparator2, toolStripMenuItem25, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem8, toolStripMenuItem24, toolStripMenuItem7, toolStripMenuItem9, toolStripSeparator3, toolStripMenuItem10, toolStripMenuItem27, toolStripMenuItem33, toolStripMenuItem16, toolStripMenuItem37 });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(181, 398);
+            contextMenuStrip1.Size = new Size(170, 376);
             // 
             // toolStripMenuItem11
             // 
@@ -367,6 +367,34 @@
             toolStripMenuItem31.Text = "No";
             toolStripMenuItem31.Click += toolStripMenuItem31_Click;
             // 
+            // toolStripMenuItem37
+            // 
+            toolStripMenuItem37.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem38, toolStripMenuItem39, toolStripMenuItem41 });
+            toolStripMenuItem37.Name = "toolStripMenuItem37";
+            toolStripMenuItem37.Size = new Size(169, 24);
+            toolStripMenuItem37.Text = "Copy";
+            // 
+            // toolStripMenuItem38
+            // 
+            toolStripMenuItem38.Name = "toolStripMenuItem38";
+            toolStripMenuItem38.Size = new Size(143, 24);
+            toolStripMenuItem38.Text = "Online ID";
+            toolStripMenuItem38.Click += toolStripMenuItem38_Click;
+            // 
+            // toolStripMenuItem39
+            // 
+            toolStripMenuItem39.Name = "toolStripMenuItem39";
+            toolStripMenuItem39.Size = new Size(143, 24);
+            toolStripMenuItem39.Text = "IP";
+            toolStripMenuItem39.Click += toolStripMenuItem39_Click;
+            // 
+            // toolStripMenuItem41
+            // 
+            toolStripMenuItem41.Name = "toolStripMenuItem41";
+            toolStripMenuItem41.Size = new Size(143, 24);
+            toolStripMenuItem41.Text = "OS";
+            toolStripMenuItem41.Click += toolStripMenuItem41_Click;
+            // 
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -420,14 +448,14 @@
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(169, 24);
-            toolStripMenuItem4.Text = "Large Screen";
+            toolStripMenuItem4.Size = new Size(125, 24);
+            toolStripMenuItem4.Text = "Screen";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(169, 24);
+            toolStripMenuItem5.Size = new Size(125, 24);
             toolStripMenuItem5.Text = "Details";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
@@ -567,34 +595,6 @@
             // 
             timer2.Interval = 1000;
             timer2.Tick += timer2_Tick;
-            // 
-            // toolStripMenuItem37
-            // 
-            toolStripMenuItem37.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem38, toolStripMenuItem39, toolStripMenuItem41 });
-            toolStripMenuItem37.Name = "toolStripMenuItem37";
-            toolStripMenuItem37.Size = new Size(180, 24);
-            toolStripMenuItem37.Text = "Copy";
-            // 
-            // toolStripMenuItem38
-            // 
-            toolStripMenuItem38.Name = "toolStripMenuItem38";
-            toolStripMenuItem38.Size = new Size(180, 24);
-            toolStripMenuItem38.Text = "Online ID";
-            toolStripMenuItem38.Click += toolStripMenuItem38_Click;
-            // 
-            // toolStripMenuItem39
-            // 
-            toolStripMenuItem39.Name = "toolStripMenuItem39";
-            toolStripMenuItem39.Size = new Size(180, 24);
-            toolStripMenuItem39.Text = "IP";
-            toolStripMenuItem39.Click += toolStripMenuItem39_Click;
-            // 
-            // toolStripMenuItem41
-            // 
-            toolStripMenuItem41.Name = "toolStripMenuItem41";
-            toolStripMenuItem41.Size = new Size(180, 24);
-            toolStripMenuItem41.Text = "OS";
-            toolStripMenuItem41.Click += toolStripMenuItem41_Click;
             // 
             // Form1
             // 

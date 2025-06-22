@@ -55,6 +55,9 @@ namespace DuplexSpyCS
 
         void setup()
         {
+            //Controls
+            radioButton2.Checked = true;
+
             v.SendCommand($"detail|client|info");
             toolStripStatusLabel1.Text = "Loading...";
         }

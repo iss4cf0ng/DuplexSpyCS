@@ -122,6 +122,8 @@
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripButton3 = new ToolStripButton();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -1033,7 +1035,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton3, toolStripSeparator1, toolStripButton1, toolStripButton2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(668, 26);
@@ -1059,6 +1061,21 @@
             toolStripButton2.Size = new Size(66, 23);
             toolStripButton2.Text = "Refresh";
             toolStripButton2.Click += toolStripButton2_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 26);
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(37, 23);
+            toolStripButton3.Text = "File";
+            toolStripButton3.Click += toolStripButton3_Click;
             // 
             // frmSetting
             // 
@@ -1227,5 +1244,7 @@
         private CheckBox checkBox10;
         private TextBox textBox15;
         private TextBox textBox14;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripButton toolStripButton3;
     }
 }

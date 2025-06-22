@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -534,6 +535,30 @@ namespace DuplexSpyCS
             {
                 textBox10.Text = ofd.FileName;
             }
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            if (ini_manager == null)
+            {
+                MessageBox.Show("ini_manager is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            string szFileName = ini_manager.Path;
+            if (!File.Exists(szFileName))
+            {
+                MessageBox.Show("File not exists: " + szFileName, "FileNotExists", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = "cmd",
+                Arguments = $"/C {szFileName}",
+                CreateNoWindow = true,
+            };
+            Process.Start(psi);
         }
     }
 }
