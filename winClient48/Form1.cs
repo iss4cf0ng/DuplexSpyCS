@@ -51,8 +51,12 @@ namespace winClient48
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        private string[] m_args;
+
+        public Form1(string[] args)
         {
+            m_args = args;
+
             InitializeComponent();
         }
 

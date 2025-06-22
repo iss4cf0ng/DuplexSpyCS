@@ -1305,6 +1305,14 @@ namespace DuplexSpyCS
                 }
 
                 #endregion
+                #region Fileless Execution
+
+                else if (cmd[0] == "fle") //Fileless Execution
+                {
+
+                }
+
+                #region
                 #region Error
 
                 else if (cmd[0] == "error")

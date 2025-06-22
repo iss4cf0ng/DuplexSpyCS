@@ -13,7 +13,7 @@ namespace winClient48
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             // Start the keylogger in the background
             //KeyLogger keylogger = new KeyLogger();
@@ -21,7 +21,7 @@ namespace winClient48
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new Form1(args));
         }
     }
 }

