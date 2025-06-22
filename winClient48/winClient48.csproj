@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AntiProcess.cs" />
+    <Compile Include="clsEZData.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="DllLoader.cs" />
     <Compile Include="DSP.cs" />
