@@ -1313,7 +1313,6 @@ namespace DuplexSpyCS
                 }
 
                 #endregion
-                #region
                 #region Error
 
                 else if (cmd[0] == "error")
