@@ -193,7 +193,7 @@ public class WinAPI
     #endregion
     #region Process/Thread
 
-    public const uint THREAD_SUSPEND_RESUME = 0x0002;
+    public const int THREAD_SUSPEND_RESUME = 0x0002;
     public const uint THREAD_QUERY_INFORMATION = 0x0040;
 
     public const uint PROCESS_ALL_ACCESS = 0x1f0fff;
@@ -202,7 +202,7 @@ public class WinAPI
     public const uint PAGE_READWRITE = 0x04;
 
     [DllImport("kernel32.dll")]
-    public static extern IntPtr OpenThread(uint dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
+    public static extern IntPtr OpenThread(int dwDesiredAccess, bool bInheritHandle, uint dwThreadId);
 
     [DllImport("kernel32.dll")]
     public static extern uint SuspendThread(IntPtr hThread);

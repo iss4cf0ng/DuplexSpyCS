@@ -114,53 +114,13 @@ namespace winClient48
             }
 
             return (code, msg, result);
-
-            /*
-            EnumWindows((hWnd, lParam) =>
-            {
-                int length = GetWindowTextLength(hWnd);
-                if (length > 0)
-                {
-                    if (IsWindowVisible(hWnd))
-                    {
-                        StringBuilder sb = new StringBuilder(length + 1);
-                        GetWindowText(hWnd, sb, sb.Capacity);
-                        string window_title = sb.ToString();
-
-                        uint process_id;
-                        GetWindowThreadProcessId(hWnd, out process_id);
-
-                        try
-                        {
-                            Process process = Process.GetProcessById((int)process_id);
-
-                            bool is_Wow64;
-                            IsWow64Process(process.Handle, out is_Wow64);
-                            string exe_path = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {process_id}")[0];
-                            result.Add($"" +
-                                $"{Crypto.b64E2Str(window_title)}," + //WINDOW TITLE
-                                $"{Path.GetFileName(exe_path)}," + //PROCESS FILE NAME
-                                $"{process_id}," + //PROCESS ID
-                                $"{process.Handle}," + //PROCESS HANDLE
-                                $"{Crypto.b64E2Str(exe_path)}," + //PROCESS EXECUTABLE PATH
-                                $"{ExtractIcon(exe_path)}" //ICON GetAppIcon(process.Handle)
-                                );
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
-                return true;
-            }, IntPtr.Zero);
-
-            return string.Join(";", result.ToArray());
-
-            */
-
         }
 
+        /// <summary>
+        /// Capture window with Windows API DC.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         public (int, string, Bitmap) CaptureWindowWithAPI(IntPtr hWnd)
         {
             int code = 1;

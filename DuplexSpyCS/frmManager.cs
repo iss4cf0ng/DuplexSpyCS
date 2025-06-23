@@ -3094,7 +3094,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView5.SelectedItems)
             {
-                int nHandle = int.Parse(item.SubItems[4].Text);
+                int nHandle = int.Parse(item.SubItems[3].Text);
                 v.SendCommand($"thread|suspend|{nHandle}");
             }
         }
@@ -3103,7 +3103,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView5.SelectedItems)
             {
-                int nHandle = int.Parse(item.SubItems[4].Text);
+                int nHandle = int.Parse(item.SubItems[3].Text);
                 v.SendCommand($"thread|resume|{nHandle}");
             }
         }

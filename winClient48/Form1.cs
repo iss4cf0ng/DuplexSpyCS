@@ -1772,7 +1772,9 @@ namespace winClient48
 
                 else if (cmd[0] == "thread")
                 {
-                    uint nThreadID = uint.Parse(cmd[2]);
+                    int nProcID = int.Parse(cmd[2]);
+                    Process proc = Process.GetProcessById(nProcID);
+                    uint nThreadID = (uint)proc.Threads[0].Id;
                     IntPtr hThread = WinAPI.OpenThread(WinAPI.THREAD_SUSPEND_RESUME, false, nThreadID);
 
                     if (hThread == IntPtr.Zero)
