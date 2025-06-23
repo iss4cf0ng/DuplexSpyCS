@@ -1,4 +1,4 @@
-# Introduction
+# DuplexSpy
 DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
 # Feature
