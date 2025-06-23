@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
+            button6 = new Button();
+            button5 = new Button();
             label3 = new Label();
             numericUpDown1 = new NumericUpDown();
             button4 = new Button();
@@ -44,9 +46,8 @@
             textBox1 = new TextBox();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabel2 = new ToolStripStatusLabel();
             richTextBox1 = new RichTextBox();
-            button5 = new Button();
-            button6 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -85,9 +86,29 @@
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 514);
-            splitContainer1.SplitterDistance = 339;
+            splitContainer1.SplitterDistance = 337;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
+            // 
+            // button6
+            // 
+            button6.Location = new Point(495, 44);
+            button6.Name = "button6";
+            button6.Size = new Size(131, 27);
+            button6.TabIndex = 13;
+            button6.Text = "Pause";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(495, 76);
+            button5.Name = "button5";
+            button5.Size = new Size(131, 27);
+            button5.TabIndex = 12;
+            button5.Text = "Stop";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
             // 
             // label3
             // 
@@ -157,7 +178,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.Location = new Point(3, 123);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 191);
+            listView1.Size = new Size(632, 189);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -165,7 +186,7 @@
             // columnHeader1
             // 
             columnHeader1.Text = "OnlineID";
-            columnHeader1.Width = 100;
+            columnHeader1.Width = 300;
             // 
             // columnHeader2
             // 
@@ -200,8 +221,8 @@
             // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 315);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
+            statusStrip1.Location = new Point(0, 313);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -214,34 +235,21 @@
             toolStripStatusLabel1.Size = new Size(158, 19);
             toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
+            // toolStripStatusLabel2
+            // 
+            toolStripStatusLabel2.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            toolStripStatusLabel2.Size = new Size(158, 19);
+            toolStripStatusLabel2.Text = "toolStripStatusLabel2";
+            // 
             // richTextBox1
             // 
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 170);
+            richTextBox1.Size = new Size(638, 172);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
-            // 
-            // button5
-            // 
-            button5.Location = new Point(495, 76);
-            button5.Name = "button5";
-            button5.Size = new Size(131, 27);
-            button5.TabIndex = 12;
-            button5.Text = "Stop";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
-            // 
-            // button6
-            // 
-            button6.Location = new Point(495, 44);
-            button6.Name = "button6";
-            button6.Size = new Size(131, 27);
-            button6.TabIndex = 13;
-            button6.Text = "Pause";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
             // 
             // frmFilelessExec
             // 
@@ -287,5 +295,6 @@
         private ColumnHeader columnHeader2;
         private Button button5;
         private Button button6;
+        private ToolStripStatusLabel toolStripStatusLabel2;
     }
 }

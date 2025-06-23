@@ -48,6 +48,8 @@
             toolStripMenuItem13 = new ToolStripMenuItem();
             toolStripMenuItem21 = new ToolStripMenuItem();
             toolStripMenuItem26 = new ToolStripMenuItem();
+            toolStripSeparator5 = new ToolStripSeparator();
+            toolStripMenuItem40 = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripMenuItem10 = new ToolStripMenuItem();
             toolStripMenuItem14 = new ToolStripMenuItem();
@@ -100,8 +102,6 @@
             toolStripLabel2 = new ToolStripLabel();
             toolStripLabel3 = new ToolStripLabel();
             timer2 = new System.Windows.Forms.Timer(components);
-            toolStripMenuItem40 = new ToolStripMenuItem();
-            toolStripSeparator5 = new ToolStripSeparator();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -231,6 +231,18 @@
             toolStripMenuItem26.Size = new Size(198, 24);
             toolStripMenuItem26.Text = "Power";
             toolStripMenuItem26.Click += toolStripMenuItem26_Click;
+            // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(195, 6);
+            // 
+            // toolStripMenuItem40
+            // 
+            toolStripMenuItem40.Name = "toolStripMenuItem40";
+            toolStripMenuItem40.Size = new Size(198, 24);
+            toolStripMenuItem40.Text = "Fileless Execution";
+            toolStripMenuItem40.Click += toolStripMenuItem40_Click;
             // 
             // toolStripSeparator3
             // 
@@ -597,17 +609,6 @@
             // 
             timer2.Interval = 1000;
             timer2.Tick += timer2_Tick;
-            // 
-            // toolStripMenuItem40
-            // 
-            toolStripMenuItem40.Name = "toolStripMenuItem40";
-            toolStripMenuItem40.Size = new Size(198, 24);
-            toolStripMenuItem40.Text = "Fileless Execution";
-            // 
-            // toolStripSeparator5
-            // 
-            toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(195, 6);
             // 
             // Form1
             // 

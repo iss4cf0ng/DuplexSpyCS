@@ -52,9 +52,25 @@ namespace winClient48
 
                         if (lpWindowTitle.Length > 0)
                         {
-                            int nProcessId;
-                            GetWindowThreadProcessId(hWnd, out nProcessId);
-                            Process proc = Process.GetProcessById(nProcessId);
+                            int nProcessId = -1;
+                            try
+                            {
+                                GetWindowThreadProcessId(hWnd, out nProcessId);
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                            }
+
+                            Process proc = null;
+                            try
+                            {
+                                proc = Process.GetProcessById(nProcessId);
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                            }
 
                             Icon iWindow = null;
                             try
@@ -66,15 +82,22 @@ namespace winClient48
                                 //MessageBox.Show(ex.Message, ex.GetType().Name);
                             }
 
-                            string szFilePath = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}")[0];
+                            string szFilePath = "[Access Denial]";
+                            if (proc != null && proc?.Id != null)
+                            {
+                                string[] aResult = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}");
+
+                                if (aResult != null && aResult.Length > 0)
+                                    szFilePath = aResult[0];
+                            }
 
                             WindowInfo info = new WindowInfo()
                             {
                                 szTitle = lpWindowTitle == null ? "[Access Denial]" : lpWindowTitle.ToString(),
-                                szProcessName = proc.ProcessName,
-                                szFilePath = szFilePath == null ? "[Access Denial]" : szFilePath,
+                                szProcessName = proc == null ? "[Access Denial]" : proc.ProcessName,
+                                szFilePath = szFilePath,
                                 nProcessId = nProcessId,
-                                nHandle = (int)hWnd,
+                                nHandle = hWnd == null ? -1 : (int)hWnd,
                                 iWindow = iWindow,
                             };
 

