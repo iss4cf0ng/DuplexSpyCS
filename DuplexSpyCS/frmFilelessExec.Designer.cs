@@ -29,6 +29,14 @@
         private void InitializeComponent()
         {
             splitContainer1 = new SplitContainer();
+            groupBox1 = new GroupBox();
+            label2 = new Label();
+            textBox1 = new TextBox();
+            button1 = new Button();
+            label1 = new Label();
+            textBox2 = new TextBox();
+            radioButton2 = new RadioButton();
+            radioButton1 = new RadioButton();
             button6 = new Button();
             button5 = new Button();
             label3 = new Label();
@@ -36,14 +44,9 @@
             button4 = new Button();
             button3 = new Button();
             button2 = new Button();
-            label2 = new Label();
-            textBox2 = new TextBox();
             listView1 = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
-            label1 = new Label();
-            button1 = new Button();
-            textBox1 = new TextBox();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
@@ -52,6 +55,7 @@
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             statusStrip1.SuspendLayout();
             SuspendLayout();
@@ -67,6 +71,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(groupBox1);
+            splitContainer1.Panel1.Controls.Add(radioButton2);
+            splitContainer1.Panel1.Controls.Add(radioButton1);
             splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(button5);
             splitContainer1.Panel1.Controls.Add(label3);
@@ -74,25 +81,99 @@
             splitContainer1.Panel1.Controls.Add(button4);
             splitContainer1.Panel1.Controls.Add(button3);
             splitContainer1.Panel1.Controls.Add(button2);
-            splitContainer1.Panel1.Controls.Add(label2);
-            splitContainer1.Panel1.Controls.Add(textBox2);
             splitContainer1.Panel1.Controls.Add(listView1);
-            splitContainer1.Panel1.Controls.Add(label1);
-            splitContainer1.Panel1.Controls.Add(button1);
-            splitContainer1.Panel1.Controls.Add(textBox1);
             splitContainer1.Panel1.Controls.Add(statusStrip1);
             // 
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
-            splitContainer1.Size = new Size(638, 514);
-            splitContainer1.SplitterDistance = 337;
+            splitContainer1.Size = new Size(638, 552);
+            splitContainer1.SplitterDistance = 372;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(textBox1);
+            groupBox1.Controls.Add(button1);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(textBox2);
+            groupBox1.Location = new Point(12, 35);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(477, 97);
+            groupBox1.TabIndex = 16;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "CSharp Assembly";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(5, 63);
+            label2.Name = "label2";
+            label2.Size = new Size(87, 19);
+            label2.TabIndex = 6;
+            label2.Text = "Argument :";
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(98, 26);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(239, 27);
+            textBox1.TabIndex = 1;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(343, 26);
+            button1.Name = "button1";
+            button1.Size = new Size(119, 27);
+            button1.TabIndex = 2;
+            button1.Text = "...";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(52, 30);
+            label1.Name = "label1";
+            label1.Size = new Size(40, 19);
+            label1.TabIndex = 3;
+            label1.Text = "File :";
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(98, 59);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(364, 27);
+            textBox2.TabIndex = 5;
+            // 
+            // radioButton2
+            // 
+            radioButton2.AutoSize = true;
+            radioButton2.Location = new Point(225, 10);
+            radioButton2.Name = "radioButton2";
+            radioButton2.Size = new Size(80, 23);
+            radioButton2.TabIndex = 15;
+            radioButton2.TabStop = true;
+            radioButton2.Text = "Current";
+            radioButton2.UseVisualStyleBackColor = true;
+            // 
+            // radioButton1
+            // 
+            radioButton1.AutoSize = true;
+            radioButton1.Location = new Point(43, 10);
+            radioButton1.Name = "radioButton1";
+            radioButton1.Size = new Size(149, 23);
+            radioButton1.TabIndex = 14;
+            radioButton1.TabStop = true;
+            radioButton1.Text = "CSharp Assembly";
+            radioButton1.UseVisualStyleBackColor = true;
+            radioButton1.CheckedChanged += radioButton1_CheckedChanged;
+            // 
             // button6
             // 
-            button6.Location = new Point(495, 44);
+            button6.Location = new Point(495, 93);
             button6.Name = "button6";
             button6.Size = new Size(131, 27);
             button6.TabIndex = 13;
@@ -102,7 +183,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(495, 76);
+            button5.Location = new Point(495, 125);
             button5.Name = "button5";
             button5.Size = new Size(131, 27);
             button5.TabIndex = 12;
@@ -113,7 +194,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(34, 84);
+            label3.Location = new Point(39, 146);
             label3.Name = "label3";
             label3.Size = new Size(65, 19);
             label3.TabIndex = 11;
@@ -121,14 +202,14 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(105, 78);
+            numericUpDown1.Location = new Point(110, 140);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(87, 27);
             numericUpDown1.TabIndex = 10;
             // 
             // button4
             // 
-            button4.Location = new Point(495, 11);
+            button4.Location = new Point(495, 60);
             button4.Name = "button4";
             button4.Size = new Size(131, 27);
             button4.TabIndex = 9;
@@ -138,7 +219,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(338, 76);
+            button3.Location = new Point(343, 138);
             button3.Name = "button3";
             button3.Size = new Size(131, 27);
             button3.TabIndex = 8;
@@ -148,7 +229,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(201, 76);
+            button2.Location = new Point(206, 138);
             button2.Name = "button2";
             button2.Size = new Size(131, 27);
             button2.TabIndex = 7;
@@ -156,29 +237,13 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 48);
-            label2.Name = "label2";
-            label2.Size = new Size(87, 19);
-            label2.TabIndex = 6;
-            label2.Text = "Argument :";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(105, 44);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(364, 27);
-            textBox2.TabIndex = 5;
-            // 
             // listView1
             // 
             listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
-            listView1.Location = new Point(3, 123);
+            listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 189);
+            listView1.Size = new Size(632, 174);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -193,36 +258,10 @@
             columnHeader2.Text = "State";
             columnHeader2.Width = 300;
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(59, 15);
-            label1.Name = "label1";
-            label1.Size = new Size(40, 19);
-            label1.TabIndex = 3;
-            label1.Text = "File :";
-            // 
-            // button1
-            // 
-            button1.Location = new Point(350, 11);
-            button1.Name = "button1";
-            button1.Size = new Size(119, 27);
-            button1.TabIndex = 2;
-            button1.Text = "...";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(105, 11);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(239, 27);
-            textBox1.TabIndex = 1;
-            // 
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 313);
+            statusStrip1.Location = new Point(0, 348);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -247,7 +286,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 172);
+            richTextBox1.Size = new Size(638, 175);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -255,7 +294,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(638, 514);
+            ClientSize = new Size(638, 552);
             Controls.Add(splitContainer1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             Margin = new Padding(4);
@@ -268,6 +307,8 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
@@ -296,5 +337,8 @@
         private Button button5;
         private Button button6;
         private ToolStripStatusLabel toolStripStatusLabel2;
+        private RadioButton radioButton2;
+        private RadioButton radioButton1;
+        private GroupBox groupBox1;
     }
 }
