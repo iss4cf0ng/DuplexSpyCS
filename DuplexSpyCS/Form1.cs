@@ -2035,5 +2035,11 @@ namespace DuplexSpyCS
 
             f.Show();
         }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            frmTipoff f = new frmTipoff();
+            f.Show();
+        }
     }
 }
