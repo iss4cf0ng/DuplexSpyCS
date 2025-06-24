@@ -32,11 +32,22 @@ namespace winClient48Small
 
         public void Send(int nCmd, int nParam, byte[] abMsg)
         {
+            byte[] abData = new DSP((byte)nCmd, (byte)nParam, abMsg).GetBytes();
+            socket.BeginSend(abData, 0, abData.Length, SocketFlags.None, new AsyncCallback((ar) =>
+            {
+                try
+                {
+                    socket.EndSend(ar);
+                }
+                catch (Exception ex)
+                {
 
+                }
+            }), abData);
         }
         public void Send(int nCmd, int nParam, string szMsg)
         {
-
+            Send(nCmd, nParam, Encoding.UTF8.GetBytes(szMsg));
         }
 
         public void SendCommand(string szPayload)

