@@ -1,6 +1,11 @@
 # DuplexSpy
 DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
+# Warning
+Ethical Purpose Only!\
+This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
+And do not execute it on target without authorization! :(
+
 # Feature
 - Windows RAT
 - Encrypted TCP socket communication (AES-256-CBC + RSA-4096)
@@ -60,7 +65,3 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
 ## Multi Desktop
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/multidesktop.png)
-
-# Ethical Purpose Only
-This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
-And do not execute it on target without authorization
