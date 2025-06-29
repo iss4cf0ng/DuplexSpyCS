@@ -28,7 +28,7 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 - Multiple Webcam
 
 # Network Architecture
-![](![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/architecture.png))
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/architecture.png)
 
 # Screenshot
 ## Main
