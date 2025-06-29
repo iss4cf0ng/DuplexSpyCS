@@ -2,7 +2,8 @@
 DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
 # Introduction
-DuplexSpy RAT can let you control remote Windows PC completely.
+A lightweight Remote Access Tool developed in C#, enabling complete control of a remote Windows machine.
+Designed for legitimate remote administration and security testing of Windows systems.
 
 # Warning
 Ethical Purpose Only!\
@@ -70,7 +71,7 @@ And do not execute it on target without authorization! :(
   - Record
   - Speak text
   - Play System Sound
-- Multiple Desktop
+- Multiple Desktop (This can use for monitoring multiple Windows machine.) 
 - Multiple Webcam
 
 # Network Architecture
