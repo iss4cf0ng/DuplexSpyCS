@@ -4,6 +4,8 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 # Feature
 - Windows RAT
 - Encrypted TCP socket communication (AES-256-CBC + RSA-4096)
+- Multi Desktop Monitor
+- Multi Webcam
 
 # Anticipation (Coming soon)
 - Remote plugin (Browser dumper, Active Directory, Vulneribility, etc...)
@@ -22,33 +24,42 @@ DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 - Webcam
 - Fun Stuff
 - Audio
-- Multiple desktop
-- Multiple webcam
+- Multiple Desktop
+- Multiple Webcam
+
+# Network Architecture
+![](![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/architecture.png))
 
 # Screenshot
 ## Main
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/main.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/main.png)
 
 ## File Manager
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/fileMgr.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/fileMgr.png)
+
+## Display Image File
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/showimage.png)
 
 ## Task Manager
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/taskmgr.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/taskmgr.png)
 
 ## Reg Edit
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/regedit.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/regedit.png)
 
 ## Window Manager
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/windowMgr.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/windowMgr.png)
 
 ## Monitor
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/monitor.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/monitor.png)
 
 ## Shell
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/shell.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/shell.png)
+
+## Keylogger
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/keylogger.png)
 
 ## Multi Desktop
-![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/Screenshot/multidesktop.png)
+![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/multidesktop.png)
 
 # Ethical Purpose Only
 This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
