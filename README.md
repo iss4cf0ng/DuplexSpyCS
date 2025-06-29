@@ -6,8 +6,9 @@ If you like it, please give it a ⭐! It would mean a lot to me and really motiv
 A lightweight Remote Access Tool developed in C#, enabling complete control of a remote Windows machine.
 Designed for legitimate remote administration and security testing of Windows systems.
 
-# Warning
-Ethical Purpose Only!\
+# ⚠️ Warning
+This tool is still under development. Features may change or break without notice.
+## Ethical Purpose Only!
 This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
 And do not execute it on target without authorization! :(
 
