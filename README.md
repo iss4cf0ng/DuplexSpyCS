@@ -71,7 +71,7 @@ And do not execute it on target without authorization! :(
   - Record
   - Speak text
   - Play System Sound
-- Multiple Desktop (This can use for monitoring multiple Windows machine.) 
+- Multiple Desktop (Can be used to monitor multiple Windows machines.)
 - Multiple Webcam
 
 # Network Architecture
