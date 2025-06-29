@@ -2425,7 +2425,7 @@ namespace winClient48
                 string szSerialNumber = id_array[0].Replace(" ", string.Empty).Trim();
                 */
                 DataTable dt = fnWmiQuery("select serialnumber from win32_diskdrive");
-                string szSerialNumber = dt.Rows[0].ToString().Replace(" ", string.Empty).Trim();
+                string szSerialNumber = dt.Rows[0][0].ToString().Replace(" ", string.Empty).Trim();
 
                 clntConfig = new ClientConfig()
                 {

