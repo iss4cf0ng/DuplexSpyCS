@@ -1,5 +1,5 @@
 # DuplexSpy
-DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
+DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S\
 If you like it, please give it a ⭐! It would mean a lot to me and really motivates me!
 
 # Introduction
