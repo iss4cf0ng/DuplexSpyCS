@@ -1,6 +1,9 @@
 # DuplexSpy
 DuplexSpyCS (CS stands for CSharp) is a RAT base on C/S
 
+# Introduction
+DuplexSpy RAT can let you control remote Windows PC completely.
+
 # Warning
 Ethical Purpose Only!\
 This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
@@ -20,15 +23,53 @@ And do not execute it on target without authorization! :(
 
 # Function
 - Information
+  - Devices
+  - Patch
+  - Others
 - File Manager
+  - Display Image File (png, jpg, bmp, etc)
+  - Editor
+  - Upload File
+  - Download File
+  - Archive (Zip/Unzip)
+  - WGET
+  - Copy
+  - Paste
+  - Cut
 - Task Manager
+  - Kill
+  - Delete
+  - Start
 - Service Manager
 - RegEdit
 - Window Manager
+  - Screenshot Window App. (GetDC/BringToFront).
+  - Suspend/Resume Window Thread.
 - Desktop
+  - Record
+  - Remote Keyboard
+  - Remote Mouse
 - Webcam
+  - Record
+  - Mirror (Left <-> Right)
 - Fun Stuff
+  - Show/Hide Taskbar
+  - Show/Hide Clock
+  - Show/Hide Desktop Icon
+  - Show/Hide StartOrb
+  - Lock/Unlock Mouse
+  - Show/Hide Mouse
+  - Crazy Mouse
+  - Replace keychar as smile face.
+  - Play Sound
+  - MessageBox
+  - Lock Screen
 - Audio
+  - System Sound
+  - Microphone
+  - Record
+  - Speak text
+  - Play System Sound
 - Multiple Desktop
 - Multiple Webcam
 
@@ -66,3 +107,6 @@ This RAT is able to view image file.
 
 ## Multi Desktop
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/multidesktop.png)
+
+# Acknowledgement
+To all cybersecurity experts and remote access tool authors.
