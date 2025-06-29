@@ -43,6 +43,7 @@ And do not execute it on target without authorization! :(
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/fileMgr.png)
 
 ## Display Image File
+This RAT is able to view image file.
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/showimage.png)
 
 ## Task Manager
