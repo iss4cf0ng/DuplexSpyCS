@@ -57,13 +57,13 @@
             comboBox3 = new ComboBox();
             label9 = new Label();
             groupBox4 = new GroupBox();
-            textBox9 = new TextBox();
+            numericUpDown5 = new NumericUpDown();
+            numericUpDown4 = new NumericUpDown();
             label14 = new Label();
-            textBox8 = new TextBox();
             label13 = new Label();
             groupBox3 = new GroupBox();
+            numericUpDown3 = new NumericUpDown();
             checkBox6 = new CheckBox();
-            textBox4 = new TextBox();
             label8 = new Label();
             checkBox5 = new CheckBox();
             checkBox4 = new CheckBox();
@@ -80,7 +80,10 @@
             groupBox2.SuspendLayout();
             groupBox5.SuspendLayout();
             groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
             groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -136,6 +139,7 @@
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(120, 27);
             numericUpDown1.TabIndex = 7;
+            numericUpDown1.Value = new decimal(new int[] { 4444, 0, 0, 0 });
             // 
             // numericUpDown2
             // 
@@ -355,9 +359,9 @@
             // 
             // groupBox4
             // 
-            groupBox4.Controls.Add(textBox9);
+            groupBox4.Controls.Add(numericUpDown5);
+            groupBox4.Controls.Add(numericUpDown4);
             groupBox4.Controls.Add(label14);
-            groupBox4.Controls.Add(textBox8);
             groupBox4.Controls.Add(label13);
             groupBox4.Location = new Point(13, 276);
             groupBox4.Name = "groupBox4";
@@ -366,33 +370,36 @@
             groupBox4.TabStop = false;
             groupBox4.Text = "ICMP";
             // 
-            // textBox9
+            // numericUpDown5
             // 
-            textBox9.Location = new Point(83, 55);
-            textBox9.Name = "textBox9";
-            textBox9.Size = new Size(145, 27);
-            textBox9.TabIndex = 28;
+            numericUpDown5.Location = new Point(65, 56);
+            numericUpDown5.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDown5.Name = "numericUpDown5";
+            numericUpDown5.Size = new Size(163, 27);
+            numericUpDown5.TabIndex = 31;
+            // 
+            // numericUpDown4
+            // 
+            numericUpDown4.Location = new Point(65, 23);
+            numericUpDown4.Maximum = new decimal(new int[] { 255, 0, 0, 0 });
+            numericUpDown4.Name = "numericUpDown4";
+            numericUpDown4.Size = new Size(163, 27);
+            numericUpDown4.TabIndex = 30;
+            numericUpDown4.Value = new decimal(new int[] { 8, 0, 0, 0 });
             // 
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(20, 58);
+            label14.Location = new Point(6, 58);
             label14.Name = "label14";
-            label14.Size = new Size(57, 19);
+            label14.Size = new Size(53, 19);
             label14.TabIndex = 27;
-            label14.Text = "Mode :";
-            // 
-            // textBox8
-            // 
-            textBox8.Location = new Point(83, 22);
-            textBox8.Name = "textBox8";
-            textBox8.Size = new Size(145, 27);
-            textBox8.TabIndex = 26;
+            label14.Text = "Code :";
             // 
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(28, 25);
+            label13.Location = new Point(10, 25);
             label13.Name = "label13";
             label13.Size = new Size(49, 19);
             label13.TabIndex = 25;
@@ -400,8 +407,8 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(numericUpDown3);
             groupBox3.Controls.Add(checkBox6);
-            groupBox3.Controls.Add(textBox4);
             groupBox3.Controls.Add(label8);
             groupBox3.Controls.Add(checkBox5);
             groupBox3.Controls.Add(checkBox4);
@@ -415,6 +422,15 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "TCP Flag";
             // 
+            // numericUpDown3
+            // 
+            numericUpDown3.Location = new Point(113, 30);
+            numericUpDown3.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
+            numericUpDown3.Name = "numericUpDown3";
+            numericUpDown3.Size = new Size(115, 27);
+            numericUpDown3.TabIndex = 29;
+            numericUpDown3.Value = new decimal(new int[] { 1000, 0, 0, 0 });
+            // 
             // checkBox6
             // 
             checkBox6.AutoSize = true;
@@ -424,13 +440,6 @@
             checkBox6.TabIndex = 4;
             checkBox6.Text = "URG";
             checkBox6.UseVisualStyleBackColor = true;
-            // 
-            // textBox4
-            // 
-            textBox4.Location = new Point(98, 29);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(142, 27);
-            textBox4.TabIndex = 20;
             // 
             // label8
             // 
@@ -550,8 +559,11 @@
             groupBox5.PerformLayout();
             groupBox4.ResumeLayout(false);
             groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown4).EndInit();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
             ResumeLayout(false);
         }
 
@@ -576,7 +588,6 @@
         private Label label6;
         private TextBox textBox2;
         private GroupBox groupBox3;
-        private TextBox textBox4;
         private Label label8;
         private CheckBox checkBox6;
         private CheckBox checkBox5;
@@ -595,13 +606,14 @@
         private TextBox textBox7;
         private Label label12;
         private CheckBox checkBox7;
-        private TextBox textBox9;
         private Label label14;
-        private TextBox textBox8;
         private Label label13;
         private TextBox textBox10;
         private Label label15;
         private TextBox textBox11;
         private Label label16;
+        private NumericUpDown numericUpDown3;
+        private NumericUpDown numericUpDown4;
+        private NumericUpDown numericUpDown5;
     }
 }

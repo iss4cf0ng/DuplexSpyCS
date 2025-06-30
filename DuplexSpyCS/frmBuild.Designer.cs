@@ -69,6 +69,9 @@
             tabPage4 = new TabPage();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
+            groupBox3 = new GroupBox();
+            label10 = new Label();
+            comboBox2 = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
@@ -83,27 +86,28 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabPage4.SuspendLayout();
             toolStrip1.SuspendLayout();
+            groupBox3.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(47, 23);
+            label1.Location = new Point(11, 23);
             label1.Name = "label1";
-            label1.Size = new Size(29, 19);
+            label1.Size = new Size(90, 19);
             label1.TabIndex = 0;
-            label1.Text = "IP :";
+            label1.Text = "IP/Domain :";
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(85, 22);
+            textBox1.Location = new Point(107, 20);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(226, 27);
             textBox1.TabIndex = 1;
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(85, 55);
+            numericUpDown1.Location = new Point(107, 53);
             numericUpDown1.Margin = new Padding(5);
             numericUpDown1.Maximum = new decimal(new int[] { 65565, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
@@ -119,14 +123,14 @@
             groupBox1.Controls.Add(textBox1);
             groupBox1.Location = new Point(6, 9);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(458, 123);
+            groupBox1.Size = new Size(458, 93);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Host";
             // 
             // button1
             // 
-            button1.Location = new Point(228, 53);
+            button1.Location = new Point(250, 51);
             button1.Name = "button1";
             button1.Size = new Size(83, 27);
             button1.TabIndex = 9;
@@ -137,7 +141,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(31, 57);
+            label2.Location = new Point(53, 55);
             label2.Name = "label2";
             label2.Size = new Size(45, 19);
             label2.TabIndex = 2;
@@ -208,7 +212,7 @@
             groupBox4.Controls.Add(label6);
             groupBox4.Controls.Add(numericUpDown3);
             groupBox4.Controls.Add(label5);
-            groupBox4.Location = new Point(6, 138);
+            groupBox4.Location = new Point(6, 108);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(458, 123);
             groupBox4.TabIndex = 10;
@@ -266,7 +270,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(470, 328);
+            richTextBox1.Size = new Size(470, 332);
             richTextBox1.TabIndex = 15;
             richTextBox1.Text = "";
             // 
@@ -285,6 +289,7 @@
             // 
             // tabPage1
             // 
+            tabPage1.Controls.Add(groupBox3);
             tabPage1.Controls.Add(groupBox1);
             tabPage1.Controls.Add(groupBox4);
             tabPage1.Location = new Point(4, 28);
@@ -458,9 +463,9 @@
             // tabPage4
             // 
             tabPage4.Controls.Add(richTextBox1);
-            tabPage4.Location = new Point(4, 28);
+            tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(470, 328);
+            tabPage4.Size = new Size(470, 332);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "Logs";
             tabPage4.UseVisualStyleBackColor = true;
@@ -484,6 +489,34 @@
             toolStripButton1.Size = new Size(45, 23);
             toolStripButton1.Text = "Help";
             toolStripButton1.Click += toolStripButton1_Click;
+            // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(comboBox2);
+            groupBox3.Controls.Add(label10);
+            groupBox3.Location = new Point(6, 237);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(458, 85);
+            groupBox3.TabIndex = 11;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Payload";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(7, 29);
+            label10.Name = "label10";
+            label10.Size = new Size(49, 19);
+            label10.TabIndex = 0;
+            label10.Text = "Type :";
+            // 
+            // comboBox2
+            // 
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(62, 26);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(180, 27);
+            comboBox2.TabIndex = 1;
             // 
             // frmBuild
             // 
@@ -521,6 +554,8 @@
             tabPage4.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -567,5 +602,8 @@
         private Label label9;
         private NumericUpDown numericUpDown4;
         private Label label8;
+        private GroupBox groupBox3;
+        private ComboBox comboBox2;
+        private Label label10;
     }
 }

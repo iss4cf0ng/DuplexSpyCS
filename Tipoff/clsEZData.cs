@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuplexSpyCS
+namespace Tipoff
 {
     internal class clsEZData
     {
@@ -15,7 +15,7 @@ namespace DuplexSpyCS
         public static List<string> fnListEncToB64(List<string> lsInput) => lsInput.Select(x => Crypto.b64E2Str(x)).ToList();
         public static List<string> fnListDecFromB64(List<string> lsInput) => lsInput.Select(x => Crypto.b64D2Str(x)).ToList();
         public static string fnListStrToStr(List<string> lsInput, string szSplitter = ",") => string.Join(szSplitter, fnListEncToB64(lsInput));
-        public static List<string> fnStrToListStr(string szInput, string szSplitter = ",") => fnListDecFromB64(szInput.Split(szSplitter).ToList());
+        public static List<string> fnStrToListStr(string szInput, string szSplitter = ",") => fnListDecFromB64(szInput.Split(new string[] { szSplitter }, StringSplitOptions.None).ToList());
 
         public static string fnGenerateRandomStr(int nLength = 10)
         {

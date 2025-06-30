@@ -317,17 +317,16 @@ namespace DuplexSpyCS
                                 }
                                 else if (dsp.Param == 1)
                                 {
-                                    int nDelay = 1000;
-
-                                    new Thread(() =>
+                                    Task.Run(() =>
                                     {
+                                        int nDelay = 1000;
                                         DateTime datetime = DateTime.Now;
                                         TimeSpan span = datetime - v.last_sent;
                                         v.latency_time = span.Milliseconds;
                                         v.last_sent = datetime;
 
-                                        v.encSend(2, 1, datetime.ToString("F"));
-                                    }).Start();
+                                        v.encSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                    });
                                 }
                             }
                             else if (dsp.Command == 3) //Implant

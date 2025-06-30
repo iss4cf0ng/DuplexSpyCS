@@ -108,6 +108,7 @@
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
             listView2 = new ListView();
+            columnHeader18 = new ColumnHeader();
             columnHeader12 = new ColumnHeader();
             columnHeader13 = new ColumnHeader();
             columnHeader14 = new ColumnHeader();
@@ -674,23 +675,28 @@
             tabPage2.Location = new Point(4, 4);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1007, 328);
+            tabPage2.Size = new Size(1007, 323);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Implant";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // listView2
             // 
-            listView2.Columns.AddRange(new ColumnHeader[] { columnHeader12, columnHeader13, columnHeader14, columnHeader15, columnHeader16, columnHeader17 });
+            listView2.Columns.AddRange(new ColumnHeader[] { columnHeader18, columnHeader12, columnHeader13, columnHeader14, columnHeader15, columnHeader16, columnHeader17 });
             listView2.ContextMenuStrip = contextMenuStrip2;
             listView2.Dock = DockStyle.Fill;
             listView2.FullRowSelect = true;
             listView2.Location = new Point(3, 3);
             listView2.Name = "listView2";
-            listView2.Size = new Size(1001, 322);
+            listView2.Size = new Size(1001, 317);
             listView2.TabIndex = 0;
             listView2.UseCompatibleStateImageBehavior = false;
             listView2.View = View.Details;
+            // 
+            // columnHeader18
+            // 
+            columnHeader18.Text = "OnlineID";
+            columnHeader18.Width = 150;
             // 
             // columnHeader12
             // 
@@ -727,19 +733,19 @@
             contextMenuStrip2.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             contextMenuStrip2.Items.AddRange(new ToolStripItem[] { toolStripMenuItem42, toolStripMenuItem43 });
             contextMenuStrip2.Name = "contextMenuStrip2";
-            contextMenuStrip2.Size = new Size(181, 74);
+            contextMenuStrip2.Size = new Size(155, 52);
             // 
             // toolStripMenuItem42
             // 
             toolStripMenuItem42.Name = "toolStripMenuItem42";
-            toolStripMenuItem42.Size = new Size(180, 24);
+            toolStripMenuItem42.Size = new Size(154, 24);
             toolStripMenuItem42.Text = "Invoke";
             toolStripMenuItem42.Click += toolStripMenuItem42_Click;
             // 
             // toolStripMenuItem43
             // 
             toolStripMenuItem43.Name = "toolStripMenuItem43";
-            toolStripMenuItem43.Size = new Size(180, 24);
+            toolStripMenuItem43.Size = new Size(154, 24);
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
@@ -858,5 +864,6 @@
         private ContextMenuStrip contextMenuStrip2;
         private ToolStripMenuItem toolStripMenuItem42;
         private ToolStripMenuItem toolStripMenuItem43;
+        private ColumnHeader columnHeader18;
     }
 }

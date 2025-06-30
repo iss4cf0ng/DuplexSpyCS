@@ -21,6 +21,12 @@ namespace DuplexSpyCS
             m_lVictim = lVictim;
         }
 
+        /// <summary>
+        /// Send payload.
+        /// </summary>
+        /// <param name="lVictim">List of victim.</param>
+        /// <param name="szFileName">Payload file.</param>
+        /// <param name="aszParams">Paramaters</param>
         private void fnSendPayload(List<Victim> lVictim, string szFileName, string[] aszParams)
         {
             try
