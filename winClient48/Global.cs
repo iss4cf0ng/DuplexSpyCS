@@ -226,6 +226,12 @@ namespace winClient48
         RAW,
         HTTP,
     }
+    public enum EntityTimestampType
+    {
+        CreationTime,
+        LastModifiedTime,
+        LastAccessedTime,
+    }
 
     public struct BasicInfo
     {

@@ -6,9 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Http;
 using System.Net;
 using System.Threading;
 
@@ -665,6 +663,45 @@ namespace winClient48
             }
 
             return results;
+        }
+
+        public (int nCode, string szMsg) fnSetEntityTimestamp(bool bIsFile, string szEntityPath, EntityTimestampType etType, DateTime date)
+        {
+            int nCode = 0;
+            string szMsg = string.Empty;
+
+            try
+            {
+                switch (etType)
+                {
+                    case EntityTimestampType.CreationTime:
+                        if (bIsFile)
+                            File.SetCreationTime(szEntityPath, date);
+                        else
+                            Directory.SetCreationTime(szEntityPath, date);
+                        break;
+                    case EntityTimestampType.LastModifiedTime:
+                        if (bIsFile)
+                            File.SetLastWriteTime(szEntityPath, date);
+                        else
+                            Directory.SetLastWriteTime(szEntityPath, date);
+                        break;
+                    case EntityTimestampType.LastAccessedTime:
+                        if (bIsFile)
+                            File.SetLastAccessTime(szEntityPath, date);
+                        else
+                            Directory.SetLastAccessTime(szEntityPath, date);
+                        break;
+                }
+
+                nCode = 1;
+            }
+            catch (Exception ex)
+            {
+                szMsg = ex.Message;
+            }
+
+            return (nCode, szMsg);
         }
     }
 }

