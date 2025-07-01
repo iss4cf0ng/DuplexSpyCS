@@ -402,7 +402,7 @@ namespace DuplexSpyCS
             }
         }
 
-        void setup()
+        private void fnSetup()
         {
             try
             {
@@ -432,7 +432,33 @@ namespace DuplexSpyCS
 
                     numericUpDown2.Value = dwTimeout; //Client connection timeout(ms).
                     numericUpDown3.Value = dwRetry;  //Client retry interval(ms).
-                    numericUpDown4.Value = dwInterval;
+                    numericUpDown4.Value = dwInterval; //Send info interval(ms).
+
+                    //Payload
+                    string szDirPayload = Path.Combine(Application.StartupPath, "Payload");
+                    if (Directory.Exists(szDirPayload))
+                    {
+                        foreach (string szDir in Directory.GetDirectories(szDirPayload))
+                        {
+                            string szDirName = Path.GetFileName(szDir);
+                            string szPayloadName = $"{szDirName}.il";
+                            string szPayloadPath = Path.Combine(szDir, szPayloadName);
+                            if (!File.Exists(szPayloadPath))
+                            {
+                                MessageBox.Show("Payload not found: " + szPayloadPath, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                continue;
+                            }
+
+                            comboBox2.Items.Add(szDirName);
+                        }
+
+                        if (comboBox2.Items.Count > 0)
+                            comboBox2.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Directory not found: " + szDirPayload, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
 
                     //Install
                     checkBox1.Checked = ReadIni("Build", "bDirectory") == "1";
@@ -457,7 +483,7 @@ namespace DuplexSpyCS
 
         private void frmBuild_Load(object sender, EventArgs e)
         {
-            setup();
+            fnSetup();
         }
 
         //Test Connection

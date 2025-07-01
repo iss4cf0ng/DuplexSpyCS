@@ -1428,7 +1428,7 @@ namespace DuplexSpyCS
         }
 
         //Setup DuplexSpyCS Server
-        void setup()
+        void fnSetup()
         {
             //listView1.OwnerDraw = true;
             //ColorStyle(color_style, this);
@@ -1494,7 +1494,7 @@ namespace DuplexSpyCS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            setup();
+            fnSetup();
         }
 
         //MANAGER

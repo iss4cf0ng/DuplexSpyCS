@@ -50,7 +50,12 @@
             richTextBox1 = new RichTextBox();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            groupBox3 = new GroupBox();
+            comboBox2 = new ComboBox();
+            label10 = new Label();
             tabPage2 = new TabPage();
+            groupBox5 = new GroupBox();
+            checkBox6 = new CheckBox();
             groupBox2 = new GroupBox();
             comboBox1 = new ComboBox();
             checkBox1 = new CheckBox();
@@ -69,9 +74,7 @@
             tabPage4 = new TabPage();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
-            groupBox3 = new GroupBox();
-            label10 = new Label();
-            comboBox2 = new ComboBox();
+            checkBox7 = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
@@ -80,13 +83,14 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
+            groupBox3.SuspendLayout();
             tabPage2.SuspendLayout();
+            groupBox5.SuspendLayout();
             groupBox2.SuspendLayout();
             tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabPage4.SuspendLayout();
             toolStrip1.SuspendLayout();
-            groupBox3.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -300,8 +304,38 @@
             tabPage1.Text = "General";
             tabPage1.UseVisualStyleBackColor = true;
             // 
+            // groupBox3
+            // 
+            groupBox3.Controls.Add(comboBox2);
+            groupBox3.Controls.Add(label10);
+            groupBox3.Location = new Point(6, 237);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(458, 85);
+            groupBox3.TabIndex = 11;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Payload";
+            // 
+            // comboBox2
+            // 
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(62, 26);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(180, 27);
+            comboBox2.TabIndex = 1;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(7, 29);
+            label10.Name = "label10";
+            label10.Size = new Size(49, 19);
+            label10.TabIndex = 0;
+            label10.Text = "Type :";
+            // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBox7);
+            tabPage2.Controls.Add(groupBox5);
             tabPage2.Controls.Add(groupBox2);
             tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
@@ -309,6 +343,26 @@
             tabPage2.TabIndex = 4;
             tabPage2.Text = "Install";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            groupBox5.Controls.Add(checkBox6);
+            groupBox5.Location = new Point(245, 3);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new Size(221, 219);
+            groupBox5.TabIndex = 7;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Fileless";
+            // 
+            // checkBox6
+            // 
+            checkBox6.AutoSize = true;
+            checkBox6.Location = new Point(8, 26);
+            checkBox6.Name = "checkBox6";
+            checkBox6.Size = new Size(134, 23);
+            checkBox6.TabIndex = 0;
+            checkBox6.Text = "Run and delete";
+            checkBox6.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -320,7 +374,7 @@
             groupBox2.Controls.Add(textBox3);
             groupBox2.Location = new Point(9, 3);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(458, 216);
+            groupBox2.Size = new Size(230, 219);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Install directory";
@@ -331,13 +385,13 @@
             comboBox1.Items.AddRange(new object[] { "%APPDATA%", "%TEMP%", "%USERPROFILE%", "%LOCALAPPDATA%", "%WINDIR%", "%DOCUMENTS%" });
             comboBox1.Location = new Point(8, 55);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(227, 27);
+            comboBox1.Size = new Size(216, 27);
             comboBox1.TabIndex = 6;
             // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
-            checkBox1.Location = new Point(6, 26);
+            checkBox1.Location = new Point(8, 26);
             checkBox1.Name = "checkBox1";
             checkBox1.Size = new Size(92, 23);
             checkBox1.TabIndex = 0;
@@ -348,7 +402,7 @@
             // 
             textBox4.Location = new Point(8, 179);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(228, 27);
+            textBox4.Size = new Size(217, 27);
             textBox4.TabIndex = 5;
             // 
             // checkBox3
@@ -364,7 +418,7 @@
             // checkBox2
             // 
             checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(6, 88);
+            checkBox2.Location = new Point(8, 88);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(81, 23);
             checkBox2.TabIndex = 2;
@@ -375,7 +429,7 @@
             // 
             textBox3.Location = new Point(7, 117);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(228, 27);
+            textBox3.Size = new Size(217, 27);
             textBox3.TabIndex = 3;
             // 
             // tabPage3
@@ -387,9 +441,9 @@
             tabPage3.Controls.Add(button2);
             tabPage3.Controls.Add(textBox5);
             tabPage3.Controls.Add(label7);
-            tabPage3.Location = new Point(4, 28);
+            tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(470, 328);
+            tabPage3.Size = new Size(470, 332);
             tabPage3.TabIndex = 5;
             tabPage3.Text = "Misc";
             tabPage3.UseVisualStyleBackColor = true;
@@ -490,33 +544,15 @@
             toolStripButton1.Text = "Help";
             toolStripButton1.Click += toolStripButton1_Click;
             // 
-            // groupBox3
+            // checkBox7
             // 
-            groupBox3.Controls.Add(comboBox2);
-            groupBox3.Controls.Add(label10);
-            groupBox3.Location = new Point(6, 237);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(458, 85);
-            groupBox3.TabIndex = 11;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Payload";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(7, 29);
-            label10.Name = "label10";
-            label10.Size = new Size(49, 19);
-            label10.TabIndex = 0;
-            label10.Text = "Type :";
-            // 
-            // comboBox2
-            // 
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(62, 26);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(180, 27);
-            comboBox2.TabIndex = 1;
+            checkBox7.AutoSize = true;
+            checkBox7.Location = new Point(17, 237);
+            checkBox7.Name = "checkBox7";
+            checkBox7.Size = new Size(115, 23);
+            checkBox7.TabIndex = 7;
+            checkBox7.Text = "UAC prompt";
+            checkBox7.UseVisualStyleBackColor = true;
             // 
             // frmBuild
             // 
@@ -545,7 +581,12 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown4).EndInit();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
             tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             tabPage3.ResumeLayout(false);
@@ -554,8 +595,6 @@
             tabPage4.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
-            groupBox3.ResumeLayout(false);
-            groupBox3.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -605,5 +644,8 @@
         private GroupBox groupBox3;
         private ComboBox comboBox2;
         private Label label10;
+        private GroupBox groupBox5;
+        private CheckBox checkBox6;
+        private CheckBox checkBox7;
     }
 }
