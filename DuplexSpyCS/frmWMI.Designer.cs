@@ -43,6 +43,7 @@
             richTextBox1.Size = new Size(660, 346);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
+            richTextBox1.WordWrap = false;
             richTextBox1.SelectionChanged += richTextBox1_SelectionChanged;
             richTextBox1.KeyDown += richTextBox1_KeyDown;
             // 

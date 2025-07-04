@@ -381,6 +381,7 @@ namespace Tipoff
                 {
                     device.Open(DeviceMode.Promiscuous, 1000);
                     device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival);
+                    device.Filter = "udp && tcp && icmp";
                     device.StartCapture();
                 }
                 catch

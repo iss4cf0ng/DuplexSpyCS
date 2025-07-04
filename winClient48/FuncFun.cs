@@ -20,11 +20,11 @@ namespace winClient48
             timerCheckStatus.Tick += TimerCheckStatus_Tick;
         }
 
-        public bool g_bMouseLock { get { return _g_bMouseLock; } }
-        private bool _g_bMouseLock = false;
-        public bool g_bMouseCrazy { get { return _g_bMouseCrazy; } }
-        private bool _g_bMouseCrazy = false;
-        public bool g_bMouseTrail
+        public bool m_bMouseLock { get { return _m_bMouseLock; } }
+        private bool _m_bMouseLock = false;
+        public bool m_bMouseCrazy { get { return _m_bMouseCrazy; } }
+        private bool _m_bMouseCrazy = false;
+        public bool m_bMouseTrail
         {
             get
             {
@@ -737,19 +737,19 @@ namespace winClient48
 
             try
             {
-                if (g_bMouseCrazy)
+                if (m_bMouseCrazy)
                 {
                     //set false
-                    _g_bMouseCrazy = false;
+                    _m_bMouseCrazy = false;
                 }
                 else
                 {
                     //set true
-                    _g_bMouseCrazy = true;
+                    _m_bMouseCrazy = true;
 
                     new Thread(() =>
                     {
-                        while (g_bMouseCrazy)
+                        while (m_bMouseCrazy)
                         {
                             Screen screen = Screen.PrimaryScreen;
                             Rectangle rtArea = screen.WorkingArea;
@@ -786,7 +786,7 @@ namespace winClient48
                     if (key == null)
                         throw new Exception("Null registry key");
 
-                    if (g_bMouseTrail)
+                    if (m_bMouseTrail)
                     {
                         //set false
                         key.SetValue("MouseTrails", "0");
@@ -826,15 +826,15 @@ namespace winClient48
             try
             {
                 
-                if (g_bMouseLock)
+                if (m_bMouseLock)
                 {
                     //set false
-                    _g_bMouseLock = false;
+                    _m_bMouseLock = false;
                 }
                 else
                 {
                     //set true
-                    _g_bMouseLock = true;
+                    _m_bMouseLock = true;
 
                     WinAPI.POINT position;
                     if (!WinAPI.GetCursorPos(out position))
@@ -842,7 +842,7 @@ namespace winClient48
 
                     new Thread(() =>
                     {
-                        while (g_bMouseLock)
+                        while (m_bMouseLock)
                         {
                             WinAPI.SetCursorPos(position.X, position.Y);
                             Thread.Sleep(100);

