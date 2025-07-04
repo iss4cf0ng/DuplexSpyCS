@@ -12,6 +12,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 
 namespace DuplexSpyCS
 {
@@ -551,6 +552,25 @@ namespace DuplexSpyCS
                 f.ShowDialog();
 
                 msgboxConfig = f.config;
+            }
+        }
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+            textBox7.Text = string.IsNullOrEmpty(textBox6.Text) ? string.Empty : Crypto.fnSha256(textBox6.Text);
+        }
+
+        private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBox2.Text == "Tipoff")
+            {
+                textBox6.Enabled = true;
+                textBox7.Enabled = true;
+            }
+            else
+            {
+                textBox6.Enabled = false;
+                textBox7.Enabled = false;
             }
         }
     }

