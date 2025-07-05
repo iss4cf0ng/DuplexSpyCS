@@ -52,9 +52,25 @@ namespace winClient48
 
                         if (lpWindowTitle.Length > 0)
                         {
-                            int nProcessId;
-                            GetWindowThreadProcessId(hWnd, out nProcessId);
-                            Process proc = Process.GetProcessById(nProcessId);
+                            int nProcessId = -1;
+                            try
+                            {
+                                GetWindowThreadProcessId(hWnd, out nProcessId);
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                            }
+
+                            Process proc = null;
+                            try
+                            {
+                                proc = Process.GetProcessById(nProcessId);
+                            }
+                            catch (Exception ex)
+                            {
+                                
+                            }
 
                             Icon iWindow = null;
                             try
@@ -66,15 +82,22 @@ namespace winClient48
                                 //MessageBox.Show(ex.Message, ex.GetType().Name);
                             }
 
-                            string szFilePath = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}")[0];
+                            string szFilePath = "[Access Denial]";
+                            if (proc != null && proc?.Id != null)
+                            {
+                                string[] aResult = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}");
+
+                                if (aResult != null && aResult.Length > 0)
+                                    szFilePath = aResult[0];
+                            }
 
                             WindowInfo info = new WindowInfo()
                             {
                                 szTitle = lpWindowTitle == null ? "[Access Denial]" : lpWindowTitle.ToString(),
-                                szProcessName = proc.ProcessName,
-                                szFilePath = szFilePath == null ? "[Access Denial]" : szFilePath,
+                                szProcessName = proc == null ? "[Access Denial]" : proc.ProcessName,
+                                szFilePath = szFilePath,
                                 nProcessId = nProcessId,
-                                nHandle = (int)hWnd,
+                                nHandle = hWnd == null ? -1 : (int)hWnd,
                                 iWindow = iWindow,
                             };
 
@@ -91,53 +114,13 @@ namespace winClient48
             }
 
             return (code, msg, result);
-
-            /*
-            EnumWindows((hWnd, lParam) =>
-            {
-                int length = GetWindowTextLength(hWnd);
-                if (length > 0)
-                {
-                    if (IsWindowVisible(hWnd))
-                    {
-                        StringBuilder sb = new StringBuilder(length + 1);
-                        GetWindowText(hWnd, sb, sb.Capacity);
-                        string window_title = sb.ToString();
-
-                        uint process_id;
-                        GetWindowThreadProcessId(hWnd, out process_id);
-
-                        try
-                        {
-                            Process process = Process.GetProcessById((int)process_id);
-
-                            bool is_Wow64;
-                            IsWow64Process(process.Handle, out is_Wow64);
-                            string exe_path = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {process_id}")[0];
-                            result.Add($"" +
-                                $"{Crypto.b64E2Str(window_title)}," + //WINDOW TITLE
-                                $"{Path.GetFileName(exe_path)}," + //PROCESS FILE NAME
-                                $"{process_id}," + //PROCESS ID
-                                $"{process.Handle}," + //PROCESS HANDLE
-                                $"{Crypto.b64E2Str(exe_path)}," + //PROCESS EXECUTABLE PATH
-                                $"{ExtractIcon(exe_path)}" //ICON GetAppIcon(process.Handle)
-                                );
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                }
-                return true;
-            }, IntPtr.Zero);
-
-            return string.Join(";", result.ToArray());
-
-            */
-
         }
 
+        /// <summary>
+        /// Capture window with Windows API DC.
+        /// </summary>
+        /// <param name="hWnd"></param>
+        /// <returns></returns>
         public (int, string, Bitmap) CaptureWindowWithAPI(IntPtr hWnd)
         {
             int code = 1;

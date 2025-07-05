@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace winClient48Small
+namespace winClientDLL
 {
-    internal class Mic
+    public class Class1
     {
     }
 }

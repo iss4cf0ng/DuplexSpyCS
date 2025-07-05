@@ -100,6 +100,8 @@ namespace winClient48
             pictureBox1.BackColor = Color.Black;
             Visible = false;
             ShowInTaskbar = false;
+
+            timer1.Start();
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -111,6 +113,18 @@ namespace winClient48
         {
             if (!allow_close)
                 e.Cancel = true;
+
+            timer1.Stop();
+        }
+
+        private void frmLockScreen_KeyDown(object sender, KeyEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            BringToFront();
         }
     }
 }

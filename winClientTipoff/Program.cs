@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace winClient48Small
+namespace winClientTipoff
 {
-    public class KeyLogger
+    internal class Program
     {
+        static void Main(string[] args)
+        {
+
+        }
     }
 }

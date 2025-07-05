@@ -97,7 +97,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AntiProcess.cs" />
+    <Compile Include="clsEZData.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="DSP.cs" />
     <Compile Include="Form1.cs">
@@ -106,31 +106,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmChat.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmChat.Designer.cs">
-      <DependentUpon>frmChat.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmLockScreen.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmLockScreen.Designer.cs">
-      <DependentUpon>frmLockScreen.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KeyLogger.cs" />
-    <Compile Include="Mic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmChat.resx">
-      <DependentUpon>frmChat.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmLockScreen.resx">
-      <DependentUpon>frmLockScreen.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

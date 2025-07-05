@@ -40,9 +40,10 @@
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Margin = new Padding(4);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(660, 346);
+            richTextBox1.Size = new Size(752, 398);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
+            richTextBox1.WordWrap = false;
             richTextBox1.SelectionChanged += richTextBox1_SelectionChanged;
             richTextBox1.KeyDown += richTextBox1_KeyDown;
             // 
@@ -50,7 +51,7 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(660, 346);
+            ClientSize = new Size(752, 398);
             Controls.Add(richTextBox1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             Margin = new Padding(4);

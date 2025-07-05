@@ -45,6 +45,9 @@
             toolStripLabel1 = new ToolStripLabel();
             toolStripComboBox1 = new ToolStripComboBox();
             toolStripSeparator2 = new ToolStripSeparator();
+            toolStripLabel2 = new ToolStripLabel();
+            toolStripComboBox2 = new ToolStripComboBox();
+            toolStripSeparator7 = new ToolStripSeparator();
             toolStripButton3 = new ToolStripButton();
             toolStripButton4 = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
@@ -53,9 +56,7 @@
             toolStripButton2 = new ToolStripButton();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            toolStripSeparator7 = new ToolStripSeparator();
-            toolStripLabel2 = new ToolStripLabel();
-            toolStripComboBox2 = new ToolStripComboBox();
+            toolStripButton1 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -63,10 +64,10 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton2, toolStripDropDownButton1, toolStripSeparator1, toolStripButton7, toolStripButton8, toolStripSeparator4, toolStripLabel1, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator7, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton6, toolStripSeparator6, toolStripButton2 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton2, toolStripDropDownButton1, toolStripSeparator1, toolStripButton7, toolStripButton8, toolStripSeparator4, toolStripLabel1, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator7, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton6, toolStripButton1, toolStripSeparator6, toolStripButton2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(902, 27);
+            toolStrip1.Size = new Size(1036, 27);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -173,6 +174,24 @@
             toolStripSeparator2.Name = "toolStripSeparator2";
             toolStripSeparator2.Size = new Size(6, 27);
             // 
+            // toolStripLabel2
+            // 
+            toolStripLabel2.Name = "toolStripLabel2";
+            toolStripLabel2.Size = new Size(55, 24);
+            toolStripLabel2.Text = "Delay :";
+            // 
+            // toolStripComboBox2
+            // 
+            toolStripComboBox2.Items.AddRange(new object[] { "10", "100", "200", "500", "800", "1000" });
+            toolStripComboBox2.Name = "toolStripComboBox2";
+            toolStripComboBox2.Size = new Size(121, 27);
+            toolStripComboBox2.SelectedIndexChanged += toolStripComboBox2_SelectedIndexChanged;
+            // 
+            // toolStripSeparator7
+            // 
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new Size(6, 27);
+            // 
             // toolStripButton3
             // 
             toolStripButton3.CheckOnClick = true;
@@ -210,6 +229,7 @@
             toolStripButton6.Size = new Size(39, 24);
             toolStripButton6.Text = "FPS";
             toolStripButton6.CheckedChanged += toolStripButton6_CheckedChanged;
+            toolStripButton6.Click += toolStripButton6_Click;
             // 
             // toolStripSeparator6
             // 
@@ -222,7 +242,7 @@
             toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
             toolStripButton2.ImageTransparentColor = Color.Magenta;
             toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(45, 23);
+            toolStripButton2.Size = new Size(45, 24);
             toolStripButton2.Text = "Help";
             toolStripButton2.Click += toolStripButton2_Click_1;
             // 
@@ -232,7 +252,7 @@
             pictureBox1.Dock = DockStyle.Fill;
             pictureBox1.Location = new Point(0, 27);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(902, 485);
+            pictureBox1.Size = new Size(1036, 517);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox1.TabIndex = 1;
             pictureBox1.TabStop = false;
@@ -247,29 +267,21 @@
             timer1.Interval = 1000;
             timer1.Tick += timer1_Tick;
             // 
-            // toolStripSeparator7
+            // toolStripButton1
             // 
-            toolStripSeparator7.Name = "toolStripSeparator7";
-            toolStripSeparator7.Size = new Size(6, 27);
-            // 
-            // toolStripLabel2
-            // 
-            toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new Size(55, 24);
-            toolStripLabel2.Text = "Delay :";
-            // 
-            // toolStripComboBox2
-            // 
-            toolStripComboBox2.Items.AddRange(new object[] { "10", "100", "200", "500", "800", "1000" });
-            toolStripComboBox2.Name = "toolStripComboBox2";
-            toolStripComboBox2.Size = new Size(121, 27);
-            toolStripComboBox2.SelectedIndexChanged += toolStripComboBox2_SelectedIndexChanged;
+            toolStripButton1.CheckOnClick = true;
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(90, 24);
+            toolStripButton1.Text = "Timestamp";
             // 
             // frmDesktop
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(902, 512);
+            ClientSize = new Size(1036, 544);
             Controls.Add(pictureBox1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -318,5 +330,6 @@
         private ToolStripLabel toolStripLabel2;
         private ToolStripComboBox toolStripComboBox2;
         private ToolStripSeparator toolStripSeparator7;
+        private ToolStripButton toolStripButton1;
     }
 }

