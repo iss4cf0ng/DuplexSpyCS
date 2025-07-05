@@ -497,14 +497,14 @@
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(125, 24);
+            toolStripMenuItem4.Size = new Size(180, 24);
             toolStripMenuItem4.Text = "Screen";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(125, 24);
+            toolStripMenuItem5.Size = new Size(180, 24);
             toolStripMenuItem5.Text = "Details";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
