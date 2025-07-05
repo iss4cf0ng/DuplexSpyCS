@@ -279,6 +279,7 @@ namespace DuplexSpyCS
                 dwTimeout = (int)numericUpDown2.Value, //Client connection timeout(ms).
                 dwRetry = (int)numericUpDown3.Value, //Client reconnect time interval(ms).
                 dwInterval = (int)numericUpDown4.Value, //Send inform interval(ms).
+                szPrefix = textBox2.Text,
 
                 //Install
                 bCopyDir = checkBox1.Checked,
@@ -330,6 +331,7 @@ namespace DuplexSpyCS
                     .Replace("[INTERVAL]", buildConfig.dwInterval.ToString())
                     .Replace("[TIMEOUT]", buildConfig.dwTimeout.ToString()) //ms
                     .Replace("[RETRY]", buildConfig.dwRetry.ToString()) //ms
+                    .Replace("[PREFIX]", buildConfig.szPrefix)
 
                     //Install
                     .Replace("[IS_CP_DIR]", buildConfig.bCopyDir ? "true" : "false")

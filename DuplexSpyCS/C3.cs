@@ -162,6 +162,7 @@ namespace DuplexSpyCS
         public int dwTimeout; //Milisecond
         public int dwRetry; //Milisecond
         public int dwInterval; //Send inform interval, ms
+        public string szPrefix;
 
         public bool bEncryptIP; //Encrypt IP
 
