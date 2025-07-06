@@ -104,6 +104,8 @@ namespace DuplexSpyCS
     {
         Merged,
         Small,
+        DLL,
+        Tipoff,
     };
     public enum ClientLanguage
     {
