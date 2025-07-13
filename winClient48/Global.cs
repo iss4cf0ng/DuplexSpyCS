@@ -232,6 +232,11 @@ namespace winClient48
         LastModifiedTime,
         LastAccessedTime,
     }
+    public enum ShortCutsType
+    {
+        File,
+        URL,
+    }
 
     public struct BasicInfo
     {

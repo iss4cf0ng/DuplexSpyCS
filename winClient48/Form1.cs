@@ -762,7 +762,7 @@ namespace winClient48
                             "zip",
 
                             //Folder State.
-                            string.Join(",", 
+                            string.Join(",",
                                 dInfo.Select(x => $"{Crypto.b64E2Str(x[0])}|{x[1]}")
                                 .Select(x => Crypto.b64E2Str(x)).ToArray()
                             ),
@@ -839,7 +839,7 @@ namespace winClient48
 
                         v.SendCommand($"file|wget|status|{cmd[2]}|{Crypto.b64E2Str(x.Item3)}|{x.Item1}|{Crypto.b64E2Str(x.Item2)}");
                     }
-                    else if (cmd[1] == "ts")
+                    else if (cmd[1] == "ts") //File Timestamp
                     {
                         bool bIsFile = cmd[2] == "1";
                         string szFilePath = Crypto.b64D2Str(cmd[3]);
@@ -849,6 +849,18 @@ namespace winClient48
                         var x = funcFile.fnSetEntityTimestamp(bIsFile, szFilePath, etType, time);
 
                         v.SendCommand($"file|ts|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
+                    }
+                    else if (cmd[1] == "sc") //ShortCut
+                    {
+                        var scType = cmd[2] == "file" ? ShortCutsType.File : ShortCutsType.URL;
+                        string[] foo = new string[] { cmd[3], cmd[4], cmd[5] }.Select(s => Crypto.b64D2Str(s)).ToArray();
+                        string szSrc = foo[0];
+                        string szDest = foo[1];
+                        string szDesc = foo[2];
+
+                        var x = funcFile.fnCreateShortCuts(scType, szSrc, szDest, szDesc);
+
+                        v.SendCommand($"file|sc|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
                     }
                 }
 
