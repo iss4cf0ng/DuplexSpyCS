@@ -85,7 +85,7 @@
     <Compile Include="AntiProcess.cs" />
     <Compile Include="clsEZData.cs" />
     <Compile Include="Crypto.cs" />
-    <Compile Include="DllLoader.cs" />
+    <Compile Include="clsLoader.cs" />
     <Compile Include="DSP.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
