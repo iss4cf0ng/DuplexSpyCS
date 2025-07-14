@@ -1,18 +1,19 @@
 # Todo
 - DLL Injection
 - Fileless
-- Implant (Assembly.Load)
 
 # Debug
 
 # New
 - Implant
-  - Tipoff
+  - Tipoff (SYN/UDP/ICMP/HTTP)
   - Small
   - DLL
 - Local
   - Open victim folder.
 - Client
+- File
+  - Create file shortcut
 
 # Improvement
 - File manager will show the "Maxiumm entries warning" to info user.
