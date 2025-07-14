@@ -237,6 +237,11 @@ namespace winClient48
         File,
         URL,
     }
+    public enum DllLoaderMethod
+    {
+        PE,
+        Reflective,
+    }
 
     public struct BasicInfo
     {
@@ -274,7 +279,6 @@ namespace winClient48
         public string szActiveWindowTitle;
         public Image imgScreenshot;
     }
-
     public struct ClientConfig
     {
         public string szOnlineID;
@@ -286,7 +290,6 @@ namespace winClient48
         public List<string> ls_szKillProcess;
         public bool bKillProcess;
     }
-
     public struct ClientInfo
     {
         public string szDnsHostName => Dns.GetHostName();
@@ -326,7 +329,6 @@ namespace winClient48
 
         public List<string> ls_Webcam => new Webcam().GetDevices();
     }
-
     public struct WindowInfo
     {
         public string szTitle;
@@ -336,7 +338,6 @@ namespace winClient48
         public int nHandle;
         public Icon iWindow;
     }
-
     public struct WgetStatus
     {
         public string szUrl;

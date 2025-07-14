@@ -603,6 +603,19 @@ namespace DuplexSpyCS
 
                         f.fileLV_Refresh();
                     }
+                    else if (cmd[1] == "sc") //ShortCut
+                    {
+                        int nCode = int.Parse(cmd[2]);
+                        string szMsg = Crypto.b64D2Str(cmd[3]);
+
+                        if (nCode == 0)
+                        {
+                            MessageBox.Show(szMsg, "File - ShortCut", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        f.fileLV_Refresh();
+                    }
                 }
 
                 #endregion

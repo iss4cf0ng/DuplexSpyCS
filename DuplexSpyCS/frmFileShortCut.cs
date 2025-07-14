@@ -27,7 +27,7 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            radioButton1.Checked = true;
+            radioButton2.Checked = true;
             if (!string.IsNullOrEmpty(m_szFilePath))
             {
                 string szFileName = Path.GetFileName(m_szFilePath);
@@ -45,12 +45,12 @@ namespace DuplexSpyCS
         private void button1_Click(object sender, EventArgs e)
         {
             string szType = string.Empty;
-            if (radioButton1.Checked)
+            if (radioButton2.Checked)
                 szType = "file";
-            else if (radioButton2.Checked)
+            else if (radioButton1.Checked)
                 szType = "url";
 
-            v.SendCommand($"file|sc|{szType}|{Crypto.b64E2Str(textBox1.Text)}|{Crypto.b64E2Str(textBox2.Text)}");
+            v.SendCommand($"file|sc|{szType}|{string.Join("|", new string[] {textBox1.Text, textBox2.Text, textBox3.Text}.Select(x => Crypto.b64E2Str(x)))}");
         }
     }
 }
