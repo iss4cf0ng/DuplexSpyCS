@@ -89,5 +89,17 @@ namespace DuplexSpyCS
             string[] aszParams = textBox2.Text.Split(' ');
             Task.Run(() => fnSendPayload(lVictim, szFileName, aszParams));
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Checked = true;
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Checked = false;
+        }
     }
 }

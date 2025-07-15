@@ -3159,6 +3159,7 @@ namespace DuplexSpyCS
 
             frmFileShortCut f = new frmFileShortCut(v, File_GetCurrentPath(), lPath[0]);
             f.Text = "Create ShortCut";
+
             f.Show();
         }
     }

