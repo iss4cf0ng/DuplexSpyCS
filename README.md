@@ -12,6 +12,9 @@ This tool is still under development. Features may change or break without notic
 This tool is designed and written for educational and ethical demonstration only, please do not use for illegal purpose.\
 And do not execute it on target without authorization! :(
 
+# Acknowledgement
+To all cybersecurity experts, researchers and remote access tool authors, respect!
+
 # Feature
 - Windows RAT
 - Encrypted TCP socket communication (AES-256-CBC + RSA-4096)
@@ -110,6 +113,3 @@ This RAT is able to view image file.
 
 ## Multi Desktop
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/multidesktop.png)
-
-# Acknowledgement
-To all cybersecurity experts and remote access tool authors.
