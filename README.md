@@ -28,56 +28,7 @@ To all cybersecurity experts, researchers and remote access tool authors, respec
 - More user friendly
 
 # Function
-- Information
-  - Devices
-  - Patch
-  - Others
-- File Manager
-  - Display Image File (png, jpg, bmp, etc)
-  - Editor
-  - Upload File
-  - Download File
-  - Archive (Zip/Unzip)
-  - WGET
-  - Copy
-  - Paste
-  - Cut
-- Task Manager
-  - Kill
-  - Delete
-  - Start
-- Service Manager
-- RegEdit
-- Window Manager
-  - Screenshot Window App. (GetDC/BringToFront).
-  - Suspend/Resume Window Thread.
-- Desktop
-  - Record
-  - Remote Keyboard
-  - Remote Mouse
-- Webcam
-  - Record
-  - Mirror (Left <-> Right)
-- Fun Stuff
-  - Show/Hide Taskbar
-  - Show/Hide Clock
-  - Show/Hide Desktop Icon
-  - Show/Hide StartOrb
-  - Lock/Unlock Mouse
-  - Show/Hide Mouse
-  - Crazy Mouse
-  - Replace keychar as smile face.
-  - Play Sound
-  - MessageBox
-  - Lock Screen
-- Audio
-  - System Sound
-  - Microphone
-  - Record
-  - Speak text
-  - Play System Sound
-- Multiple Desktop (Can be used to monitor multiple Windows machines.)
-- Multiple Webcam
+[Wiki](https://github.com/iss4cf0ng/DuplexSpyCS/wiki/Introduction#function)
 
 # Network Architecture
 ![](https://github.com/iss4cf0ng/DuplexSpyCS/blob/main/png/architecture.png)
