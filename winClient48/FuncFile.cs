@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Net;
 using System.Threading;
+using System.Security.Policy;
 
 namespace winClient48
 {
@@ -691,6 +692,53 @@ namespace winClient48
                             File.SetLastAccessTime(szEntityPath, date);
                         else
                             Directory.SetLastAccessTime(szEntityPath, date);
+                        break;
+                }
+
+                nCode = 1;
+            }
+            catch (Exception ex)
+            {
+                szMsg = ex.Message;
+            }
+
+            return (nCode, szMsg);
+        }
+
+        public (int nCode, string szMsg) fnCreateShortCuts(ShortCutsType scType, string szSrc, string szDestPath, string szDescription)
+        {
+            int nCode = 0;
+            string szMsg = string.Empty;
+
+            try
+            {
+                //Validate
+                if (File.Exists(szDestPath))
+                    throw new Exception("ShortCut exists: " + szDestPath);
+                if (!File.Exists(szSrc) && !Directory.Exists(szSrc))
+                    throw new Exception("Target not found: " + szSrc);
+
+                //Process
+                switch (scType)
+                {
+                    case ShortCutsType.File:
+                        var shell = new IWshRuntimeLibrary.WshShell();
+                        IWshRuntimeLibrary.IWshShortcut sc = (IWshRuntimeLibrary.IWshShortcut)shell.CreateShortcut(szDestPath);
+                        sc.TargetPath = szSrc;
+                        sc.Description = szDescription;
+                        sc.WorkingDirectory = Path.GetDirectoryName(szSrc);
+
+                        sc.Save();
+
+                        break;
+
+                    case ShortCutsType.URL:
+                        using (StreamWriter sw = new StreamWriter(szDestPath))
+                        {
+                            sw.WriteLine("[InternetShortcut]");
+                            sw.WriteLine("URL=" + szSrc);
+                        }
+
                         break;
                 }
 

@@ -14,6 +14,8 @@ namespace DuplexSpyCS
     public partial class frmFileShowImg : Form
     {
         public Victim v;
+        public int m_nTotalImage { get; set; }
+
         private ImageList il;
 
         public frmFileShowImg()
@@ -34,8 +36,9 @@ namespace DuplexSpyCS
             Invoke(new Action(() =>
             {
                 listView1.Items.Add(item);
-                toolStripStatusLabel1.Text = $"Image[{listView1.Items.Count}]";
+                toolStripStatusLabel1.Text = $"Image[{listView1.Items.Count}/{m_nTotalImage}]";
                 toolStripStatusLabel1.ForeColor = Color.Black;
+                toolStripProgressBar1.Increment(1);
             }));
         }
 
@@ -82,6 +85,9 @@ namespace DuplexSpyCS
             il = new ImageList();
             il.ImageSize = new Size(250, 250);
             listView1.LargeImageList = il;
+            
+            toolStripProgressBar1.Maximum = m_nTotalImage;
+            toolStripProgressBar1.Value = 0;
         }
 
         private void frmFileShowImg_Load(object sender, EventArgs e)
@@ -106,9 +112,10 @@ namespace DuplexSpyCS
 
             try
             {
-                frmShowImgSave f = new frmShowImgSave();
+                frmShowImgSave f = new frmShowImgSave(v);
                 f.Text = $@"SaveImage@ShowImage\\{v.ID}";
                 f.img_cnt = listView1.Items.Count;
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.Show();
 
                 foreach (ListViewItem item in listView1.Items)

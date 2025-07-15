@@ -1,4 +1,4 @@
-﻿namespace winClient48
+﻿namespace winClient48Small
 {
     partial class Form1
     {

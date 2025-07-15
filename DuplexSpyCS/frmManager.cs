@@ -1252,6 +1252,7 @@ namespace DuplexSpyCS
                     f.Text = $@"File - Show Image\\{v.ID}";
                     f.Tag = Function.FileImage;
                     f.v = v;
+                    f.m_nTotalImage = filename.Count;
                     Invoke(new Action(() => f.Show()));
                 }
 
@@ -2749,9 +2750,11 @@ namespace DuplexSpyCS
         //Task - Dll Injection
         private void toolStripMenuItem33_Click(object sender, EventArgs e)
         {
-            frmTaskDLLInjector f = new frmTaskDLLInjector();
-
-            f.Show();
+            foreach (ListViewItem item in listView2.SelectedItems)
+            {
+                frmTaskDLLInjector f = new frmTaskDLLInjector(v, int.Parse(item.SubItems[1].Text));
+                f.Show();
+            }
         }
 
         private void treeView3_KeyDown(object sender, KeyEventArgs e)
@@ -3139,6 +3142,25 @@ namespace DuplexSpyCS
             List<string> lEntity = listView1.SelectedItems.Cast<ListViewItem>().Select(x => ((object[])x.Tag)[0].ToString()).ToList();
             Clipboard.SetText(string.Join("\n", lEntity));
             MessageBox.Show($"Count: {lEntity.Count}", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void toolStripMenuItem74_Click(object sender, EventArgs e)
+        {
+            List<string> lPath = listView1.SelectedItems.Cast<ListViewItem>()
+                .Select(x => File_GetItemObj(x))
+                .Where(x => x[1] == "f")
+                .Select(x => x[0])
+                .ToList();
+
+            if (lPath.Count == 0)
+                return;
+            else if (lPath.Count > 1)
+                MessageBox.Show("More then one file, this tool will choose the first file automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            frmFileShortCut f = new frmFileShortCut(v, File_GetCurrentPath(), lPath[0]);
+            f.Text = "Create ShortCut";
+
+            f.Show();
         }
     }
 }

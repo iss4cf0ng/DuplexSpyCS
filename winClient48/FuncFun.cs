@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace winClient48
             timerCheckStatus.Tick += TimerCheckStatus_Tick;
         }
 
+        public bool m_bMouseVisible { get; set; }
         public bool m_bMouseLock { get { return _m_bMouseLock; } }
         private bool _m_bMouseLock = false;
         public bool m_bMouseCrazy { get { return _m_bMouseCrazy; } }
@@ -718,8 +720,17 @@ namespace winClient48
 
             try
             {
+                if (m_bMouseVisible)
+                    while (WinAPI.ShowCursor(false) >= 0) ;
+                else
+                    while (WinAPI.ShowCursor(true) < 0) ;
+
+                m_bMouseVisible = !m_bMouseVisible;
+
+                /*
                 bool bVisible = bMouseVisible;
                 WinAPI.ShowCursor(!bVisible);
+                */
             }
             catch (Exception ex)
             {
@@ -888,14 +899,14 @@ namespace winClient48
 
             return (code, msg, bmp);
         }
-        public (int, string) SetCursorIcon()
+        public (int, string) SetCursorIcon(Image img)
         {
             int code = 1;
             string msg = string.Empty;
 
             try
             {
-
+                
             }
             catch (Exception ex)
             {

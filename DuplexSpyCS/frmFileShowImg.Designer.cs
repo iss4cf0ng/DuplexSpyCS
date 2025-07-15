@@ -34,10 +34,11 @@
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
+            toolStripButton3 = new ToolStripButton();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             listView1 = new ListView();
-            toolStripButton3 = new ToolStripButton();
+            toolStripProgressBar1 = new ToolStripProgressBar();
             statusStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
@@ -47,7 +48,7 @@
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripProgressBar1, toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 546);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 18, 0);
@@ -92,6 +93,16 @@
             toolStripButton2.Text = "Show All";
             toolStripButton2.Click += toolStripButton2_Click;
             // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(92, 23);
+            toolStripButton3.Text = "Remove All";
+            toolStripButton3.Click += toolStripButton3_Click;
+            // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
@@ -126,15 +137,10 @@
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.DoubleClick += listView1_DoubleClick;
             // 
-            // toolStripButton3
+            // toolStripProgressBar1
             // 
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(92, 23);
-            toolStripButton3.Text = "Remove All";
-            toolStripButton3.Click += toolStripButton3_Click;
+            toolStripProgressBar1.Name = "toolStripProgressBar1";
+            toolStripProgressBar1.Size = new Size(100, 18);
             // 
             // frmFileShowImg
             // 
@@ -171,5 +177,6 @@
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
+        private ToolStripProgressBar toolStripProgressBar1;
     }
 }

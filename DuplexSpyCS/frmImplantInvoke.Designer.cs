@@ -39,6 +39,8 @@
             textBox2 = new TextBox();
             label2 = new Label();
             button2 = new Button();
+            button3 = new Button();
+            button4 = new Button();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -63,9 +65,9 @@
             listView1.CheckBoxes = true;
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.FullRowSelect = true;
-            listView1.Location = new Point(0, 78);
+            listView1.Location = new Point(0, 125);
             listView1.Name = "listView1";
-            listView1.Size = new Size(507, 362);
+            listView1.Size = new Size(507, 315);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -132,11 +134,33 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // button3
+            // 
+            button3.Location = new Point(16, 78);
+            button3.Name = "button3";
+            button3.Size = new Size(232, 41);
+            button3.TabIndex = 8;
+            button3.Text = "Check All";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(263, 78);
+            button4.Name = "button4";
+            button4.Size = new Size(232, 41);
+            button4.TabIndex = 9;
+            button4.Text = "Uncheck All";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
             // frmImplantInvoke
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(507, 467);
+            Controls.Add(button4);
+            Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(textBox2);
             Controls.Add(label2);
@@ -172,5 +196,7 @@
         private Button button2;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
+        private Button button3;
+        private Button button4;
     }
 }

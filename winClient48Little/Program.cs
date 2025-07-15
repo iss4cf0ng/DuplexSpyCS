@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static winClient48.Form1;
 
-namespace winClient48
+namespace winClient48Small
 {
     internal static class Program
     {

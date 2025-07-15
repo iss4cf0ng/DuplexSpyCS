@@ -81,6 +81,8 @@
             tabPage4 = new TabPage();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
+            groupBox6 = new GroupBox();
+            backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
@@ -97,6 +99,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tabPage4.SuspendLayout();
             toolStrip1.SuspendLayout();
+            groupBox6.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -382,9 +385,9 @@
             tabPage2.Controls.Add(checkBox7);
             tabPage2.Controls.Add(groupBox5);
             tabPage2.Controls.Add(groupBox2);
-            tabPage2.Location = new Point(4, 24);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
-            tabPage2.Size = new Size(470, 380);
+            tabPage2.Size = new Size(470, 376);
             tabPage2.TabIndex = 4;
             tabPage2.Text = "Install";
             tabPage2.UseVisualStyleBackColor = true;
@@ -489,25 +492,19 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(groupBox6);
             tabPage3.Controls.Add(textBox2);
             tabPage3.Controls.Add(label11);
-            tabPage3.Controls.Add(checkBox5);
-            tabPage3.Controls.Add(checkBox4);
-            tabPage3.Controls.Add(button4);
-            tabPage3.Controls.Add(pictureBox1);
-            tabPage3.Controls.Add(button2);
-            tabPage3.Controls.Add(textBox5);
-            tabPage3.Controls.Add(label7);
-            tabPage3.Location = new Point(4, 24);
+            tabPage3.Location = new Point(4, 28);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(470, 380);
+            tabPage3.Size = new Size(470, 376);
             tabPage3.TabIndex = 5;
             tabPage3.Text = "Misc";
             tabPage3.UseVisualStyleBackColor = true;
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(75, 169);
+            textBox2.Location = new Point(75, 182);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(265, 27);
             textBox2.TabIndex = 10;
@@ -516,7 +513,7 @@
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(14, 172);
+            label11.Location = new Point(14, 185);
             label11.Name = "label11";
             label11.Size = new Size(55, 19);
             label11.TabIndex = 9;
@@ -525,7 +522,7 @@
             // checkBox5
             // 
             checkBox5.AutoSize = true;
-            checkBox5.Location = new Point(12, 86);
+            checkBox5.Location = new Point(13, 109);
             checkBox5.Name = "checkBox5";
             checkBox5.Size = new Size(57, 23);
             checkBox5.TabIndex = 8;
@@ -535,7 +532,7 @@
             // checkBox4
             // 
             checkBox4.AutoSize = true;
-            checkBox4.Location = new Point(12, 42);
+            checkBox4.Location = new Point(13, 65);
             checkBox4.Name = "checkBox4";
             checkBox4.Size = new Size(84, 23);
             checkBox4.TabIndex = 7;
@@ -545,7 +542,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(102, 86);
+            button4.Location = new Point(103, 109);
             button4.Name = "button4";
             button4.Size = new Size(97, 26);
             button4.TabIndex = 6;
@@ -555,7 +552,7 @@
             // 
             // pictureBox1
             // 
-            pictureBox1.Location = new Point(205, 76);
+            pictureBox1.Location = new Point(206, 99);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(59, 47);
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -564,7 +561,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(102, 36);
+            button2.Location = new Point(103, 59);
             button2.Name = "button2";
             button2.Size = new Size(238, 33);
             button2.TabIndex = 2;
@@ -574,7 +571,7 @@
             // 
             // textBox5
             // 
-            textBox5.Location = new Point(102, 3);
+            textBox5.Location = new Point(103, 26);
             textBox5.Name = "textBox5";
             textBox5.Size = new Size(238, 27);
             textBox5.TabIndex = 1;
@@ -582,7 +579,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(8, 6);
+            label7.Location = new Point(9, 29);
             label7.Name = "label7";
             label7.Size = new Size(88, 19);
             label7.TabIndex = 0;
@@ -617,6 +614,21 @@
             toolStripButton1.Size = new Size(45, 23);
             toolStripButton1.Text = "Help";
             toolStripButton1.Click += toolStripButton1_Click;
+            // 
+            // groupBox6
+            // 
+            groupBox6.Controls.Add(textBox5);
+            groupBox6.Controls.Add(label7);
+            groupBox6.Controls.Add(button2);
+            groupBox6.Controls.Add(checkBox5);
+            groupBox6.Controls.Add(pictureBox1);
+            groupBox6.Controls.Add(checkBox4);
+            groupBox6.Controls.Add(button4);
+            groupBox6.Location = new Point(8, 3);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new Size(458, 154);
+            groupBox6.TabIndex = 11;
+            groupBox6.TabStop = false;
             // 
             // frmBuild
             // 
@@ -659,6 +671,8 @@
             tabPage4.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -717,5 +731,7 @@
         private Label label12;
         private TextBox textBox7;
         private Label label13;
+        private GroupBox groupBox6;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
