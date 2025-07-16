@@ -4,7 +4,8 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            clsDumper dumper = new clsDumper();
+            dumper.fnDumpPassword();
         }
     }
 }
