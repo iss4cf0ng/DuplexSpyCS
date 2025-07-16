@@ -21,7 +21,7 @@ To all cybersecurity experts, researchers and remote access tool authors, respec
 - Multi Desktop Monitor
 - Multi Webcam
 
-# Anticipation (Coming soon)
+# Anticipation (Coming soon, in v2.0.0)
 - Remote plugin (Browser dumper, Active Directory, Vulneribility, etc...)
 - Debug
 - More stable
