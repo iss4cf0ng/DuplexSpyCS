@@ -17,6 +17,7 @@ To all cybersecurity experts, researchers and remote access tool authors, respec
 
 # Feature
 - Windows RAT
+- Audio (Microphone and System speaker)
 - Encrypted TCP socket communication (AES-256-CBC + RSA-4096)
 - Multi Desktop Monitor
 - Multi Webcam
