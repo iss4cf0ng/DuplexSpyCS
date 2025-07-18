@@ -22,5 +22,10 @@ namespace FirefoxDumper
             public DateTime CreationTime { get; set; }
             public DateTime LastUsedDate { get; set; }
         }
+
+        public List<stCredential> fnDumpCredential()
+        {
+
+        }
     }
 }
