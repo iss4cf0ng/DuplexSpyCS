@@ -12,20 +12,37 @@ namespace DuplexSpyCS
 {
     public partial class frmEditListener : Form
     {
+        private SqlConn m_sqlConn { get; set; }
         private stListenerConfig m_ListenerConfig { get; set; }
         private bool m_bNewListener { get; set; }
 
-        public frmEditListener(stListenerConfig listenerConfig, bool bNewListener)
+        public frmEditListener(SqlConn sqlConn, stListenerConfig listenerConfig, bool bNewListener)
         {
             InitializeComponent();
 
+            m_sqlConn = sqlConn;
             m_ListenerConfig = listenerConfig;
             m_bNewListener = bNewListener;
         }
 
         void fnSaveListener()
         {
+            stListenerConfig config = new stListenerConfig()
+            {
+                szName = textBox2.Text,
+                enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), comboBox1.Text),
+                nPort = (int)numericUpDown1.Value,
+                szDescription = textBox1.Text,
+            };
 
+            if (m_sqlConn.fnbSaveListener(config))
+            {
+                MessageBox.Show("Save listener successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                MessageBox.Show("Save listener failed", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         void fnSetup()

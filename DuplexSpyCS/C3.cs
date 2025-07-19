@@ -449,5 +449,6 @@ namespace DuplexSpyCS
         public int nPort;
         public enListenerProtocol enProtocol;
         public string szDescription;
+        public DateTime dtCreationDate;
     }
 }

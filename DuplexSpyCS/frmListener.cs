@@ -19,7 +19,10 @@ namespace DuplexSpyCS
 
         void fnSetup()
         {
+            //List all listener
 
+
+            toolStripStatusLabel1.Text = $"Listener[{listView1.Items.Count}]";
         }
 
         private void frmListener_Load(object sender, EventArgs e)
