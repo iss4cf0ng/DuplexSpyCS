@@ -56,6 +56,16 @@ namespace DuplexSpyCS
                     "LastOnlineDate",
                     "Uptime",
                 }
+            },
+            {
+                "Listener", new string[]
+                {
+                    "Name",
+                    "Protocol", //TCP, UDP, HTTP
+                    "Port",
+                    "Description",
+                    "CreationDate",
+                }
             }
         };
 
@@ -487,6 +497,42 @@ namespace DuplexSpyCS
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, "ClearLogs()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        public DataTable fndtGetAllListener()
+        {
+            DataTable dt = new DataTable();
+
+            return dt;
+        }
+
+        public bool fnListenerExists(string szName)
+        {
+            try
+            {
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool fnbSaveListener(stListenerConfig config)
+        {
+            try
+            {
+
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }

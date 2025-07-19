@@ -112,6 +112,12 @@ namespace DuplexSpyCS
         CSharp,
         Cpp,
     }
+    public enum enListenerProtocol
+    {
+        TCP,
+        DNS,
+        HTTP,
+    }
 
     public class C3
     {
@@ -434,5 +440,14 @@ namespace DuplexSpyCS
         public int nProcessId;
         public int nHandle;
         public Icon iWindow;
+    }
+
+
+    public struct stListenerConfig
+    {
+        public string szName;
+        public int nPort;
+        public enListenerProtocol enProtocol;
+        public string szDescription;
     }
 }
