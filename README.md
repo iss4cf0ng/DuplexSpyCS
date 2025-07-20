@@ -1,5 +1,5 @@
 # DuplexSpy
-DuplexSpyCS (CS stands for CSharp) is a open source RAT base on C/S\
+DuplexSpyCS (CS stands for CSharp) is a open source RAT base on C/S
 
 # Introduction
 A lightweight Remote Access Tool developed in C#, enabling complete control of a remote Windows machine.
