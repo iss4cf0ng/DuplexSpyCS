@@ -2181,6 +2181,12 @@ namespace winClient48
                 }
 
                 #endregion
+
+                else if (cmd[0] == "plugin")
+                {
+
+                }
+
                 #region Fileless Execution
 
                 else if (cmd[0] == "fle") //Fileless Execution

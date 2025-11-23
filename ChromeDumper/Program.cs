@@ -4,7 +4,13 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var ls = ChromeHistory.HistoryDumper();
+            foreach (var entity in ls)
+            {
+                Console.WriteLine(entity._title);
+                Console.WriteLine(entity._url);
+                Console.ReadKey();
+            }
         }
     }
 }

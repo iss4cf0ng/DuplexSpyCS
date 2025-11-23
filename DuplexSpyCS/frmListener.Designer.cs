@@ -62,6 +62,7 @@
             toolStripButton1.Name = "toolStripButton1";
             toolStripButton1.Size = new Size(66, 23);
             toolStripButton1.Text = "Refresh";
+            toolStripButton1.Click += toolStripButton1_Click;
             // 
             // toolStripButton2
             // 
@@ -71,6 +72,7 @@
             toolStripButton2.Name = "toolStripButton2";
             toolStripButton2.Size = new Size(45, 23);
             toolStripButton2.Text = "New";
+            toolStripButton2.Click += toolStripButton2_Click;
             // 
             // statusStrip1
             // 
@@ -100,6 +102,7 @@
             listView1.TabIndex = 2;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
+            listView1.DoubleClick += listView1_DoubleClick;
             // 
             // columnHeader1
             // 

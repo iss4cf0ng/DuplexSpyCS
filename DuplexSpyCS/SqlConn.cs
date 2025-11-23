@@ -606,6 +606,8 @@ namespace DuplexSpyCS
                         $");";
                 }
 
+                GetDataTable(szQuery);
+
                 return fnbListenerEqual(config, config.szName);
             }
             catch (Exception ex)

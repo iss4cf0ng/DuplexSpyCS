@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="AntiProcess.cs" />
     <Compile Include="clsEZData.cs" />
+    <Compile Include="clsIRemotePlugin.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="clsLoader.cs" />
     <Compile Include="DSP.cs" />
