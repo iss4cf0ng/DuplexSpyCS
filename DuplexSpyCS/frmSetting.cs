@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmSetting : Form
     {
-        private IniManager ini_manager = C2.ini_manager;
+        private clsIniManager ini_manager = clsStore.ini_manager;
 
         public frmSetting(string szInitPageName = null)
         {
@@ -191,12 +191,12 @@ namespace DuplexSpyCS
             if (!Modal)
                 throw new Exception("frmSetting cannot be called by Show()");
 
-            SettingConfig config = C1.GetConfigFromINI();
+            SettingConfig config = clsTools.GetConfigFromINI();
 
             try
             {
-                if (C2.ini_manager == null)
-                    ini_manager = new IniManager("config.ini");
+                if (clsStore.ini_manager == null)
+                    ini_manager = new clsIniManager("config.ini");
 
                 #region General
 
@@ -468,7 +468,7 @@ namespace DuplexSpyCS
                 #endregion
 
                 //Logs
-                C2.dtStartUp = dateTimePicker1.Value;
+                clsStore.dtStartUp = dateTimePicker1.Value;
 
                 MessageBox.Show("Save config.ini successfully", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }

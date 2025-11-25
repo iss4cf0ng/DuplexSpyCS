@@ -14,7 +14,7 @@ namespace DuplexSpyCS
     {
         public frmManager f_mgr;
 
-        public Victim v;
+        public clsVictim v;
         public List<string[]> lsEntries; //Index 0: Folder/File, 1: Full Path.
         public ArchiveAction archiveAction;
         public string currentPath;
@@ -150,8 +150,8 @@ namespace DuplexSpyCS
             {
                 "file",
                 "zip",
-                string.Join(",", lsFolders.Select(x => Crypto.b64E2Str(x)).ToArray()),
-                string.Join(",", lsFiles.Select(x => Crypto.b64E2Str(x)).ToArray()),
+                string.Join(",", lsFolders.Select(x => clsCrypto.b64E2Str(x)).ToArray()),
+                string.Join(",", lsFiles.Select(x => clsCrypto.b64E2Str(x)).ToArray()),
                 Path.Combine(currentPath, textBox1.Text),
             }));
 
@@ -164,7 +164,7 @@ namespace DuplexSpyCS
                 .Items.Cast<ListViewItem>()
                 .Select(x => ((string[])x.Tag)[1])
                 .ToArray();
-            string[] b64Entries = entries.Select(x => Crypto.b64E2Str(x)).ToArray();
+            string[] b64Entries = entries.Select(x => clsCrypto.b64E2Str(x)).ToArray();
 
             /* Combobox1 Index:
              *      0: Each to Seperate Folder
@@ -199,7 +199,7 @@ namespace DuplexSpyCS
 
             tabControl1.SelectedIndex = (int)archiveAction;
             comboBox1.SelectedIndex = 0;
-            textBox1.Text = C1.GenerateFileName("zip");
+            textBox1.Text = clsTools.GenerateFileName("zip");
 
             //ListView
             foreach (string[] entry in lsEntries)

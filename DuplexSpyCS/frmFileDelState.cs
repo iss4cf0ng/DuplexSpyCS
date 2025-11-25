@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileDelState : Form
     {
-        public Victim v;
+        public clsVictim v;
         public frmManager f_mgr;
 
         public List<string> l_folder;
@@ -41,7 +41,7 @@ namespace DuplexSpyCS
                     {
                         if (lvItemMatch(item, entry[1]))
                         {
-                            item.SubItems[2].Text = entry[2] == string.Empty ? "OK" : Crypto.b64D2Str(entry[2]);
+                            item.SubItems[2].Text = entry[2] == string.Empty ? "OK" : clsCrypto.b64D2Str(entry[2]);
                             break;
                         }
                     }

@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmSystem : Form
     {
-        public Victim v;
+        public clsVictim v;
         private struct DeviceInfo
         {
             public string Name;
@@ -118,7 +118,7 @@ namespace DuplexSpyCS
                     if (nClass == null)
                     {
                         nClass = new TreeNode(pnp_class);
-                        Icon icon = DeviceIconExtract.GetDeviceClassIcon(class_guid);
+                        Icon icon = clsDeviceIconExtract.GetDeviceClassIcon(class_guid);
                         if (icon != null)
                             il_devices.Images.Add(pnp_class, icon);
                         nClass.ImageKey = pnp_class;
@@ -201,7 +201,7 @@ namespace DuplexSpyCS
         private void If_ReqDetail(bool enable)
         {
             foreach (ListViewItem item in listView2.SelectedItems)
-                v.encSend(2, 0, $"system|if|enable|{Crypto.b64E2Str(item.Text)}|" + (enable ? "1" : "0"));
+                v.encSend(2, 0, $"system|if|enable|{clsCrypto.b64E2Str(item.Text)}|" + (enable ? "1" : "0"));
         }
 
         #endregion
@@ -308,7 +308,7 @@ namespace DuplexSpyCS
             TreeNode selectedNode = treeView1.SelectedNode;
             if (selectedNode.Parent != null)
             {
-                v.SendCommand($"system|device|info|{Crypto.b64E2Str(selectedNode.Text)}");
+                v.SendCommand($"system|device|info|{clsCrypto.b64E2Str(selectedNode.Text)}");
             }
         }
 

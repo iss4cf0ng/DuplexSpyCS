@@ -118,6 +118,7 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
+            toolStripMenuItem44 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -130,9 +131,9 @@
             // contextMenuStrip1
             // 
             contextMenuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem11, toolStripMenuItem6, toolStripSeparator2, toolStripMenuItem25, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem8, toolStripMenuItem24, toolStripMenuItem7, toolStripMenuItem9, toolStripSeparator3, toolStripMenuItem10, toolStripMenuItem27, toolStripMenuItem33, toolStripMenuItem16, toolStripMenuItem37 });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem11, toolStripMenuItem6, toolStripSeparator2, toolStripMenuItem25, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem8, toolStripMenuItem24, toolStripMenuItem7, toolStripMenuItem9, toolStripMenuItem44, toolStripSeparator3, toolStripMenuItem10, toolStripMenuItem27, toolStripMenuItem33, toolStripMenuItem16, toolStripMenuItem37 });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(170, 376);
+            contextMenuStrip1.Size = new Size(181, 422);
             // 
             // toolStripMenuItem11
             // 
@@ -279,40 +280,40 @@
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new Size(161, 24);
+            toolStripMenuItem14.Size = new Size(180, 24);
             toolStripMenuItem14.Text = "Desktop";
             toolStripMenuItem14.Click += toolStripMenuItem14_Click;
             // 
             // toolStripMenuItem15
             // 
             toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(161, 24);
+            toolStripMenuItem15.Size = new Size(180, 24);
             toolStripMenuItem15.Text = "Webcam";
             toolStripMenuItem15.Click += toolStripMenuItem15_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(158, 6);
+            toolStripSeparator4.Size = new Size(177, 6);
             // 
             // toolStripMenuItem17
             // 
             toolStripMenuItem17.Name = "toolStripMenuItem17";
-            toolStripMenuItem17.Size = new Size(161, 24);
+            toolStripMenuItem17.Size = new Size(180, 24);
             toolStripMenuItem17.Text = "Lock Screen";
             toolStripMenuItem17.Click += toolStripMenuItem17_Click;
             // 
             // toolStripMenuItem23
             // 
             toolStripMenuItem23.Name = "toolStripMenuItem23";
-            toolStripMenuItem23.Size = new Size(161, 24);
+            toolStripMenuItem23.Size = new Size(180, 24);
             toolStripMenuItem23.Text = "Run Script";
             toolStripMenuItem23.Click += toolStripMenuItem23_Click;
             // 
             // toolStripMenuItem32
             // 
             toolStripMenuItem32.Name = "toolStripMenuItem32";
-            toolStripMenuItem32.Size = new Size(161, 24);
+            toolStripMenuItem32.Size = new Size(180, 24);
             toolStripMenuItem32.Text = "URL";
             toolStripMenuItem32.Click += toolStripMenuItem32_Click;
             // 
@@ -497,14 +498,14 @@
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(180, 24);
+            toolStripMenuItem4.Size = new Size(125, 24);
             toolStripMenuItem4.Text = "Screen";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(180, 24);
+            toolStripMenuItem5.Size = new Size(125, 24);
             toolStripMenuItem5.Text = "Details";
             toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
@@ -675,7 +676,7 @@
             tabPage2.Location = new Point(4, 4);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(1007, 323);
+            tabPage2.Size = new Size(1007, 328);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Implant";
             tabPage2.UseVisualStyleBackColor = true;
@@ -688,7 +689,7 @@
             listView2.FullRowSelect = true;
             listView2.Location = new Point(3, 3);
             listView2.Name = "listView2";
-            listView2.Size = new Size(1001, 317);
+            listView2.Size = new Size(1001, 322);
             listView2.TabIndex = 0;
             listView2.UseCompatibleStateImageBehavior = false;
             listView2.View = View.Details;
@@ -748,6 +749,13 @@
             toolStripMenuItem43.Size = new Size(154, 24);
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
+            // 
+            // toolStripMenuItem44
+            // 
+            toolStripMenuItem44.Name = "toolStripMenuItem44";
+            toolStripMenuItem44.Size = new Size(180, 24);
+            toolStripMenuItem44.Text = "Plugin";
+            toolStripMenuItem44.Click += toolStripMenuItem44_Click;
             // 
             // Form1
             // 
@@ -865,5 +873,6 @@
         private ToolStripMenuItem toolStripMenuItem42;
         private ToolStripMenuItem toolStripMenuItem43;
         private ColumnHeader columnHeader18;
+        private ToolStripMenuItem toolStripMenuItem44;
     }
 }

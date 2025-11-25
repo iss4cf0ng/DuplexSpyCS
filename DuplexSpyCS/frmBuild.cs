@@ -47,7 +47,7 @@ namespace DuplexSpyCS
          * .o0o.---------------[ README ]---------------.o0o.
          */
 
-        private IniManager ini_manager = C2.ini_manager;
+        private clsIniManager ini_manager = clsStore.ini_manager;
         private Image imgExeIcon;
 
         private BuildConfig buildConfig;
@@ -593,7 +593,7 @@ namespace DuplexSpyCS
 
         private void textBox6_TextChanged(object sender, EventArgs e)
         {
-            textBox7.Text = string.IsNullOrEmpty(textBox6.Text) ? string.Empty : Crypto.fnSha256(textBox6.Text);
+            textBox7.Text = string.IsNullOrEmpty(textBox6.Text) ? string.Empty : clsCrypto.fnSha256(textBox6.Text);
         }
 
         private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)

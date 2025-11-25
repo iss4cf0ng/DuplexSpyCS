@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmBuildMsgbox : Form
     {
         public MsgBoxConfig config;
-        private IniManager ini_manager = C2.ini_manager;
+        private clsIniManager ini_manager = clsStore.ini_manager;
 
         public frmBuildMsgbox()
         {

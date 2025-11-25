@@ -13,14 +13,14 @@ namespace DuplexSpyCS
     public class SqlConn
     {
         //LOG EVENT
-        public delegate void NewVictimEventHandler(Victim v, string os, string host);
+        public delegate void NewVictimEventHandler(clsVictim v, string os, string host);
         public event NewVictimEventHandler NewVictimEvent;
 
         public delegate void SystemEventHandler(string msg); //System log event handler.
         public event SystemEventHandler NewSystemLogs;
-        public delegate void KeyExchangeEventHandler(Victim v, string msg); //Key exchange log event handler.
+        public delegate void KeyExchangeEventHandler(clsVictim v, string msg); //Key exchange log event handler.
         public event KeyExchangeEventHandler NewKeyExchangeLogs;
-        public delegate void SendFunctionEventHandler(Victim v, string msg); //Send function log event handler.
+        public delegate void SendFunctionEventHandler(clsVictim v, string msg); //Send function log event handler.
         public event SendFunctionEventHandler NewSendFunctionLogs;
         public delegate void ErrorEventHandler(string msg); //Error log event handler.
         public event ErrorEventHandler NewErrorLogs;
@@ -305,7 +305,7 @@ namespace DuplexSpyCS
         /// <param name="os"></param>
         /// <param name="host"></param>
         /// <returns></returns>
-        public (int, string) NewVictim(Victim v, string os, string host)
+        public (int, string) NewVictim(clsVictim v, string os, string host)
         {
             int code = 1;
             string msg = string.Empty;
@@ -316,7 +316,7 @@ namespace DuplexSpyCS
                 DataRow dr = dt.Rows[0];
                 long qwExists = (long)dr[0];
 
-                string szDate = C1.DateTimeStrEnglish();
+                string szDate = clsTools.DateTimeStrEnglish();
 
                 if (qwExists == 0) //Not exists
                 {
@@ -367,12 +367,12 @@ namespace DuplexSpyCS
                 switch (msg_type)
                 {
                     case MsgType.System:
-                        msg = $"[{C1.DateTimeStrEnglish()}]: {msg}";
+                        msg = $"[{clsTools.DateTimeStrEnglish()}]: {msg}";
                         if (NewSystemLogs != null)
                             NewSystemLogs(msg);
                         break;
                     case MsgType.Error:
-                        msg = $"[{C1.DateTimeStrEnglish()}]: {msg}";
+                        msg = $"[{clsTools.DateTimeStrEnglish()}]: {msg}";
                         if (NewErrorLogs != null)
                             NewErrorLogs(msg); 
                         break;
@@ -402,12 +402,12 @@ namespace DuplexSpyCS
                 switch (msg_type)
                 {
                     case MsgType.System:
-                        msg = $"[{C1.DateTimeStrEnglish()}]: {msg}";
+                        msg = $"[{clsTools.DateTimeStrEnglish()}]: {msg}";
                         if (NewSystemLogs != null)
                             NewSystemLogs(msg);
                         break;
                     case MsgType.Error:
-                        msg = $"[{C1.DateTimeStrEnglish()}]: {msg}";
+                        msg = $"[{clsTools.DateTimeStrEnglish()}]: {msg}";
                         if (NewErrorLogs != null)
                             NewErrorLogs(msg);
                         break;
@@ -421,7 +421,7 @@ namespace DuplexSpyCS
                 return 0;
             }
         }
-        public int NewVictimLogs(MsgType msg_type, Victim v, string msg)
+        public int NewVictimLogs(MsgType msg_type, clsVictim v, string msg)
         {
             try
             {
@@ -431,7 +431,7 @@ namespace DuplexSpyCS
                     $"\"{v.ID}\"," + //ID
                     $"\"{v.remoteOS}\"," + //Remote OS
                     $"\"{msg}\"," + //Message
-                    $"\"{C1.DateTimeStrEnglish()}\"" + //Create Date
+                    $"\"{clsTools.DateTimeStrEnglish()}\"" + //Create Date
                     $")";
                 SqlNoOutput(sql_query);
 
@@ -465,15 +465,15 @@ namespace DuplexSpyCS
         {
             NewLogs(CSV.Server, MsgType.System, msg);
         }
-        public void WriteKeyExchange(Victim v, string msg)
+        public void WriteKeyExchange(clsVictim v, string msg)
         {
             NewVictimLogs(MsgType.KeyExchange, v, msg);
         }
-        public void WriteSendLogs(Victim v, string msg)
+        public void WriteSendLogs(clsVictim v, string msg)
         {
             NewVictimLogs(MsgType.Function, v, msg);
         }
-        public void WriteErrorLogs(Victim v, string msg)
+        public void WriteErrorLogs(clsVictim v, string msg)
         {
             NewVictimLogs(MsgType.Error, v, msg);
         }

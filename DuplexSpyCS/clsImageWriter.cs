@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace DuplexSpyCS
 {
-    internal class ImageWriter
+    internal class clsImageWriter
     {
         //Write MP4
         private readonly string filePath;
@@ -24,7 +24,7 @@ namespace DuplexSpyCS
         private int imgWidth { get; set; }
         private int imgHeight { get; set; }
 
-        public ImageWriter(string filePath, long fileLen, int imgWidth, int imgHeight)
+        public clsImageWriter(string filePath, long fileLen, int imgWidth, int imgHeight)
         {
             this.filePath = filePath;
             imageQueue = new ConcurrentQueue<(float, Image)>();

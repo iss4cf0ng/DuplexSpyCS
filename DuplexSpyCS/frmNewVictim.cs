@@ -17,7 +17,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        public void SetInfo(Victim v, string ip, string os)
+        public void SetInfo(clsVictim v, string ip, string os)
         {
             label1.Text = v.ID;
             label2.Text = ip;

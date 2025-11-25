@@ -119,7 +119,7 @@ namespace DuplexSpyCS
         HTTP,
     }
 
-    public class C3
+    public class clsGlobal
     {
         public static Dictionary<ColorStyleMode, Dictionary<string, Color>> dic_ColorModeStylee = new Dictionary<ColorStyleMode, Dictionary<string, Color>>()
         {

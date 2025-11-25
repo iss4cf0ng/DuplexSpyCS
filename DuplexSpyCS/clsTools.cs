@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
-    internal class C1
+    internal class clsTools
     {
         //GZIP
         public static byte[] Compress(byte[] abBuffer)
@@ -68,7 +68,7 @@ namespace DuplexSpyCS
         /// <param name="v">class Victim</param>
         /// <param name="func">enum Function</param>
         /// <returns></returns>
-        public static Form GetFormByVictim(Victim v, Function func)
+        public static Form GetFormByVictim(clsVictim v, Function func)
         {
             Form form = null;
             try
@@ -76,10 +76,10 @@ namespace DuplexSpyCS
                 foreach (Form f in Application.OpenForms)
                 {
                     FieldInfo field = f.GetType().GetField("v", BindingFlags.Public | BindingFlags.Instance);
-                    bool has_victim_field = field != null && field.FieldType == typeof(Victim);
+                    bool has_victim_field = field != null && field.FieldType == typeof(clsVictim);
                     if (has_victim_field && f.Tag != null)
                     {
-                        Victim _v = (Victim)field.GetValue(f);
+                        clsVictim _v = (clsVictim)field.GetValue(f);
                         if ((Function)f.Tag == func && _v == v)
                         {
                             form = f;
@@ -168,7 +168,7 @@ namespace DuplexSpyCS
             //todo: change all member to read from ini file.
             try
             {
-                IniManager ini_manager = C2.ini_manager;
+                clsIniManager ini_manager = clsStore.ini_manager;
                 string Read(string section, string key)
                 {
                     return ini_manager.Read(section, key);
@@ -313,6 +313,37 @@ namespace DuplexSpyCS
         public static bool IsPositiveNumber(string szPattern)
         {
             return int.TryParse(szPattern, out int nResult) && nResult > 0;
+        }
+
+        public static string BytesNormalize(long bytes_size)
+        {
+            if (bytes_size < 1024)
+                return $"{bytes_size} Bytes";
+            else if (bytes_size < 1024 * 1024)
+                return $"{bytes_size / 1024.0:F2} KB";
+            else if (bytes_size < 1024 * 1024 * 1024)
+                return $"{bytes_size / (1024.0 * 1024):F2} MB";
+            else if (bytes_size < 1024L * 1024 * 1024 * 1024)
+                return $"{bytes_size / (1024.0 * 1024 * 1024):F2} GB";
+            else
+                return $"{bytes_size / (1024.0 * 1024 * 1024 * 1024):F2} TB";
+        }
+        public static string ImageToBase64(string file)
+        {
+            return ImageToBase64(Image.FromFile(file));
+        }
+        public static string ImageToBase64(Image img)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                img.Save(ms, img.RawFormat);
+                return Convert.ToBase64String(ms.ToArray());
+            }
+        }
+        public static bool FileIsImage(string filename)
+        {
+            string name = Path.GetExtension(filename).Replace(".", string.Empty);
+            return clsStore.imgs.Contains(name);
         }
     }
 }

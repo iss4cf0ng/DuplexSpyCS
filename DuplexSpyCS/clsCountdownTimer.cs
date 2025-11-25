@@ -7,7 +7,7 @@ using System.Timers;
 
 namespace DuplexSpyCS
 {
-    internal class CountdownTimer
+    internal class clsCountdownTimer
     {
         private int m_nSecond;
         private System.Timers.Timer m_timer;
@@ -15,7 +15,7 @@ namespace DuplexSpyCS
         public delegate void CountdownCompletedEventHandler();
         public event CountdownCompletedEventHandler CountdownCompleted;
 
-        public CountdownTimer(int nSecond)
+        public clsCountdownTimer(int nSecond)
         {
             m_nSecond = nSecond;
             m_timer = new System.Timers.Timer(1000);

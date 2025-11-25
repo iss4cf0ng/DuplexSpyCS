@@ -112,7 +112,7 @@ namespace DuplexSpyCS
                     catch (Exception ex) //Convert into image failed.
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        C2.sql_conn.WriteSysErrorLogs(ex.Message);
+                        clsStore.sql_conn.WriteSysErrorLogs(ex.Message);
                     }
                 }
             }

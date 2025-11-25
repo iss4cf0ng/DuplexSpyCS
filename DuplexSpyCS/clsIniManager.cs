@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
-    internal class IniManager
+    internal class clsIniManager
     {
         public string Path { get; private set; }
 
@@ -19,7 +19,7 @@ namespace DuplexSpyCS
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         static extern long GetPrivateProfileString(string section, string key, string default_val, StringBuilder ret_val, int size, string file_path);
 
-        public IniManager(string path)
+        public clsIniManager(string path)
         {
             Path = new FileInfo(path ?? "config.ini").FullName;
             if (!File.Exists(Path))

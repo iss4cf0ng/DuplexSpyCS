@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmChat : Form
     {
-        public Victim v;
+        public clsVictim v;
 
         public frmChat()
         {
@@ -32,7 +32,7 @@ namespace DuplexSpyCS
         public void SendMsg()
         {
             textBox1.Text = textBox1.Text.Trim();
-            v.encSend(2, 0, $"chat|msg|{Crypto.b64E2Str(toolStripTextBox1.Text)}|{Crypto.b64E2Str(textBox1.Text)}");
+            v.encSend(2, 0, $"chat|msg|{clsCrypto.b64E2Str(toolStripTextBox1.Text)}|{clsCrypto.b64E2Str(textBox1.Text)}");
             ShowMsg(toolStripTextBox1.Text, textBox1.Text);
             textBox1.Text = string.Empty;
         }

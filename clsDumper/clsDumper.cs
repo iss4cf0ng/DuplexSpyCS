@@ -22,7 +22,7 @@ namespace clsDumper
     {
         public string szName => "BrowserDumper";
         public string szVersion => "1.0.0";
-        public string szDescription => "LAN Scanner";
+        public string szDescription => "Browser Dumper Toolkit.";
 
         public struct stCredential
         {

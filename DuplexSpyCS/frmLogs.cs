@@ -15,7 +15,7 @@ namespace DuplexSpyCS
     {
         private DateTime dateLastUpdate;
         private string szDateTime => dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss");
-        private SqlConn sql_conn = C2.sql_conn;
+        private SqlConn sql_conn = clsStore.sql_conn;
 
         private bool bSearchWhenTextChanged = false;
 
@@ -31,7 +31,7 @@ namespace DuplexSpyCS
         {
             string sql = $"SELECT * FROM Logs WHERE CreateDate >= \"{dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss")}\" AND Type == \"System\";";
 
-            DataTable dt = C2.sql_conn.GetDataTable(sql);
+            DataTable dt = clsStore.sql_conn.GetDataTable(sql);
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -51,7 +51,7 @@ namespace DuplexSpyCS
             //Sent RSA public key
             string sql = $"SELECT * FROM Logs WHERE CreateDate >= \"{dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss")}\" AND Type == \"KeyExchange\" AND Message ==\"OK\";";
 
-            DataTable dt = C2.sql_conn.GetDataTable(sql);
+            DataTable dt = clsStore.sql_conn.GetDataTable(sql);
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -59,7 +59,7 @@ namespace DuplexSpyCS
 
                 /* Warning: the OnlineID maybe be duplicated if same machine connect to this server over thousands times.
                  * Becasue in this stage the online id is determined by remote host. */
-                DataTable tmp = C2.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE OnlineID == \"{rhost}\" AND Type == \"KeyExchange\" AND Message ==\"Sent RSA public key\";");
+                DataTable tmp = clsStore.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE OnlineID == \"{rhost}\" AND Type == \"KeyExchange\" AND Message ==\"Sent RSA public key\";");
                 string szCreateDate = tmp.Rows[0][6].ToString();
 
                 ListViewItem item = new ListViewItem(rhost);
@@ -78,7 +78,7 @@ namespace DuplexSpyCS
         {
             string sql = $"SELECT * FROM Logs WHERE CreateDate >= \"{dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss")}\" AND Type == \"Function\";";
 
-            DataTable dt = C2.sql_conn.GetDataTable(sql);
+            DataTable dt = clsStore.sql_conn.GetDataTable(sql);
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -97,7 +97,7 @@ namespace DuplexSpyCS
         {
             string sql = $"SELECT * FROM Logs WHERE CreateDate >= \"{dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss")}\" AND Type == \"Error\";";
 
-            DataTable dt = C2.sql_conn.GetDataTable(sql);
+            DataTable dt = clsStore.sql_conn.GetDataTable(sql);
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -127,13 +127,13 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="v"></param>
         /// <param name="msg"></param>
-        private void NewKeyExchange(Victim v, string msg)
+        private void NewKeyExchange(clsVictim v, string msg)
         {
             string rhost = v.socket.RemoteEndPoint.ToString();
             Invoke(new Action(() =>
             {
                 ListViewItem item = listView1.FindItemWithText(rhost);
-                string szDate = C1.DateTimeStrEnglish();
+                string szDate = clsTools.DateTimeStrEnglish();
 
                 if (item == null)
                 {
@@ -156,7 +156,7 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="v"></param>
         /// <param name="msg"></param>
-        private void NewFunction(Victim v, string msg)
+        private void NewFunction(clsVictim v, string msg)
         {
             Invoke(new Action(() =>
             {
@@ -180,7 +180,7 @@ namespace DuplexSpyCS
 
         void setup()
         {
-            dateLastUpdate = C2.dtStartUp;
+            dateLastUpdate = clsStore.dtStartUp;
 
             ShowSystemLogs();
             ShowKeyExchange();
@@ -262,7 +262,7 @@ namespace DuplexSpyCS
         {
             richTextBox1.Clear();
 
-            DataTable dt = C2.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"System\" AND CreateDate >= \"{szDateTime}\"");
+            DataTable dt = clsStore.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"System\" AND CreateDate >= \"{szDateTime}\"");
             foreach (DataRow dr in dt.Rows)
             {
                 string msg = (string)dr[5];
@@ -295,7 +295,7 @@ namespace DuplexSpyCS
         {
             listView1.Items.Clear();
 
-            DataTable dt = C2.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"KeyExchange\" AND CreateDate >= \"{szDateTime}\"");
+            DataTable dt = clsStore.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"KeyExchange\" AND CreateDate >= \"{szDateTime}\"");
             foreach (DataRow dr in dt.Rows)
             {
                 string online_id = (string)dr[2];
@@ -333,7 +333,7 @@ namespace DuplexSpyCS
         {
             richTextBox2.Clear();
 
-            DataTable dt = C2.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"Function\" AND CreateDate >= \"{szDateTime}\"");
+            DataTable dt = clsStore.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"Function\" AND CreateDate >= \"{szDateTime}\"");
             foreach (DataRow dr in dt.Rows)
             {
                 string online_id = (string)dr[2];
@@ -367,7 +367,7 @@ namespace DuplexSpyCS
         {
             richTextBox3.Clear();
 
-            DataTable dt = C2.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"Error\" AND CreateDate >= \"{szDateTime}\"");
+            DataTable dt = clsStore.sql_conn.GetDataTable($"SELECT * FROM Logs WHERE Type = \"Error\" AND CreateDate >= \"{szDateTime}\"");
             foreach (DataRow dr in dt.Rows)
             {
                 string msg = (string)dr[5];

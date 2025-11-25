@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmRegValRename : Form
     {
         public frmManager f_mgr;
-        public Victim v;
+        public clsVictim v;
 
         public string currentPath;
         public string oldName;
