@@ -13,6 +13,27 @@ namespace DuplexSpyCS
             m_szName = szName;
             m_nPort = nPort;
             m_szDescription = szDescription;
+
+            m_protocol = enListenerProtocol.TLS;
+        }
+
+        ~clsTlsListener()
+        {
+
+        }
+
+        public override void fnStart()
+        {
+            //base.fnStart();
+
+            m_bIslistening = true;
+        }
+
+        public override void fnStop()
+        {
+            //base.fnStop();
+
+            m_bIslistening = false;
         }
     }
 }

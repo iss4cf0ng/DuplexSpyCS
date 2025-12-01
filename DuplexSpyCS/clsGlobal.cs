@@ -115,9 +115,19 @@ namespace DuplexSpyCS
     public enum enListenerProtocol
     {
         TCP,
+        TLS,
         DNS,
         HTTP,
     }
+
+    public enum enHttpMethod
+    {
+        GET,
+        POST,
+        HEAD,
+        PUT,
+        DELETE,
+    };
 
     public class clsGlobal
     {
@@ -449,6 +459,16 @@ namespace DuplexSpyCS
         public int nPort;
         public enListenerProtocol enProtocol;
         public string szDescription;
+
         public DateTime dtCreationDate;
+        public DateTime dtLastAccessDate;
+
+        public string szCertPath;
+        public string szCertPassword;
+
+        public enHttpMethod httpMethod;
+        public string szHttpHost;
+        public string szHttpPath;
+        public string szHttpUA;
     }
 }

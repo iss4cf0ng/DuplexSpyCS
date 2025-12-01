@@ -345,5 +345,10 @@ namespace DuplexSpyCS
             string name = Path.GetExtension(filename).Replace(".", string.Empty);
             return clsStore.imgs.Contains(name);
         }
+
+        public static bool fnbVictimEquals(clsVictim v1, clsVictim v2)
+        {
+            return v1 == v2;
+        }
     }
 }

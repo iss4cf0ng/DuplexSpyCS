@@ -12,7 +12,7 @@ namespace DuplexSpyCS
 {
     public partial class frmListen : Form
     {
-        public Form1 frmMain;
+        public frmMain frmMain;
 
         public string ip;
         public int port;
@@ -38,7 +38,7 @@ namespace DuplexSpyCS
         //Stop
         private void button2_Click(object sender, EventArgs e)
         {
-            frmMain.listener.Stop(frmMain.GetAllVictim());
+            //frmMain.listener.Stop(frmMain.GetAllVictim());
             Close();
         }
     }

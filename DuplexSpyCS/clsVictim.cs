@@ -10,6 +10,7 @@ using DuplexSpyCS;
 public class clsVictim
 {
     //SOCKET
+    public clsListener m_listener { get; set; }
     public Socket socket;
     public static int MAX_BUFFER_LENGTH = 65536; //Buffer size.
     public byte[] buffer = new byte[MAX_BUFFER_LENGTH];
@@ -45,7 +46,7 @@ public class clsVictim
     //WEBCAM
     public Image img_LastWebcam;
 
-    public clsVictim(Socket socket)
+    public clsVictim(clsListener listener, Socket socket)
     {
         if (socket == null)
         {
@@ -59,6 +60,7 @@ public class clsVictim
         r_addr = split[0];
         r_port = int.Parse(split[1]);
         ID = "[NOT YET]";
+        m_listener = listener;
     }
 
     public void Send(int Command, int Param, string data)

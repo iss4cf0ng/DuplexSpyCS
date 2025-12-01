@@ -13,6 +13,23 @@ namespace DuplexSpyCS
             m_szName = szName;
             m_nPort = nPort;
             m_szDescription = szDescription;
+
+            m_protocol = enListenerProtocol.HTTP;
+        }
+
+        ~clsHttpListener()
+        {
+
+        }
+
+        public override void fnStart()
+        {
+            m_bIslistening = true;
+        }
+
+        public override void fnStop()
+        {
+            m_bIslistening = false;
         }
     }
 }

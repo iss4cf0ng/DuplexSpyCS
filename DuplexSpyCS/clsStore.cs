@@ -16,7 +16,7 @@ namespace DuplexSpyCS
         public static int sent_bytes;
         public static int recv_bytes;
 
-        public static SqlConn sql_conn;
+        public static clsSqlConn sql_conn;
         public static clsIniManager ini_manager;
 
         public static ImageList il_extension = new ImageList();

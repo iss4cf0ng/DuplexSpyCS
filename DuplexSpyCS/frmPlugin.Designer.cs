@@ -31,7 +31,10 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmPlugin));
             toolStrip1 = new ToolStrip();
+            toolStripButton1 = new ToolStripButton();
+            toolStripButton2 = new ToolStripButton();
             statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
             listView1 = new ListView();
             columnHeader1 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
@@ -42,9 +45,6 @@
             toolStripMenuItem3 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripMenuItem();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
-            toolStripButton1 = new ToolStripButton();
-            toolStripButton2 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -59,6 +59,24 @@
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(23, 22);
+            toolStripButton1.Text = "toolStripButton1";
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Size = new Size(23, 22);
+            toolStripButton2.Text = "toolStripButton2";
+            // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -68,6 +86,12 @@
             statusStrip1.Size = new Size(909, 24);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(158, 19);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // listView1
             // 
@@ -132,30 +156,6 @@
             toolStripMenuItem1.Size = new Size(116, 24);
             toolStripMenuItem1.Text = "Help";
             // 
-            // toolStripStatusLabel1
-            // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(158, 19);
-            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // toolStripButton1
-            // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(23, 22);
-            toolStripButton1.Text = "toolStripButton1";
-            // 
-            // toolStripButton2
-            // 
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(23, 22);
-            toolStripButton2.Text = "toolStripButton2";
-            // 
             // frmPlugin
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -169,6 +169,7 @@
             Name = "frmPlugin";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmPlugin";
+            FormClosed += frmPlugin_FormClosed;
             Load += frmPlugin_Load;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();

@@ -90,7 +90,7 @@ namespace DuplexSpyCS
             }
             if (done)
             {
-                Form1.g_FilePacketWriter.Remove(file_path);
+                frmMain.g_FilePacketWriter.Remove(file_path);
             }
         }
     }

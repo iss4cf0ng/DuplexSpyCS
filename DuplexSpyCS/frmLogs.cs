@@ -15,7 +15,7 @@ namespace DuplexSpyCS
     {
         private DateTime dateLastUpdate;
         private string szDateTime => dateLastUpdate.ToString("yyyy-MM-dd HH:mm:ss");
-        private SqlConn sql_conn = clsStore.sql_conn;
+        private clsSqlConn sql_conn = clsStore.sql_conn;
 
         private bool bSearchWhenTextChanged = false;
 

