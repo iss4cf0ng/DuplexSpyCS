@@ -96,6 +96,25 @@ namespace DuplexSpyCS
             return form;
         }
 
+        public static T fnFindForm<T>(clsVictim victim) where T : Form
+        {
+            foreach (Form f in Application.OpenForms)
+            {
+                if (f.GetType() == typeof(T))
+                {
+                    PropertyInfo ptyVictim = f.GetType().GetProperty("victim", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    if (ptyVictim != null)
+                    {
+                        object fieldValue1 = ptyVictim.GetValue(f);
+                        if (fieldValue1 != null && fnbVictimEquals(victim, (clsVictim)fieldValue1))
+                            return (T)f;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public static string GenerateFileName(string ext = null)
         {
             DateTime date = DateTime.Now;

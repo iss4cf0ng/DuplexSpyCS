@@ -79,5 +79,15 @@ namespace winClient48
         {
             encSend(2, 0, payload);
         }
+
+        public void fnSendCommand(string[] asMsg)
+        {
+            fnSendCommand(asMsg.ToList());
+        }
+
+        public void fnSendCommand(List<string> lsMsg)
+        {
+            SendCommand(string.Join("|", lsMsg));
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace DuplexSpyCS
 {
     public partial class frmManager : Form
     {
-        public clsVictim v;
+        public clsVictim v { get; init; }
         string current_path;
         frmWindowCapture f_winCap;
         private string file_homedir;
@@ -79,9 +79,46 @@ namespace DuplexSpyCS
         //Config
         private SettingConfig mgrConfig => clsStore.settingConfig;
 
-        public frmManager()
+        public frmManager(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
+            v.m_listener.ReceivedDecoded += fnRecv;
+        }
+
+        void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
+        {
+            if (!clsTools.fnbVictimEquals(victim, v))
+                return;
+
+            if (lsMsg[0] == "file")
+            {
+                if (lsMsg[1] == "init")
+                {
+
+                }
+                else if (lsMsg[1] == "sd")
+                {
+
+                }
+                else if (lsMsg[1] == "goto")
+                {
+
+                }
+            }
+            else if (lsMsg[0] == "task")
+            {
+
+            }
+            else if (lsMsg[0] == "service")
+            {
+
+            }
+            else if (lsMsg[0] == "window")
+            {
+
+            }
         }
 
         #region Global Function
@@ -3161,6 +3198,11 @@ namespace DuplexSpyCS
             f.Text = "Create ShortCut";
 
             f.Show();
+        }
+
+        private void frmManager_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            v.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

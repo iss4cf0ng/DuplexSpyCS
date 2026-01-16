@@ -30,14 +30,14 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmManager));
-            TreeNode treeNode17 = new TreeNode("Type");
-            TreeNode treeNode18 = new TreeNode("Count[0]");
-            TreeNode treeNode19 = new TreeNode("State", new TreeNode[] { treeNode17, treeNode18 });
-            TreeNode treeNode20 = new TreeNode("Folder");
-            TreeNode treeNode21 = new TreeNode("File");
-            TreeNode treeNode22 = new TreeNode("Type");
-            TreeNode treeNode23 = new TreeNode("Key");
-            TreeNode treeNode24 = new TreeNode("Value");
+            TreeNode treeNode1 = new TreeNode("Type");
+            TreeNode treeNode2 = new TreeNode("Count[0]");
+            TreeNode treeNode3 = new TreeNode("State", new TreeNode[] { treeNode1, treeNode2 });
+            TreeNode treeNode4 = new TreeNode("Folder");
+            TreeNode treeNode5 = new TreeNode("File");
+            TreeNode treeNode6 = new TreeNode("Type");
+            TreeNode treeNode7 = new TreeNode("Key");
+            TreeNode treeNode8 = new TreeNode("Value");
             menuStrip1 = new MenuStrip();
             toolStripMenuItem46 = new ToolStripMenuItem();
             toolStripMenuItem47 = new ToolStripMenuItem();
@@ -87,6 +87,7 @@
             toolStripMenuItem26 = new ToolStripMenuItem();
             toolStripMenuItem27 = new ToolStripMenuItem();
             toolStripMenuItem72 = new ToolStripMenuItem();
+            toolStripMenuItem74 = new ToolStripMenuItem();
             toolStripMenuItem73 = new ToolStripMenuItem();
             statusStrip2 = new StatusStrip();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
@@ -224,7 +225,6 @@
             statusStrip5 = new StatusStrip();
             toolStripStatusLabel6 = new ToolStripStatusLabel();
             toolStrip3 = new ToolStrip();
-            toolStripMenuItem74 = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
@@ -478,17 +478,17 @@
             treeView7.Dock = DockStyle.Fill;
             treeView7.Location = new Point(0, 0);
             treeView7.Name = "treeView7";
-            treeNode17.Name = "Node3";
-            treeNode17.Text = "Type";
-            treeNode18.Name = "Node4";
-            treeNode18.Text = "Count[0]";
-            treeNode19.Name = "Node2";
-            treeNode19.Text = "State";
-            treeNode20.Name = "Node0";
-            treeNode20.Text = "Folder";
-            treeNode21.Name = "Node1";
-            treeNode21.Text = "File";
-            treeView7.Nodes.AddRange(new TreeNode[] { treeNode19, treeNode20, treeNode21 });
+            treeNode1.Name = "Node3";
+            treeNode1.Text = "Type";
+            treeNode2.Name = "Node4";
+            treeNode2.Text = "Count[0]";
+            treeNode3.Name = "Node2";
+            treeNode3.Text = "State";
+            treeNode4.Name = "Node0";
+            treeNode4.Text = "Folder";
+            treeNode5.Name = "Node1";
+            treeNode5.Text = "File";
+            treeView7.Nodes.AddRange(new TreeNode[] { treeNode3, treeNode4, treeNode5 });
             treeView7.Size = new Size(331, 406);
             treeView7.TabIndex = 0;
             // 
@@ -548,7 +548,7 @@
             contextMenuStrip1.Font = new Font("Microsoft JhengHei", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem2, toolStripSeparator1, toolStripMenuItem7, toolStripMenuItem3, toolStripMenuItem4, toolStripMenuItem5, toolStripMenuItem6, toolStripSeparator5, toolStripMenuItem16, toolStripMenuItem17, toolStripMenuItem59, toolStripSeparator2, toolStripMenuItem8, toolStripMenuItem72, toolStripMenuItem74, toolStripMenuItem73 });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(181, 380);
+            contextMenuStrip1.Size = new Size(166, 358);
             // 
             // toolStripMenuItem1
             // 
@@ -693,6 +693,13 @@
             toolStripMenuItem72.Size = new Size(165, 24);
             toolStripMenuItem72.Text = "Datetime";
             toolStripMenuItem72.Click += toolStripMenuItem72_Click;
+            // 
+            // toolStripMenuItem74
+            // 
+            toolStripMenuItem74.Name = "toolStripMenuItem74";
+            toolStripMenuItem74.Size = new Size(165, 24);
+            toolStripMenuItem74.Text = "ShortCut";
+            toolStripMenuItem74.Click += toolStripMenuItem74_Click;
             // 
             // toolStripMenuItem73
             // 
@@ -1195,13 +1202,13 @@
             treeView8.Dock = DockStyle.Fill;
             treeView8.Location = new Point(0, 0);
             treeView8.Name = "treeView8";
-            treeNode22.Name = "Node0";
-            treeNode22.Text = "Type";
-            treeNode23.Name = "Node1";
-            treeNode23.Text = "Key";
-            treeNode24.Name = "Node2";
-            treeNode24.Text = "Value";
-            treeView8.Nodes.AddRange(new TreeNode[] { treeNode22, treeNode23, treeNode24 });
+            treeNode6.Name = "Node0";
+            treeNode6.Text = "Type";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Key";
+            treeNode8.Name = "Node2";
+            treeNode8.Text = "Value";
+            treeView8.Nodes.AddRange(new TreeNode[] { treeNode6, treeNode7, treeNode8 });
             treeView8.Size = new Size(301, 414);
             treeView8.TabIndex = 0;
             // 
@@ -1813,13 +1820,6 @@
             toolStrip3.TabIndex = 1;
             toolStrip3.Text = "toolStrip3";
             // 
-            // toolStripMenuItem74
-            // 
-            toolStripMenuItem74.Name = "toolStripMenuItem74";
-            toolStripMenuItem74.Size = new Size(180, 24);
-            toolStripMenuItem74.Text = "ShortCut";
-            toolStripMenuItem74.Click += toolStripMenuItem74_Click;
-            // 
             // frmManager
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -1833,6 +1833,7 @@
             Name = "frmManager";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmManager";
+            FormClosed += frmManager_FormClosed;
             Load += frmManager_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();

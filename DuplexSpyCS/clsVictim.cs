@@ -109,6 +109,14 @@ public class clsVictim
     {
         encSend(2, 0, command);
     }
+    public void fnSendCommand(string[] aMsg)
+    {
+        fnSendCommand(aMsg.ToList());
+    }
+    public void fnSendCommand(List<string> lsMsg)
+    {
+        SendCommand(string.Join("|", lsMsg));
+    }
 
     public void Reconnect()
     {

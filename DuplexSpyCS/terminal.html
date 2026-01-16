@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm/css/xterm.css"/>
+<script src="https://cdn.jsdelivr.net/npm/xterm/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+
+<style>
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: black;
+    overflow: hidden;
+}
+
+#terminal {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+
+<body>
+<div id="terminal"></div>
+
+<script>
+const term = new Terminal({
+    cursorBlink: true,
+    scrollback: 5000
+});
+
+const fitAddon = new FitAddon.FitAddon();
+term.loadAddon(fitAddon);
+
+term.open(document.getElementById('terminal'));
+fitAddon.fit();
+
+function fitTerminal() {
+    fitAddon.fit();
+
+    const cols = term.cols;
+    const rows = term.rows;
+
+    window.chrome.webview.postMessage(
+        "shell|resize|" + cols + "|" + rows
+    );
+}
+
+// Keyboard → C#
+term.onData(data => {
+    if (data === '\r') data = '\n';
+
+    const bytes = new TextEncoder().encode(data);
+    let binary = '';
+    bytes.forEach(b => binary += String.fromCharCode(b));
+
+    const b64 = btoa(binary);
+    window.chrome.webview.postMessage("shell|input|" + b64);
+});
+
+// C# → terminal display
+window.chrome.webview.addEventListener('message', e => {
+    const b64 = e.data;
+    const binary = atob(b64);
+    const len = binary.length;
+    const bytes = new Uint8Array(len);
+
+    for (let i = 0; i < len; i++)
+        bytes[i] = binary.charCodeAt(i);
+
+    term.write(bytes);
+});
+</script>
+</body>
+</html>

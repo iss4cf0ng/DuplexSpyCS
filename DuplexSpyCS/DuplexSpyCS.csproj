@@ -16,6 +16,7 @@
     <PackageReference Include="AForge.Video" Version="2.2.5" />
     <PackageReference Include="ICSharpCode.TextEditor" Version="3.2.1.6466" />
     <PackageReference Include="ICSharpCode.TextEditor.Extended" Version="4.2.4" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Lame" Version="2.1.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />

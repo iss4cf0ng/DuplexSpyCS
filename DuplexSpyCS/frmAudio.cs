@@ -452,7 +452,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            using (frmManager f = new frmManager()
+            using (frmManager f = new frmManager(v)
             {
                 v = v,
             })
@@ -534,7 +534,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            using (frmManager f = new frmManager()
+            using (frmManager f = new frmManager(v)
             {
                 v = v,
             })

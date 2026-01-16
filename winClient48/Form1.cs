@@ -53,10 +53,13 @@ namespace winClient48
     public partial class Form1 : Form
     {
         private string[] m_args;
+        clsfnXterm m_fnXterm;
 
         public Form1(string[] args)
         {
             InitializeComponent();
+
+            m_args = args;
         }
 
         class PacketWriter
@@ -169,6 +172,14 @@ namespace winClient48
         private bool send_screen = true;
         private string id_prefix = "[PREFIX]";
         private string id_hardware = string.Empty;
+
+        private enMethod m_method { get; set; }
+
+        public enum enMethod
+        {
+            TCP,
+            TLS,
+        }
 
         private ClientConfig clntConfig;
 
@@ -2199,6 +2210,49 @@ namespace winClient48
                 }
 
                 #endregion
+
+                else if (cmd[0] == "xterm")
+                {
+                    if (cmd[1] == "start")
+                    {
+                        if (m_fnXterm == null)
+                        {
+                            m_fnXterm = new clsfnXterm(v);
+                            m_fnXterm.fnStart();
+                        }
+                    }
+                    else if (cmd[1] == "stop")
+                    {
+                        if (m_fnXterm != null)
+                        {
+                            m_fnXterm.fnStop();
+                            m_fnXterm.Dispose();
+                            m_fnXterm = null;
+                        }
+                    }
+                    else if (cmd[1] == "input")
+                    {
+                        if (m_fnXterm != null)
+                        {
+                            byte[] abData = Convert.FromBase64String(cmd[2]);
+                            m_fnXterm.fnPushInput(abData);
+                        }
+                    }
+                    else if (cmd[1] == "resize")
+                    {
+                        if (m_fnXterm != null)
+                        {
+                            int nCols = int.Parse(cmd[2]);
+                            int nRows = int.Parse(cmd[3]);
+
+                            m_fnXterm.fnResize(nCols, nRows);
+                        }
+                    }
+                    else if (cmd[1] == "exec")
+                    {
+
+                    }
+                }
             }
             catch (Exception ex)
             {
