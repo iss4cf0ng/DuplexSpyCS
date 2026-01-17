@@ -102,7 +102,7 @@ namespace DuplexSpyCS
             {
                 if (f.GetType() == typeof(T))
                 {
-                    PropertyInfo ptyVictim = f.GetType().GetProperty("victim", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    PropertyInfo ptyVictim = f.GetType().GetProperty("m_victim", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
                     if (ptyVictim != null)
                     {
                         object fieldValue1 = ptyVictim.GetValue(f);

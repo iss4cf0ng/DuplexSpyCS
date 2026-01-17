@@ -17,10 +17,7 @@ namespace DuplexSpyCS
             m_protocol = enListenerProtocol.TLS;
         }
 
-        ~clsTlsListener()
-        {
-
-        }
+        ~clsTlsListener() => fnStop();
 
         public override void fnStart()
         {

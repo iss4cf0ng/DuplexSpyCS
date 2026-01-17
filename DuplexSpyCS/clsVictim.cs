@@ -46,6 +46,8 @@ public class clsVictim
     //WEBCAM
     public Image img_LastWebcam;
 
+    public Dictionary<string, List<clsPlugin.stCommandSpec>> m_dicCommandRegistry = new();
+
     public clsVictim(clsListener listener, Socket socket)
     {
         if (socket == null)

@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plugin.Abstractions48\Plugin.Abstractions48.csproj" />
+    <ProjectReference Include="..\winClient48\winClient48.csproj" />
+  </ItemGroup>
+
+</Project>

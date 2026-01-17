@@ -46,6 +46,7 @@
             webView21.Size = new Size(794, 364);
             webView21.TabIndex = 0;
             webView21.ZoomFactor = 1D;
+            webView21.Resize += webView21_Resize;
             // 
             // textBox1
             // 
@@ -84,6 +85,7 @@
             Text = "frmXterm";
             FormClosed += frmXterm_FormClosed;
             Load += frmXterm_Load;
+            SizeChanged += frmXterm_SizeChanged;
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             ResumeLayout(false);
             PerformLayout();

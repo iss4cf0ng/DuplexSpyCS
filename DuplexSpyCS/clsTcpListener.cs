@@ -14,8 +14,6 @@ namespace DuplexSpyCS
         //Listener
         public Socket socket;
 
-        public int m_nPort = -1;
-
         int MAX_BUFFER_LENGTH = 65536; //BUFFER MAXIMUM LENGTH
         public List<clsVictim> l_victim = new List<clsVictim>(); //Victim LIST
 
@@ -46,10 +44,7 @@ namespace DuplexSpyCS
             m_protocol = enListenerProtocol.TCP;
         }
 
-        ~clsTcpListener()
-        {
-
-        }
+        ~clsTcpListener() => fnStop();
 
         //Crypto
         private string GetChallengeText()

