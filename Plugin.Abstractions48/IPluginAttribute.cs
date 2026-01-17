@@ -11,5 +11,6 @@ namespace Plugin.Abstractions48
     {
         public string Author { get; set; }
         public string Description { get; set; }
+        public string Usage { get; set; }
     }
 }

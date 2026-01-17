@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using Plugin.Abstractions48;
 
 namespace winClient48
@@ -20,6 +21,54 @@ namespace winClient48
         public clsPluginMgr(IPluginContext context)
         {
             _context = context;
+        }
+
+        private string fnPrintHelp(string szDescription, string szUsage, DataTable dt)
+        {
+            if (dt == null || dt.Columns.Count == 0)
+                return string.Empty;
+
+            int[] colWidths = new int[dt.Columns.Count];
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                colWidths[i] = dt.Columns[i].ColumnName.Length;
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    int len = row[i]?.ToString().Length ?? 0;
+                    if (len > colWidths[i])
+                        colWidths[i] = len;
+                }
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(szDescription);
+            sb.AppendLine(szUsage);
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                sb.Append(dt.Columns[i].ColumnName.PadRight(colWidths[i] + 2));
+            }
+            sb.AppendLine();
+
+            for (int i = 0; i < dt.Columns.Count; i++)
+            {
+                sb.Append(new string('-', colWidths[i]) + "  ");
+            }
+            sb.AppendLine();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                for (int i = 0; i < dt.Columns.Count; i++)
+                {
+                    string text = row[i]?.ToString() ?? "";
+                    sb.Append(text.PadRight(colWidths[i] + 2));
+                }
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         public void Load(byte[] abRaw)
@@ -44,6 +93,9 @@ namespace winClient48
         {
             if (!_plugins.TryGetValue(pluginName, out var plugin))
                 throw new KeyNotFoundException($"Plugin '{pluginName}' not loaded");
+
+            if (args.TryGetValue("help", out _))
+                return fnPrintHelp(plugin.Attribute.Description, plugin.Attribute.Usage, plugin.HelpTable);
 
             return plugin.Execute(args);
         }
