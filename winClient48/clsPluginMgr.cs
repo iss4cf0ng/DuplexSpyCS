@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -97,7 +98,20 @@ namespace winClient48
             if (args.TryGetValue("help", out _))
                 return fnPrintHelp(plugin.Attribute.Description, plugin.Attribute.Usage, plugin.HelpTable);
 
-            return plugin.Execute(args);
+            StringBuilder sb = new StringBuilder();
+            var writer = new PluginConsoleWriter(s =>
+            {
+                sb.AppendLine(s);
+            });
+
+            var originalOut = Console.Out;
+            Console.SetOut(writer);
+
+            var result = plugin.Execute(args);
+
+            Console.SetOut(originalOut);
+
+            return sb.ToString();
         }
 
         public void Unload(string pluginName)
@@ -115,6 +129,28 @@ namespace winClient48
                 p.Dispose();
 
             _plugins.Clear();
+        }
+    }
+
+    public class PluginConsoleWriter : TextWriter
+    {
+        private readonly Action<string> _onWrite;
+
+        public PluginConsoleWriter(Action<string> onWrite)
+        {
+            _onWrite = onWrite;
+        }
+
+        public override Encoding Encoding => Encoding.UTF8;
+
+        public override void WriteLine(string value)
+        {
+            _onWrite?.Invoke(value);
+        }
+
+        public override void Write(char value)
+        {
+            _onWrite?.Invoke(value.ToString());
         }
     }
 }

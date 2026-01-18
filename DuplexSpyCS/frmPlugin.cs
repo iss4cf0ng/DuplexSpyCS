@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Web.WebView2.Core;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -87,7 +88,9 @@ namespace DuplexSpyCS
                     else
                         fnPrintError("Run command failed:");
 
-                    fnPrintLine(szOutput);
+                    List<string> lsOutput = szOutput.Split(Environment.NewLine).ToList();
+                    foreach (string szLine in lsOutput)
+                        fnPrintLine(szLine);
                 }
                 else if (lsMsg[1] == "load")
                 {
@@ -124,10 +127,6 @@ namespace DuplexSpyCS
                     }
 
                     fnPrintOK("Unload plugin successfully: " + szName);
-                }
-                else if (lsMsg[1] == "clear")
-                {
-
                 }
             }
         }
@@ -231,6 +230,28 @@ namespace DuplexSpyCS
         {
             Invoke(new Action(() =>
             {
+                if (szMsg.Length >= 3 && szMsg[0] == '[' && szMsg[2] == ']')
+                {
+                    string szPrefix = szMsg.Substring(0, 3);
+                    szMsg = szMsg.Substring(3).TrimStart();
+
+                    switch (szPrefix)
+                    {
+                        case "[+]":
+                            fnPrintOK(szMsg);
+                            return;
+                        case "[*]":
+                            fnPrintInfo(szMsg);
+                            return;
+                        case "[-]":
+                            fnPrintError(szMsg);
+                            return;
+                        case "[!]":
+                            fnPrintWarning(szMsg);
+                            return;
+                    }
+                }
+
                 richTextBox1.AppendText(szMsg);
                 richTextBox1.AppendText(Environment.NewLine);
             }));
@@ -408,9 +429,9 @@ namespace DuplexSpyCS
                 {
                     var info = m_dicPluginInfo[szName];
                     dt.Rows.Add(szName, info.Meta.Entry, info.Meta.Description);
-
-                    fnPrintTable(dt);
                 }
+
+                fnPrintTable(dt);
 
                 if (m_dicPluginInfo.Keys.Count == 0)
                 {

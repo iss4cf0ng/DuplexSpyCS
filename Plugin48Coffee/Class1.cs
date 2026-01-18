@@ -68,7 +68,6 @@ namespace Plugin48Coffee
         private string szDescription = "This plugin allows you to print a cup of coffee...\n" +
             "OK...This plugin is only for testing my plugin interface...\n";
         private string szUsage = $"Usage: coffee print <Index>>";
-
         
 
         public void Init(IPluginContext context)
@@ -101,16 +100,18 @@ namespace Plugin48Coffee
             {
                 int nIdx = int.Parse(args[szCmd].ToString());
                 if (nIdx >= Coffee.Length)
-                    return $"Index out of range: {nIdx}";
+                    Console.WriteLine($"Index out of range: {nIdx}");
                 else if (nIdx < 0)
-                    return "Invalid index";
+                    Console.WriteLine("Invalid index");
 
-                return Coffee[nIdx];
+                Console.WriteLine(Coffee[nIdx]);
             }
             else
             {
-                return "Invalid parameter: " + szCmd;
+                Console.WriteLine("Invalid parameter: " + szCmd);
             }
+
+            return string.Empty;
         }
 
         public void Dispose()
