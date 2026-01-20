@@ -34,6 +34,15 @@
             label2 = new Label();
             textBox2 = new TextBox();
             button2 = new Button();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            label3 = new Label();
+            tabPage2 = new TabPage();
+            textBox3 = new TextBox();
+            label4 = new Label();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            tabPage2.SuspendLayout();
             SuspendLayout();
             // 
             // button1
@@ -66,7 +75,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(17, 48);
+            label2.Location = new Point(6, 9);
             label2.Name = "label2";
             label2.Size = new Size(40, 19);
             label2.TabIndex = 4;
@@ -74,14 +83,14 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(63, 45);
+            textBox2.Location = new Point(52, 6);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(243, 27);
+            textBox2.Size = new Size(310, 27);
             textBox2.TabIndex = 3;
             // 
             // button2
             // 
-            button2.Location = new Point(17, 78);
+            button2.Location = new Point(17, 212);
             button2.Name = "button2";
             button2.Size = new Size(392, 38);
             button2.TabIndex = 5;
@@ -89,14 +98,73 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // tabControl1
+            // 
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Location = new Point(17, 45);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(391, 161);
+            tabControl1.TabIndex = 6;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(label3);
+            tabPage1.Controls.Add(textBox2);
+            tabPage1.Controls.Add(label2);
+            tabPage1.Location = new Point(4, 28);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(383, 129);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "tabPage1";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(6, 68);
+            label3.Name = "label3";
+            label3.Size = new Size(51, 19);
+            label3.TabIndex = 5;
+            label3.Text = "label3";
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(textBox3);
+            tabPage2.Controls.Add(label4);
+            tabPage2.Location = new Point(4, 28);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(383, 129);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "tabPage2";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(67, 6);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(310, 27);
+            textBox3.TabIndex = 5;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(12, 9);
+            label4.Name = "label4";
+            label4.Size = new Size(49, 19);
+            label4.TabIndex = 6;
+            label4.Text = "Args :";
+            // 
             // frmTaskDLLInjector
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(420, 128);
+            ClientSize = new Size(420, 262);
+            Controls.Add(tabControl1);
             Controls.Add(button2);
-            Controls.Add(label2);
-            Controls.Add(textBox2);
             Controls.Add(label1);
             Controls.Add(textBox1);
             Controls.Add(button1);
@@ -108,6 +176,11 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmTaskDLLInjector";
             Load += frmTaskDLLInjector_Load;
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            tabPage1.PerformLayout();
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -120,5 +193,11 @@
         private Label label2;
         private TextBox textBox2;
         private Button button2;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private Label label3;
+        private TabPage tabPage2;
+        private TextBox textBox3;
+        private Label label4;
     }
 }

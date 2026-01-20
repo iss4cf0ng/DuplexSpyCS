@@ -53,7 +53,7 @@ namespace clsDumper
 
         }
 
-        public void fnRun(Victim v, List<string> lsMsg)
+        public void fnRun(clsVictim v, List<string> lsMsg)
         {
 
         }

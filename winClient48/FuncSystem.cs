@@ -163,7 +163,7 @@ namespace winClient48
                 }
             }
 
-            return $"{code}|{Crypto.b64E2Str(msg)}";
+            return $"{code}|{clsCrypto.b64E2Str(msg)}";
         }
 
         #endregion

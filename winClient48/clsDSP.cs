@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    public class DSP
+    public class clsDSP
     {
         //HEADER
         public const int HEADER_SIZE = 6; //6 BYTES
@@ -25,7 +25,7 @@ namespace winClient48
         public byte[] MoreData { get { return _MoreData; } }
 
         //CONSTRUCTOR-1
-        public DSP(byte[] buffer)
+        public clsDSP(byte[] buffer)
         {
             if (buffer == null || buffer.Length < HEADER_SIZE)
                 return;
@@ -55,7 +55,7 @@ namespace winClient48
             }
         }
         //CONSTRUCTOR-2
-        public DSP(byte cmd, byte para, byte[] msg)
+        public clsDSP(byte cmd, byte para, byte[] msg)
         {
             _Command = cmd;
             _Param = para;

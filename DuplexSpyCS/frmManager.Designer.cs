@@ -935,7 +935,7 @@
             // 
             toolStripMenuItem33.Name = "toolStripMenuItem33";
             toolStripMenuItem33.Size = new Size(177, 24);
-            toolStripMenuItem33.Text = "DLL Injection";
+            toolStripMenuItem33.Text = "Injector";
             toolStripMenuItem33.Click += toolStripMenuItem33_Click;
             // 
             // toolStripSeparator6

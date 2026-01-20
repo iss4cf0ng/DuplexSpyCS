@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
-    internal class clsIniManager
+    public class clsIniManager
     {
         public string Path { get; private set; }
 

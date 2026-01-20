@@ -42,6 +42,8 @@ namespace DuplexSpyCS
             socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             m_protocol = enListenerProtocol.TCP;
+
+            m_bIslistening = false;
         }
 
         ~clsTcpListener() => fnStop();
@@ -272,8 +274,14 @@ namespace DuplexSpyCS
                                     string dec_data = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(buffer.msg)), v._AES.key, v._AES.iv);
                                     string[] cmd = dec_data.Split("|");
 
-                                    //Received(this, v, buffer, 0);
-                                    fnReceivedDecoded(this, v, cmd.ToList());
+                                    try
+                                    {
+                                        fnReceivedDecoded(this, v, cmd.ToList());
+                                    }
+                                    catch (InvalidOperationException)
+                                    {
+
+                                    }
                                 }
                                 else if (dsp.Param == 1)
                                 {

@@ -178,7 +178,7 @@ namespace winClient48
                             break;
                     }
                     string type = GetValueTypeString((int)value_kind);
-                    l_values.Add($"{value_name},{type},{Crypto.b64E2Str(value)}");
+                    l_values.Add($"{value_name},{type},{clsCrypto.b64E2Str(value)}");
                 }
 
             }
@@ -232,7 +232,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -310,7 +310,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -402,7 +402,7 @@ namespace winClient48
                 msg = $"{ex.GetType().Name} - {ex.Message}";
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -433,7 +433,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -455,7 +455,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -553,7 +553,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }
@@ -597,7 +597,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            msg = Crypto.b64E2Str(msg);
+            msg = clsCrypto.b64E2Str(msg);
 
             return (code, msg);
         }

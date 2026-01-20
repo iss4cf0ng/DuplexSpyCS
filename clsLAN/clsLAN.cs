@@ -83,7 +83,7 @@ namespace clsLAN
             }
         }
 
-        public void fnRun(Victim v, List<string> lsMsg)
+        public void fnRun(clsVictim v, List<string> lsMsg)
         {
             if (lsMsg[0] == "init")
             {

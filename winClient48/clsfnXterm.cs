@@ -30,9 +30,9 @@ namespace winClient48
         //Callback
         public Action<byte[]> actOnOutput;
 
-        private Victim m_victim { get; set; }
+        private clsVictim m_victim { get; set; }
 
-        public clsfnXterm(Victim victim)
+        public clsfnXterm(clsVictim victim)
         {
             m_victim = victim;
 

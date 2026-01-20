@@ -22,7 +22,7 @@ namespace winClient48
         public bool snapshot = false;
         public bool monitor = false;
         public int nDelay { get; set; } = 100;
-        public Victim v;
+        public clsVictim v;
 
         public List<string> GetDevices()
         {

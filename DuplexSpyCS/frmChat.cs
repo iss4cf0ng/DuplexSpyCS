@@ -32,7 +32,7 @@ namespace DuplexSpyCS
         public void SendMsg()
         {
             textBox1.Text = textBox1.Text.Trim();
-            v.encSend(2, 0, $"chat|msg|{clsCrypto.b64E2Str(toolStripTextBox1.Text)}|{clsCrypto.b64E2Str(textBox1.Text)}");
+            v.fnSendCommand($"chat|msg|{clsCrypto.b64E2Str(toolStripTextBox1.Text)}|{clsCrypto.b64E2Str(textBox1.Text)}");
             ShowMsg(toolStripTextBox1.Text, textBox1.Text);
             textBox1.Text = string.Empty;
         }
@@ -46,7 +46,7 @@ namespace DuplexSpyCS
         void setup()
         {
             toolStripTextBox1.Text = "h4cKer";
-            v.encSend(2, 0, "chat|init");
+            v.fnSendCommand("chat|init");
         }
 
         private void frmChat_Load(object sender, EventArgs e)
@@ -56,7 +56,7 @@ namespace DuplexSpyCS
 
         private void frmChat_FormClosing(object sender, FormClosingEventArgs e)
         {
-            v.encSend(2, 0, "chat|close");
+            v.fnSendCommand("chat|close");
         }
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
@@ -74,17 +74,17 @@ namespace DuplexSpyCS
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "chat|max"); //MAXIMIZE
+            v.fnSendCommand("chat|max"); //MAXIMIZE
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "chat|min"); //MINIMIZE
+            v.fnSendCommand("chat|min"); //MINIMIZE
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "chat|n"); //NORMAL
+            v.fnSendCommand("chat|n"); //NORMAL
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    public class Crypto
+    public class clsCrypto
     {
         static int rsa_keySize = 4096;
         static int aes_keySize = 256;

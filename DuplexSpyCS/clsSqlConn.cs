@@ -66,6 +66,14 @@ namespace DuplexSpyCS
                     "Port",         //LISTENER'S PORT.
                     "Description",  //LISTENER'S DESCRIPTION.
                     "CreationDate", //LISTENER'S CREATION DATE.
+
+                    "CertPath",
+                    "CertPassword",
+                    
+                    "HttpHost",
+                    "HttpMethod",
+                    "HttpPath",
+                    "HttpUA",
                 }
             }
         };
@@ -268,8 +276,6 @@ namespace DuplexSpyCS
         public DataTable GetDataTable(string sql)
         {
             DataTable dt = new DataTable();
-            DataSet ds = new DataSet();
-            ds.Clear();
 
             try
             {
@@ -278,13 +284,16 @@ namespace DuplexSpyCS
                 
                 using (var data_adapter = new SQLiteDataAdapter(sql, sql_conn))
                 {
+                    DataSet ds = new DataSet();
                     data_adapter.Fill(ds);
-                    dt = ds.Tables[0];
+
+                    if (ds.Tables.Count > 0)
+                        dt = ds.Tables[0];
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "GetDataTable()", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return dt;
@@ -510,17 +519,14 @@ namespace DuplexSpyCS
         {
             if (fnbListenerExists(szName))
             {
-                string szQuery = $"SELECT * FROM \"Listener\" WHERE \"Name\" = \"{szName}\";";
-                DataTable dt = GetDataTable(szQuery);
-                DataRow dr = dt.Rows[0];
-                return new stListenerConfig()
+                var ls = fndtGetAllListener();
+                foreach (var l in ls)
                 {
-                    szName         = (string)dr["Name"],
-                    enProtocol     = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), (string)dr["Protocol"]),
-                    nPort          = int.Parse((string)dr["Port"]),
-                    szDescription  = (string)dr["Description"],
-                    dtCreationDate = DateTime.Parse((string)dr["CreationDate"]),
-                };
+                    if (string.Equals(l.szName, szName))
+                        return l;
+                }
+
+                return new stListenerConfig();
             }
             else
             {
@@ -543,6 +549,14 @@ namespace DuplexSpyCS
                     nPort          = int.Parse((string)dr["Port"]),
                     szDescription  = (string)dr["Description"],
                     dtCreationDate = DateTime.Parse((string)dr["CreationDate"]),
+
+                    szCertPath = (string)dr["CertPath"],
+                    szCertPassword = (string)dr["CertPassword"],
+
+                    szHttpHost = (string)dr["HttpHost"],
+                    httpMethod = (enHttpMethod)Enum.Parse(typeof(enHttpMethod), (string)dr["HttpMethod"]),
+                    szHttpPath = (string)dr["HttpPath"],
+                    szHttpUA = (string)dr["HttpUA"],
                 };
 
                 lListener.Add(config);
@@ -604,7 +618,7 @@ namespace DuplexSpyCS
         {
             try
             {
-                if (!fnbSaveListener(config))
+                if (!fnbSaveListenerValidate(config))
                     return false;
 
                 string szQuery = string.Empty;
@@ -614,7 +628,15 @@ namespace DuplexSpyCS
                         $"\"Protocol\"=\"{config.enProtocol}\"," +
                         $"\"Port\"=\"{config.nPort}\"," +
                         $"\"Description\"=\"{config.szDescription}\"," +
-                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\" " +
+                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\"," +
+                        
+                        $"\"CertPath\"=\"{config.szCertPath}\"," +
+                        $"\"CertPassword\"=\"{config.szCertPassword}\"," +
+                        
+                        $"\"HttpHost\"=\"{config.szHttpHost}\"," +
+                        $"\"HttpMethod\"=\"{Enum.GetName(config.httpMethod)}\"," +
+                        $"\"HttpPath\"=\"{config.szHttpPath}\"," +
+                        $"\"HttpUA\"=\"{config.szHttpUA}\" " +
                         $"WHERE \"Name\"=\"{config.szName}\";";
                 }
                 else
@@ -625,7 +647,15 @@ namespace DuplexSpyCS
                         $"\"{config.enProtocol}\"," +
                         $"\"{config.nPort} \"," +
                         $"\"{config.szDescription}\"," +
-                        $"\"{config.dtCreationDate.ToString("F")}\"" +
+                        $"\"{config.dtCreationDate.ToString("F")}\"," +
+                        
+                        $"\"{config.szCertPath}\"," +
+                        $"\"{config.szCertPassword}\"," +
+
+                        $"\"{config.szHttpHost}\"," +
+                        $"\"{Enum.GetName(config.httpMethod)}\"," +
+                        $"\"{config.szHttpPath}\"," +
+                        $"\"{config.szHttpUA}\"" +
                         $");";
                 }
 

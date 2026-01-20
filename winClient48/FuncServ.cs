@@ -57,7 +57,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return $"{code}|{Crypto.b64E2Str(string.Join(",", names.Select(x => Crypto.b64E2Str(x))))}|{Crypto.b64E2Str(msg)}";
+            return $"{code}|{clsCrypto.b64E2Str(string.Join(",", names.Select(x => clsCrypto.b64E2Str(x))))}|{clsCrypto.b64E2Str(msg)}";
         }
     }
 }

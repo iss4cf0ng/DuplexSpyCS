@@ -36,5 +36,16 @@ namespace winClient48
                 }
             }
         }
+
+        public static string fnGenerateRandomStr(int nLength = 10)
+        {
+            const string szPattern = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            StringBuilder sb = new StringBuilder();
+            Random rand = new Random();
+            for (int i = 0; i < nLength; i++)
+                sb.Append(szPattern[rand.Next(0, szPattern.Length)]);
+
+            return sb.ToString();
+        }
     }
 }

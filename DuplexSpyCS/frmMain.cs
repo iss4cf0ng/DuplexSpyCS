@@ -269,7 +269,8 @@ namespace DuplexSpyCS
                 {
                     if (cmd[1] == "client")
                     {
-                        frmClientConfig f = (frmClientConfig)clsTools.GetFormByVictim(v, Function.ClientConfig);
+                        //frmClientConfig f = (frmClientConfig)clsTools.GetFormByVictim(v, Function.ClientConfig);
+                        frmClientConfig f = clsTools.fnFindForm<frmClientConfig>(v);
                         if (f == null)
                             return;
 
@@ -1623,9 +1624,9 @@ namespace DuplexSpyCS
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            string szPorts = m_dicListener.Keys.Count == 0 ? string.Empty : string.Join(", ", m_dicListener.Keys.Select(x => m_dicListener[x]).Select(x => x.m_nPort.ToString()));
+            string szPorts = m_dicListener.Keys.Count == 0 ? string.Empty : string.Join(", ", m_dicListener.Keys.Select(x => m_dicListener[x]).Where(x => x.m_bIslistening).Select(x => x.m_nPort.ToString()));
 
-            Text = $"DuplexSpyCS v1.0.0 by ISSAC | " +
+            Text = $"DuplexSpyCS v2.0.0 by ISSAC | " +
                 $"Port[{szPorts}] | " +
                 $"Online[{listView1.Items.Count}] - " +
                 $"Implant[{listView2.Items.Count}] - " +
@@ -1881,10 +1882,11 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmClientConfig f = new frmClientConfig();
-                f.v = GetVictim(item);
+                clsVictim victim = GetVictim(item);
+
+                frmClientConfig f = new frmClientConfig(victim);
                 f.Tag = Function.ClientConfig;
-                f.Text = $@"ClientConfig\\{f.v.ID}";
+                f.Text = $@"ClientConfig\\{victim.ID}";
                 f.StartPosition = FormStartPosition.CenterScreen;
 
                 f.Show();

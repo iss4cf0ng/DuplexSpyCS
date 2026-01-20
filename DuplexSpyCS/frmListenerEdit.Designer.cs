@@ -33,6 +33,14 @@
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             tabPage2 = new TabPage();
+            checkBox1 = new CheckBox();
+            label9 = new Label();
+            textBox4 = new TextBox();
+            button3 = new Button();
+            button2 = new Button();
+            textBox3 = new TextBox();
+            label5 = new Label();
+            tabPage4 = new TabPage();
             button1 = new Button();
             textBox1 = new TextBox();
             label2 = new Label();
@@ -40,9 +48,17 @@
             textBox2 = new TextBox();
             numericUpDown1 = new NumericUpDown();
             label4 = new Label();
-            tabPage3 = new TabPage();
-            tabPage4 = new TabPage();
+            label12 = new Label();
+            textBox7 = new TextBox();
+            textBox6 = new TextBox();
+            label11 = new Label();
+            label10 = new Label();
+            textBox5 = new TextBox();
+            comboBox4 = new ComboBox();
+            label7 = new Label();
             tabControl1.SuspendLayout();
+            tabPage2.SuspendLayout();
+            tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
@@ -62,12 +78,12 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(281, 27);
             comboBox1.TabIndex = 1;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // tabControl1
             // 
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Controls.Add(tabPage3);
             tabControl1.Controls.Add(tabPage4);
             tabControl1.Location = new Point(12, 201);
             tabControl1.Name = "tabControl1";
@@ -88,6 +104,13 @@
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(checkBox1);
+            tabPage2.Controls.Add(label9);
+            tabPage2.Controls.Add(textBox4);
+            tabPage2.Controls.Add(button3);
+            tabPage2.Controls.Add(button2);
+            tabPage2.Controls.Add(textBox3);
+            tabPage2.Controls.Add(label5);
             tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -95,6 +118,85 @@
             tabPage2.TabIndex = 1;
             tabPage2.Text = "TLS";
             tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(251, 41);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(67, 23);
+            checkBox1.TabIndex = 13;
+            checkBox1.Text = "Show";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(16, 42);
+            label9.Name = "label9";
+            label9.Size = new Size(47, 19);
+            label9.TabIndex = 12;
+            label9.Text = "Pass :";
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new Point(69, 39);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(176, 27);
+            textBox4.TabIndex = 11;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(20, 72);
+            button3.Name = "button3";
+            button3.Size = new Size(298, 45);
+            button3.TabIndex = 10;
+            button3.Text = "Create Cert";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(251, 6);
+            button2.Name = "button2";
+            button2.Size = new Size(67, 27);
+            button2.TabIndex = 9;
+            button2.Text = "...";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(69, 6);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(176, 27);
+            textBox3.TabIndex = 8;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(18, 10);
+            label5.Name = "label5";
+            label5.Size = new Size(45, 19);
+            label5.TabIndex = 7;
+            label5.Text = "Cert :";
+            // 
+            // tabPage4
+            // 
+            tabPage4.Controls.Add(label12);
+            tabPage4.Controls.Add(textBox7);
+            tabPage4.Controls.Add(textBox6);
+            tabPage4.Controls.Add(label11);
+            tabPage4.Controls.Add(label10);
+            tabPage4.Controls.Add(textBox5);
+            tabPage4.Controls.Add(comboBox4);
+            tabPage4.Controls.Add(label7);
+            tabPage4.Location = new Point(4, 28);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Size = new Size(336, 178);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "HTTP";
+            tabPage4.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
@@ -156,23 +258,70 @@
             label4.TabIndex = 9;
             label4.Text = "Port :";
             // 
-            // tabPage3
+            // label12
             // 
-            tabPage3.Location = new Point(4, 28);
-            tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(336, 178);
-            tabPage3.TabIndex = 2;
-            tabPage3.Text = "DNS";
-            tabPage3.UseVisualStyleBackColor = true;
+            label12.AutoSize = true;
+            label12.Location = new Point(32, 6);
+            label12.Name = "label12";
+            label12.Size = new Size(48, 19);
+            label12.TabIndex = 24;
+            label12.Text = "Host :";
             // 
-            // tabPage4
+            // textBox7
             // 
-            tabPage4.Location = new Point(4, 28);
-            tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(336, 178);
-            tabPage4.TabIndex = 3;
-            tabPage4.Text = "HTTP";
-            tabPage4.UseVisualStyleBackColor = true;
+            textBox7.Location = new Point(86, 3);
+            textBox7.Name = "textBox7";
+            textBox7.Size = new Size(237, 27);
+            textBox7.TabIndex = 23;
+            // 
+            // textBox6
+            // 
+            textBox6.Location = new Point(86, 102);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(237, 27);
+            textBox6.TabIndex = 22;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(43, 105);
+            label11.Name = "label11";
+            label11.Size = new Size(37, 19);
+            label11.TabIndex = 21;
+            label11.Text = "UA :";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(33, 72);
+            label10.Name = "label10";
+            label10.Size = new Size(47, 19);
+            label10.TabIndex = 20;
+            label10.Text = "Path :";
+            // 
+            // textBox5
+            // 
+            textBox5.Location = new Point(86, 69);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(237, 27);
+            textBox5.TabIndex = 19;
+            // 
+            // comboBox4
+            // 
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Location = new Point(86, 36);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(237, 27);
+            comboBox4.TabIndex = 18;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(12, 39);
+            label7.Name = "label7";
+            label7.Size = new Size(71, 19);
+            label7.TabIndex = 17;
+            label7.Text = "Method :";
             // 
             // frmListenerEdit
             // 
@@ -198,6 +347,10 @@
             Text = "frmListenerEdit";
             Load += frmListenerEdit_Load;
             tabControl1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            tabPage4.ResumeLayout(false);
+            tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -217,7 +370,21 @@
         private TextBox textBox2;
         private NumericUpDown numericUpDown1;
         private Label label4;
-        private TabPage tabPage3;
         private TabPage tabPage4;
+        private CheckBox checkBox1;
+        private Label label9;
+        private TextBox textBox4;
+        private Button button3;
+        private Button button2;
+        private TextBox textBox3;
+        private Label label5;
+        private Label label12;
+        private TextBox textBox7;
+        private TextBox textBox6;
+        private Label label11;
+        private Label label10;
+        private TextBox textBox5;
+        private ComboBox comboBox4;
+        private Label label7;
     }
 }

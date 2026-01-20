@@ -17,10 +17,7 @@ namespace DuplexSpyCS
             m_protocol = enListenerProtocol.HTTP;
         }
 
-        ~clsHttpListener()
-        {
-
-        }
+        ~clsHttpListener() => fnStop();
 
         public override void fnStart()
         {

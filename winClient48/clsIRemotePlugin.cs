@@ -17,6 +17,6 @@ namespace winClient48
         string szDescription { get; }
         void Initialize();
 
-        void fnRun(Victim v, List<string> lsMsg);
+        void fnRun(clsVictim v, List<string> lsMsg);
     }
 }

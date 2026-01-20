@@ -16,7 +16,7 @@ namespace winClient48
     public partial class frmChat : Form
     {
         private bool allow_close = false;
-        public Victim v;
+        public clsVictim v;
 
         public frmChat()
         {
@@ -45,7 +45,7 @@ namespace winClient48
             Invoke(new Action(() =>
             {
                 string msg = textBox1.Text.Trim();
-                v.encSend(2, 0, "chat|msg|" + Crypto.b64E2Str(msg));
+                v.encSend(2, 0, "chat|msg|" + clsCrypto.b64E2Str(msg));
                 ShowMsg("You", msg);
                 textBox1.Text = string.Empty;
             }));

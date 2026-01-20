@@ -16,5 +16,10 @@ namespace DuplexSpyCS
         {
             InitializeComponent();
         }
+
+        private void frmFileFindEntry_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

