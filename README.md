@@ -1,7 +1,6 @@
 # 💢Todo
 - Fileless
 - DNS Resolution
-- TLS Listener
 - HTTP Listener
 
 # ✅Done
@@ -11,4 +10,5 @@
   - Browser Dumper
       - Chrome (v10)
 - Multiple Listener
+  - TLS
 - DLL Injection
