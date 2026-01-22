@@ -161,6 +161,9 @@ namespace DuplexSpyCS
             });
         }
 
+        /// <summary>
+        /// Refresh listview.
+        /// </summary>
         void fnRefresh()
         {
             listView1.Items.Clear();

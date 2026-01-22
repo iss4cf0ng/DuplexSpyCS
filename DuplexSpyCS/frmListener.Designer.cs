@@ -55,6 +55,7 @@
             toolStripMenuItem6 = new ToolStripMenuItem();
             toolStripMenuItem7 = new ToolStripMenuItem();
             toolStripMenuItem8 = new ToolStripMenuItem();
+            timer1 = new System.Windows.Forms.Timer(components);
             toolStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -141,6 +142,7 @@
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
             listView1.DoubleClick += listView1_DoubleClick;
+            listView1.KeyDown += listView1_KeyDown;
             // 
             // columnHeader1
             // 
@@ -182,40 +184,40 @@
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(180, 24);
+            toolStripMenuItem1.Size = new Size(174, 24);
             toolStripMenuItem1.Text = "Refresh";
             toolStripMenuItem1.Click += toolStripMenuItem1_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(171, 6);
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(180, 24);
+            toolStripMenuItem2.Size = new Size(174, 24);
             toolStripMenuItem2.Text = "New";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(180, 24);
+            toolStripMenuItem3.Size = new Size(174, 24);
             toolStripMenuItem3.Text = "Edit";
             toolStripMenuItem3.Click += toolStripMenuItem3_Click;
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(180, 24);
+            toolStripMenuItem4.Size = new Size(174, 24);
             toolStripMenuItem4.Text = "Delete";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(177, 6);
+            toolStripSeparator2.Size = new Size(171, 6);
             // 
             // toolStripMenuItem5
             // 
@@ -227,7 +229,7 @@
             // toolStripMenuItem6
             // 
             toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new Size(180, 24);
+            toolStripMenuItem6.Size = new Size(174, 24);
             toolStripMenuItem6.Text = "Start All";
             toolStripMenuItem6.Click += toolStripMenuItem6_Click;
             // 
@@ -241,9 +243,13 @@
             // toolStripMenuItem8
             // 
             toolStripMenuItem8.Name = "toolStripMenuItem8";
-            toolStripMenuItem8.Size = new Size(180, 24);
+            toolStripMenuItem8.Size = new Size(174, 24);
             toolStripMenuItem8.Text = "Stop All";
             toolStripMenuItem8.Click += toolStripMenuItem8_Click;
+            // 
+            // timer1
+            // 
+            timer1.Tick += timer1_Tick;
             // 
             // frmListener
             // 
@@ -258,6 +264,7 @@
             Name = "frmListener";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmListener";
+            FormClosed += frmListener_FormClosed;
             Load += frmListener_Load;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
@@ -295,5 +302,6 @@
         private ToolStripMenuItem toolStripMenuItem7;
         private ToolStripMenuItem toolStripMenuItem8;
         private ColumnHeader columnHeader6;
+        private System.Windows.Forms.Timer timer1;
     }
 }

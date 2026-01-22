@@ -53,7 +53,6 @@ namespace DuplexSpyCS
 
         public override void fnStop()
         {
-            //base.fnStop();
             m_listener.Stop();
             m_bIslistening = false;
         }

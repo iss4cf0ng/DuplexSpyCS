@@ -585,11 +585,17 @@ namespace DuplexSpyCS
             {
                 stListenerConfig stCheckConfig = fnGetListener(szName);
                 return (
-                    config.szName         == stCheckConfig.szName &&
-                    config.enProtocol     == stCheckConfig.enProtocol &&
-                    config.nPort          == stCheckConfig.nPort &&
-                    config.szDescription  == stCheckConfig.szDescription &&
-                    config.dtCreationDate == stCheckConfig.dtCreationDate
+                    Equals(stCheckConfig.enProtocol, config.enProtocol) &&
+                    Equals(stCheckConfig.szDescription, config.szDescription) &&
+                    Equals(stCheckConfig.nPort, config.nPort) &&
+                    
+                    Equals(stCheckConfig.szCertPath, config.szCertPath) &&
+                    Equals(stCheckConfig.szCertPassword, config.szCertPassword) &&
+
+                    Equals(stCheckConfig.httpMethod, config.httpMethod) &&
+                    Equals(stCheckConfig.szHttpHost, config.szHttpHost) &&
+                    Equals(stCheckConfig.szHttpPath, config.szHttpPath) &&
+                    Equals(stCheckConfig.szHttpUA, config.szHttpUA)
                 );
             }
             catch (Exception ex)

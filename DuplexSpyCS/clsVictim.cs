@@ -156,6 +156,10 @@ public class clsVictim
         fnSslSendRaw(abBuffer);
     }
 
+    /// <summary>
+    /// Send SSL raw data.
+    /// </summary>
+    /// <param name="abBuffer"></param>
     public void fnSslSendRaw(byte[] abBuffer)
     {
         m_sslClnt.BeginWrite(abBuffer, 0, abBuffer.Length, new AsyncCallback((ar) =>
