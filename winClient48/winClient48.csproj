@@ -85,6 +85,7 @@
     <Compile Include="AntiProcess.cs" />
     <Compile Include="clsEZData.cs" />
     <Compile Include="clsfnXterm.cs" />
+    <Compile Include="clsHttpReq.cs" />
     <Compile Include="clsIRemotePlugin.cs" />
     <Compile Include="clsPluginContext.cs" />
     <Compile Include="clsPluginMgr.cs" />

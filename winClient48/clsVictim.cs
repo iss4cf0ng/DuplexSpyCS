@@ -55,7 +55,7 @@ namespace winClient48
             if (msg != null)
             {
                 byte[] buffer = new clsDSP((byte)cmd, (byte)param, msg).GetBytes();
-                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.Partial, new AsyncCallback((ar) =>
+                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
                     try
                     {
@@ -66,6 +66,28 @@ namespace winClient48
                         
                     }
                 }), buffer);
+            }
+        }
+
+        public void Send(byte[] abBuffer)
+        {
+            try
+            {
+                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                {
+                    try
+                    {
+                        socket.EndSend(ar);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }), abBuffer);
+            }
+            catch (Exception ex)
+            {
+
             }
         }
 

@@ -42,6 +42,10 @@ namespace DuplexSpyCS
             tabControl1.ItemSize = new Size(0, 1);
             tabControl1.SizeMode = TabSizeMode.Fixed;
 
+            //HTTP
+            textBox7.Text = "www.google.com";
+
+
             if (!string.IsNullOrEmpty(m_config.szName))
             {
                 for (int i = 0; i < comboBox1.Items.Count; i++)
