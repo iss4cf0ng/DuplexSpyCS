@@ -243,6 +243,7 @@
             comboBox3.Name = "comboBox3";
             comboBox3.Size = new Size(203, 27);
             comboBox3.TabIndex = 13;
+            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
             // 
             // label14
             // 

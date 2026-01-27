@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Net.Security;
 using Plugin.Abstractions48;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Windows.Forms;
 
 namespace winClient48
 {
@@ -81,13 +83,13 @@ namespace winClient48
                     }
                     catch (Exception ex)
                     {
-
+                        //MessageBox.Show(ex.Message);
                     }
                 }), abBuffer);
             }
             catch (Exception ex)
             {
-
+                //MessageBox.Show(ex.Message);
             }
         }
 
@@ -131,7 +133,7 @@ namespace winClient48
                     fnSslSendRAW(Encoding.UTF8.GetBytes(payload));
                     break;
                 case enProtocol.HTTP:
-
+                    fnHttpSend(payload);
                     break;
             }
         }
@@ -162,6 +164,18 @@ namespace winClient48
 
                 }
             }), abData);
+        }
+
+        public void fnHttpSend(string[] asMsg) => fnHttpSend(asMsg.ToList());
+        public void fnHttpSend(List<string> lsMsg) => fnHttpSend(string.Join("|", lsMsg));
+        public void fnHttpSend(string szMsg) => fnHttpSend(2, 0, szMsg);
+        public void fnHttpSend(int nCmd, int nParam, string szMsg)
+        {
+            clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, Encoding.UTF8.GetBytes(szMsg));
+            string szBody = Convert.ToBase64String(dsp.GetBytes());
+
+            clsHttpReq req = new clsHttpReq("www.google.com", "/", clsHttpReq.enMethod.POST, "", szBody);
+            Send(req.fnabGetRequest());
         }
 
         public void fnSendCmdParam(int nCmd, int nParam)

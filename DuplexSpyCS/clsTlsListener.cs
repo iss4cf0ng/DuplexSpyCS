@@ -156,7 +156,6 @@ namespace DuplexSpyCS
                                     try
                                     {
                                         fnReceivedDecoded(this, victim, lsMsg);
-                                        victim.fnSendCommand("x");
                                     }
                                     catch (InvalidOperationException)
                                     {
@@ -171,7 +170,6 @@ namespace DuplexSpyCS
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
                 clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
                 fnDisconnected(victim);
             }
