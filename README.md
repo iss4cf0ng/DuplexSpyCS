@@ -1,7 +1,6 @@
 # 💢Todo
 - Fileless
 - DNS Resolution
-- HTTP Listener
 
 # ✅Done
 - Virtual Terminal (Interactive Shell)
@@ -11,4 +10,5 @@
       - Chrome (v10)
 - Multiple Listener
   - TLS
+  - HTTP
 - DLL Injection
