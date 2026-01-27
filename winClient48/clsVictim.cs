@@ -133,7 +133,7 @@ namespace winClient48
                     fnSslSendRAW(Encoding.UTF8.GetBytes(payload));
                     break;
                 case enProtocol.HTTP:
-                    fnHttpSend(payload);
+                    fnHttpSend(clsCrypto.AESEncrypt(payload, _AES.key, _AES.iv));
                     break;
             }
         }
