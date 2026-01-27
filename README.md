@@ -1,8 +1,5 @@
-# 💢Todo
-- Fileless
-- DNS Resolution
-
 # ✅Done
+- DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
 - Basis Remote Plugin
   - Basic InfoSpyder
