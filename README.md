@@ -1,3 +1,10 @@
+# Todo list
+- Shellcode injection.
+
+# Debug
+- DLL Injection
+- TLS error.
+
 # ✅Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
@@ -8,4 +15,3 @@
 - Multiple Listener
   - TLS
   - HTTP
-- DLL Injection
