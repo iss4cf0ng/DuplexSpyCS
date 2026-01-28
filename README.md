@@ -1,9 +1,19 @@
-# Todo list
+# Todo List
 - Shellcode injection.
 
 # Debug
 - DLL Injection
 - TLS error.
+
+# Solved
+- Detail -> Column width error.
+- Muti-Desktop display error.
+- File transfer: Percentage display error.
+
+# New
+- Maximum files/folders warning.
+- TaskMgr -> Regex search bar.
+- ConneInfo -> Regex search bar.
 
 # ✅Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
