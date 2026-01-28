@@ -11,6 +11,7 @@
 - Muti-Desktop display error.
 - File transfer: Percentage display error.
 - Terminal -> Resize issues.
+- Regedit -> Refresh problem.
 
 # New
 - Maximum files/folders warning.
