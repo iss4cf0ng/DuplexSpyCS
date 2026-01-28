@@ -314,10 +314,11 @@ namespace DuplexSpyCS
         private void timer1_Tick(object sender, EventArgs e)
         {
             List<clsListener> ls = m_dicListener.Values.ToList();
-            int nTCP = ls.Select(x => x.m_protocol == enListenerProtocol.TCP).ToList().Count;
-            int nTLS = ls.Select(x => x.m_protocol == enListenerProtocol.TLS).ToList().Count;
+            int nTCP = ls.Where(x => x.m_protocol == enListenerProtocol.TCP).ToList().Count;
+            int nTLS = ls.Where(x => x.m_protocol == enListenerProtocol.TLS).ToList().Count;
+            int nHTTP = ls.Where(x => x.m_protocol == enListenerProtocol.HTTP).ToList().Count;
 
-            Text = $"Listener | TCP[{nTCP}], TLS[{nTLS}]";
+            Text = $"Listener | TCP[{nTCP}], TLS[{nTLS}], HTTP[{nHTTP}]";
             toolStripStatusLabel1.Text = $"Listener[{listView1.Items.Count}]";
         }
 

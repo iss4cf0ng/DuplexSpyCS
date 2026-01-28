@@ -30,6 +30,10 @@ namespace winClient48
 
         public enProtocol m_protocol { get; set; }
 
+        //Lock
+        private readonly object _tcpWriteLock = new object();
+        private readonly object _sslWriteLock = new object();
+
         public clsVictim(Socket socket)
         {
             this.socket = socket;
@@ -57,17 +61,21 @@ namespace winClient48
             if (msg != null)
             {
                 byte[] buffer = new clsDSP((byte)cmd, (byte)param, msg).GetBytes();
-                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                
+                lock (_tcpWriteLock)
                 {
-                    try
+                    socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                     {
-                        socket.EndSend(ar);
-                    }
-                    catch (Exception ex)
-                    {
-                        
-                    }
-                }), buffer);
+                        try
+                        {
+                            socket.EndSend(ar);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }), buffer);
+                }
             }
         }
 
@@ -75,17 +83,20 @@ namespace winClient48
         {
             try
             {
-                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                lock(_tcpWriteLock)
                 {
-                    try
+                    socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                     {
-                        socket.EndSend(ar);
-                    }
-                    catch (Exception ex)
-                    {
-                        //MessageBox.Show(ex.Message);
-                    }
-                }), abBuffer);
+                        try
+                        {
+                            socket.EndSend(ar);
+                        }
+                        catch (Exception ex)
+                        {
+                            //MessageBox.Show(ex.Message);
+                        }
+                    }), abBuffer);
+                }
             }
             catch (Exception ex)
             {
@@ -153,17 +164,21 @@ namespace winClient48
         public void fnSslSendRAW(int nCmd, int nParam, byte[] abBuffer)
         {
             byte[] abData = new clsDSP((byte)nCmd, (byte)nParam, abBuffer).GetBytes();
-            m_sslClnt.BeginWrite(abData, 0, abData.Length, new AsyncCallback((ar) =>
+            
+            lock (_sslWriteLock)
             {
-                try
+                m_sslClnt.BeginWrite(abData, 0, abData.Length, new AsyncCallback((ar) =>
                 {
-                    m_sslClnt.EndWrite(ar);
-                }
-                catch (Exception ex)
-                {
+                    try
+                    {
+                        m_sslClnt.EndWrite(ar);
+                    }
+                    catch (Exception ex)
+                    {
 
-                }
-            }), abData);
+                    }
+                }), abData);
+            }
         }
 
         public void fnHttpSend(string[] asMsg) => fnHttpSend(asMsg.ToList());

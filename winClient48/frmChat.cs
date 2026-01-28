@@ -45,7 +45,7 @@ namespace winClient48
             Invoke(new Action(() =>
             {
                 string msg = textBox1.Text.Trim();
-                v.encSend(2, 0, "chat|msg|" + clsCrypto.b64E2Str(msg));
+                v.SendCommand("chat|msg|" + clsCrypto.b64E2Str(msg));
                 ShowMsg("You", msg);
                 textBox1.Text = string.Empty;
             }));
@@ -53,7 +53,7 @@ namespace winClient48
 
         void setup()
         {
-            v.encSend(2, 0, "chat|init");
+            v.SendCommand("chat|init");
             timer1.Start();
         }
 

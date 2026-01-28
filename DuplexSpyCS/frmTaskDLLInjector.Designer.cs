@@ -36,10 +36,11 @@
             button2 = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
-            label3 = new Label();
             tabPage2 = new TabPage();
             textBox3 = new TextBox();
             label4 = new Label();
+            textBox4 = new TextBox();
+            textBox5 = new TextBox();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -85,7 +86,7 @@
             // 
             textBox2.Location = new Point(52, 6);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(310, 27);
+            textBox2.Size = new Size(325, 27);
             textBox2.TabIndex = 3;
             // 
             // button2
@@ -110,7 +111,7 @@
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(label3);
+            tabPage1.Controls.Add(textBox4);
             tabPage1.Controls.Add(textBox2);
             tabPage1.Controls.Add(label2);
             tabPage1.Location = new Point(4, 28);
@@ -118,20 +119,12 @@
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(383, 129);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "tabPage1";
+            tabPage1.Text = "Native DLL";
             tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(6, 68);
-            label3.Name = "label3";
-            label3.Size = new Size(51, 19);
-            label3.TabIndex = 5;
-            label3.Text = "label3";
             // 
             // tabPage2
             // 
+            tabPage2.Controls.Add(textBox5);
             tabPage2.Controls.Add(textBox3);
             tabPage2.Controls.Add(label4);
             tabPage2.Location = new Point(4, 28);
@@ -139,7 +132,7 @@
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(383, 129);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "tabPage2";
+            tabPage2.Text = "CSharp DLL";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // textBox3
@@ -157,6 +150,24 @@
             label4.Size = new Size(49, 19);
             label4.TabIndex = 6;
             label4.Text = "Args :";
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new Point(6, 39);
+            textBox4.Multiline = true;
+            textBox4.Name = "textBox4";
+            textBox4.ReadOnly = true;
+            textBox4.Size = new Size(371, 84);
+            textBox4.TabIndex = 5;
+            // 
+            // textBox5
+            // 
+            textBox5.Location = new Point(6, 39);
+            textBox5.Multiline = true;
+            textBox5.Name = "textBox5";
+            textBox5.ReadOnly = true;
+            textBox5.Size = new Size(371, 84);
+            textBox5.TabIndex = 7;
             // 
             // frmTaskDLLInjector
             // 
@@ -195,9 +206,10 @@
         private Button button2;
         private TabControl tabControl1;
         private TabPage tabPage1;
-        private Label label3;
         private TabPage tabPage2;
         private TextBox textBox3;
         private Label label4;
+        private TextBox textBox4;
+        private TextBox textBox5;
     }
 }

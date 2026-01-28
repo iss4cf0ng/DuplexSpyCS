@@ -18,6 +18,7 @@ namespace DuplexSpyCS
         public List<clsVictim> l_victim = new List<clsVictim>(); //Victim LIST
 
         private List<clsVictim> m_lsVictim = new List<clsVictim>();
+        public List<clsVictim> Victims { get { return m_lsVictim; } }
 
         //STATUS
         public int _received_bytes = 0;

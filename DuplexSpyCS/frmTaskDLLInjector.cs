@@ -35,6 +35,9 @@ namespace DuplexSpyCS
         private void fnSetup()
         {
             textBox2.Text = m_nProcId.ToString();
+
+            textBox4.Text = "This method is used for native DLL injection only.";
+            textBox5.Text = "This method is used for C# DLL injection only.";
         }
 
         private void frmTaskDLLInjector_Load(object sender, EventArgs e)

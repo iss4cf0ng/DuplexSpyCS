@@ -14,6 +14,9 @@ namespace DuplexSpyCS
     {
         private X509Certificate m_certificate { get; set; }
         private TcpListener m_listener { get; set; }
+        
+        private List<clsVictim> m_lsVictim = new List<clsVictim>();
+        public List<clsVictim> Victims { get { return m_lsVictim; } }
 
         public clsTlsListener(string szName, int nPort, string szDescription, string szCertPath, string szCertPassword)
         {
@@ -106,6 +109,7 @@ namespace DuplexSpyCS
                 return;
 
             clsVictim victim = (clsVictim)ar.AsyncState;
+            m_lsVictim.Add(victim);
 
             try
             {
@@ -172,6 +176,8 @@ namespace DuplexSpyCS
             {
                 clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
                 fnDisconnected(victim);
+
+                m_lsVictim.Remove(victim);
             }
         }
     }

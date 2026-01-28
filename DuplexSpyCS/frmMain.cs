@@ -1638,7 +1638,10 @@ namespace DuplexSpyCS
         {
             int width = listView1.Columns[0].Width;
             if (width < 256)
+            {
                 il_screen.ImageSize = new Size(width, width);
+                screen_width = width;
+            }
         }
 
         //VIEW - LARGE ICON
@@ -1646,9 +1649,12 @@ namespace DuplexSpyCS
         {
             listView1.View = View.LargeIcon;
             screen_BigWidth = 255;
+            il_screen.ImageSize = new Size(screen_BigWidth, screen_BigWidth);
             listView1.Columns[0].Width = screen_BigWidth;
             foreach (ListViewItem item in listView1.Items)
                 item.Text = item.SubItems[1].Text + "@" + item.SubItems[3].Text;
+
+            listView1.Refresh();
         }
 
         //VIEW - DETAIL
@@ -1656,8 +1662,13 @@ namespace DuplexSpyCS
         {
             listView1.View = View.Details;
             listView1.Columns[0].Width = screen_width;
+
+            il_screen.ImageSize = new Size(screen_width, screen_width);
+
             foreach (ListViewItem item in listView1.Items)
                 item.Text = string.Empty;
+
+            listView1.Refresh();
         }
 
         //WEBCAM
