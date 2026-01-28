@@ -1,9 +1,5 @@
-# 💢Todo
-- Fileless
-- DNS Resolution
-- HTTP Listener
-
 # ✅Done
+- DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
 - Basis Remote Plugin
   - Basic InfoSpyder
@@ -11,4 +7,5 @@
       - Chrome (v10)
 - Multiple Listener
   - TLS
+  - HTTP
 - DLL Injection
