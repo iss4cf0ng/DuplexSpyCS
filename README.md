@@ -1,3 +1,6 @@
+# Todo List
+- Rewrite the file transfer algorithm.
+
 # ✅Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
