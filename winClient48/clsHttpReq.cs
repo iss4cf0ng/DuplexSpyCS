@@ -8,11 +8,11 @@ namespace winClient48
 {
     internal class clsHttpReq
     {
-        private string m_szHost { get; set; }
-        private string m_szPath { get; set; }
-        private enMethod m_method { get; set; }
-        private string m_szUA { get; set; }
-        private string m_szMsg { get; set; }
+        private string m_szHost { get; set; } //HTTP host.
+        private string m_szPath { get; set; } //HTTP path.
+        private enMethod m_method { get; set; } //HTTP request method.
+        private string m_szUA { get; set; } //Client user-agent.
+        private string m_szMsg { get; set; } //Body.
 
         public clsHttpReq(string szHost, string szPath, enMethod method, string szUA, string szMsg)
         {
@@ -40,5 +40,4 @@ namespace winClient48
             return Encoding.UTF8.GetBytes(szResp);
         }
     }
-
 }

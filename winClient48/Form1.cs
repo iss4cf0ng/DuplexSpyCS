@@ -149,13 +149,16 @@ namespace winClient48
             private void CheckCompleted()
             {
                 bool done = file_bytes >= file_len;
+
+                string szProgress = ((double)file_bytes * 100 / file_len).ToString("0.00") + "%";
+
                 string data = string.Join("|", new string[]
                 {
                     "file",
                     "uf",
                     "state",
                     clsCrypto.b64E2Str(file_path),
-                    done ? "OK" : ((float)(file_bytes * 100 / file_len)).ToString("F2") + " %",
+                    done ? "OK" : szProgress
                 });
 
                 v.SendCommand(data);

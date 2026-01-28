@@ -563,7 +563,7 @@ namespace DuplexSpyCS
             m_victim.m_listener.ReceivedDecoded += fnRecv;
 
             richTextBox1.Font = new Font("Consolas", 11);
-            textBox1.Tag = -1;
+            textBox1.Tag = 0;
 
             fnRefresh();
         }
@@ -606,12 +606,19 @@ namespace DuplexSpyCS
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            void fnCursorGotoTheEnd()
+            {
+                textBox1.SelectionStart = textBox1.Text.Length + 1;
+                textBox1.SelectionLength = 0;
+                textBox1.Focus();
+            }
+
             if (e.KeyCode == Keys.Enter)
             {
                 if (!string.IsNullOrEmpty(textBox1.Text))
                 {
                     m_lsCommandHistory.Add(textBox1.Text);
-                    textBox1.Tag = m_lsCommandHistory.Count - 1;
+                    textBox1.Tag = m_lsCommandHistory.Count;
 
                     List<string> lsArgs = textBox1.Text.Split(' ').ToList();
                     fnCommandHandler(lsArgs);
@@ -621,31 +628,39 @@ namespace DuplexSpyCS
             }
             else if (e.KeyCode == Keys.Up)
             {
+                if (m_lsCommandHistory.Count == 0)
+                    return;
+
                 int nIndex = (int)textBox1.Tag;
                 if (nIndex == 0)
                 {
                     textBox1.Text = m_lsCommandHistory[0];
+                    fnCursorGotoTheEnd();
                     return;
                 }
 
                 textBox1.Text = m_lsCommandHistory[nIndex - 1];
                 textBox1.Tag = nIndex - 1;
 
-                textBox1.SelectionStart = textBox1.Text.Length;
+                fnCursorGotoTheEnd();
             }
             else if (e.KeyCode == Keys.Down)
             {
+                if (m_lsCommandHistory.Count == 0)
+                    return;
+
                 int nIndex = (int)textBox1.Tag;
-                if (nIndex == m_lsCommandHistory.Count - 1)
+                if (nIndex == m_lsCommandHistory.Count)
                 {
                     textBox1.Text = m_lsCommandHistory.Last();
+                    fnCursorGotoTheEnd();
                     return;
                 }
 
-                textBox1.Text = m_lsCommandHistory[nIndex + 1];
+                textBox1.Text = m_lsCommandHistory[nIndex];
                 textBox1.Tag = nIndex + 1;
 
-                textBox1.SelectionStart = textBox1.Text.Length;
+                fnCursorGotoTheEnd();
             }
         }
 

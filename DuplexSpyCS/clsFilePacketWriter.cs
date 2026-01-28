@@ -85,7 +85,8 @@ namespace DuplexSpyCS
             {
                 if (f is frmFileTransferState && ((frmFileTransferState)f).transfer_type == TransferFileType.Download)
                 {
-                    ((frmFileTransferState)f).UpdateState(remote_file, done ? "OK" : ((float)(file_bytes * 100 / file_len)).ToString("F2") + " %");
+                    string szProgress = ((double)file_bytes * 100 / file_len).ToString("0.00") + "%";
+                    ((frmFileTransferState)f).UpdateState(remote_file, done ? "OK" : szProgress);
                 }
             }
             if (done)
