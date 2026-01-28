@@ -4,6 +4,7 @@
 # Debug
 - DLL Injection
 - TLS error.
+- WQL Console commands issues.
 
 # Solved
 - Detail -> Column width error.
