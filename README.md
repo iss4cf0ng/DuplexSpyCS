@@ -9,6 +9,7 @@
 - Detail -> Column width error.
 - Muti-Desktop display error.
 - File transfer: Percentage display error.
+- Terminal -> Resize issues.
 
 # New
 - Maximum files/folders warning.
