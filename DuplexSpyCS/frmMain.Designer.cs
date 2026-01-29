@@ -119,6 +119,7 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
+            toolStripMenuItem20 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -133,7 +134,7 @@
             contextMenuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem11, toolStripMenuItem6, toolStripSeparator2, toolStripMenuItem25, toolStripMenuItem1, toolStripMenuItem2, toolStripMenuItem3, toolStripMenuItem8, toolStripMenuItem24, toolStripMenuItem7, toolStripMenuItem9, toolStripMenuItem44, toolStripSeparator3, toolStripMenuItem10, toolStripMenuItem27, toolStripMenuItem33, toolStripMenuItem16, toolStripMenuItem37 });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(170, 400);
+            contextMenuStrip1.Size = new Size(181, 422);
             // 
             // toolStripMenuItem11
             // 
@@ -170,23 +171,23 @@
             // 
             // toolStripMenuItem2
             // 
-            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem45, toolStripMenuItem22 });
+            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem20, toolStripMenuItem45, toolStripMenuItem22 });
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(169, 24);
+            toolStripMenuItem2.Size = new Size(180, 24);
             toolStripMenuItem2.Text = "Console";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
             // toolStripMenuItem45
             // 
             toolStripMenuItem45.Name = "toolStripMenuItem45";
-            toolStripMenuItem45.Size = new Size(189, 24);
-            toolStripMenuItem45.Text = "Virtual Terminal";
+            toolStripMenuItem45.Size = new Size(180, 24);
+            toolStripMenuItem45.Text = "Xterm Shell";
             toolStripMenuItem45.Click += toolStripMenuItem45_Click;
             // 
             // toolStripMenuItem22
             // 
             toolStripMenuItem22.Name = "toolStripMenuItem22";
-            toolStripMenuItem22.Size = new Size(189, 24);
+            toolStripMenuItem22.Size = new Size(180, 24);
             toolStripMenuItem22.Text = "WQL Console";
             toolStripMenuItem22.Click += toolStripMenuItem22_Click;
             // 
@@ -287,40 +288,40 @@
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new Size(180, 24);
+            toolStripMenuItem14.Size = new Size(161, 24);
             toolStripMenuItem14.Text = "Desktop";
             toolStripMenuItem14.Click += toolStripMenuItem14_Click;
             // 
             // toolStripMenuItem15
             // 
             toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(180, 24);
+            toolStripMenuItem15.Size = new Size(161, 24);
             toolStripMenuItem15.Text = "Webcam";
             toolStripMenuItem15.Click += toolStripMenuItem15_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(177, 6);
+            toolStripSeparator4.Size = new Size(158, 6);
             // 
             // toolStripMenuItem17
             // 
             toolStripMenuItem17.Name = "toolStripMenuItem17";
-            toolStripMenuItem17.Size = new Size(180, 24);
+            toolStripMenuItem17.Size = new Size(161, 24);
             toolStripMenuItem17.Text = "Lock Screen";
             toolStripMenuItem17.Click += toolStripMenuItem17_Click;
             // 
             // toolStripMenuItem23
             // 
             toolStripMenuItem23.Name = "toolStripMenuItem23";
-            toolStripMenuItem23.Size = new Size(180, 24);
+            toolStripMenuItem23.Size = new Size(161, 24);
             toolStripMenuItem23.Text = "Run Script";
             toolStripMenuItem23.Click += toolStripMenuItem23_Click;
             // 
             // toolStripMenuItem32
             // 
             toolStripMenuItem32.Name = "toolStripMenuItem32";
-            toolStripMenuItem32.Size = new Size(180, 24);
+            toolStripMenuItem32.Size = new Size(161, 24);
             toolStripMenuItem32.Text = "URL";
             toolStripMenuItem32.Click += toolStripMenuItem32_Click;
             // 
@@ -334,14 +335,14 @@
             // toolStripMenuItem28
             // 
             toolStripMenuItem28.Name = "toolStripMenuItem28";
-            toolStripMenuItem28.Size = new Size(180, 24);
+            toolStripMenuItem28.Size = new Size(154, 24);
             toolStripMenuItem28.Text = "Reconnect";
             toolStripMenuItem28.Click += toolStripMenuItem28_Click;
             // 
             // toolStripMenuItem29
             // 
             toolStripMenuItem29.Name = "toolStripMenuItem29";
-            toolStripMenuItem29.Size = new Size(180, 24);
+            toolStripMenuItem29.Size = new Size(154, 24);
             toolStripMenuItem29.Text = "Disconnect";
             toolStripMenuItem29.Click += toolStripMenuItem29_Click;
             // 
@@ -355,21 +356,21 @@
             // toolStripMenuItem34
             // 
             toolStripMenuItem34.Name = "toolStripMenuItem34";
-            toolStripMenuItem34.Size = new Size(180, 24);
+            toolStripMenuItem34.Size = new Size(135, 24);
             toolStripMenuItem34.Text = "Sleep";
             toolStripMenuItem34.Click += toolStripMenuItem34_Click;
             // 
             // toolStripMenuItem35
             // 
             toolStripMenuItem35.Name = "toolStripMenuItem35";
-            toolStripMenuItem35.Size = new Size(180, 24);
+            toolStripMenuItem35.Size = new Size(135, 24);
             toolStripMenuItem35.Text = "Update";
             toolStripMenuItem35.Click += toolStripMenuItem35_Click;
             // 
             // toolStripMenuItem36
             // 
             toolStripMenuItem36.Name = "toolStripMenuItem36";
-            toolStripMenuItem36.Size = new Size(180, 24);
+            toolStripMenuItem36.Size = new Size(135, 24);
             toolStripMenuItem36.Text = "Remove";
             toolStripMenuItem36.Click += toolStripMenuItem36_Click;
             // 
@@ -383,7 +384,7 @@
             // toolStripMenuItem18
             // 
             toolStripMenuItem18.Name = "toolStripMenuItem18";
-            toolStripMenuItem18.Size = new Size(180, 24);
+            toolStripMenuItem18.Size = new Size(165, 24);
             toolStripMenuItem18.Text = "Open Folder";
             toolStripMenuItem18.Click += toolStripMenuItem18_Click;
             // 
@@ -391,7 +392,7 @@
             // 
             toolStripMenuItem19.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem30, toolStripMenuItem31 });
             toolStripMenuItem19.Name = "toolStripMenuItem19";
-            toolStripMenuItem19.Size = new Size(180, 24);
+            toolStripMenuItem19.Size = new Size(165, 24);
             toolStripMenuItem19.Text = "High Light";
             toolStripMenuItem19.Click += toolStripMenuItem19_Click;
             // 
@@ -758,6 +759,13 @@
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
+            // toolStripMenuItem20
+            // 
+            toolStripMenuItem20.Name = "toolStripMenuItem20";
+            toolStripMenuItem20.Size = new Size(180, 24);
+            toolStripMenuItem20.Text = "Pipe Shell";
+            toolStripMenuItem20.Click += toolStripMenuItem20_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(10F, 20F);
@@ -876,5 +884,6 @@
         private ColumnHeader columnHeader18;
         private ToolStripMenuItem toolStripMenuItem44;
         private ToolStripMenuItem toolStripMenuItem45;
+        private ToolStripMenuItem toolStripMenuItem20;
     }
 }

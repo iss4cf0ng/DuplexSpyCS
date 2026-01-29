@@ -243,6 +243,18 @@ namespace DuplexSpyCS
 
                                 clsStore.sent_bytes += abBuffer.Length;
                             }
+                            else if (nParam == 1)
+                            {
+                                await Task.Run(() =>
+                                {
+                                    int nDelay = 1000;
+                                    DateTime datetime = DateTime.Now;
+                                    TimeSpan span = datetime - victim.last_sent;
+                                    victim.latency_time = span.Milliseconds;
+                                    victim.last_sent = datetime;
+                                    victim.fnHttpSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                });
+                            }
                         }
                     }
                     catch (ObjectDisposedException)

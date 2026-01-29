@@ -41,14 +41,14 @@
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem5 = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripDropDownButton3 = new ToolStripDropDownButton();
+            toolStripMenuItem6 = new ToolStripMenuItem();
+            toolStripMenuItem7 = new ToolStripMenuItem();
             toolStripButton2 = new ToolStripButton();
             toolStripButton1 = new ToolStripButton();
             contextMenuStrip1 = new ContextMenuStrip(components);
             textBox2 = new TextBox();
             button2 = new Button();
-            toolStripDropDownButton3 = new ToolStripDropDownButton();
-            toolStripMenuItem6 = new ToolStripMenuItem();
-            toolStripMenuItem7 = new ToolStripMenuItem();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -155,6 +155,30 @@
             toolStripMenuItem3.Text = "Clear";
             toolStripMenuItem3.Click += toolStripMenuItem3_Click;
             // 
+            // toolStripDropDownButton3
+            // 
+            toolStripDropDownButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton3.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem6, toolStripMenuItem7 });
+            toolStripDropDownButton3.Image = (Image)resources.GetObject("toolStripDropDownButton3.Image");
+            toolStripDropDownButton3.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButton3.Name = "toolStripDropDownButton3";
+            toolStripDropDownButton3.Size = new Size(72, 23);
+            toolStripDropDownButton3.Text = "History";
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new Size(114, 24);
+            toolStripMenuItem6.Text = "File";
+            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
+            // 
+            // toolStripMenuItem7
+            // 
+            toolStripMenuItem7.Name = "toolStripMenuItem7";
+            toolStripMenuItem7.Size = new Size(114, 24);
+            toolStripMenuItem7.Text = "Clear";
+            toolStripMenuItem7.Click += toolStripMenuItem7_Click;
+            // 
             // toolStripButton2
             // 
             toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
@@ -204,30 +228,6 @@
             button2.UseVisualStyleBackColor = false;
             button2.Click += button2_Click;
             // 
-            // toolStripDropDownButton3
-            // 
-            toolStripDropDownButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripDropDownButton3.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem6, toolStripMenuItem7 });
-            toolStripDropDownButton3.Image = (Image)resources.GetObject("toolStripDropDownButton3.Image");
-            toolStripDropDownButton3.ImageTransparentColor = Color.Magenta;
-            toolStripDropDownButton3.Name = "toolStripDropDownButton3";
-            toolStripDropDownButton3.Size = new Size(72, 23);
-            toolStripDropDownButton3.Text = "History";
-            // 
-            // toolStripMenuItem6
-            // 
-            toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new Size(180, 24);
-            toolStripMenuItem6.Text = "File";
-            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
-            // 
-            // toolStripMenuItem7
-            // 
-            toolStripMenuItem7.Name = "toolStripMenuItem7";
-            toolStripMenuItem7.Size = new Size(180, 24);
-            toolStripMenuItem7.Text = "Clear";
-            toolStripMenuItem7.Click += toolStripMenuItem7_Click;
-            // 
             // frmShell
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -244,6 +244,7 @@
             Margin = new Padding(4);
             Name = "frmShell";
             Text = "frmShell";
+            FormClosed += frmShell_FormClosed;
             Load += frmShell_Load;
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();

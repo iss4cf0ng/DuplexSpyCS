@@ -315,12 +315,11 @@ namespace DuplexSpyCS
             {
                 //MessageBox.Show(ex.Message);
                 clsStore.sql_conn.WriteErrorLogs(v, ex.Message);
-                l_victim.Remove(v);
-                fnDisconnected(v);
             }
             finally
             {
-                
+                fnDisconnected(v);
+                l_victim.Remove(v);
             }
         }
     }

