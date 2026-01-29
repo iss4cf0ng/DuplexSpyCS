@@ -9,16 +9,13 @@
 # Solved
 - Detail -> Column width error.
 - Muti-Desktop display error.
-- File transfer: Percentage display error.
+- File transfer:
+  - Percentage display error.
+  - Improved "Find".
 - Terminal -> Resize issues.
 - Regedit -> Refresh problem.
 
-# New
-- Maximum files/folders warning.
-- TaskMgr -> Regex search bar.
-- ConneInfo -> Regex search bar.
-
-# ✅Done
+# ✅ Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
 - Basis Remote Plugin
@@ -28,3 +25,9 @@
 - Multiple Listener
   - TLS
   - HTTP
+
+# ✅ New
+- Maximum files/folders warning.
+- TaskMgr -> Regex search bar.
+- ConneInfo -> Regex search bar.
+- UAC Prompt.
