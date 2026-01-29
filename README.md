@@ -3,7 +3,6 @@
 
 # Debug
 - DLL Injection
-- TLS error.
 - WQL Console commands issues.
 
 # Solved
@@ -16,6 +15,7 @@
 - Regedit -> Refresh problem.
 - UI display error.
 - Errors when reusing virtual terminal.
+- TLS error.
 
 # ✅ Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
