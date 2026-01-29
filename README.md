@@ -1,6 +1,6 @@
 # Todo List
 - Shellcode injection.
-- Simple Ransomware Plugin
+- Simple Ransomware Plugin.
 
 # Debug
 - DLL Injection
