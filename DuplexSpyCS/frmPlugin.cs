@@ -128,6 +128,15 @@ namespace DuplexSpyCS
                     }
 
                     fnPrintOK("Unload plugin successfully: " + szName);
+                    Invoke(new Action(() =>
+                    {
+                        ListViewItem item = listView1.FindItemWithText(szName, true, 0);
+                        if (item == null)
+                            return;
+
+                        m_dicLoadedPlugin.Remove(szName);
+                        item.SubItems[2].Text = "Unloaded";
+                    }));
                 }
             }
         }

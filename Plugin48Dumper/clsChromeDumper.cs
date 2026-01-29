@@ -36,9 +36,6 @@ namespace Plugin48Dumper
         private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
         private string WebDataFile { get { return Path.Combine(DefaultDir, "Web Data"); } }
 
-        private string fnConnString(string szFilePath) => $"Data Source={szFilePath};Version=3;Read Only=True;";
-        private string fnNewTempFilePath() => Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-
         public Dictionary<string, string> m_dicModule = new Dictionary<string, string>()
         {
             {
@@ -409,23 +406,6 @@ namespace Plugin48Dumper
                 var nextPath = string.IsNullOrEmpty(name) ? szCurrentPath : $"{szCurrentPath}/{name}";
 
                 fnParseNode(child, nextPath, output);
-            }
-        }
-
-        private DateTime? fnChromeTimeToDateTime(long webkitTime)
-        {
-            if (webkitTime <= 0)
-                return null;
-
-            try
-            {
-                DateTime epoch = new DateTime(1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-                return epoch.AddTicks(webkitTime * 10);
-            }
-            catch
-            {
-                return null;
             }
         }
 

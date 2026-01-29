@@ -58,6 +58,6 @@ namespace Plugin.Abstractions48
         public static void fnLogOK(string szMsg) => Console.WriteLine($"[+] {szMsg}");
         public static void fnLogInfo(string szMsg) => Console.WriteLine($"[*] {szMsg}");
         public static void fnLogError(string szMsg) => Console.WriteLine($"[-] {szMsg}");
-        public static void fnLogWarnign(string szMsg) => Console.WriteLine($"[!] {szMsg}");
+        public static void fnLogWarning(string szMsg) => Console.WriteLine($"[!] {szMsg}");
     }
 }
