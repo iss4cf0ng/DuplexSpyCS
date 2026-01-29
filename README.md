@@ -15,6 +15,7 @@
 - Terminal -> Resize issues.
 - Regedit -> Refresh problem.
 - UI display error.
+- Errors when reusing virtual terminal.
 
 # ✅ Done
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
