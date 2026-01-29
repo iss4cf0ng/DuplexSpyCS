@@ -3,21 +3,18 @@
 
 # Debug
 - DLL Injection
-- TLS error.
 - WQL Console commands issues.
 
-# Solved
-- Detail -> Column width error.
-- Muti-Desktop display error.
-- File transfer:
-  - Percentage display error.
-  - Improved "Find".
-- Terminal -> Resize issues.
-- Regedit -> Refresh problem.
-- UI display error.
-- Errors when reusing virtual terminal.
+# ✅ New
+- UAC Prompt.
+- Maximum files/folders warning.
+- TaskMgr -> Regex search bar.
+- ConneInfo -> Regex search bar.
 
 # ✅ Done
+- Decrypting Chrome cookies.
+- Extracting Mobzilla history records.
+- Extracting Mobzilla cookies.
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
 - Basis Remote Plugin
@@ -28,8 +25,14 @@
   - TLS
   - HTTP
 
-# ✅ New
-- Maximum files/folders warning.
-- TaskMgr -> Regex search bar.
-- ConneInfo -> Regex search bar.
-- UAC Prompt.
+# ✅ Solved
+- Detail -> Column width error.
+- Muti-Desktop display error.
+- File transfer:
+  - Percentage display error.
+  - Improved "Find".
+- Terminal -> Resize issues.
+- Regedit -> Refresh problem.
+- UI display error.
+- Errors when reusing virtual terminal.
+- TLS error.
