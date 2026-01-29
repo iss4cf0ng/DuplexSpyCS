@@ -5,7 +5,7 @@
 - DLL Injection
 - WQL Console commands issues.
 
-# Solved
+# ✅ Solved
 - Detail -> Column width error.
 - Muti-Desktop display error.
 - File transfer:
