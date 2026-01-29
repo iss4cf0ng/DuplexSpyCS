@@ -9,12 +9,12 @@ using System.Diagnostics;
 
 namespace winClient48
 {
-    internal class FuncPower
+    internal class clsfnPower
     {
         [DllImport("powrprof.dll", SetLastError = true)]
         private static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
 
-        public FuncPower()
+        public clsfnPower()
         {
 
         }

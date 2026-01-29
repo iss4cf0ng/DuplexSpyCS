@@ -13,9 +13,9 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    internal class FuncFun
+    internal class clsfnFun
     {
-        public FuncFun()
+        public clsfnFun()
         {
             System.Windows.Forms.Timer timerCheckStatus = new System.Windows.Forms.Timer();
             timerCheckStatus.Tick += TimerCheckStatus_Tick;

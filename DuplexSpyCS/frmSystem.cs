@@ -24,9 +24,11 @@ namespace DuplexSpyCS
         private Dictionary<string, DeviceInfo> dic_Devices = new Dictionary<string, DeviceInfo>();
         private ImageList il_devices = new ImageList();
 
-        public frmSystem()
+        public frmSystem(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         #region Application
@@ -44,6 +46,8 @@ namespace DuplexSpyCS
                 "InstallSource",
                 "InstallLocation",
             };
+            listView1.Columns.Clear();
+            listView1.Items.Clear();
             listView1.Columns.AddRange(cols.Select(x => new ColumnHeader() { Text = x, Width = 200 }).ToArray());
 
             listView1.View = View.Details;
@@ -69,6 +73,9 @@ namespace DuplexSpyCS
         //DEVICES
         void init_Device()
         {
+            treeView1.Nodes.Clear();
+            il_devices.Images.Clear();
+
             v.fnSendCommand("system|device|init");
         }
         public void Device_ShowDevices(List<string[]> devices)
@@ -177,6 +184,10 @@ namespace DuplexSpyCS
                 "Status",
                 "MAC Address",
             };
+
+            listView2.Items.Clear();
+            listView2.Columns.Clear();
+
             listView2.Columns.AddRange(cols.Select(x => new ColumnHeader() { Text = x, Width = 200 }).ToArray());
 
             listView2.View = View.Details;
@@ -216,6 +227,10 @@ namespace DuplexSpyCS
                 "Type",
                 "Value",
             };
+
+            listView3.Items.Clear();
+            listView3.Columns.Clear();
+
             listView3.Columns.AddRange(cols.Select(x => new ColumnHeader() { Text = x, Width = 200 }).ToArray());
 
             listView3.View = View.Details;
@@ -349,6 +364,78 @@ namespace DuplexSpyCS
         private void toolStripMenuItem9_Click(object sender, EventArgs e)
         {
             treeView1.CollapseAll();
+        }
+
+        //Application
+        private void listView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                foreach (ListViewItem item in listView1.Items)
+                    item.Selected = true;
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    init_App();
+                }
+            }
+        }
+
+        private void tabControl1_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        //Device Mgr.
+        private void treeView1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    init_Device();
+                }
+            }
+        }
+
+        //Internet
+        private void listView2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                foreach (ListViewItem item in listView2.Items)
+                    item.Selected = true;
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    init_if();
+                }
+            }
+        }
+
+        //Environment Variables
+        private void listView3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.Control)
+            {
+                foreach (ListViewItem item in listView3.Items)
+                    item.Selected = true;
+            }
+            else
+            {
+                if (e.KeyCode == Keys.F5)
+                {
+                    init_EV();
+                }
+            }
         }
     }
 }

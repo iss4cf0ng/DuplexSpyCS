@@ -23,9 +23,11 @@ namespace DuplexSpyCS
         private clsIniManager ini_manager;
         public clsVictim v;
 
-        public frmFunStuff()
+        public frmFunStuff(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         void SendFun(params string[] para) => v.SendCommand(string.Join("|", new string[] { "fun" }.Concat(para).ToArray()));

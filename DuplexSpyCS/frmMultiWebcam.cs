@@ -83,10 +83,17 @@ namespace DuplexSpyCS
 
                 if (idx + idx_start < l_victim.Count)
                 {
-                    frmWebcam f = new frmWebcam();
-                    f.Tag = Function.Webcam;
-                    f.v = l_victim[idx + idx_start];
-                    f.Show();
+                    clsVictim v = l_victim[idx + idx_start];
+                    frmWebcam f = clsTools.fnFindForm<frmWebcam>(v);
+                    if (f == null)
+                    {
+                        f = new frmWebcam(v);
+                        f.Show();
+                    }
+                    else
+                    {
+                        f.BringToFront();
+                    }
                 }
             }
         }

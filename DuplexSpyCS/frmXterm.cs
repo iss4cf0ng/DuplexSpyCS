@@ -23,6 +23,9 @@ namespace DuplexSpyCS
             m_szInitDir = szInitDir;
 
             textBox1.Text = @"C:\Windows\System32\cmd.exe";
+
+            Text = @$"Virtual Terminal\\{victim.ID}";
+            StartPosition = FormStartPosition.CenterScreen;
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
@@ -108,6 +111,11 @@ namespace DuplexSpyCS
         }
 
         private void webView21_Resize(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void frmXterm_Resize(object sender, EventArgs e)
         {
             if (webView21.CoreWebView2 != null)
             {

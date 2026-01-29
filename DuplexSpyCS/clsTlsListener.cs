@@ -176,7 +176,9 @@ namespace DuplexSpyCS
             {
                 clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
                 fnDisconnected(victim);
-
+            }
+            finally
+            {
                 m_lsVictim.Remove(victim);
             }
         }

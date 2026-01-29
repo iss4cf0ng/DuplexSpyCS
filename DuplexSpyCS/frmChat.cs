@@ -14,9 +14,11 @@ namespace DuplexSpyCS
     {
         public clsVictim v;
 
-        public frmChat()
+        public frmChat(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         public void ShowMsg(string user, string msg)

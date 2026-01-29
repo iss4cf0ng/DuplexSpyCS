@@ -34,9 +34,11 @@ namespace DuplexSpyCS
         private List<TreeNode> ls_tnTitle = new List<TreeNode>();
         private List<TreeNode> ls_tnDate = new List<TreeNode>();
 
-        public frmKeyLogger()
+        public frmKeyLogger(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         private void RegexSearch(int idx_start, string text)

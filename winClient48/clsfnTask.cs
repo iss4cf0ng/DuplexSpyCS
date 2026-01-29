@@ -9,7 +9,7 @@ using System.IO;
 
 namespace winClient48
 {
-    public class FuncTask
+    public class clsfnTask
     {
         public string GetProcess()
         {

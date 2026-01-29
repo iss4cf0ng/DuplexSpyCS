@@ -105,6 +105,7 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(945, 466);
             tabControl1.TabIndex = 1;
+            tabControl1.KeyDown += tabControl1_KeyDown;
             // 
             // tabPage1
             // 
@@ -128,6 +129,7 @@
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
+            listView1.KeyDown += listView1_KeyDown;
             // 
             // toolStrip4
             // 
@@ -158,10 +160,10 @@
             tabPage2.Controls.Add(treeView1);
             tabPage2.Controls.Add(statusStrip2);
             tabPage2.Controls.Add(toolStrip2);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(937, 434);
+            tabPage2.Size = new Size(937, 438);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Device Mgr";
             tabPage2.UseVisualStyleBackColor = true;
@@ -171,17 +173,18 @@
             treeView1.Dock = DockStyle.Fill;
             treeView1.Location = new Point(3, 29);
             treeView1.Name = "treeView1";
-            treeView1.Size = new Size(931, 378);
+            treeView1.Size = new Size(931, 382);
             treeView1.TabIndex = 0;
             treeView1.BeforeSelect += treeView1_BeforeSelect;
             treeView1.AfterSelect += treeView1_AfterSelect;
             treeView1.DoubleClick += treeView1_DoubleClick;
+            treeView1.KeyDown += treeView1_KeyDown;
             // 
             // statusStrip2
             // 
             statusStrip2.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip2.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel2 });
-            statusStrip2.Location = new Point(3, 407);
+            statusStrip2.Location = new Point(3, 411);
             statusStrip2.Name = "statusStrip2";
             statusStrip2.Size = new Size(931, 24);
             statusStrip2.TabIndex = 2;
@@ -247,6 +250,7 @@
             listView2.Size = new Size(937, 389);
             listView2.TabIndex = 2;
             listView2.UseCompatibleStateImageBehavior = false;
+            listView2.KeyDown += listView2_KeyDown;
             // 
             // statusStrip3
             // 
@@ -292,6 +296,7 @@
             listView3.TabIndex = 0;
             listView3.UseCompatibleStateImageBehavior = false;
             listView3.DoubleClick += listView3_DoubleClick;
+            listView3.KeyDown += listView3_KeyDown;
             // 
             // statusStrip4
             // 

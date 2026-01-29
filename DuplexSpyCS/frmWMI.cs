@@ -15,9 +15,11 @@ namespace DuplexSpyCS
         public clsVictim v;
         private int idx_prompt;
 
-        public frmWMI()
+        public frmWMI(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         public void ShowOutput(string data)

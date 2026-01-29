@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    public class FuncMouse
+    public class clsfnMouse
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
         private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);

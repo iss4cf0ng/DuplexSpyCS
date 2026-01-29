@@ -194,6 +194,7 @@ namespace DuplexSpyCS
         public string szStartUpName;
         public bool bRegistry;
         public string szRegKeyName;
+        public bool bUAC;
 
         //Misc
         public string szKeylogFileName;

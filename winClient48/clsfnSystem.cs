@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    internal class FuncSystem
+    internal class clsfnSystem
     {
         private string regKey_uninstall = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
         private string query_device = "SELECT * FROM Win32_PnpEntity";
 
-        public FuncSystem()
+        public clsfnSystem()
         {
 
         }

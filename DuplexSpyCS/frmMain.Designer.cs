@@ -287,40 +287,40 @@
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new Size(161, 24);
+            toolStripMenuItem14.Size = new Size(180, 24);
             toolStripMenuItem14.Text = "Desktop";
             toolStripMenuItem14.Click += toolStripMenuItem14_Click;
             // 
             // toolStripMenuItem15
             // 
             toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(161, 24);
+            toolStripMenuItem15.Size = new Size(180, 24);
             toolStripMenuItem15.Text = "Webcam";
             toolStripMenuItem15.Click += toolStripMenuItem15_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(158, 6);
+            toolStripSeparator4.Size = new Size(177, 6);
             // 
             // toolStripMenuItem17
             // 
             toolStripMenuItem17.Name = "toolStripMenuItem17";
-            toolStripMenuItem17.Size = new Size(161, 24);
+            toolStripMenuItem17.Size = new Size(180, 24);
             toolStripMenuItem17.Text = "Lock Screen";
             toolStripMenuItem17.Click += toolStripMenuItem17_Click;
             // 
             // toolStripMenuItem23
             // 
             toolStripMenuItem23.Name = "toolStripMenuItem23";
-            toolStripMenuItem23.Size = new Size(161, 24);
+            toolStripMenuItem23.Size = new Size(180, 24);
             toolStripMenuItem23.Text = "Run Script";
             toolStripMenuItem23.Click += toolStripMenuItem23_Click;
             // 
             // toolStripMenuItem32
             // 
             toolStripMenuItem32.Name = "toolStripMenuItem32";
-            toolStripMenuItem32.Size = new Size(161, 24);
+            toolStripMenuItem32.Size = new Size(180, 24);
             toolStripMenuItem32.Text = "URL";
             toolStripMenuItem32.Click += toolStripMenuItem32_Click;
             // 
@@ -334,14 +334,14 @@
             // toolStripMenuItem28
             // 
             toolStripMenuItem28.Name = "toolStripMenuItem28";
-            toolStripMenuItem28.Size = new Size(154, 24);
+            toolStripMenuItem28.Size = new Size(180, 24);
             toolStripMenuItem28.Text = "Reconnect";
             toolStripMenuItem28.Click += toolStripMenuItem28_Click;
             // 
             // toolStripMenuItem29
             // 
             toolStripMenuItem29.Name = "toolStripMenuItem29";
-            toolStripMenuItem29.Size = new Size(154, 24);
+            toolStripMenuItem29.Size = new Size(180, 24);
             toolStripMenuItem29.Text = "Disconnect";
             toolStripMenuItem29.Click += toolStripMenuItem29_Click;
             // 
@@ -355,21 +355,21 @@
             // toolStripMenuItem34
             // 
             toolStripMenuItem34.Name = "toolStripMenuItem34";
-            toolStripMenuItem34.Size = new Size(135, 24);
+            toolStripMenuItem34.Size = new Size(180, 24);
             toolStripMenuItem34.Text = "Sleep";
             toolStripMenuItem34.Click += toolStripMenuItem34_Click;
             // 
             // toolStripMenuItem35
             // 
             toolStripMenuItem35.Name = "toolStripMenuItem35";
-            toolStripMenuItem35.Size = new Size(135, 24);
+            toolStripMenuItem35.Size = new Size(180, 24);
             toolStripMenuItem35.Text = "Update";
             toolStripMenuItem35.Click += toolStripMenuItem35_Click;
             // 
             // toolStripMenuItem36
             // 
             toolStripMenuItem36.Name = "toolStripMenuItem36";
-            toolStripMenuItem36.Size = new Size(135, 24);
+            toolStripMenuItem36.Size = new Size(180, 24);
             toolStripMenuItem36.Text = "Remove";
             toolStripMenuItem36.Click += toolStripMenuItem36_Click;
             // 
@@ -383,7 +383,7 @@
             // toolStripMenuItem18
             // 
             toolStripMenuItem18.Name = "toolStripMenuItem18";
-            toolStripMenuItem18.Size = new Size(165, 24);
+            toolStripMenuItem18.Size = new Size(180, 24);
             toolStripMenuItem18.Text = "Open Folder";
             toolStripMenuItem18.Click += toolStripMenuItem18_Click;
             // 
@@ -391,7 +391,7 @@
             // 
             toolStripMenuItem19.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem30, toolStripMenuItem31 });
             toolStripMenuItem19.Name = "toolStripMenuItem19";
-            toolStripMenuItem19.Size = new Size(165, 24);
+            toolStripMenuItem19.Size = new Size(180, 24);
             toolStripMenuItem19.Text = "High Light";
             toolStripMenuItem19.Click += toolStripMenuItem19_Click;
             // 
@@ -419,22 +419,22 @@
             // toolStripMenuItem38
             // 
             toolStripMenuItem38.Name = "toolStripMenuItem38";
-            toolStripMenuItem38.Size = new Size(143, 24);
+            toolStripMenuItem38.Size = new Size(204, 24);
             toolStripMenuItem38.Text = "Online ID";
             toolStripMenuItem38.Click += toolStripMenuItem38_Click;
             // 
             // toolStripMenuItem39
             // 
             toolStripMenuItem39.Name = "toolStripMenuItem39";
-            toolStripMenuItem39.Size = new Size(143, 24);
-            toolStripMenuItem39.Text = "IP";
+            toolStripMenuItem39.Size = new Size(204, 24);
+            toolStripMenuItem39.Text = "IPv4 Address";
             toolStripMenuItem39.Click += toolStripMenuItem39_Click;
             // 
             // toolStripMenuItem41
             // 
             toolStripMenuItem41.Name = "toolStripMenuItem41";
-            toolStripMenuItem41.Size = new Size(143, 24);
-            toolStripMenuItem41.Text = "OS";
+            toolStripMenuItem41.Size = new Size(204, 24);
+            toolStripMenuItem41.Text = "Operating System";
             toolStripMenuItem41.Click += toolStripMenuItem41_Click;
             // 
             // toolStrip1

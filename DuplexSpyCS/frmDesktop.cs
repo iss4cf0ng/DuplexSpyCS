@@ -26,7 +26,7 @@ namespace DuplexSpyCS
             public int DisplayQuality;
         }
 
-        public clsVictim v;
+        public clsVictim v { get; set; }
         private Dictionary<string, Dictionary<string, int>> monitor_info = new Dictionary<string, Dictionary<string, int>>();
         private Label fps_label = new Label();
         private bool capture = false;
@@ -43,9 +43,11 @@ namespace DuplexSpyCS
         private DateTime fps_last_time;
         private TimeSpan fps_span;
 
-        public frmDesktop()
+        public frmDesktop(clsVictim victim)
         {
             InitializeComponent();
+
+            v = victim;
         }
 
         private Bitmap Base64ToBitmap(string b64_str)

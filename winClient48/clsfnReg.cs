@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    public class FuncReg
+    public class clsfnReg
     {
         private RegistryHive StringToRegistryHive(string hiveString)
         {

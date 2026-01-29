@@ -183,7 +183,6 @@ namespace winClient48
             {
                 await m_sslClnt.WriteAsync(abData, 0, abData.Length);
                 //await m_sslClnt.FlushAsync();
-                await Task.Yield();
             }
             catch (Exception ex)
             {
@@ -228,7 +227,7 @@ namespace winClient48
             Send(req.fnabGetRequest());
         }
 
-        public void fnSendCmdParam(int nCmd, int nParam)
+        public async void fnSendCmdParam(int nCmd, int nParam)
         {
             string szMsg = clsEZData.fnGenerateRandomStr();
             byte[] abData = Encoding.UTF8.GetBytes(szMsg);
@@ -239,7 +238,7 @@ namespace winClient48
                     Send(nParam, nParam, abData);
                     break;
                 case enProtocol.TLS:
-                    fnSslSendRAW(nCmd, nParam, abData);
+                    await fnSslSendRAW(nCmd, nParam, abData);
                     break;
             }
         }

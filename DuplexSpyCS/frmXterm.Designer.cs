@@ -86,6 +86,7 @@
             FormClosed += frmXterm_FormClosed;
             Load += frmXterm_Load;
             SizeChanged += frmXterm_SizeChanged;
+            Resize += frmXterm_Resize;
             ((System.ComponentModel.ISupportInitialize)webView21).EndInit();
             ResumeLayout(false);
             PerformLayout();

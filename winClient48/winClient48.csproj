@@ -88,9 +88,9 @@
     <Compile Include="clsHttpReq.cs" />
     <Compile Include="clsIRemotePlugin.cs" />
     <Compile Include="clsPluginContext.cs" />
-    <Compile Include="clsPluginMgr.cs" />
+    <Compile Include="clsfnPluginMgr.cs" />
     <Compile Include="clsCrypto.cs" />
-    <Compile Include="clsLoader.cs" />
+    <Compile Include="clsfnLoader.cs" />
     <Compile Include="clsDSP.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -110,28 +110,28 @@
     <Compile Include="frmLockScreen.Designer.cs">
       <DependentUpon>frmLockScreen.cs</DependentUpon>
     </Compile>
-    <Compile Include="FuncConn.cs" />
-    <Compile Include="FuncFile.cs" />
-    <Compile Include="FuncFun.cs" />
-    <Compile Include="FuncInfo.cs" />
-    <Compile Include="FuncMouse.cs" />
-    <Compile Include="FuncPower.cs" />
-    <Compile Include="FuncReg.cs" />
-    <Compile Include="FuncRunScript.cs" />
-    <Compile Include="FuncServ.cs" />
-    <Compile Include="FuncSystem.cs" />
-    <Compile Include="FuncTask.cs" />
+    <Compile Include="clsfnConn.cs" />
+    <Compile Include="clsfnFile.cs" />
+    <Compile Include="clsfnFun.cs" />
+    <Compile Include="clsfnInfo.cs" />
+    <Compile Include="clsfnMouse.cs" />
+    <Compile Include="clsfnPower.cs" />
+    <Compile Include="clsfnReg.cs" />
+    <Compile Include="clsfnRunScript.cs" />
+    <Compile Include="clsfnServ.cs" />
+    <Compile Include="clsfnSystem.cs" />
+    <Compile Include="clsfnTask.cs" />
     <Compile Include="FuncWindow.cs" />
-    <Compile Include="Global.cs" />
-    <Compile Include="Installer.cs" />
+    <Compile Include="clsGlobal.cs" />
+    <Compile Include="clsInstaller.cs" />
     <Compile Include="KeyBoard.cs" />
     <Compile Include="KeyLogger.cs" />
     <Compile Include="MicAudio.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RemoteShell.cs" />
+    <Compile Include="clsfnRemoteShell.cs" />
     <Compile Include="clsVictim.cs" />
-    <Compile Include="Webcam.cs" />
+    <Compile Include="clsfnWebcam.cs" />
     <Compile Include="WinAPI.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

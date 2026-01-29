@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    internal class Installer
+    internal class clsInstaller
     {
         public string[] m_args { get; set; }
 
@@ -31,7 +31,7 @@ namespace winClient48
 
         private RegistryKey reg_key;
 
-        public Installer()
+        public clsInstaller()
         {
             reg_key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
         }
@@ -47,6 +47,9 @@ namespace winClient48
             {
                 RegRun();
             }
+
+            if (m_bUAC)
+                UAC();
         }
 
         /// <summary>
@@ -108,7 +111,17 @@ namespace winClient48
                     UseShellExecute = true,
                     Verb = "runas", //TRIGGER THE UAC PROMPT
                 };
-                Process.Start(info);
+                
+                try
+                {
+                    Process.Start(info);
+                }
+                catch
+                {
+
+                }
+
+                Environment.Exit(0);
             }
         }
 

@@ -11,19 +11,27 @@ using Plugin.Abstractions48;
 
 namespace winClient48
 {
-    public class clsPluginMgr
+    public class clsfnPluginMgr
     {
         private readonly Dictionary<string, IPlugin> _plugins =
-        new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
-        public Dictionary<string, IPlugin> Plugins { get { return _plugins; } }
+            new Dictionary<string, IPlugin>(StringComparer.OrdinalIgnoreCase);
 
-        private readonly IPluginContext _context;
+        public Dictionary<string, IPlugin> Plugins { get { return _plugins; } } //Plugin dictionary.
 
-        public clsPluginMgr(IPluginContext context)
+        private readonly IPluginContext _context; //Plugin context.
+
+        public clsfnPluginMgr(IPluginContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Print table in the console.
+        /// </summary>
+        /// <param name="szDescription"></param>
+        /// <param name="szUsage"></param>
+        /// <param name="dt"></param>
+        /// <returns></returns>
         private string fnPrintHelp(string szDescription, string szUsage, DataTable dt)
         {
             if (dt == null || dt.Columns.Count == 0)
@@ -90,6 +98,13 @@ namespace winClient48
             _plugins.Add(plugin.Name, plugin);
         }
 
+        /// <summary>
+        /// Execute the plugin with specified arguments.
+        /// </summary>
+        /// <param name="pluginName">Plugin's name.</param>
+        /// <param name="args">Arguments.</param>
+        /// <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
         public object Execute(string pluginName, IDictionary<string, object> args)
         {
             if (!_plugins.TryGetValue(pluginName, out var plugin))
@@ -114,6 +129,10 @@ namespace winClient48
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Unload specified plugin.
+        /// </summary>
+        /// <param name="pluginName">Plugin's name.</param>
         public void Unload(string pluginName)
         {
             if (_plugins.TryGetValue(pluginName, out var plugin))
@@ -123,6 +142,9 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// Unload all plugin.
+        /// </summary>
         public void UnloadAll()
         {
             foreach (var p in _plugins.Values)

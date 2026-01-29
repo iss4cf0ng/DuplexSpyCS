@@ -85,7 +85,7 @@ namespace winClient48
                             string szFilePath = "[Access Denial]";
                             if (proc != null && proc?.Id != null)
                             {
-                                string[] aResult = Global.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}");
+                                string[] aResult = clsGlobal.WMI_QueryNoEncode($"select ExecutablePath from win32_process where ProcessId = {proc.Id}");
 
                                 if (aResult != null && aResult.Length > 0)
                                     szFilePath = aResult[0];

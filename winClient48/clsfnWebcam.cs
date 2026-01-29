@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    internal class Webcam
+    internal class clsfnWebcam
     {
         private FilterInfoCollection videoDevices;
         public VideoCaptureDevice videoSource;

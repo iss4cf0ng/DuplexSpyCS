@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    internal class clsLoader
+    internal class clsfnLoader
     {
-        public clsLoader()
+        public clsfnLoader()
         {
 
         }

@@ -52,6 +52,9 @@ namespace DuplexSpyCS
             }
 
             timer1.Start();
+
+            toolStripStatusLabel1.Text = $"Screen[{l_victim.Count}]";
+            toolStripStatusLabel3.Text = string.Empty;
         }
 
         private void frmMultiDesktop_Load(object sender, EventArgs e)
@@ -79,10 +82,18 @@ namespace DuplexSpyCS
             {
                 int idx_start = (idx_page - 1) * 9;
                 int idx = (int)pb.Tag;
-                frmDesktop f = new frmDesktop();
-                f.Tag = Function.Desktop;
-                f.v = l_victim[idx + idx_start];
-                f.Show();
+
+                clsVictim victim = l_victim[idx + idx_start];
+                frmDesktop f = clsTools.fnFindForm<frmDesktop>(victim);
+                if (f == null)
+                {
+                    f = new frmDesktop(victim);
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 

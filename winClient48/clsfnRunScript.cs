@@ -13,9 +13,9 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    internal class FuncRunScript
+    internal class clsfnRunScript
     {
-        public FuncRunScript()
+        public clsfnRunScript()
         {
 
         }

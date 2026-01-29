@@ -7,8 +7,13 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    public class FuncConn
+    public class clsfnConn
     {
+        public clsfnConn()
+        {
+
+        }
+
         public string GetConn()
         {
             List<string> result = new List<string>();
