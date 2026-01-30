@@ -1,5 +1,9 @@
 # Todo List
-- Shellcode injection.
+- Shellcode Injection
+  - Completed function.
+- DLL Injection. 
+  - Completed function.
+
 - Simple Ransomware Plugin.
 
 # Debug
@@ -11,11 +15,24 @@
 - Maximum files/folders warning.
 - TaskMgr -> Regex search bar.
 - ConneInfo -> Regex search bar.
+- "Urge" for interactive shell while HTTP tunneling.
 
 # ✅ Done
-- Decrypting Chrome cookies.
-- Extracting Mobzilla history records.
-- Extracting Mobzilla cookies.
+- Plugin
+  - Decrypting Chrome cookies.
+  - Extracting Mobzilla history records.
+  - Extracting Mobzilla cookies.
+  - Simple MobaXterm dumper.
+
+- Shellcode Injection
+  - CreateThread
+  - Fiber Injection
+
+- DLL Injection
+
+- PELoader
+  - x64 PE.
+
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
 - Basis Remote Plugin
