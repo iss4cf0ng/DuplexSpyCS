@@ -242,6 +242,7 @@ namespace winClient48
         CreateRemoteThread,
         DotNetAssemblyLoad,
         ShellCode,
+        ShellCodeIntoProcess,
     }
 
     public struct BasicInfo

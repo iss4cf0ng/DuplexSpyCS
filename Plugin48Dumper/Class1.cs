@@ -142,9 +142,25 @@ namespace Plugin48Dumper
                         clsTools.fnLogOK("[Summary]");
                         clsTools.fnLogOK($"Total: {ls.Count} records");
                     }
+                    else if (szAction == "cookie")
+                    {
+                        var ls = module.fnlsDumpCookie(nCount, szRegex);
+                        foreach (var cookie in ls)
+                        {
+                            clsTools.fnLogOK(new string('=', 50));
+
+                            clsTools.fnLogOK("[Host]: " + cookie.szHost);
+                            clsTools.fnLogOK("[Name]: " + cookie.szName);
+                            clsTools.fnLogOK("[Value]: " + cookie.szValue);
+                        }
+
+                        clsTools.fnLogOK(new string('=', 50));
+                        clsTools.fnLogOK("[Summary]");
+                        clsTools.fnLogOK($"Total: {ls.Count} records");
+                    }
                     else if (szAction == "bookmark")
                     {
-                        var ls = module.fnlsDumpBookMark(nCount);
+                        var ls = module.fnlsDumpBookmark(nCount);
                         foreach (var bookMark in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));

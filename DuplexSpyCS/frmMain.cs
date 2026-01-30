@@ -1378,7 +1378,11 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
+                    int nCode = int.Parse(cmd[1]);
+                    string szMsg = cmd[2];
 
+                    MessageBox.Show(nCode.ToString());
+                    MessageBox.Show(szMsg);
                 }
 
                 #endregion

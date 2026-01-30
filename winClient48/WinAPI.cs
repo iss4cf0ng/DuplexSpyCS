@@ -220,11 +220,26 @@ public class WinAPI
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
+    [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+    public delegate void FiberStartRoutine(IntPtr lpParameter);
+
+    [DllImport("kernel32.dll", EntryPoint = "ConvertThreadToFiber", SetLastError = true)]
+    public static extern IntPtr ConvertThreadToFiber(IntPtr lpParameter);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public extern static IntPtr CreateFiber(int dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter);
+
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public extern static IntPtr SwitchToFiber(IntPtr fiberAddress);
+
     #endregion
     #region Memory
 
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool VirtualProtect(IntPtr lpAddress, UIntPtr dwSize, uint flNewProtect, out uint lpFlOldProtect);
+
+    [DllImport("kernel32.dll")]
+    public static extern bool VirtualProtectEx(IntPtr hProcess, uint dwAddress, int nSize, uint flNewProtect, out uint lpflOldProtect);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern IntPtr VirtualAlloc(IntPtr lpAddr, uint dwSize, uint flAllocationType, uint flProtect);
