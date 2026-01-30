@@ -25,10 +25,14 @@
   - Simple MobaXterm dumper.
 
 - Shellcode Injection
-  - CreateThread
-  - Fiber Injection
+  - APC
+  - EarlyBird
+  - CreateRemoteThread
 
 - DLL Injection
+  - APC
+  - EarlyBird
+  - CreateRemoteThread
 
 - PELoader
   - x64 PE.
