@@ -12,18 +12,27 @@ using Plugin.Abstractions48;
 using Org.BouncyCastle.Asn1;
 using System.Security.Cryptography;
 using static Plugin48Dumper.clsChromeDumper;
+using System.Data;
 
 namespace Plugin48Dumper
 {
     public class clsFirefoxDumper : clsDumper
     {
         public string BrowserName { get { return "Firefox"; } }
+        public DataTable dtHelp = new DataTable();
 
         public clsFirefoxDumper()
         {
             Entry = "firefox";
             Description = "Firefox dumper";
             Usage = "firefox <action>";
+
+            dtHelp.Columns.Add("Action");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("cred", "Dump credentials.");
+            dtHelp.Rows.Add("history", "Dump browser history records.");
+            dtHelp.Rows.Add("cookie", "Dump browser cookies.");
 
             Available = true;
         }

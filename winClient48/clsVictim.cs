@@ -102,10 +102,10 @@ namespace winClient48
 
             try
             {
-                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
+                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
                 {
                     socket.EndSend(ar);
-                }), buffer);
+                }), abBuffer);
             }
             catch
             {

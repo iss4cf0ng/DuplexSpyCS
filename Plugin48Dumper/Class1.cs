@@ -109,7 +109,11 @@ namespace Plugin48Dumper
 
                     clsTools.fnLogInfo("Action => " + szAction);
 
-                    if (szAction == "history")
+                    if (szAction == "help")
+                    {
+                        clsTools.fnPrintTable(module.dtHelp);
+                    }
+                    else if (szAction == "history")
                     {
                         var ls = module.fnlsDumpHistory(nCount, szRegex);
                         foreach (var history in ls)
@@ -206,7 +210,11 @@ namespace Plugin48Dumper
 
                     clsTools.fnLogInfo("Action => " + szAction);
 
-                    if (szAction == "cred")
+                    if (szAction == "help")
+                    {
+                        clsTools.fnPrintTable(module.dtHelp);
+                    }
+                    else if (szAction == "cred")
                     {
                         var ls = module.fnDumpCredential(nCount, szRegex);
                         foreach (var cred in ls)
@@ -251,10 +259,10 @@ namespace Plugin48Dumper
                             clsTools.fnLogOK($"[Name]: {cookie.szName}");
                             clsTools.fnLogOK($"[Value]: {cookie.szValue}");
 
-                            clsTools.fnLogOK($"[Value]: {cookie.szExpiry}");
-                            clsTools.fnLogOK($"[Value]: {cookie.szCreation}");
-                            clsTools.fnLogOK($"[Value]: {cookie.szLastAccessed}");
-                            clsTools.fnLogOK($"[Value]: {cookie.szUpdated}");
+                            clsTools.fnLogOK($"[Expiry]: {cookie.szExpiry}");
+                            clsTools.fnLogOK($"[Creation Date]: {cookie.szCreation}");
+                            clsTools.fnLogOK($"[Last Accessed]: {cookie.szLastAccessed}");
+                            clsTools.fnLogOK($"[Updated]: {cookie.szUpdated}");
                         }
 
                         clsTools.fnLogOK(new string('=', 50));
@@ -265,17 +273,40 @@ namespace Plugin48Dumper
                 else if (szTarget == "xterm")
                 {
                     var xterm = new clsMobaXtermDumper();
-                    var ls = xterm.fnlsDump();
+                    string szAction = lsKey[2];
 
-                    foreach (var cred in ls)
+                    if (szAction == "help")
                     {
-                        clsTools.fnLogInfo(new string('-', 50));
 
-                        clsTools.fnLogInfo(cred.Username);
-                        clsTools.fnLogInfo(cred.Password);
                     }
+                    else if (szAction == "cred")
+                    {
+                        var ls = xterm.fnlsDump();
 
-                    clsTools.fnLogInfo(new string('-', 50));
+                        foreach (var cred in ls)
+                        {
+                            clsTools.fnLogInfo(new string('-', 50));
+
+                            clsTools.fnLogInfo("[Hostname]: " + cred.Username);
+                            clsTools.fnLogInfo("[Encrypted Password]: " + cred.Password);
+                        }
+
+                        clsTools.fnLogInfo(new string('-', 50));
+                    }
+                    else if (szAction == "master")
+                    {
+                        var ls = xterm.fnGetMasterKey();
+
+                        foreach (var key in ls)
+                        {
+                            clsTools.fnLogInfo(new string('-', 50));
+
+                            clsTools.fnLogInfo("[Hostname]: " + key.szHostname);
+                            clsTools.fnLogInfo("[Encrypted Password]: " + key.szEncPassword);
+                        }
+
+                        clsTools.fnLogInfo(new string('-', 50));
+                    }
                 }
             }
             else
