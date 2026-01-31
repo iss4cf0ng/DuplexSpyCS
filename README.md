@@ -9,8 +9,6 @@
 # Debug
 - DLL Injection
 - WQL Console commands issues.
-- File transfer bad data.
-- File transfer progress display error.
 
 # ✅ New
 - UAC Prompt.
@@ -60,6 +58,8 @@
   - Percentage display error.
   - Improved "Find".
 - Terminal -> Resize issues.
+- File transfer bad data.
+- File transfer progress display error.
 - Regedit -> Refresh problem.
 - UI display error.
 - Errors when reusing virtual terminal.
