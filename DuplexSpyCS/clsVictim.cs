@@ -220,6 +220,11 @@ public class clsVictim
         _tlsSendQueue.Add(abBuffer);
     }
 
+    /// <summary>
+    /// TLS message queue.
+    /// </summary>
+    /// <param name="ct"></param>
+    /// <returns></returns>
     public async Task fnTlsSendLoop(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)

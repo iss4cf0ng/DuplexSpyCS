@@ -1026,14 +1026,8 @@ namespace DuplexSpyCS
                     if (f == null)
                         return;
 
-                    if (cmd[1] == "output")
-                    {
-                        f.ShowOutput(cmd[2]);
-                    }
-                    else if (cmd[1] == "error")
-                    {
-                        MessageBox.Show("WMI error");
-                    }
+                    DataTable dt = clsEZData.fnStringToDataTable($"{cmd[1]}|{cmd[2]}");
+                    f.ShowOutput(dt);
                 }
 
                 #endregion

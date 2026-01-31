@@ -51,6 +51,8 @@
             toolStripMenuItem26 = new ToolStripMenuItem();
             toolStripSeparator5 = new ToolStripSeparator();
             toolStripMenuItem40 = new ToolStripMenuItem();
+            toolStripMenuItem46 = new ToolStripMenuItem();
+            toolStripMenuItem47 = new ToolStripMenuItem();
             toolStripMenuItem44 = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripMenuItem10 = new ToolStripMenuItem();
@@ -120,8 +122,7 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
-            toolStripMenuItem46 = new ToolStripMenuItem();
-            toolStripMenuItem47 = new ToolStripMenuItem();
+            toolStripSeparator7 = new ToolStripSeparator();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -173,7 +174,7 @@
             // 
             // toolStripMenuItem2
             // 
-            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem20, toolStripMenuItem45, toolStripMenuItem22 });
+            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem20, toolStripMenuItem45, toolStripSeparator7, toolStripMenuItem22 });
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(180, 24);
             toolStripMenuItem2.Text = "Console";
@@ -182,21 +183,21 @@
             // toolStripMenuItem20
             // 
             toolStripMenuItem20.Name = "toolStripMenuItem20";
-            toolStripMenuItem20.Size = new Size(173, 24);
+            toolStripMenuItem20.Size = new Size(180, 24);
             toolStripMenuItem20.Text = "Pipe Shell";
             toolStripMenuItem20.Click += toolStripMenuItem20_Click;
             // 
             // toolStripMenuItem45
             // 
             toolStripMenuItem45.Name = "toolStripMenuItem45";
-            toolStripMenuItem45.Size = new Size(173, 24);
+            toolStripMenuItem45.Size = new Size(180, 24);
             toolStripMenuItem45.Text = "Xterm Shell";
             toolStripMenuItem45.Click += toolStripMenuItem45_Click;
             // 
             // toolStripMenuItem22
             // 
             toolStripMenuItem22.Name = "toolStripMenuItem22";
-            toolStripMenuItem22.Size = new Size(173, 24);
+            toolStripMenuItem22.Size = new Size(180, 24);
             toolStripMenuItem22.Text = "WQL Console";
             toolStripMenuItem22.Click += toolStripMenuItem22_Click;
             // 
@@ -274,6 +275,20 @@
             toolStripMenuItem40.Size = new Size(199, 24);
             toolStripMenuItem40.Text = "Fileless Execution";
             toolStripMenuItem40.Click += toolStripMenuItem40_Click;
+            // 
+            // toolStripMenuItem46
+            // 
+            toolStripMenuItem46.Name = "toolStripMenuItem46";
+            toolStripMenuItem46.Size = new Size(199, 24);
+            toolStripMenuItem46.Text = "DLL Loader";
+            toolStripMenuItem46.Click += toolStripMenuItem46_Click;
+            // 
+            // toolStripMenuItem47
+            // 
+            toolStripMenuItem47.Name = "toolStripMenuItem47";
+            toolStripMenuItem47.Size = new Size(199, 24);
+            toolStripMenuItem47.Text = "Shellcode Loader";
+            toolStripMenuItem47.Click += toolStripMenuItem47_Click;
             // 
             // toolStripMenuItem44
             // 
@@ -768,19 +783,10 @@
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
-            // toolStripMenuItem46
+            // toolStripSeparator7
             // 
-            toolStripMenuItem46.Name = "toolStripMenuItem46";
-            toolStripMenuItem46.Size = new Size(199, 24);
-            toolStripMenuItem46.Text = "DLL Loader";
-            toolStripMenuItem46.Click += toolStripMenuItem46_Click;
-            // 
-            // toolStripMenuItem47
-            // 
-            toolStripMenuItem47.Name = "toolStripMenuItem47";
-            toolStripMenuItem47.Size = new Size(199, 24);
-            toolStripMenuItem47.Text = "Shellcode Loader";
-            toolStripMenuItem47.Click += toolStripMenuItem47_Click;
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            toolStripSeparator7.Size = new Size(177, 6);
             // 
             // frmMain
             // 
@@ -903,5 +909,6 @@
         private ToolStripMenuItem toolStripMenuItem20;
         private ToolStripMenuItem toolStripMenuItem46;
         private ToolStripMenuItem toolStripMenuItem47;
+        private ToolStripSeparator toolStripSeparator7;
     }
 }

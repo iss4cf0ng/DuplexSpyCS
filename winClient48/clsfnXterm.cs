@@ -58,13 +58,11 @@ namespace winClient48
         /// <exception cref="InvalidOperationException"></exception>
         public void fnStart(int cols = 80, int rows = 24)
         {
-            fnStop(); // 確保乾淨狀態
+            fnStop();
 
-            // --- Pipes ---
             WinAPI.CreatePipe(out m_hPipeInRead, out m_hPipeInWrite, IntPtr.Zero, 0);
             WinAPI.CreatePipe(out m_hPipeOutRead, out m_hPipeOutWrite, IntPtr.Zero, 0);
 
-            // --- Create ConPTY ---
             var size = new WinAPI.COORD
             {
                 X = (short)cols,
@@ -101,7 +99,6 @@ namespace winClient48
         {
             m_isRunning = false;
 
-            // 關 pipe，逼 ReadFile 立刻返回
             m_hPipeOutRead?.Dispose();
             m_hPipeInWrite?.Dispose();
             m_hPipeInRead?.Dispose();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +29,50 @@ namespace DuplexSpyCS
             }
 
             return result.ToString();
+        }
+
+        public static DataTable fnStringToDataTable(string szData)
+        {
+            DataTable dt = new DataTable();
+
+            if (string.IsNullOrEmpty(szData))
+                return dt;
+
+            string[] arrParts = szData.Split('|', 2);
+            if (arrParts.Length < 2)
+                return dt;
+
+            string szColsB64 = arrParts[0];
+            string szRowsB64 = arrParts[1];
+
+            string[] arrCols = szColsB64.Split(',');
+            foreach (string szColB64 in arrCols)
+            {
+                string szColName = clsCrypto.b64D2Str(szColB64);
+                dt.Columns.Add(szColName);
+            }
+
+            if (!string.IsNullOrEmpty(szRowsB64))
+            {
+                string[] arrRowStrs = szRowsB64.Split(',');
+
+                int nColCount = dt.Columns.Count;
+                int nTotalCells = arrRowStrs.Length;
+                int nRowCount = nTotalCells / nColCount;
+
+                for (int i = 0; i < nRowCount; i++)
+                {
+                    DataRow dr = dt.NewRow();
+                    for (int j = 0; j < nColCount; j++)
+                    {
+                        int nIndex = i * nColCount + j;
+                        dr[j] = clsCrypto.b64D2Str(arrRowStrs[nIndex]);
+                    }
+                    dt.Rows.Add(dr);
+                }
+            }
+
+            return dt;
         }
     }
 }

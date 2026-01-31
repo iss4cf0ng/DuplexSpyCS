@@ -105,7 +105,9 @@
             toolStripMenuItem22 = new ToolStripMenuItem();
             toolStripMenuItem23 = new ToolStripMenuItem();
             toolStripButton3 = new ToolStripButton();
-            toolStripButton4 = new ToolStripButton();
+            toolStripDropDownButton1 = new ToolStripDropDownButton();
+            toolStripMenuItem78 = new ToolStripMenuItem();
+            toolStripMenuItem79 = new ToolStripMenuItem();
             toolStripButton6 = new ToolStripButton();
             tabPage2 = new TabPage();
             splitContainer2 = new SplitContainer();
@@ -752,7 +754,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton5, toolStripButton1, toolStripButton2, toolStripDropDownButton2, toolStripSeparator4, toolStripDropDownButton3, toolStripButton3, toolStripButton4, toolStripButton6 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton5, toolStripButton1, toolStripButton2, toolStripDropDownButton2, toolStripSeparator4, toolStripDropDownButton3, toolStripButton3, toolStripDropDownButton1, toolStripButton6 });
             toolStrip1.Location = new Point(3, 3);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1056, 26);
@@ -852,15 +854,29 @@
             toolStripButton3.Text = "Execute";
             toolStripButton3.Click += toolStripButton3_Click;
             // 
-            // toolStripButton4
+            // toolStripDropDownButton1
             // 
-            toolStripButton4.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton4.Image = (Image)resources.GetObject("toolStripButton4.Image");
-            toolStripButton4.ImageTransparentColor = Color.Magenta;
-            toolStripButton4.Name = "toolStripButton4";
-            toolStripButton4.Size = new Size(47, 23);
-            toolStripButton4.Text = "Shell";
-            toolStripButton4.Click += toolStripButton4_Click;
+            toolStripDropDownButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButton1.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem78, toolStripMenuItem79 });
+            toolStripDropDownButton1.Image = (Image)resources.GetObject("toolStripDropDownButton1.Image");
+            toolStripDropDownButton1.ImageTransparentColor = Color.Magenta;
+            toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            toolStripDropDownButton1.Size = new Size(56, 23);
+            toolStripDropDownButton1.Text = "Shell";
+            // 
+            // toolStripMenuItem78
+            // 
+            toolStripMenuItem78.Name = "toolStripMenuItem78";
+            toolStripMenuItem78.Size = new Size(180, 24);
+            toolStripMenuItem78.Text = "Pipeline Shell";
+            toolStripMenuItem78.Click += toolStripMenuItem78_Click;
+            // 
+            // toolStripMenuItem79
+            // 
+            toolStripMenuItem79.Name = "toolStripMenuItem79";
+            toolStripMenuItem79.Size = new Size(180, 24);
+            toolStripMenuItem79.Text = "Xterm Shell";
+            toolStripMenuItem79.Click += toolStripMenuItem79_Click;
             // 
             // toolStripButton6
             // 
@@ -2095,7 +2111,6 @@
         private ToolStripMenuItem toolStripMenuItem22;
         private ToolStripMenuItem toolStripMenuItem23;
         private ToolStripButton toolStripButton3;
-        private ToolStripButton toolStripButton4;
         private ToolStripMenuItem toolStripMenuItem24;
         private ToolStripMenuItem toolStripMenuItem25;
         private ToolStripButton toolStripButton5;
@@ -2192,5 +2207,8 @@
         private ToolStripMenuItem toolStripMenuItem75;
         private ToolStripMenuItem toolStripMenuItem76;
         private ToolStripMenuItem toolStripMenuItem77;
+        private ToolStripDropDownButton toolStripDropDownButton1;
+        private ToolStripMenuItem toolStripMenuItem78;
+        private ToolStripMenuItem toolStripMenuItem79;
     }
 }
