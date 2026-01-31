@@ -9,6 +9,8 @@
 # Debug
 - DLL Injection
 - WQL Console commands issues.
+- File transfer bad data.
+- File transfer progress display error.
 
 # ✅ New
 - UAC Prompt.
@@ -34,6 +36,9 @@
   - EarlyBird
   - CreateRemoteThread
 
+- Shellcode Loader
+- DLL Loader
+
 - PELoader
   - x64 PE.
 
@@ -43,6 +48,7 @@
   - Basic InfoSpyder
   - Browser Dumper
       - Chrome (v10)
+
 - Multiple Listener
   - TLS
   - HTTP
