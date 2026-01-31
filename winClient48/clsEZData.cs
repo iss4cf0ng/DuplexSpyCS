@@ -10,6 +10,8 @@ namespace winClient48
 {
     internal class clsEZData
     {
+        public static string fnGetNewTempFilePath(string szExt = "") => Path.GetTempFileName() + (string.IsNullOrEmpty(szExt) ? string.Empty : $".{szExt}");
+
         public static byte[] abGzipCompress(byte[] abRaw)
         {
             using (MemoryStream ms = new MemoryStream())

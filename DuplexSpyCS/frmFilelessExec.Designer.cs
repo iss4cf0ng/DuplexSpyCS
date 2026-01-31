@@ -88,7 +88,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 371;
+            splitContainer1.SplitterDistance = 368;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -151,12 +151,12 @@
             // radioButton2
             // 
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(225, 10);
+            radioButton2.Location = new Point(184, 10);
             radioButton2.Name = "radioButton2";
-            radioButton2.Size = new Size(80, 23);
+            radioButton2.Size = new Size(147, 23);
             radioButton2.TabIndex = 15;
             radioButton2.TabStop = true;
-            radioButton2.Text = "Current";
+            radioButton2.Text = "C# dotNet (*.exe)";
             radioButton2.UseVisualStyleBackColor = true;
             // 
             // radioButton1
@@ -164,10 +164,10 @@
             radioButton1.AutoSize = true;
             radioButton1.Location = new Point(43, 10);
             radioButton1.Name = "radioButton1";
-            radioButton1.Size = new Size(73, 23);
+            radioButton1.Size = new Size(120, 23);
             radioButton1.TabIndex = 14;
             radioButton1.TabStop = true;
-            radioButton1.Text = "x64 PE";
+            radioButton1.Text = "x64 PE (*.exe)";
             radioButton1.UseVisualStyleBackColor = true;
             radioButton1.CheckedChanged += radioButton1_CheckedChanged;
             // 
@@ -243,7 +243,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 173);
+            listView1.Size = new Size(632, 170);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -261,7 +261,7 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 347);
+            statusStrip1.Location = new Point(0, 344);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -286,7 +286,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 176);
+            richTextBox1.Size = new Size(638, 179);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 

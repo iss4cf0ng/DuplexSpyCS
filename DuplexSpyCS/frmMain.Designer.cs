@@ -121,6 +121,7 @@
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
             toolStripMenuItem46 = new ToolStripMenuItem();
+            toolStripMenuItem47 = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -181,21 +182,21 @@
             // toolStripMenuItem20
             // 
             toolStripMenuItem20.Name = "toolStripMenuItem20";
-            toolStripMenuItem20.Size = new Size(180, 24);
+            toolStripMenuItem20.Size = new Size(173, 24);
             toolStripMenuItem20.Text = "Pipe Shell";
             toolStripMenuItem20.Click += toolStripMenuItem20_Click;
             // 
             // toolStripMenuItem45
             // 
             toolStripMenuItem45.Name = "toolStripMenuItem45";
-            toolStripMenuItem45.Size = new Size(180, 24);
+            toolStripMenuItem45.Size = new Size(173, 24);
             toolStripMenuItem45.Text = "Xterm Shell";
             toolStripMenuItem45.Click += toolStripMenuItem45_Click;
             // 
             // toolStripMenuItem22
             // 
             toolStripMenuItem22.Name = "toolStripMenuItem22";
-            toolStripMenuItem22.Size = new Size(180, 24);
+            toolStripMenuItem22.Size = new Size(173, 24);
             toolStripMenuItem22.Text = "WQL Console";
             toolStripMenuItem22.Click += toolStripMenuItem22_Click;
             // 
@@ -229,7 +230,7 @@
             // 
             // toolStripMenuItem9
             // 
-            toolStripMenuItem9.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem12, toolStripMenuItem13, toolStripMenuItem21, toolStripMenuItem26, toolStripSeparator5, toolStripMenuItem40, toolStripMenuItem46 });
+            toolStripMenuItem9.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem12, toolStripMenuItem13, toolStripMenuItem21, toolStripMenuItem26, toolStripSeparator5, toolStripMenuItem40, toolStripMenuItem46, toolStripMenuItem47 });
             toolStripMenuItem9.Name = "toolStripMenuItem9";
             toolStripMenuItem9.Size = new Size(180, 24);
             toolStripMenuItem9.Text = "Misc";
@@ -237,40 +238,40 @@
             // toolStripMenuItem12
             // 
             toolStripMenuItem12.Name = "toolStripMenuItem12";
-            toolStripMenuItem12.Size = new Size(209, 24);
+            toolStripMenuItem12.Size = new Size(199, 24);
             toolStripMenuItem12.Text = "KeyLogger";
             toolStripMenuItem12.Click += toolStripMenuItem12_Click;
             // 
             // toolStripMenuItem13
             // 
             toolStripMenuItem13.Name = "toolStripMenuItem13";
-            toolStripMenuItem13.Size = new Size(209, 24);
+            toolStripMenuItem13.Size = new Size(199, 24);
             toolStripMenuItem13.Text = "Chat Message";
             toolStripMenuItem13.Click += toolStripMenuItem13_Click;
             // 
             // toolStripMenuItem21
             // 
             toolStripMenuItem21.Name = "toolStripMenuItem21";
-            toolStripMenuItem21.Size = new Size(209, 24);
+            toolStripMenuItem21.Size = new Size(199, 24);
             toolStripMenuItem21.Text = "Run Script";
             toolStripMenuItem21.Click += toolStripMenuItem21_Click;
             // 
             // toolStripMenuItem26
             // 
             toolStripMenuItem26.Name = "toolStripMenuItem26";
-            toolStripMenuItem26.Size = new Size(209, 24);
+            toolStripMenuItem26.Size = new Size(199, 24);
             toolStripMenuItem26.Text = "PC Power";
             toolStripMenuItem26.Click += toolStripMenuItem26_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new Size(206, 6);
+            toolStripSeparator5.Size = new Size(196, 6);
             // 
             // toolStripMenuItem40
             // 
             toolStripMenuItem40.Name = "toolStripMenuItem40";
-            toolStripMenuItem40.Size = new Size(209, 24);
+            toolStripMenuItem40.Size = new Size(199, 24);
             toolStripMenuItem40.Text = "Fileless Execution";
             toolStripMenuItem40.Click += toolStripMenuItem40_Click;
             // 
@@ -296,40 +297,40 @@
             // toolStripMenuItem14
             // 
             toolStripMenuItem14.Name = "toolStripMenuItem14";
-            toolStripMenuItem14.Size = new Size(180, 24);
+            toolStripMenuItem14.Size = new Size(161, 24);
             toolStripMenuItem14.Text = "Desktop";
             toolStripMenuItem14.Click += toolStripMenuItem14_Click;
             // 
             // toolStripMenuItem15
             // 
             toolStripMenuItem15.Name = "toolStripMenuItem15";
-            toolStripMenuItem15.Size = new Size(180, 24);
+            toolStripMenuItem15.Size = new Size(161, 24);
             toolStripMenuItem15.Text = "Webcam";
             toolStripMenuItem15.Click += toolStripMenuItem15_Click;
             // 
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new Size(177, 6);
+            toolStripSeparator4.Size = new Size(158, 6);
             // 
             // toolStripMenuItem17
             // 
             toolStripMenuItem17.Name = "toolStripMenuItem17";
-            toolStripMenuItem17.Size = new Size(180, 24);
+            toolStripMenuItem17.Size = new Size(161, 24);
             toolStripMenuItem17.Text = "Lock Screen";
             toolStripMenuItem17.Click += toolStripMenuItem17_Click;
             // 
             // toolStripMenuItem23
             // 
             toolStripMenuItem23.Name = "toolStripMenuItem23";
-            toolStripMenuItem23.Size = new Size(180, 24);
+            toolStripMenuItem23.Size = new Size(161, 24);
             toolStripMenuItem23.Text = "Run Script";
             toolStripMenuItem23.Click += toolStripMenuItem23_Click;
             // 
             // toolStripMenuItem32
             // 
             toolStripMenuItem32.Name = "toolStripMenuItem32";
-            toolStripMenuItem32.Size = new Size(180, 24);
+            toolStripMenuItem32.Size = new Size(161, 24);
             toolStripMenuItem32.Text = "URL";
             toolStripMenuItem32.Click += toolStripMenuItem32_Click;
             // 
@@ -770,8 +771,16 @@
             // toolStripMenuItem46
             // 
             toolStripMenuItem46.Name = "toolStripMenuItem46";
-            toolStripMenuItem46.Size = new Size(209, 24);
-            toolStripMenuItem46.Text = "Shellcode Injection";
+            toolStripMenuItem46.Size = new Size(199, 24);
+            toolStripMenuItem46.Text = "DLL Loader";
+            toolStripMenuItem46.Click += toolStripMenuItem46_Click;
+            // 
+            // toolStripMenuItem47
+            // 
+            toolStripMenuItem47.Name = "toolStripMenuItem47";
+            toolStripMenuItem47.Size = new Size(199, 24);
+            toolStripMenuItem47.Text = "Shellcode Loader";
+            toolStripMenuItem47.Click += toolStripMenuItem47_Click;
             // 
             // frmMain
             // 
@@ -893,5 +902,6 @@
         private ToolStripMenuItem toolStripMenuItem45;
         private ToolStripMenuItem toolStripMenuItem20;
         private ToolStripMenuItem toolStripMenuItem46;
+        private ToolStripMenuItem toolStripMenuItem47;
     }
 }

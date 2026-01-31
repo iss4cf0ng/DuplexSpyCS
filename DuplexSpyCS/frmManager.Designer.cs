@@ -114,6 +114,8 @@
             listView2 = new ListView();
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem33 = new ToolStripMenuItem();
+            toolStripMenuItem76 = new ToolStripMenuItem();
+            toolStripMenuItem77 = new ToolStripMenuItem();
             toolStripSeparator6 = new ToolStripSeparator();
             toolStripMenuItem34 = new ToolStripMenuItem();
             toolStripMenuItem9 = new ToolStripMenuItem();
@@ -943,10 +945,25 @@
             // 
             // toolStripMenuItem33
             // 
+            toolStripMenuItem33.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem76, toolStripMenuItem77 });
             toolStripMenuItem33.Name = "toolStripMenuItem33";
             toolStripMenuItem33.Size = new Size(177, 24);
             toolStripMenuItem33.Text = "Injector";
             toolStripMenuItem33.Click += toolStripMenuItem33_Click;
+            // 
+            // toolStripMenuItem76
+            // 
+            toolStripMenuItem76.Name = "toolStripMenuItem76";
+            toolStripMenuItem76.Size = new Size(146, 24);
+            toolStripMenuItem76.Text = "DLL";
+            toolStripMenuItem76.Click += toolStripMenuItem76_Click;
+            // 
+            // toolStripMenuItem77
+            // 
+            toolStripMenuItem77.Name = "toolStripMenuItem77";
+            toolStripMenuItem77.Size = new Size(146, 24);
+            toolStripMenuItem77.Text = "Shellcode";
+            toolStripMenuItem77.Click += toolStripMenuItem77_Click;
             // 
             // toolStripSeparator6
             // 
@@ -1019,6 +1036,7 @@
             textBox4.Size = new Size(755, 27);
             textBox4.TabIndex = 1;
             textBox4.TextChanged += textBox4_TextChanged;
+            textBox4.KeyDown += textBox4_KeyDown;
             // 
             // statusStrip3
             // 
@@ -1098,7 +1116,7 @@
             tabPage12.Location = new Point(4, 4);
             tabPage12.Name = "tabPage12";
             tabPage12.Padding = new Padding(3);
-            tabPage12.Size = new Size(301, 406);
+            tabPage12.Size = new Size(301, 410);
             tabPage12.TabIndex = 1;
             tabPage12.Text = "Explorer";
             tabPage12.UseVisualStyleBackColor = true;
@@ -1112,7 +1130,7 @@
             treeView3.Location = new Point(3, 3);
             treeView3.Name = "treeView3";
             treeView3.SelectedImageIndex = 0;
-            treeView3.Size = new Size(295, 400);
+            treeView3.Size = new Size(295, 404);
             treeView3.TabIndex = 0;
             treeView3.AfterSelect += treeView3_AfterSelect;
             treeView3.KeyDown += treeView3_KeyDown;
@@ -1199,7 +1217,7 @@
             // 
             tabPage13.Location = new Point(4, 4);
             tabPage13.Name = "tabPage13";
-            tabPage13.Size = new Size(301, 406);
+            tabPage13.Size = new Size(301, 410);
             tabPage13.TabIndex = 2;
             tabPage13.Text = "ShortCuts";
             tabPage13.UseVisualStyleBackColor = true;
@@ -1209,7 +1227,7 @@
             tabPage14.Controls.Add(treeView8);
             tabPage14.Location = new Point(4, 4);
             tabPage14.Name = "tabPage14";
-            tabPage14.Size = new Size(301, 406);
+            tabPage14.Size = new Size(301, 410);
             tabPage14.TabIndex = 3;
             tabPage14.Text = "Clipboard";
             tabPage14.UseVisualStyleBackColor = true;
@@ -1226,7 +1244,7 @@
             treeNode8.Name = "Node2";
             treeNode8.Text = "Value";
             treeView8.Nodes.AddRange(new TreeNode[] { treeNode6, treeNode7, treeNode8 });
-            treeView8.Size = new Size(301, 406);
+            treeView8.Size = new Size(301, 410);
             treeView8.TabIndex = 0;
             // 
             // listView6
@@ -2172,5 +2190,7 @@
         private ToolStripComboBox toolStripComboBox1;
         private ImageList imageListTabIcon;
         private ToolStripMenuItem toolStripMenuItem75;
+        private ToolStripMenuItem toolStripMenuItem76;
+        private ToolStripMenuItem toolStripMenuItem77;
     }
 }
