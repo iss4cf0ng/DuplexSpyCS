@@ -867,14 +867,14 @@
             // toolStripMenuItem78
             // 
             toolStripMenuItem78.Name = "toolStripMenuItem78";
-            toolStripMenuItem78.Size = new Size(180, 24);
+            toolStripMenuItem78.Size = new Size(171, 24);
             toolStripMenuItem78.Text = "Pipeline Shell";
             toolStripMenuItem78.Click += toolStripMenuItem78_Click;
             // 
             // toolStripMenuItem79
             // 
             toolStripMenuItem79.Name = "toolStripMenuItem79";
-            toolStripMenuItem79.Size = new Size(180, 24);
+            toolStripMenuItem79.Size = new Size(171, 24);
             toolStripMenuItem79.Text = "Xterm Shell";
             toolStripMenuItem79.Click += toolStripMenuItem79_Click;
             // 
@@ -1930,6 +1930,7 @@
             Controls.Add(tabControl1);
             Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             Name = "frmManager";

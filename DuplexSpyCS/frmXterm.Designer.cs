@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmXterm));
             webView21 = new Microsoft.Web.WebView2.WinForms.WebView2();
             textBox1 = new TextBox();
             button1 = new Button();
@@ -81,6 +82,7 @@
             Controls.Add(textBox1);
             Controls.Add(webView21);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmXterm";
             Text = "frmXterm";

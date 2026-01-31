@@ -50,7 +50,7 @@ namespace DuplexSpyCS
             m_victim.m_listener.ReceivedDecoded += fnRecv;
 
             await webView21.EnsureCoreWebView2Async();
-            webView21.CoreWebView2.Navigate(Path.Combine(Application.StartupPath, "terminal.html"));
+            webView21.CoreWebView2.Navigate(Path.Combine(Application.StartupPath, "Tools", "xterm", "terminal.html"));
 
             webView21.CoreWebView2.WebMessageReceived += (s, e) =>
             {

