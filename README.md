@@ -8,7 +8,6 @@
 
 # Debug
 - DLL Injection
-- WQL Console commands issues.
 
 # ✅ New
 - UAC Prompt.
@@ -64,3 +63,4 @@
 - UI display error.
 - Errors when reusing virtual terminal.
 - TLS error.
+- WQL Console commands issues.
