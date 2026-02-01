@@ -330,8 +330,8 @@ namespace DuplexSpyCS
                             }
                         }
                     }
-                } while (receive_len > 0);
-
+                } 
+                while (receive_len > 0 && m_bIslistening);
             }
             catch (Exception ex) //ERROR -> DISCONNECT
             {

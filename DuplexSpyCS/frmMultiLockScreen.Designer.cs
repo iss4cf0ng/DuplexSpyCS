@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMultiLockScreen));
             statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
             label1 = new Label();
             textBox1 = new TextBox();
             button1 = new Button();
@@ -40,7 +42,6 @@
             button3 = new Button();
             button4 = new Button();
             button5 = new Button();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -53,6 +54,12 @@
             statusStrip1.Size = new Size(823, 24);
             statusStrip1.TabIndex = 0;
             statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(158, 19);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // label1
             // 
@@ -153,12 +160,6 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
-            // toolStripStatusLabel1
-            // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(158, 19);
-            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
             // frmMultiLockScreen
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -174,6 +175,7 @@
             Controls.Add(label1);
             Controls.Add(statusStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmMultiLockScreen";
             Text = "frmMultiLockScreen";

@@ -36,13 +36,10 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             button1 = new Button();
-            numericUpDown1 = new NumericUpDown();
-            label1 = new Label();
             numericUpDown2 = new NumericUpDown();
             label2 = new Label();
             label3 = new Label();
             statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
             SuspendLayout();
             // 
@@ -58,9 +55,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(342, 12);
+            button2.Location = new Point(239, 48);
             button2.Name = "button2";
-            button2.Size = new Size(123, 27);
+            button2.Size = new Size(224, 33);
             button2.TabIndex = 20;
             button2.Text = "Uncheck All";
             button2.UseVisualStyleBackColor = true;
@@ -106,36 +103,17 @@
             // 
             // button1
             // 
-            button1.Location = new Point(213, 12);
+            button1.Location = new Point(14, 48);
             button1.Name = "button1";
-            button1.Size = new Size(123, 27);
+            button1.Size = new Size(219, 33);
             button1.TabIndex = 17;
             button1.Text = "Check All";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(86, 12);
-            numericUpDown1.Margin = new Padding(4);
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 27);
-            numericUpDown1.TabIndex = 16;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(14, 14);
-            label1.Name = "label1";
-            label1.Size = new Size(65, 19);
-            label1.TabIndex = 15;
-            label1.Text = "Thread :";
-            // 
             // numericUpDown2
             // 
-            numericUpDown2.Location = new Point(86, 47);
+            numericUpDown2.Location = new Point(71, 14);
             numericUpDown2.Margin = new Padding(4);
             numericUpDown2.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             numericUpDown2.Name = "numericUpDown2";
@@ -146,7 +124,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(29, 49);
+            label2.Location = new Point(14, 16);
             label2.Name = "label2";
             label2.Size = new Size(50, 19);
             label2.TabIndex = 22;
@@ -155,7 +133,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(213, 49);
+            label3.Location = new Point(198, 16);
             label3.Name = "label3";
             label3.Size = new Size(61, 19);
             label3.TabIndex = 24;
@@ -174,8 +152,6 @@
             Controls.Add(listView1);
             Controls.Add(statusStrip1);
             Controls.Add(button1);
-            Controls.Add(numericUpDown1);
-            Controls.Add(label1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4);
@@ -184,7 +160,6 @@
             Load += frmClntSleep_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -200,8 +175,6 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private Button button1;
-        private NumericUpDown numericUpDown1;
-        private Label label1;
         private NumericUpDown numericUpDown2;
         private Label label2;
         private Label label3;

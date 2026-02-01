@@ -36,14 +36,11 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             button1 = new Button();
-            numericUpDown1 = new NumericUpDown();
-            label1 = new Label();
             label2 = new Label();
             textBox1 = new TextBox();
             button4 = new Button();
             checkBox1 = new CheckBox();
             statusStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
             // button3
@@ -58,9 +55,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(340, 9);
+            button2.Location = new Point(235, 9);
             button2.Name = "button2";
-            button2.Size = new Size(123, 27);
+            button2.Size = new Size(227, 35);
             button2.TabIndex = 13;
             button2.Text = "Uncheck All";
             button2.UseVisualStyleBackColor = true;
@@ -106,32 +103,13 @@
             // 
             // button1
             // 
-            button1.Location = new Point(211, 9);
+            button1.Location = new Point(12, 9);
             button1.Name = "button1";
-            button1.Size = new Size(123, 27);
+            button1.Size = new Size(208, 33);
             button1.TabIndex = 10;
             button1.Text = "Check All";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(84, 9);
-            numericUpDown1.Margin = new Padding(4);
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 27);
-            numericUpDown1.TabIndex = 9;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 11);
-            label1.Name = "label1";
-            label1.Size = new Size(65, 19);
-            label1.TabIndex = 8;
-            label1.Text = "Thread :";
             // 
             // label2
             // 
@@ -183,8 +161,6 @@
             Controls.Add(listView1);
             Controls.Add(statusStrip1);
             Controls.Add(button1);
-            Controls.Add(numericUpDown1);
-            Controls.Add(label1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4);
@@ -194,7 +170,6 @@
             Load += frmClntUpdate_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -209,8 +184,6 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private Button button1;
-        private NumericUpDown numericUpDown1;
-        private Label label1;
         private Label label2;
         private TextBox textBox1;
         private Button button4;

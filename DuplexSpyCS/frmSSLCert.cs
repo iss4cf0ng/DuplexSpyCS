@@ -17,6 +17,8 @@ namespace DuplexSpyCS
         public frmSSLCert()
         {
             InitializeComponent();
+
+            Text = "SSL Certificate";
         }
 
         void fnSetup()

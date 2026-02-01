@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFilelessExec));
             splitContainer1 = new SplitContainer();
             groupBox1 = new GroupBox();
             label2 = new Label();
@@ -88,7 +89,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 368;
+            splitContainer1.SplitterDistance = 367;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -243,7 +244,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 170);
+            listView1.Size = new Size(632, 169);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -261,7 +262,7 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 344);
+            statusStrip1.Location = new Point(0, 343);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -286,7 +287,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 179);
+            richTextBox1.Size = new Size(638, 180);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -297,6 +298,7 @@
             ClientSize = new Size(638, 552);
             Controls.Add(splitContainer1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmFilelessExec";
             StartPosition = FormStartPosition.CenterScreen;

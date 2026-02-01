@@ -288,7 +288,11 @@ namespace DuplexSpyCS
                     }
                     catch (Exception ex)
                     {
-                        //MessageBox.Show(ex.Message);
+                        break;
+                    }
+                    finally
+                    {
+
                     }
                 }
 

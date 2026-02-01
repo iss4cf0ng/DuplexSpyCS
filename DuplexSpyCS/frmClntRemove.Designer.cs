@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            numericUpDown1 = new NumericUpDown();
             button1 = new Button();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -38,34 +36,14 @@
             columnHeader2 = new ColumnHeader();
             button2 = new Button();
             button3 = new Button();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 15);
-            label1.Name = "label1";
-            label1.Size = new Size(65, 19);
-            label1.TabIndex = 0;
-            label1.Text = "Thread :";
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(84, 13);
-            numericUpDown1.Margin = new Padding(4);
-            numericUpDown1.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(120, 27);
-            numericUpDown1.TabIndex = 2;
-            numericUpDown1.Value = new decimal(new int[] { 1, 0, 0, 0 });
-            // 
             // button1
             // 
-            button1.Location = new Point(211, 13);
+            button1.Location = new Point(12, 12);
             button1.Name = "button1";
-            button1.Size = new Size(123, 27);
+            button1.Size = new Size(215, 29);
             button1.TabIndex = 3;
             button1.Text = "Check All";
             button1.UseVisualStyleBackColor = true;
@@ -111,9 +89,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(340, 13);
+            button2.Location = new Point(248, 12);
             button2.Name = "button2";
-            button2.Size = new Size(123, 27);
+            button2.Size = new Size(215, 29);
             button2.TabIndex = 6;
             button2.Text = "Uncheck All";
             button2.UseVisualStyleBackColor = true;
@@ -139,8 +117,6 @@
             Controls.Add(listView1);
             Controls.Add(statusStrip1);
             Controls.Add(button1);
-            Controls.Add(numericUpDown1);
-            Controls.Add(label1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Margin = new Padding(4);
@@ -148,7 +124,6 @@
             Name = "frmClntRemove";
             Text = "frmClntRemove";
             Load += frmClntRemove_Load;
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ResumeLayout(false);
@@ -156,9 +131,6 @@
         }
 
         #endregion
-
-        private Label label1;
-        private NumericUpDown numericUpDown1;
         private Button button1;
         private StatusStrip statusStrip1;
         private ListView listView1;
