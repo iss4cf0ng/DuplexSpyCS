@@ -47,9 +47,11 @@
             toolStripSeparator4 = new ToolStripSeparator();
             toolStripButton4 = new ToolStripButton();
             toolStripButton8 = new ToolStripButton();
+            toolStripButton9 = new ToolStripButton();
+            toolStripSeparator5 = new ToolStripSeparator();
+            toolStripButton10 = new ToolStripButton();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            toolStripButton9 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -57,10 +59,10 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripSeparator3, toolStripButton5, toolStripButton6, toolStripButton7, toolStripSeparator1, toolStripLabel1, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator4, toolStripButton4, toolStripButton8, toolStripButton9 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripSeparator3, toolStripButton5, toolStripButton6, toolStripButton7, toolStripSeparator1, toolStripLabel1, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator4, toolStripButton4, toolStripButton8, toolStripButton9, toolStripSeparator5, toolStripButton10 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(998, 27);
+            toolStrip1.Size = new Size(1060, 27);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -196,22 +198,6 @@
             toolStripButton8.Text = "Mirror";
             toolStripButton8.CheckStateChanged += toolStripButton8_CheckStateChanged;
             // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = Color.Black;
-            pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(0, 27);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(998, 507);
-            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox1.TabIndex = 1;
-            pictureBox1.TabStop = false;
-            // 
-            // timer1
-            // 
-            timer1.Interval = 1000;
-            timer1.Tick += timer1_Tick;
-            // 
             // toolStripButton9
             // 
             toolStripButton9.CheckOnClick = true;
@@ -222,14 +208,46 @@
             toolStripButton9.Size = new Size(90, 24);
             toolStripButton9.Text = "Timestamp";
             // 
+            // toolStripSeparator5
+            // 
+            toolStripSeparator5.Name = "toolStripSeparator5";
+            toolStripSeparator5.Size = new Size(6, 27);
+            // 
+            // toolStripButton10
+            // 
+            toolStripButton10.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton10.Image = (Image)resources.GetObject("toolStripButton10.Image");
+            toolStripButton10.ImageTransparentColor = Color.Magenta;
+            toolStripButton10.Name = "toolStripButton10";
+            toolStripButton10.Size = new Size(45, 24);
+            toolStripButton10.Text = "Help";
+            toolStripButton10.Click += toolStripButton10_Click;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = Color.Black;
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(0, 27);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(1060, 507);
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.TabIndex = 1;
+            pictureBox1.TabStop = false;
+            // 
+            // timer1
+            // 
+            timer1.Interval = 1000;
+            timer1.Tick += timer1_Tick;
+            // 
             // frmWebcam
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(998, 534);
+            ClientSize = new Size(1060, 534);
             Controls.Add(pictureBox1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmWebcam";
             StartPosition = FormStartPosition.CenterScreen;
@@ -265,5 +283,7 @@
         private ToolStripComboBox toolStripComboBox2;
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripButton toolStripButton9;
+        private ToolStripSeparator toolStripSeparator5;
+        private ToolStripButton toolStripButton10;
     }
 }

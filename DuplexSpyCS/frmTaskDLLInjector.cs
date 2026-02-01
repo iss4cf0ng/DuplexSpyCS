@@ -13,7 +13,7 @@ namespace DuplexSpyCS
     public partial class frmTaskDLLInjector : Form
     {
         private clsVictim m_victim { get; set; }
-        private List<(string, int)> m_lsProc { get; set; } 
+        private List<(string, int)> m_lsProc { get; set; }
 
         public frmTaskDLLInjector(clsVictim victim, List<(string, int)> lsProc)
         {
@@ -22,7 +22,7 @@ namespace DuplexSpyCS
             m_victim = victim;
             m_lsProc = lsProc;
 
-            Text = $"Injector | {victim.ID}";
+            Text = @$"DLL Injector\\{victim.ID}";
         }
 
         public enum enMethod
@@ -94,6 +94,8 @@ namespace DuplexSpyCS
 
         private void button2_Click(object sender, EventArgs e)
         {
+            tabControl1.SelectedIndex = 1;
+
             try
             {
                 string szFileName = textBox1.Text;
@@ -128,6 +130,11 @@ namespace DuplexSpyCS
         private void frmTaskDLLInjector_FormClosed(object sender, FormClosedEventArgs e)
         {
             m_victim.m_listener.ReceivedDecoded -= fnRecv;
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\TaskMgrInjector").Show();
         }
     }
 }

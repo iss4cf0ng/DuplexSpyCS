@@ -36,10 +36,13 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStrip1 = new ToolStrip();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             statusStrip1.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -47,10 +50,10 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 0);
+            tabControl1.Location = new Point(0, 27);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(834, 439);
+            tabControl1.Size = new Size(834, 412);
             tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -59,7 +62,7 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(826, 407);
+            tabPage1.Size = new Size(826, 380);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Basic Info";
             tabPage1.UseVisualStyleBackColor = true;
@@ -69,7 +72,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(820, 401);
+            richTextBox1.Size = new Size(820, 374);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -78,10 +81,10 @@
             tabPage2.Controls.Add(listView1);
             tabPage2.Controls.Add(statusStrip1);
             tabPage2.Controls.Add(toolStrip1);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(826, 407);
+            tabPage2.Size = new Size(826, 411);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Installed Patch";
             tabPage2.UseVisualStyleBackColor = true;
@@ -92,7 +95,7 @@
             listView1.FullRowSelect = true;
             listView1.Location = new Point(3, 28);
             listView1.Name = "listView1";
-            listView1.Size = new Size(820, 352);
+            listView1.Size = new Size(820, 356);
             listView1.TabIndex = 2;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -101,7 +104,7 @@
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 380);
+            statusStrip1.Location = new Point(3, 384);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(820, 24);
             statusStrip1.TabIndex = 1;
@@ -121,13 +124,32 @@
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(834, 27);
+            menuStrip1.TabIndex = 1;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
             // frmInfo
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(834, 439);
             Controls.Add(tabControl1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             Name = "frmInfo";
             Text = "frmInfo";
@@ -138,7 +160,10 @@
             tabPage2.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -151,5 +176,7 @@
         private ToolStrip toolStrip1;
         private RichTextBox richTextBox1;
         private ToolStripStatusLabel toolStripStatusLabel1;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

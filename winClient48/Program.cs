@@ -30,13 +30,28 @@ namespace winClient48
                         byte[] abShellcode = Convert.FromBase64String(szB64);
 
                         loader.fnShellCodeLoader(abShellcode);
-                }
+                    }
                     else if (args[0] == "--dll")
                     {
                         string szB64 = args[1];
                         byte[] abDllBytes = Convert.FromBase64String(szB64);
 
                         loader.fnLdrLoadDll(abDllBytes);
+                    }
+                    else if (args[0] == "--x64")
+                    {
+                        string szB64 = args[1];
+                        byte[] abExe = Convert.FromBase64String(szB64);
+
+                        loader.fnLoadPeIntoMemory(abExe);
+                    }
+                    else if (args[0] == "--cs")
+                    {
+                        string szB64 = args[1];
+                        byte[] abDotNetExe = Convert.FromBase64String(szB64);
+                        string[] parameters = args.Skip(2).ToArray();
+
+                        loader.fnLoadDotNetExe(abDotNetExe, parameters);
                     }
                 }
                 catch (Exception ex)

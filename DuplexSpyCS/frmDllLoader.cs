@@ -19,6 +19,7 @@ namespace DuplexSpyCS
             InitializeComponent();
 
             m_lsVictim = lsVictim;
+            Text = "DLL Loader";
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
@@ -86,6 +87,8 @@ namespace DuplexSpyCS
 
         private void button2_Click(object sender, EventArgs e)
         {
+            tabControl1.SelectedIndex = 1;
+
             Task.Run(() =>
             {
                 try

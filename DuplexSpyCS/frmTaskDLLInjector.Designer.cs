@@ -43,15 +43,18 @@
             richTextBox1 = new RichTextBox();
             label2 = new Label();
             comboBox1 = new ComboBox();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             statusStrip1.SuspendLayout();
             tabPage2.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(312, 42);
+            button1.Location = new Point(312, 67);
             button1.Margin = new Padding(4);
             button1.Name = "button1";
             button1.Size = new Size(96, 29);
@@ -62,7 +65,7 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(93, 44);
+            textBox1.Location = new Point(93, 69);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(212, 27);
             textBox1.TabIndex = 1;
@@ -70,7 +73,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(47, 47);
+            label1.Location = new Point(47, 72);
             label1.Name = "label1";
             label1.Size = new Size(40, 19);
             label1.TabIndex = 2;
@@ -78,7 +81,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(16, 78);
+            button2.Location = new Point(16, 103);
             button2.Name = "button2";
             button2.Size = new Size(392, 38);
             button2.TabIndex = 5;
@@ -91,10 +94,10 @@
             tabControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
-            tabControl1.Location = new Point(3, 122);
+            tabControl1.Location = new Point(3, 147);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(415, 390);
+            tabControl1.Size = new Size(415, 365);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 6;
             // 
@@ -105,7 +108,7 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(407, 358);
+            tabPage1.Size = new Size(407, 333);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Process";
             tabPage1.UseVisualStyleBackColor = true;
@@ -114,7 +117,7 @@
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 331);
+            statusStrip1.Location = new Point(3, 306);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(401, 24);
             statusStrip1.TabIndex = 1;
@@ -133,7 +136,7 @@
             listView1.FullRowSelect = true;
             listView1.Location = new Point(3, 3);
             listView1.Name = "listView1";
-            listView1.Size = new Size(401, 352);
+            listView1.Size = new Size(401, 327);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -171,7 +174,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(17, 11);
+            label2.Location = new Point(17, 36);
             label2.Name = "label2";
             label2.Size = new Size(71, 19);
             label2.TabIndex = 7;
@@ -181,10 +184,27 @@
             // 
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "APC", "EarlyBird", "CreateRemoteThread", "NtCreateThreadEx", "ZwCreateThreadEx" });
-            comboBox1.Location = new Point(94, 8);
+            comboBox1.Location = new Point(94, 33);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(314, 27);
             comboBox1.TabIndex = 8;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(420, 27);
+            menuStrip1.TabIndex = 9;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
             // 
             // frmTaskDLLInjector
             // 
@@ -198,8 +218,10 @@
             Controls.Add(label1);
             Controls.Add(textBox1);
             Controls.Add(button1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmTaskDLLInjector";
@@ -213,6 +235,8 @@
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             tabPage2.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -234,5 +258,7 @@
         private RichTextBox richTextBox1;
         private Label label2;
         private ComboBox comboBox1;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

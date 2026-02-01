@@ -24,7 +24,7 @@ namespace DuplexSpyCS
             m_victim = victim;
             m_lsProc = lsProc;
 
-            Text = @$"Shell Injector\\{m_victim.ID}";
+            Text = @$"Shellcode Injector\\{m_victim.ID}";
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
@@ -97,6 +97,8 @@ namespace DuplexSpyCS
 
         private void button2_Click(object sender, EventArgs e)
         {
+            tabControl1.SelectedIndex = 1;
+
             int nMethod = comboBox1.SelectedIndex;
 
             if (radioButton1.Checked)

@@ -89,6 +89,7 @@
             toolStripMenuItem4 = new ToolStripMenuItem();
             toolStripMenuItem5 = new ToolStripMenuItem();
             toolStripButton4 = new ToolStripButton();
+            toolStripButton7 = new ToolStripButton();
             listView1 = new ListView();
             columnHeader11 = new ColumnHeader();
             columnHeader1 = new ColumnHeader();
@@ -123,7 +124,6 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
-            toolStripButton7 = new ToolStripButton();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -571,6 +571,16 @@
             toolStripButton4.Text = "About";
             toolStripButton4.Click += toolStripButton4_Click;
             // 
+            // toolStripButton7
+            // 
+            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+            toolStripButton7.ImageTransparentColor = Color.Magenta;
+            toolStripButton7.Name = "toolStripButton7";
+            toolStripButton7.Size = new Size(45, 23);
+            toolStripButton7.Text = "Help";
+            toolStripButton7.Click += toolStripButton7_Click;
+            // 
             // listView1
             // 
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader11, columnHeader1, columnHeader2, columnHeader3, columnHeader4, columnHeader10, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9 });
@@ -584,6 +594,7 @@
             listView1.TabIndex = 3;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
+            listView1.ColumnWidthChanged += listView1_ColumnWidthChanged;
             listView1.ColumnWidthChanging += listView1_ColumnWidthChanging;
             listView1.DrawColumnHeader += listView1_DrawColumnHeader;
             listView1.DrawItem += listView1_DrawItem;
@@ -802,16 +813,6 @@
             toolStripMenuItem43.Size = new Size(154, 24);
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
-            // 
-            // toolStripButton7
-            // 
-            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
-            toolStripButton7.ImageTransparentColor = Color.Magenta;
-            toolStripButton7.Name = "toolStripButton7";
-            toolStripButton7.Size = new Size(45, 23);
-            toolStripButton7.Text = "Help";
-            toolStripButton7.Click += toolStripButton7_Click;
             // 
             // frmMain
             // 

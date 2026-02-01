@@ -45,7 +45,10 @@
             toolStripMenuItem7 = new ToolStripMenuItem();
             toolStripMenuItem9 = new ToolStripMenuItem();
             toolStripMenuItem8 = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripButton1 = new ToolStripButton();
             statusStrip1 = new StatusStrip();
+            toolStripProgressBar1 = new ToolStripProgressBar();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             splitContainer1 = new SplitContainer();
             tabControl1 = new TabControl();
@@ -58,7 +61,6 @@
             textBox1 = new TextBox();
             richTextBox1 = new RichTextBox();
             textBox2 = new TextBox();
-            toolStripProgressBar1 = new ToolStripProgressBar();
             toolStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -73,7 +75,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripDropDownButton2, toolStripDropDownButton3 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton1, toolStripDropDownButton2, toolStripDropDownButton3, toolStripSeparator2, toolStripButton1 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(940, 26);
@@ -193,6 +195,21 @@
             toolStripMenuItem8.Text = "Delete";
             toolStripMenuItem8.Click += toolStripMenuItem8_Click;
             // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 26);
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(45, 23);
+            toolStripButton1.Text = "Help";
+            toolStripButton1.Click += toolStripButton1_Click;
+            // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -202,6 +219,11 @@
             statusStrip1.Size = new Size(940, 24);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripProgressBar1
+            // 
+            toolStripProgressBar1.Name = "toolStripProgressBar1";
+            toolStripProgressBar1.Size = new Size(200, 18);
             // 
             // toolStripStatusLabel1
             // 
@@ -319,7 +341,7 @@
             richTextBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             richTextBox1.Location = new Point(1, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(620, 398);
+            richTextBox1.Size = new Size(618, 398);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             richTextBox1.KeyDown += richTextBox1_KeyDown;
@@ -332,11 +354,6 @@
             textBox2.Size = new Size(940, 27);
             textBox2.TabIndex = 3;
             // 
-            // toolStripProgressBar1
-            // 
-            toolStripProgressBar1.Name = "toolStripProgressBar1";
-            toolStripProgressBar1.Size = new Size(200, 18);
-            // 
             // frmKeyLogger
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -347,6 +364,7 @@
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmKeyLogger";
             StartPosition = FormStartPosition.CenterScreen;
@@ -402,5 +420,7 @@
         private TextBox textBox3;
         private TextBox textBox4;
         private ToolStripProgressBar toolStripProgressBar1;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton toolStripButton1;
     }
 }

@@ -90,5 +90,10 @@ namespace DuplexSpyCS
         {
             setup();
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Info").Show();
+        }
     }
 }

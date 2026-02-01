@@ -100,6 +100,8 @@
             miHWndClock = new ToolStripMenuItem();
             miHWndStartOrb = new ToolStripMenuItem();
             tabPage3 = new TabPage();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem5 = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             groupBox3.SuspendLayout();
@@ -111,6 +113,7 @@
             statusStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             tabPage3.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // groupBox1
@@ -393,10 +396,10 @@
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage3);
             tabControl1.Dock = DockStyle.Fill;
-            tabControl1.Location = new Point(0, 0);
+            tabControl1.Location = new Point(0, 27);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(710, 398);
+            tabControl1.Size = new Size(710, 371);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 6;
             // 
@@ -407,7 +410,7 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(702, 366);
+            tabPage1.Size = new Size(702, 339);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Message";
             tabPage1.UseVisualStyleBackColor = true;
@@ -561,16 +564,16 @@
             tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(702, 366);
+            tabPage2.Size = new Size(702, 339);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "FlipFlop";
+            tabPage2.Text = "Switch";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 339);
+            statusStrip1.Location = new Point(3, 312);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(696, 24);
             statusStrip1.TabIndex = 12;
@@ -625,7 +628,7 @@
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.Location = new Point(0, 45);
             listView1.Name = "listView1";
-            listView1.Size = new Size(702, 283);
+            listView1.Size = new Size(702, 264);
             listView1.TabIndex = 7;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -763,10 +766,28 @@
             tabPage3.Controls.Add(groupBox3);
             tabPage3.Location = new Point(4, 28);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(702, 366);
+            tabPage3.Size = new Size(702, 339);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Image";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem5 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(710, 27);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
+            menuStrip1.ItemClicked += menuStrip1_ItemClicked;
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(53, 23);
+            toolStripMenuItem5.Text = "Help";
+            toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
             // frmFunStuff
             // 
@@ -774,7 +795,9 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(710, 398);
             Controls.Add(tabControl1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmFunStuff";
@@ -797,7 +820,10 @@
             statusStrip1.PerformLayout();
             contextMenuStrip1.ResumeLayout(false);
             tabPage3.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -873,5 +899,7 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripMenuItem miMouseTrails;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem5;
     }
 }

@@ -94,6 +94,8 @@ namespace DuplexSpyCS
             m_frmListener = frmListener;
             m_config = config;
             m_sqlConn = sqlConn;
+
+            Text = "Listener Editor";
         }
 
         void fnSetup()

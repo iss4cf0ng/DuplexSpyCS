@@ -121,11 +121,11 @@ namespace DuplexSpyCS
             Invoke(new Action(() =>
             {
                 textBox2.Text = clsCrypto.b64D2Str(d1); //Path
-                
+
                 richTextBox1.Clear();
                 treeView1.Nodes.Clear();
                 treeView2.Nodes.Clear();
-                
+
                 ls_tnTitle.Clear();
                 ls_tnDate.Clear();
 
@@ -506,6 +506,11 @@ namespace DuplexSpyCS
                     treeView2.Nodes.Add(node);
                 }
             }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\KeyLogger").Show();
         }
     }
 }

