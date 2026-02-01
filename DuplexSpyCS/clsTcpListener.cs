@@ -310,8 +310,11 @@ namespace DuplexSpyCS
                                 {
                                     Task.Run(() =>
                                     {
-                                        int nDelay = 1000;
                                         DateTime datetime = DateTime.Now;
+
+                                        int nDelay = 5000;
+                                        Thread.Sleep(nDelay);
+
                                         TimeSpan span = datetime - v.last_sent;
                                         v.latency_time = span.Milliseconds;
                                         v.last_sent = datetime;

