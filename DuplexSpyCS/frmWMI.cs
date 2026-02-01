@@ -192,5 +192,10 @@ namespace DuplexSpyCS
             richTextBox1.SelectionStart = richTextBox1.Text.Length + 1;
             richTextBox1.SelectionLength = 0;
         }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\WQL").Show();
+        }
     }
 }

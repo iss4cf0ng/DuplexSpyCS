@@ -10,15 +10,15 @@ namespace winClient48
     {
         private string m_szHost { get; set; } //HTTP host.
         private string m_szPath { get; set; } //HTTP path.
-        private enMethod m_method { get; set; } //HTTP request method.
+        private string m_szMethod { get; set; } //HTTP request method.
         private string m_szUA { get; set; } //Client user-agent.
         private string m_szMsg { get; set; } //Body.
 
-        public clsHttpReq(string szHost, string szPath, enMethod method, string szUA, string szMsg)
+        public clsHttpReq(string szHost, string szPath, string szMethod, string szUA, string szMsg)
         {
             m_szHost = szHost;
             m_szPath = szPath;
-            m_method = method;
+            m_szMethod = szMethod;
             m_szUA = szUA;
             m_szMsg = szMsg;
         }
@@ -28,7 +28,7 @@ namespace winClient48
         public byte[] fnabGetRequest()
         {
             string szResp =
-                $"{Enum.GetName(typeof(enMethod), m_method)} {m_szPath} HTTP/1.1\r\n" +
+                $"{m_szMethod} HTTP/1.1\r\n" +
                 $"Host: {m_szHost}\r\n" +
                 $"User-Agent: {m_szUA}\r\n" +
                 $"Accept: */*\r\n" +

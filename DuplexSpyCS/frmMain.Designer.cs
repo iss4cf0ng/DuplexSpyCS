@@ -123,6 +123,7 @@
             contextMenuStrip2 = new ContextMenuStrip(components);
             toolStripMenuItem42 = new ToolStripMenuItem();
             toolStripMenuItem43 = new ToolStripMenuItem();
+            toolStripButton7 = new ToolStripButton();
             contextMenuStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
@@ -484,7 +485,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton6, toolStripSeparator6, toolStripButton2, toolStripButton3, toolStripDropDownButton1, toolStripButton4 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton6, toolStripSeparator6, toolStripButton2, toolStripButton3, toolStripDropDownButton1, toolStripButton4, toolStripButton7 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1015, 26);
@@ -802,6 +803,16 @@
             toolStripMenuItem43.Text = "Disconnect";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
+            // toolStripButton7
+            // 
+            toolStripButton7.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton7.Image = (Image)resources.GetObject("toolStripButton7.Image");
+            toolStripButton7.ImageTransparentColor = Color.Magenta;
+            toolStripButton7.Name = "toolStripButton7";
+            toolStripButton7.Size = new Size(45, 23);
+            toolStripButton7.Text = "Help";
+            toolStripButton7.Click += toolStripButton7_Click;
+            // 
             // frmMain
             // 
             AutoScaleDimensions = new SizeF(10F, 20F);
@@ -924,5 +935,6 @@
         private ToolStripMenuItem toolStripMenuItem46;
         private ToolStripMenuItem toolStripMenuItem47;
         private ToolStripSeparator toolStripSeparator7;
+        private ToolStripButton toolStripButton7;
     }
 }

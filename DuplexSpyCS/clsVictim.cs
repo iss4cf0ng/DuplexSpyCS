@@ -270,7 +270,8 @@ public class clsVictim
     {
         if (m_qResponse.Count == 0)
         {
-            return new clsHttpResp(3, 0, "HTTP 500://Server internal error.");
+            var config = clsStore.sql_conn.fnGetListener(m_listener.m_szName);
+            return new clsHttpResp(config);
         }
         else
         {

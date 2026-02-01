@@ -43,16 +43,16 @@
             tabPage4 = new TabPage();
             tabControl2 = new TabControl();
             tabPage3 = new TabPage();
+            comboBox6 = new ComboBox();
             label12 = new Label();
             label7 = new Label();
             textBox7 = new TextBox();
             comboBox4 = new ComboBox();
-            textBox6 = new TextBox();
             textBox5 = new TextBox();
             label11 = new Label();
             label10 = new Label();
             tabPage5 = new TabPage();
-            textBox8 = new TextBox();
+            comboBox7 = new ComboBox();
             comboBox5 = new ComboBox();
             comboBox3 = new ComboBox();
             comboBox2 = new ComboBox();
@@ -67,6 +67,8 @@
             textBox2 = new TextBox();
             numericUpDown1 = new NumericUpDown();
             label4 = new Label();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage4.SuspendLayout();
@@ -74,12 +76,13 @@
             tabPage3.SuspendLayout();
             tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(15, 15);
+            label1.Location = new Point(15, 33);
             label1.Name = "label1";
             label1.Size = new Size(54, 19);
             label1.TabIndex = 0;
@@ -88,7 +91,7 @@
             // comboBox1
             // 
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(75, 12);
+            comboBox1.Location = new Point(75, 30);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(281, 27);
             comboBox1.TabIndex = 1;
@@ -99,10 +102,10 @@
             tabControl1.Controls.Add(tabPage1);
             tabControl1.Controls.Add(tabPage2);
             tabControl1.Controls.Add(tabPage4);
-            tabControl1.Location = new Point(12, 201);
+            tabControl1.Location = new Point(12, 200);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(344, 210);
+            tabControl1.Size = new Size(344, 222);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 2;
             // 
@@ -111,7 +114,7 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(336, 178);
+            tabPage1.Size = new Size(336, 190);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "TCP";
             tabPage1.UseVisualStyleBackColor = true;
@@ -128,7 +131,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(336, 182);
+            tabPage2.Size = new Size(336, 194);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "TLS";
             tabPage2.UseVisualStyleBackColor = true;
@@ -142,6 +145,7 @@
             checkBox1.TabIndex = 13;
             checkBox1.Text = "Show";
             checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // label9
             // 
@@ -200,7 +204,7 @@
             tabPage4.Controls.Add(tabControl2);
             tabPage4.Location = new Point(4, 28);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(336, 178);
+            tabPage4.Size = new Size(336, 190);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "HTTP";
             tabPage4.UseVisualStyleBackColor = true;
@@ -209,30 +213,39 @@
             // 
             tabControl2.Controls.Add(tabPage3);
             tabControl2.Controls.Add(tabPage5);
-            tabControl2.Location = new Point(0, 3);
+            tabControl2.Dock = DockStyle.Fill;
+            tabControl2.Location = new Point(0, 0);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(333, 175);
+            tabControl2.Size = new Size(336, 190);
             tabControl2.SizeMode = TabSizeMode.Fixed;
             tabControl2.TabIndex = 25;
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(comboBox6);
             tabPage3.Controls.Add(label12);
             tabPage3.Controls.Add(label7);
             tabPage3.Controls.Add(textBox7);
             tabPage3.Controls.Add(comboBox4);
-            tabPage3.Controls.Add(textBox6);
             tabPage3.Controls.Add(textBox5);
             tabPage3.Controls.Add(label11);
             tabPage3.Controls.Add(label10);
             tabPage3.Location = new Point(4, 28);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(325, 143);
+            tabPage3.Size = new Size(328, 158);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Request";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // comboBox6
+            // 
+            comboBox6.FormattingEnabled = true;
+            comboBox6.Location = new Point(85, 105);
+            comboBox6.Name = "comboBox6";
+            comboBox6.Size = new Size(237, 27);
+            comboBox6.TabIndex = 25;
             // 
             // label12
             // 
@@ -267,13 +280,6 @@
             comboBox4.Size = new Size(237, 27);
             comboBox4.TabIndex = 18;
             // 
-            // textBox6
-            // 
-            textBox6.Location = new Point(85, 105);
-            textBox6.Name = "textBox6";
-            textBox6.Size = new Size(237, 27);
-            textBox6.TabIndex = 22;
-            // 
             // textBox5
             // 
             textBox5.Location = new Point(85, 72);
@@ -301,7 +307,7 @@
             // 
             // tabPage5
             // 
-            tabPage5.Controls.Add(textBox8);
+            tabPage5.Controls.Add(comboBox7);
             tabPage5.Controls.Add(comboBox5);
             tabPage5.Controls.Add(comboBox3);
             tabPage5.Controls.Add(comboBox2);
@@ -309,26 +315,26 @@
             tabPage5.Controls.Add(label8);
             tabPage5.Controls.Add(label13);
             tabPage5.Controls.Add(label14);
-            tabPage5.Location = new Point(4, 28);
+            tabPage5.Location = new Point(4, 24);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
-            tabPage5.Size = new Size(325, 143);
+            tabPage5.Size = new Size(328, 162);
             tabPage5.TabIndex = 1;
             tabPage5.Text = "Response";
             tabPage5.UseVisualStyleBackColor = true;
             // 
-            // textBox8
+            // comboBox7
             // 
-            textBox8.Location = new Point(83, 103);
-            textBox8.Multiline = true;
-            textBox8.Name = "textBox8";
-            textBox8.Size = new Size(237, 34);
-            textBox8.TabIndex = 32;
+            comboBox7.FormattingEnabled = true;
+            comboBox7.Location = new Point(83, 106);
+            comboBox7.Name = "comboBox7";
+            comboBox7.Size = new Size(237, 27);
+            comboBox7.TabIndex = 32;
             // 
             // comboBox5
             // 
             comboBox5.FormattingEnabled = true;
-            comboBox5.Location = new Point(83, 70);
+            comboBox5.Location = new Point(83, 40);
             comboBox5.Name = "comboBox5";
             comboBox5.Size = new Size(237, 27);
             comboBox5.TabIndex = 31;
@@ -336,7 +342,7 @@
             // comboBox3
             // 
             comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(83, 40);
+            comboBox3.Location = new Point(83, 73);
             comboBox3.Name = "comboBox3";
             comboBox3.Size = new Size(237, 27);
             comboBox3.TabIndex = 30;
@@ -361,7 +367,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(28, 43);
+            label8.Location = new Point(28, 76);
             label8.Name = "label8";
             label8.Size = new Size(49, 19);
             label8.TabIndex = 25;
@@ -370,7 +376,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(25, 103);
+            label13.Location = new Point(25, 109);
             label13.Name = "label13";
             label13.Size = new Size(52, 19);
             label13.TabIndex = 27;
@@ -379,7 +385,7 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(16, 73);
+            label14.Location = new Point(16, 43);
             label14.Name = "label14";
             label14.Size = new Size(61, 19);
             label14.TabIndex = 26;
@@ -387,9 +393,9 @@
             // 
             // button1
             // 
-            button1.Location = new Point(12, 417);
+            button1.Location = new Point(12, 429);
             button1.Name = "button1";
-            button1.Size = new Size(344, 55);
+            button1.Size = new Size(344, 64);
             button1.TabIndex = 3;
             button1.Text = "Save";
             button1.UseVisualStyleBackColor = true;
@@ -397,7 +403,7 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(75, 45);
+            textBox1.Location = new Point(75, 63);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(280, 27);
             textBox1.TabIndex = 4;
@@ -405,7 +411,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(11, 48);
+            label2.Location = new Point(11, 66);
             label2.Name = "label2";
             label2.Size = new Size(58, 19);
             label2.TabIndex = 5;
@@ -414,7 +420,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(20, 114);
+            label3.Location = new Point(20, 129);
             label3.Name = "label3";
             label3.Size = new Size(49, 19);
             label3.TabIndex = 7;
@@ -422,15 +428,15 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(75, 111);
+            textBox2.Location = new Point(75, 129);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(280, 84);
+            textBox2.Size = new Size(280, 65);
             textBox2.TabIndex = 6;
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(75, 78);
+            numericUpDown1.Location = new Point(75, 96);
             numericUpDown1.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(280, 27);
@@ -439,17 +445,34 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(24, 80);
+            label4.Location = new Point(24, 98);
             label4.Name = "label4";
             label4.Size = new Size(45, 19);
             label4.TabIndex = 9;
             label4.Text = "Port :";
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(371, 27);
+            menuStrip1.TabIndex = 10;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
             // frmListenerEdit
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(371, 484);
+            ClientSize = new Size(371, 505);
             Controls.Add(label4);
             Controls.Add(numericUpDown1);
             Controls.Add(label3);
@@ -460,8 +483,10 @@
             Controls.Add(tabControl1);
             Controls.Add(comboBox1);
             Controls.Add(label1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmListenerEdit";
@@ -478,6 +503,8 @@
             tabPage5.ResumeLayout(false);
             tabPage5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -506,7 +533,6 @@
         private Label label5;
         private Label label12;
         private TextBox textBox7;
-        private TextBox textBox6;
         private Label label11;
         private Label label10;
         private TextBox textBox5;
@@ -521,7 +547,10 @@
         private Label label8;
         private Label label13;
         private Label label14;
-        private TextBox textBox8;
         private ComboBox comboBox5;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ComboBox comboBox6;
+        private ComboBox comboBox7;
     }
 }

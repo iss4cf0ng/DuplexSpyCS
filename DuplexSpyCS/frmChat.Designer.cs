@@ -41,6 +41,8 @@
             toolStripTextBox1 = new ToolStripTextBox();
             toolStripSeparator2 = new ToolStripSeparator();
             toolStripLabel2 = new ToolStripLabel();
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripButton4 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -76,7 +78,8 @@
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripSeparator1, toolStripLabel1, toolStripTextBox1, toolStripSeparator2, toolStripLabel2 });
+            toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripSeparator1, toolStripLabel1, toolStripTextBox1, toolStripSeparator2, toolStripLabel2, toolStripSeparator3, toolStripButton4 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(824, 27);
@@ -146,6 +149,21 @@
             toolStripLabel2.Size = new Size(106, 24);
             toolStripLabel2.Text = "Status: Offline";
             // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 27);
+            // 
+            // toolStripButton4
+            // 
+            toolStripButton4.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton4.Image = (Image)resources.GetObject("toolStripButton4.Image");
+            toolStripButton4.ImageTransparentColor = Color.Magenta;
+            toolStripButton4.Name = "toolStripButton4";
+            toolStripButton4.Size = new Size(45, 24);
+            toolStripButton4.Text = "Help";
+            toolStripButton4.Click += toolStripButton4_Click;
+            // 
             // frmChat
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -182,5 +200,7 @@
         private ToolStripTextBox toolStripTextBox1;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripLabel toolStripLabel2;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton toolStripButton4;
     }
 }

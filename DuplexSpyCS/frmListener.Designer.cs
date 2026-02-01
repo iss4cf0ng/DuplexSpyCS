@@ -56,6 +56,8 @@
             toolStripMenuItem7 = new ToolStripMenuItem();
             toolStripMenuItem8 = new ToolStripMenuItem();
             timer1 = new System.Windows.Forms.Timer(components);
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripButton5 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -64,7 +66,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4, toolStripButton1 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripButton3, toolStripButton4, toolStripButton1, toolStripSeparator3, toolStripButton5 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(785, 26);
@@ -251,6 +253,21 @@
             // 
             timer1.Tick += timer1_Tick;
             // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 26);
+            // 
+            // toolStripButton5
+            // 
+            toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton5.Image = (Image)resources.GetObject("toolStripButton5.Image");
+            toolStripButton5.ImageTransparentColor = Color.Magenta;
+            toolStripButton5.Name = "toolStripButton5";
+            toolStripButton5.Size = new Size(45, 23);
+            toolStripButton5.Text = "Help";
+            toolStripButton5.Click += toolStripButton5_Click;
+            // 
             // frmListener
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -303,5 +320,7 @@
         private ToolStripMenuItem toolStripMenuItem8;
         private ColumnHeader columnHeader6;
         private System.Windows.Forms.Timer timer1;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton toolStripButton5;
     }
 }

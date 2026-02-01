@@ -136,7 +136,7 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(numericUpDown1);
             groupBox1.Controls.Add(textBox1);
-            groupBox1.Location = new Point(6, 9);
+            groupBox1.Location = new Point(6, 135);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(458, 93);
             groupBox1.TabIndex = 4;
@@ -165,7 +165,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(422, 23);
+            label6.Location = new Point(422, 56);
             label6.Name = "label6";
             label6.Size = new Size(30, 19);
             label6.TabIndex = 8;
@@ -174,7 +174,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(210, 23);
+            label5.Location = new Point(210, 56);
             label5.Name = "label5";
             label5.Size = new Size(30, 19);
             label5.TabIndex = 7;
@@ -182,7 +182,7 @@
             // 
             // numericUpDown3
             // 
-            numericUpDown3.Location = new Point(319, 21);
+            numericUpDown3.Location = new Point(319, 54);
             numericUpDown3.Margin = new Padding(8);
             numericUpDown3.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numericUpDown3.Name = "numericUpDown3";
@@ -191,7 +191,7 @@
             // 
             // numericUpDown2
             // 
-            numericUpDown2.Location = new Point(107, 21);
+            numericUpDown2.Location = new Point(107, 54);
             numericUpDown2.Margin = new Padding(6);
             numericUpDown2.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numericUpDown2.Name = "numericUpDown2";
@@ -201,7 +201,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(257, 23);
+            label4.Location = new Point(257, 56);
             label4.Name = "label4";
             label4.Size = new Size(53, 19);
             label4.TabIndex = 4;
@@ -210,7 +210,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(25, 23);
+            label3.Location = new Point(25, 56);
             label3.Name = "label3";
             label3.Size = new Size(73, 19);
             label3.TabIndex = 3;
@@ -229,7 +229,7 @@
             groupBox4.Controls.Add(label6);
             groupBox4.Controls.Add(numericUpDown3);
             groupBox4.Controls.Add(label5);
-            groupBox4.Location = new Point(6, 108);
+            groupBox4.Location = new Point(6, 6);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(458, 123);
             groupBox4.TabIndex = 10;
@@ -239,25 +239,25 @@
             // comboBox3
             // 
             comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(107, 86);
+            comboBox3.Location = new Point(107, 18);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(203, 27);
+            comboBox3.Size = new Size(304, 27);
             comboBox3.TabIndex = 13;
             comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
             // 
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(24, 89);
+            label14.Location = new Point(27, 21);
             label14.Name = "label14";
-            label14.Size = new Size(74, 19);
+            label14.Size = new Size(71, 19);
             label14.TabIndex = 12;
-            label14.Text = "Protocol :";
+            label14.Text = "Listener :";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(210, 54);
+            label9.Location = new Point(210, 87);
             label9.Name = "label9";
             label9.Size = new Size(30, 19);
             label9.TabIndex = 11;
@@ -265,7 +265,7 @@
             // 
             // numericUpDown4
             // 
-            numericUpDown4.Location = new Point(107, 52);
+            numericUpDown4.Location = new Point(107, 85);
             numericUpDown4.Margin = new Padding(8);
             numericUpDown4.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
             numericUpDown4.Name = "numericUpDown4";
@@ -275,7 +275,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(30, 54);
+            label8.Location = new Point(30, 87);
             label8.Name = "label8";
             label8.Size = new Size(68, 19);
             label8.TabIndex = 9;

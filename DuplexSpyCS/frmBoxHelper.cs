@@ -25,11 +25,11 @@ namespace DuplexSpyCS
         void setup()
         {
             Text = readFile;
+
             string path = Path.Combine(new string[] { Application.StartupPath, "Doc", "RTF", readFile + ".rtf" });
 
             if (File.Exists(path))
             {
-                Text = readFile;
                 textBox1.Text = path;
                 textBox1.Tag = path;
 

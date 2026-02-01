@@ -37,6 +37,8 @@
             toolStripSeparator1 = new ToolStripSeparator();
             toolStripLabel1 = new ToolStripLabel();
             toolStripComboBox1 = new ToolStripComboBox();
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripButton3 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -60,7 +62,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripSeparator2, toolStripButton1, toolStripSeparator1, toolStripLabel1, toolStripComboBox1 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripSeparator2, toolStripButton1, toolStripSeparator1, toolStripLabel1, toolStripComboBox1, toolStripSeparator3, toolStripButton3 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(752, 26);
@@ -109,6 +111,21 @@
             toolStripComboBox1.Size = new Size(200, 26);
             toolStripComboBox1.SelectedIndexChanged += toolStripComboBox1_SelectedIndexChanged;
             // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 26);
+            // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(45, 23);
+            toolStripButton3.Text = "Help";
+            toolStripButton3.Click += toolStripButton3_Click;
+            // 
             // frmWMI
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -138,5 +155,7 @@
         private ToolStripComboBox toolStripComboBox1;
         private ToolStripButton toolStripButton2;
         private ToolStripSeparator toolStripSeparator2;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripButton toolStripButton3;
     }
 }
