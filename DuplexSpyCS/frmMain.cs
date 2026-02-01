@@ -1679,7 +1679,7 @@ namespace DuplexSpyCS
             listView1.View = View.Details;
             listView1.Columns[0].Width = screen_width;
 
-            //il_screen.ImageSize = new Size(screen_width, screen_width);
+            il_screen.ImageSize = new Size(screen_width, screen_width);
 
             foreach (ListViewItem item in listView1.Items)
                 item.Text = string.Empty;

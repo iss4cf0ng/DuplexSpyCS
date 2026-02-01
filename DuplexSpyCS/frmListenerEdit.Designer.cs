@@ -41,6 +41,25 @@
             textBox3 = new TextBox();
             label5 = new Label();
             tabPage4 = new TabPage();
+            tabControl2 = new TabControl();
+            tabPage3 = new TabPage();
+            label12 = new Label();
+            label7 = new Label();
+            textBox7 = new TextBox();
+            comboBox4 = new ComboBox();
+            textBox6 = new TextBox();
+            textBox5 = new TextBox();
+            label11 = new Label();
+            label10 = new Label();
+            tabPage5 = new TabPage();
+            textBox8 = new TextBox();
+            comboBox5 = new ComboBox();
+            comboBox3 = new ComboBox();
+            comboBox2 = new ComboBox();
+            label6 = new Label();
+            label8 = new Label();
+            label13 = new Label();
+            label14 = new Label();
             button1 = new Button();
             textBox1 = new TextBox();
             label2 = new Label();
@@ -48,17 +67,12 @@
             textBox2 = new TextBox();
             numericUpDown1 = new NumericUpDown();
             label4 = new Label();
-            label12 = new Label();
-            textBox7 = new TextBox();
-            textBox6 = new TextBox();
-            label11 = new Label();
-            label10 = new Label();
-            textBox5 = new TextBox();
-            comboBox4 = new ComboBox();
-            label7 = new Label();
             tabControl1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage4.SuspendLayout();
+            tabControl2.SuspendLayout();
+            tabPage3.SuspendLayout();
+            tabPage5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
@@ -111,10 +125,10 @@
             tabPage2.Controls.Add(button2);
             tabPage2.Controls.Add(textBox3);
             tabPage2.Controls.Add(label5);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(336, 178);
+            tabPage2.Size = new Size(336, 182);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "TLS";
             tabPage2.UseVisualStyleBackColor = true;
@@ -183,20 +197,193 @@
             // 
             // tabPage4
             // 
-            tabPage4.Controls.Add(label12);
-            tabPage4.Controls.Add(textBox7);
-            tabPage4.Controls.Add(textBox6);
-            tabPage4.Controls.Add(label11);
-            tabPage4.Controls.Add(label10);
-            tabPage4.Controls.Add(textBox5);
-            tabPage4.Controls.Add(comboBox4);
-            tabPage4.Controls.Add(label7);
+            tabPage4.Controls.Add(tabControl2);
             tabPage4.Location = new Point(4, 28);
             tabPage4.Name = "tabPage4";
             tabPage4.Size = new Size(336, 178);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "HTTP";
             tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // tabControl2
+            // 
+            tabControl2.Controls.Add(tabPage3);
+            tabControl2.Controls.Add(tabPage5);
+            tabControl2.Location = new Point(0, 3);
+            tabControl2.Name = "tabControl2";
+            tabControl2.SelectedIndex = 0;
+            tabControl2.Size = new Size(333, 175);
+            tabControl2.SizeMode = TabSizeMode.Fixed;
+            tabControl2.TabIndex = 25;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(label12);
+            tabPage3.Controls.Add(label7);
+            tabPage3.Controls.Add(textBox7);
+            tabPage3.Controls.Add(comboBox4);
+            tabPage3.Controls.Add(textBox6);
+            tabPage3.Controls.Add(textBox5);
+            tabPage3.Controls.Add(label11);
+            tabPage3.Controls.Add(label10);
+            tabPage3.Location = new Point(4, 28);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(325, 143);
+            tabPage3.TabIndex = 0;
+            tabPage3.Text = "Request";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(31, 9);
+            label12.Name = "label12";
+            label12.Size = new Size(48, 19);
+            label12.TabIndex = 24;
+            label12.Text = "Host :";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(11, 42);
+            label7.Name = "label7";
+            label7.Size = new Size(71, 19);
+            label7.TabIndex = 17;
+            label7.Text = "Method :";
+            // 
+            // textBox7
+            // 
+            textBox7.Location = new Point(85, 6);
+            textBox7.Name = "textBox7";
+            textBox7.Size = new Size(237, 27);
+            textBox7.TabIndex = 23;
+            // 
+            // comboBox4
+            // 
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Location = new Point(85, 39);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(237, 27);
+            comboBox4.TabIndex = 18;
+            // 
+            // textBox6
+            // 
+            textBox6.Location = new Point(85, 105);
+            textBox6.Name = "textBox6";
+            textBox6.Size = new Size(237, 27);
+            textBox6.TabIndex = 22;
+            // 
+            // textBox5
+            // 
+            textBox5.Location = new Point(85, 72);
+            textBox5.Name = "textBox5";
+            textBox5.Size = new Size(237, 27);
+            textBox5.TabIndex = 19;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(42, 108);
+            label11.Name = "label11";
+            label11.Size = new Size(37, 19);
+            label11.TabIndex = 21;
+            label11.Text = "UA :";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(32, 75);
+            label10.Name = "label10";
+            label10.Size = new Size(47, 19);
+            label10.TabIndex = 20;
+            label10.Text = "Path :";
+            // 
+            // tabPage5
+            // 
+            tabPage5.Controls.Add(textBox8);
+            tabPage5.Controls.Add(comboBox5);
+            tabPage5.Controls.Add(comboBox3);
+            tabPage5.Controls.Add(comboBox2);
+            tabPage5.Controls.Add(label6);
+            tabPage5.Controls.Add(label8);
+            tabPage5.Controls.Add(label13);
+            tabPage5.Controls.Add(label14);
+            tabPage5.Location = new Point(4, 28);
+            tabPage5.Name = "tabPage5";
+            tabPage5.Padding = new Padding(3);
+            tabPage5.Size = new Size(325, 143);
+            tabPage5.TabIndex = 1;
+            tabPage5.Text = "Response";
+            tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // textBox8
+            // 
+            textBox8.Location = new Point(83, 103);
+            textBox8.Multiline = true;
+            textBox8.Name = "textBox8";
+            textBox8.Size = new Size(237, 34);
+            textBox8.TabIndex = 32;
+            // 
+            // comboBox5
+            // 
+            comboBox5.FormattingEnabled = true;
+            comboBox5.Location = new Point(83, 70);
+            comboBox5.Name = "comboBox5";
+            comboBox5.Size = new Size(237, 27);
+            comboBox5.TabIndex = 31;
+            // 
+            // comboBox3
+            // 
+            comboBox3.FormattingEnabled = true;
+            comboBox3.Location = new Point(83, 40);
+            comboBox3.Name = "comboBox3";
+            comboBox3.Size = new Size(237, 27);
+            comboBox3.TabIndex = 30;
+            // 
+            // comboBox2
+            // 
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(83, 7);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(237, 27);
+            comboBox2.TabIndex = 29;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(18, 10);
+            label6.Name = "label6";
+            label6.Size = new Size(59, 19);
+            label6.TabIndex = 28;
+            label6.Text = "Status :";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(28, 43);
+            label8.Name = "label8";
+            label8.Size = new Size(49, 19);
+            label8.TabIndex = 25;
+            label8.Text = "Type :";
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(25, 103);
+            label13.Name = "label13";
+            label13.Size = new Size(52, 19);
+            label13.TabIndex = 27;
+            label13.Text = "Body :";
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(16, 73);
+            label14.Name = "label14";
+            label14.Size = new Size(61, 19);
+            label14.TabIndex = 26;
+            label14.Text = "Server :";
             // 
             // button1
             // 
@@ -258,71 +445,6 @@
             label4.TabIndex = 9;
             label4.Text = "Port :";
             // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(32, 6);
-            label12.Name = "label12";
-            label12.Size = new Size(48, 19);
-            label12.TabIndex = 24;
-            label12.Text = "Host :";
-            // 
-            // textBox7
-            // 
-            textBox7.Location = new Point(86, 3);
-            textBox7.Name = "textBox7";
-            textBox7.Size = new Size(237, 27);
-            textBox7.TabIndex = 23;
-            // 
-            // textBox6
-            // 
-            textBox6.Location = new Point(86, 102);
-            textBox6.Name = "textBox6";
-            textBox6.Size = new Size(237, 27);
-            textBox6.TabIndex = 22;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(43, 105);
-            label11.Name = "label11";
-            label11.Size = new Size(37, 19);
-            label11.TabIndex = 21;
-            label11.Text = "UA :";
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(33, 72);
-            label10.Name = "label10";
-            label10.Size = new Size(47, 19);
-            label10.TabIndex = 20;
-            label10.Text = "Path :";
-            // 
-            // textBox5
-            // 
-            textBox5.Location = new Point(86, 69);
-            textBox5.Name = "textBox5";
-            textBox5.Size = new Size(237, 27);
-            textBox5.TabIndex = 19;
-            // 
-            // comboBox4
-            // 
-            comboBox4.FormattingEnabled = true;
-            comboBox4.Location = new Point(86, 36);
-            comboBox4.Name = "comboBox4";
-            comboBox4.Size = new Size(237, 27);
-            comboBox4.TabIndex = 18;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(12, 39);
-            label7.Name = "label7";
-            label7.Size = new Size(71, 19);
-            label7.TabIndex = 17;
-            label7.Text = "Method :";
-            // 
             // frmListenerEdit
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -350,7 +472,11 @@
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             tabPage4.ResumeLayout(false);
-            tabPage4.PerformLayout();
+            tabControl2.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
+            tabPage3.PerformLayout();
+            tabPage5.ResumeLayout(false);
+            tabPage5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -386,5 +512,16 @@
         private TextBox textBox5;
         private ComboBox comboBox4;
         private Label label7;
+        private TabControl tabControl2;
+        private TabPage tabPage3;
+        private TabPage tabPage5;
+        private ComboBox comboBox3;
+        private ComboBox comboBox2;
+        private Label label6;
+        private Label label8;
+        private Label label13;
+        private Label label14;
+        private TextBox textBox8;
+        private ComboBox comboBox5;
     }
 }

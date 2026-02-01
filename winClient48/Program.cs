@@ -17,10 +17,6 @@ namespace winClient48
         [STAThread]
         static void Main(string[] args)
         {
-            // Start the keylogger in the background
-            //KeyLogger keylogger = new KeyLogger();
-            //keylogger.Start();
-
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
 
             Application.EnableVisualStyles();
@@ -33,7 +29,6 @@ namespace winClient48
             var name = new AssemblyName(args.Name).Name;
             if (name == "Plugin.Abstractions48")
             {
-                // 回傳 Client.exe 裡面 ILMerge 的 Abstractions48 Assembly
                 return typeof(IPlugin).Assembly;
             }
 

