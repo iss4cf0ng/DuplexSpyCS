@@ -502,6 +502,10 @@ namespace winClient48
 
                                 _ = Task.Run(() => _Received(victim, szPlain));
                             }
+                            else if (para == 1)
+                            {
+                                _ = Task.Run(() => victim.fnSendCmdParam(2, 1));
+                            }
                         }
                     }
                 }
@@ -623,7 +627,7 @@ namespace winClient48
                             }
                             else if (dsp.Param == 1)
                             {
-                                
+                                _ = Task.Run(() => victim.fnSendCmdParam(2, 1));
                             }
                         }
                     }

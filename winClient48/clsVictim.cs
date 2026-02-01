@@ -279,6 +279,9 @@ namespace winClient48
                 case enProtocol.TLS:
                     fnSslSendRAW(nCmd, nParam, abData);
                     break;
+                case enProtocol.HTTP:
+                    fnHttpSend(nCmd, nParam, szMsg);
+                    break;
             }
         }
     }

