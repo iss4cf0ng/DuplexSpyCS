@@ -64,3 +64,6 @@
 - Errors when reusing virtual terminal.
 - TLS error.
 - WQL Console commands issues.
+- FunStuff
+  - Toggle
+    - Mouse Trails.
