@@ -5,6 +5,7 @@
   - Completed function.
 
 - Simple Ransomware Plugin.
+- QA (Quality Assurance)
 
 # Debug
 - DLL Injection
