@@ -51,12 +51,15 @@
   - HTTP
 
 # ✅ Solved
-- Detail -> Column width error.
+- Main:
+  - Column width error.
+  - Screen display error when it has multiple onlined machines.
 - Muti-Desktop display error.
 - File transfer:
   - Percentage display error.
   - Improved "Find".
   - Data corrupted while transfering (misuse of byte array).
+  - Improved transfering algorithm and data structure.
 - Terminal -> Resize issues.
 - File transfer bad data.
 - File transfer progress display error.
@@ -72,3 +75,6 @@
   - Desktop icons cannot be hided.
   - Randomness of "Crazy Mouse"
   - hWnd value shows incorrectly.
+- Multi-URL
+- Multi-RunScript
+- Multi-LockScreen
