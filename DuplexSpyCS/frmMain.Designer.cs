@@ -81,8 +81,6 @@
             toolStripMenuItem41 = new ToolStripMenuItem();
             toolStrip1 = new ToolStrip();
             toolStripButton1 = new ToolStripButton();
-            toolStripButton6 = new ToolStripButton();
-            toolStripSeparator6 = new ToolStripSeparator();
             toolStripButton2 = new ToolStripButton();
             toolStripButton3 = new ToolStripButton();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
@@ -472,7 +470,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton6, toolStripSeparator6, toolStripButton2, toolStripButton3, toolStripDropDownButton1, toolStripButton4, toolStripButton7 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripButton2, toolStripButton3, toolStripDropDownButton1, toolStripButton4, toolStripButton7 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1015, 26);
@@ -488,21 +486,6 @@
             toolStripButton1.Size = new Size(54, 23);
             toolStripButton1.Text = "Listen";
             toolStripButton1.Click += toolStripButton1_Click;
-            // 
-            // toolStripButton6
-            // 
-            toolStripButton6.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton6.Image = (Image)resources.GetObject("toolStripButton6.Image");
-            toolStripButton6.ImageTransparentColor = Color.Magenta;
-            toolStripButton6.Name = "toolStripButton6";
-            toolStripButton6.Size = new Size(53, 23);
-            toolStripButton6.Text = "Tipoff";
-            toolStripButton6.Click += toolStripButton6_Click;
-            // 
-            // toolStripSeparator6
-            // 
-            toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new Size(6, 26);
             // 
             // toolStripButton2
             // 
@@ -814,8 +797,6 @@
         private ToolStripMenuItem toolStripMenuItem41;
         private ToolStripSeparator toolStripSeparator5;
         private ToolStripMenuItem toolStripMenuItem40;
-        private ToolStripButton toolStripButton6;
-        private ToolStripSeparator toolStripSeparator6;
         private TabControl tabControl1;
         private TabPage tabPage1;
         private TabPage tabPage2;

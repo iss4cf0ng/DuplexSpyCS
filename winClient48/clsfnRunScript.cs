@@ -20,72 +20,115 @@ namespace winClient48
 
         }
 
-        public (int, string) EvaluateCS(string code, string[] szArr_Params)
+        public (int nCode, string szMsg) EvaluateCS(string code, string[] szArr_Params)
         {
-            int ret = 1;
+            int nCode = 0;
+            string szMsg = string.Empty;
+
             StringWriter sw_output = new StringWriter();
+            TextWriter originalOut = Console.Out;
 
-            CSharpCodeProvider provider = new CSharpCodeProvider();
-            CompilerParameters param = new CompilerParameters()
+            try
             {
-                GenerateInMemory = true,
-            };
+                Console.SetOut(sw_output);
 
-            Console.SetOut(sw_output);
+                var provider = new CSharpCodeProvider();
+                var param = new CompilerParameters
+                {
+                    GenerateInMemory = true,
+                    GenerateExecutable = true
+                };
 
-            CompilerResults result = provider.CompileAssemblyFromSource(param, code);
-            if (result.Errors.HasErrors)
+                CompilerResults result = provider.CompileAssemblyFromSource(param, code);
+
+                if (result.Errors.HasErrors)
+                {
+                    foreach (CompilerError error in result.Errors)
+                        sw_output.WriteLine(error.ToString());
+
+                    Console.SetOut(originalOut);
+                    return (0, sw_output.ToString());
+                }
+
+                MethodInfo main = result.CompiledAssembly.EntryPoint;
+
+                //Main(string[] args)
+                main.Invoke(null, new object[] { szArr_Params });
+
+                Console.SetOut(originalOut);
+
+                nCode = 1;
+            }
+            catch (Exception ex)
             {
-                Console.SetError(sw_output);
-                ret = 0;
+                sw_output.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
             }
 
-            Assembly assembly = result.CompiledAssembly;
-            Type program_type = assembly.GetType("Program");
-            MethodInfo main_method = program_type.GetMethod("Main");
-
-            main_method.Invoke(null, szArr_Params);
-
-            return (ret, sw_output.ToString());
+            return (nCode, sw_output.ToString());
         }
 
-        public (int, string) EvaluateVB(string code, string[] szArr_Params)
+        public (int nCode, string szMsg) EvaluateVB(string code, string[] szArr_Params)
         {
-            int ret = 1;
+            int nCode = 0;
             StringWriter sw_output = new StringWriter();
+            TextWriter originalOut = Console.Out;
 
-            VBCodeProvider provider = new VBCodeProvider();
-            CompilerParameters param = new CompilerParameters()
+            try
             {
-                GenerateInMemory = true,
-            };
+                Console.SetOut(sw_output);
 
-            Console.SetOut(sw_output);
+                VBCodeProvider provider = new VBCodeProvider();
+                CompilerParameters param = new CompilerParameters
+                {
+                    GenerateInMemory = true,
+                    GenerateExecutable = true
+                };
 
-            CompilerResults result = provider.CompileAssemblyFromSource(param, code);
-            if (result.Errors.HasErrors)
+                CompilerResults result =  provider.CompileAssemblyFromSource(param, code);
+
+                if (result.Errors.HasErrors)
+                {
+                    foreach (CompilerError err in result.Errors)
+                        sw_output.WriteLine(err.ToString());
+
+                    return (0, sw_output.ToString());
+                }
+
+                MethodInfo main = result.CompiledAssembly.EntryPoint;
+
+                //Main(String())
+                if (main.GetParameters().Length == 1)
+                    main.Invoke(null, new object[] { szArr_Params });
+                else
+                    main.Invoke(null, null);
+
+                nCode = 1;
+            }
+            catch (Exception ex)
             {
-                Console.SetError(sw_output);
-                ret = 0;
+                sw_output.WriteLine(ex.ToString());
+            }
+            finally
+            {
+                Console.SetOut(originalOut);
             }
 
-            Assembly assembly = result.CompiledAssembly;
-            Type program_type = assembly.GetType("Program");
-            MethodInfo main_method = program_type.GetMethod("Main");
-
-            main_method.Invoke(null, szArr_Params);
-
-            return (ret, sw_output.ToString());
+            return (nCode, sw_output.ToString());
         }
 
-        public (int, string) ExecBatch(string script, string[] szArr_Params)
+
+        public (int nCode, string szMsg) ExecBatch(string script, string[] szArr_Params)
         {
             int ret = 1;
             string msg = string.Empty;
 
             try
             {
-                string szTmpFile = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".bat");
+                string szTmpFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".bat");
                 File.WriteAllText(szTmpFile, script);
 
                 if (!File.Exists(szTmpFile))

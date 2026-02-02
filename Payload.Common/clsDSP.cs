@@ -5,27 +5,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tipoff
+namespace Payload.Common
 {
-    public class DSP
+    public class clsDSP
     {
         //HEADER
-        public const int HEADER_SIZE = 6; //6 BYTES
+        public const int HEADER_SIZE = 6;                     //6 bytes
         public byte _Command = 0;
-        public byte Command { get { return _Command; } }
+        public byte Command { get { return _Command; } }      //Command
         public byte _Param = 0;
-        public byte Param { get { return _Param; } }
+        public byte Param { get { return _Param; } }          //Parameter
         private int _DataLength = 0;
-        public int DataLength { get { return _DataLength; } }
+        public int DataLength { get { return _DataLength; } } //Data length
 
         //DATA
         private byte[] _MessageData = new byte[0];
-        private byte[] MessageData = new byte[0];
+        private byte[] MessageData = new byte[0];             //Message
         private byte[] _MoreData = new byte[0];
-        public byte[] MoreData { get { return _MoreData; } }
+        public byte[] MoreData { get { return _MoreData; } }  //More message.
 
         //CONSTRUCTOR-1
-        public DSP(byte[] buffer)
+        public clsDSP(byte[] buffer)
         {
             if (buffer == null || buffer.Length < HEADER_SIZE)
                 return;
@@ -55,7 +55,7 @@ namespace Tipoff
             }
         }
         //CONSTRUCTOR-2
-        public DSP(byte cmd, byte para, byte[] msg)
+        public clsDSP(byte cmd, byte para, byte[] msg)
         {
             _Command = cmd;
             _Param = para;
@@ -63,6 +63,10 @@ namespace Tipoff
             _DataLength = msg.Length;
         }
 
+        /// <summary>
+        /// Get the entire byte array.
+        /// </summary>
+        /// <returns></returns>
         public byte[] GetBytes()
         {
             try
@@ -86,6 +90,10 @@ namespace Tipoff
             }
         }
 
+        /// <summary>
+        /// Get message.
+        /// </summary>
+        /// <returns></returns>
         public (byte cmd, byte para, int len, byte[] msg) GetMsg()
         {
             (byte cmd, byte para, int len, byte[] msg) ret = (
@@ -98,6 +106,11 @@ namespace Tipoff
             return ret;
         }
 
+        /// <summary>
+        /// Get message header.
+        /// </summary>
+        /// <param name="buf">Data bytes.</param>
+        /// <returns></returns>
         public static (byte cmd, byte para, int len) GetHeader(byte[] buf)
         {
             (byte cmd, byte para, int len) ret = (0, 0, 0);

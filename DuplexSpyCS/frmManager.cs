@@ -1004,6 +1004,10 @@ namespace DuplexSpyCS
                         }));
                         cnt_dir++;
                     }
+                    catch (InvalidOperationException)
+                    {
+                        break;
+                    }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1058,6 +1062,10 @@ namespace DuplexSpyCS
                         item.ImageKey = ext;
                         Invoke(new Action(() => listView1.Items.Add(item)));
                         cnt_file++;
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        break;
                     }
                     catch (Exception ex)
                     {

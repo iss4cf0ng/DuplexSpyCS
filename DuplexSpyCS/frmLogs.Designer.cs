@@ -50,10 +50,10 @@
             toolStrip1 = new ToolStrip();
             toolStripDropDownButton1 = new ToolStripDropDownButton();
             toolStripMenuItem1 = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
             toolStripButton2 = new ToolStripButton();
             toolStripButton1 = new ToolStripButton();
             timer1 = new System.Windows.Forms.Timer(components);
-            toolStripMenuItem2 = new ToolStripMenuItem();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
@@ -242,9 +242,16 @@
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(180, 24);
+            toolStripMenuItem1.Size = new Size(114, 24);
             toolStripMenuItem1.Text = "Save";
             toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(114, 24);
+            toolStripMenuItem2.Text = "Clear";
+            toolStripMenuItem2.Click += toolStripMenuItem2_Click;
             // 
             // toolStripButton2
             // 
@@ -270,13 +277,6 @@
             // 
             timer1.Tick += timer1_Tick;
             // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(180, 24);
-            toolStripMenuItem2.Text = "Clear";
-            toolStripMenuItem2.Click += toolStripMenuItem2_Click;
-            // 
             // frmLogs
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -285,8 +285,10 @@
             Controls.Add(toolStrip1);
             Controls.Add(tabControl1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmLogs";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "frmLogs";
             FormClosing += frmLogs_FormClosing;
             FormClosed += frmLogs_FormClosed;

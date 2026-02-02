@@ -569,10 +569,10 @@
             tabPage2.Controls.Add(textBox5);
             tabPage2.Controls.Add(label6);
             tabPage2.Controls.Add(listView1);
-            tabPage2.Location = new Point(4, 24);
+            tabPage2.Location = new Point(4, 28);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(702, 355);
+            tabPage2.Size = new Size(702, 351);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Toggle";
             tabPage2.UseVisualStyleBackColor = true;
@@ -581,7 +581,7 @@
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 328);
+            statusStrip1.Location = new Point(3, 324);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(696, 24);
             statusStrip1.TabIndex = 12;
@@ -636,7 +636,7 @@
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.Location = new Point(0, 45);
             listView1.Name = "listView1";
-            listView1.Size = new Size(702, 276);
+            listView1.Size = new Size(702, 272);
             listView1.TabIndex = 7;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -773,9 +773,9 @@
             // 
             tabPage3.Controls.Add(groupBox4);
             tabPage3.Controls.Add(groupBox3);
-            tabPage3.Location = new Point(4, 24);
+            tabPage3.Location = new Point(4, 28);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(702, 355);
+            tabPage3.Size = new Size(702, 351);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Image";
             tabPage3.UseVisualStyleBackColor = true;

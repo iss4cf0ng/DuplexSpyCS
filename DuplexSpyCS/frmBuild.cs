@@ -448,6 +448,7 @@ namespace DuplexSpyCS
                 socket.SendTimeout = (int)numericUpDown2.Value;
                 socket.Connect(ip, port);
                 socket.Close();
+
                 MessageBox.Show("Connect successfully", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)

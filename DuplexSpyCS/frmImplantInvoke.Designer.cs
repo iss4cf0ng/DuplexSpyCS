@@ -41,7 +41,10 @@
             button2 = new Button();
             button3 = new Button();
             button4 = new Button();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             statusStrip1.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // statusStrip1
@@ -65,9 +68,9 @@
             listView1.CheckBoxes = true;
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.FullRowSelect = true;
-            listView1.Location = new Point(0, 125);
+            listView1.Location = new Point(0, 143);
             listView1.Name = "listView1";
-            listView1.Size = new Size(507, 315);
+            listView1.Size = new Size(507, 297);
             listView1.TabIndex = 1;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -85,7 +88,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(16, 16);
+            label1.Location = new Point(16, 34);
             label1.Name = "label1";
             label1.Size = new Size(64, 19);
             label1.TabIndex = 2;
@@ -93,14 +96,14 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(86, 12);
+            textBox1.Location = new Point(86, 30);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(295, 27);
             textBox1.TabIndex = 3;
             // 
             // button1
             // 
-            button1.Location = new Point(387, 44);
+            button1.Location = new Point(387, 62);
             button1.Name = "button1";
             button1.Size = new Size(108, 28);
             button1.TabIndex = 4;
@@ -110,7 +113,7 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(86, 45);
+            textBox2.Location = new Point(86, 63);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(295, 27);
             textBox2.TabIndex = 6;
@@ -118,7 +121,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(12, 48);
+            label2.Location = new Point(12, 66);
             label2.Name = "label2";
             label2.Size = new Size(68, 19);
             label2.TabIndex = 5;
@@ -126,7 +129,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(387, 11);
+            button2.Location = new Point(387, 29);
             button2.Name = "button2";
             button2.Size = new Size(108, 27);
             button2.TabIndex = 7;
@@ -136,7 +139,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(16, 78);
+            button3.Location = new Point(16, 96);
             button3.Name = "button3";
             button3.Size = new Size(232, 41);
             button3.TabIndex = 8;
@@ -146,13 +149,30 @@
             // 
             // button4
             // 
-            button4.Location = new Point(263, 78);
+            button4.Location = new Point(263, 96);
             button4.Name = "button4";
             button4.Size = new Size(232, 41);
             button4.TabIndex = 9;
             button4.Text = "Uncheck All";
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(507, 27);
+            menuStrip1.TabIndex = 10;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
             // 
             // frmImplantInvoke
             // 
@@ -169,8 +189,10 @@
             Controls.Add(label1);
             Controls.Add(listView1);
             Controls.Add(statusStrip1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmImplantInvoke";
@@ -179,6 +201,8 @@
             Load += frmImplantInvoke_Load;
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -198,5 +222,7 @@
         private ColumnHeader columnHeader2;
         private Button button3;
         private Button button4;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

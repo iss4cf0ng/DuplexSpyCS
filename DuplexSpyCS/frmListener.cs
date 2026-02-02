@@ -87,24 +87,31 @@ namespace DuplexSpyCS
                 var ls = m_sqlConn.fnlsGetAllListener();
                 foreach (var config in ls)
                 {
-                    clsListener listener = null;
-                    m_dicListener.TryGetValue(config.szName, out listener);
-                    if (listener == null)
+                    try
                     {
-                        fnAddListener(config);
+                        clsListener listener = null;
+                        m_dicListener.TryGetValue(config.szName, out listener);
+                        if (listener == null)
+                        {
+                            fnAddListener(config);
+                        }
+
+                        ListViewItem item = new ListViewItem(config.szName);
+                        item.SubItems.Add(config.enProtocol.ToString());
+                        item.SubItems.Add(config.nPort.ToString());
+                        item.SubItems.Add(config.szDescription);
+                        item.SubItems.Add(config.dtCreationDate.ToString("F"));
+
+                        item.SubItems.Add((listener != null && listener.m_bIslistening) ? "Opened" : "Closed");
+
+                        item.Tag = config;
+
+                        listView1.Items.Add(item);
                     }
+                    catch (InvalidOperationException)
+                    {
 
-                    ListViewItem item = new ListViewItem(config.szName);
-                    item.SubItems.Add(config.enProtocol.ToString());
-                    item.SubItems.Add(config.nPort.ToString());
-                    item.SubItems.Add(config.szDescription);
-                    item.SubItems.Add(config.dtCreationDate.ToString("F"));
-
-                    item.SubItems.Add((listener != null && listener.m_bIslistening) ? "Opened" : "Closed");
-
-                    item.Tag = config;
-
-                    listView1.Items.Add(item);
+                    }
                 }
             }
 
@@ -121,11 +128,19 @@ namespace DuplexSpyCS
                 if (!listener.m_bIslistening)
                     listener.fnStart();
 
-                Invoke(new Action(() =>
+                try
                 {
-                    ListViewItem item = listView1.FindItemWithText(szName);
-                    item.SubItems[5].Text = "Opened";
-                }));
+                    Invoke(new Action(() =>
+                    {
+                        ListViewItem item = listView1.FindItemWithText(szName);
+                        item.SubItems[5].Text = "Opened";
+
+                    }));
+                }
+                catch (InvalidOperationException)
+                {
+
+                }
             }
         }
 

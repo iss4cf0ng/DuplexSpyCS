@@ -151,4 +151,22 @@
   <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>127, 17</value>
   </metadata>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAICAQAAEABADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAAAAAAAAAAAAAAAAAAAAAAAACHd3d3d3d3d3d3AAAAAAAAj///////////9wAAAAAAAI////
+        ////////cAAAAAAACP///////////3AAAAAAAAj/zMzMzA////9wAAAAAAAI//////gA////cAAAAAAA
+        CP/MzMzI8MzM/3AAAAAAAAj/////j3cP//9wAAAAAAAI/8zMzI93DMz/cAAAAAAACP////O3czD//3AA
+        AAAAAAj/zMzDv7cwzP9wAAAAAAAI////87+3MP//cAAAAAAACP/MzMO/tzDM/3AAAAAAAAj////zv7cw
+        //9wAAAAAAAI/8zMw7+3MMz/cAAAAAAACP////O/tzD//3AAAAAAAAj/zMzDv7cwzP9wAAAAAAAI////
+        87+3MP//cAAAAAAACP/MzMO/tzDM/3AAAAAAAAj////zv7cw//9wAAAAAAAI////87+3MP//cAAAAAAA
+        CP////O/tzD//3AAAAAAAAj////zv7cw//9wAAAAAAAIiIiIg7+3MIiIiAAAAAAAAAAAAAh3eIAAAAAA
+        AAAAAAAAAAAI/3iAAAAAAAAAAAAAAAAACId4gAAAAAAAAAAAAAAAAAHRERAAAAAAAAAAAAAAAAAB2ZEQ
+        AAAAAAAAAAAAAAAAAZ2REAAAAAAAAAAAAAAAAAAREQAAAAAAAAD4AAA/+AAAP/gAAD/4AAA/+AAAP/gA
+        AD/4AAA/+AAAP/gAAD/4AAA/+AAAP/gAAD/4AAA/+AAAP/gAAD/4AAA/+AAAP/gAAD/4AAA/+AAAP/gA
+        AD/4AAA/+AAAP/gAAD/4AAA///gP///4D///+A////gP///4D///+A////wf/wAAAAAAAAAAAAAAAAAA
+        AAAAAAAA
+</value>
+  </data>
 </root>

