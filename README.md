@@ -56,6 +56,7 @@
 - File transfer:
   - Percentage display error.
   - Improved "Find".
+  - Data corrupted while transfering (misuse of byte array).
 - Terminal -> Resize issues.
 - File transfer bad data.
 - File transfer progress display error.
@@ -67,3 +68,7 @@
 - FunStuff
   - Toggle
     - Mouse Trails.
+  - Wallpaper cannot be modified.
+  - Desktop icons cannot be hided.
+  - Randomness of "Crazy Mouse"
+  - hWnd value shows incorrectly.
