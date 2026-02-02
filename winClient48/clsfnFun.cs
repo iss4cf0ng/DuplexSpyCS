@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +17,8 @@ namespace winClient48
 {
     internal class clsfnFun
     {
+        private static readonly Random rng = new Random();
+
         public clsfnFun()
         {
             System.Windows.Forms.Timer timerCheckStatus = new System.Windows.Forms.Timer();
@@ -32,12 +36,21 @@ namespace winClient48
             {
                 try
                 {
-                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Mouse", true))
+                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Mouse"))
                     {
                         if (key == null)
-                            throw new Exception("Null registry key");
+                            return false;
 
-                        return Equals(key.GetValue("MouseTrails"), "5");
+                        object v = key.GetValue("MouseTrails");
+                        if (v == null)
+                            return false;
+
+                        if (int.TryParse(v.ToString(), out int trails))
+                        {
+                            return trails > 0;
+                        }
+
+                        return false;
                     }
                 }
                 catch
@@ -110,17 +123,11 @@ namespace winClient48
         {
             get
             {
-                IntPtr hWnd = WinAPI.FindWindowEx(
-                    WinAPI.FindWindow(
-                        "Progman",
-                        null
-                    ),
-                    IntPtr.Zero,
-                    "SHELLDLL_DefView",
-                    null
-                );
+                IntPtr defView = fnGetDesktopListView();
+                if (defView == IntPtr.Zero)
+                    return false;
 
-                return !WinAPI.IsWindowVisible(hWnd);
+                return !WinAPI.IsWindowVisible(defView);
             }
         }
         public bool bHideTaskbar
@@ -144,6 +151,43 @@ namespace winClient48
         public void TimerCheckStatus_Tick(object sender, EventArgs e)
         {
 
+        }
+
+        private IntPtr fnGetDesktopListView()
+        {
+            IntPtr progman = WinAPI.FindWindow("Progman", null);
+
+            IntPtr defView = WinAPI.FindWindowEx(
+                progman,
+                IntPtr.Zero,
+                "SHELLDLL_DefView",
+                null
+            );
+
+            if (defView != IntPtr.Zero)
+                return defView;
+
+            // Win8+ : search WorkerW
+            IntPtr workerW = IntPtr.Zero;
+            while ((workerW = WinAPI.FindWindowEx(
+                IntPtr.Zero,
+                workerW,
+                "WorkerW",
+                null
+            )) != IntPtr.Zero)
+            {
+                defView = WinAPI.FindWindowEx(
+                    workerW,
+                    IntPtr.Zero,
+                    "SHELLDLL_DefView",
+                    null
+                );
+
+                if (defView != IntPtr.Zero)
+                    return defView;
+            }
+
+            return IntPtr.Zero;
         }
 
         /// <summary>
@@ -184,16 +228,47 @@ namespace winClient48
                 if (img == null)
                     throw new Exception("Image object cannot be null");
 
-                string szTempPath = Path.Combine(Path.GetTempPath(), Path.GetTempFileName() + ".jpg");
-                img.Save(szTempPath);
+                string szTempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".jpg");
 
-                WinAPI.SystemParametersInfo(20, 0, szTempPath, 0x01 | 0x02);
+                Rectangle totalBounds = Screen.AllScreens.Select(s => s.Bounds).Aggregate(Rectangle.Union);
 
-                File.Delete(szTempPath);
+                using (Bitmap bmp = new Bitmap(totalBounds.Width, totalBounds.Height))
+                {
+                    using (Graphics g = Graphics.FromImage(bmp))
+                    {
+                        Color color = ((Bitmap)img).GetPixel(0, 0);
+                        g.Clear(color);
+
+                        float ratio = Math.Min((float)bmp.Width / img.Width, (float)bmp.Height / img.Height);
+
+                        int w = (int)(img.Width * ratio);
+                        int h = (int)(img.Height * ratio);
+                        int x = (bmp.Width - w) / 2;
+                        int y = (bmp.Height - h) / 2;
+
+                        g.DrawImage(img, new Rectangle(x, y, w, h));
+                    }
+
+                    bmp.Save(szTempPath, ImageFormat.Bmp);
+
+                    if (!File.Exists(szTempPath))
+                        throw new Exception("Image not found.");
+
+                    using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true))
+                    {
+                        key.SetValue("WallpaperStyle", "10"); //Fill
+                        key.SetValue("TileWallpaper", "0");
+                    }
+
+                    bool bResult = WinAPI.SystemParametersInfo(20, 0, szTempPath, 0x01 | 0x02) == 1;
+                    if (!bResult)
+                        throw new Exception("SystemParametersInfo failed.");
+                }
             }
             catch (Exception ex)
             {
-                msg = $"{ex.GetType().Name}|{ex.Message}";
+                MessageBox.Show(ex.Message);
+                msg = ex.Message;
                 code = 0;
             }
 
@@ -592,8 +667,10 @@ namespace winClient48
 
             try
             {
-                IntPtr hWndProgman = WinAPI.FindWindow("Progman", null);
-                IntPtr hWnd = WinAPI.FindWindowEx(hWndProgman, IntPtr.Zero, "SHELLDLL_DefView", null);
+                IntPtr hWnd = fnGetDesktopListView();
+                if (hWnd == IntPtr.Zero)
+                    throw new Exception("Cannot find desktop ListView");
+
                 if (!WinAPI.ShowWindow(hWnd, WinAPI.SW_HIDE))
                     throw new Exception("ShowWindow() error");
             }
@@ -605,6 +682,7 @@ namespace winClient48
 
             return (code, msg);
         }
+
         public (int, string) ShowDesktopIcon()
         {
             int code = 1;
@@ -612,8 +690,10 @@ namespace winClient48
 
             try
             {
-                IntPtr hWndProgman = WinAPI.FindWindow("Progman", null);
-                IntPtr hWnd = WinAPI.FindWindowEx(hWndProgman, IntPtr.Zero, "SHELLDLL_DefView", null);
+                IntPtr hWnd = fnGetDesktopListView();
+                if (hWnd == IntPtr.Zero)
+                    throw new Exception("Cannot find desktop ListView");
+
                 if (!WinAPI.ShowWindow(hWnd, WinAPI.SW_SHOW))
                     throw new Exception("ShowWindow() error");
             }
@@ -625,25 +705,25 @@ namespace winClient48
 
             return (code, msg);
         }
+
         public (int, string) FlipFlopDesktopIcon()
         {
-            int code = 0;
+            int code = 1;
             string msg = string.Empty;
 
             try
             {
-                IntPtr hWndProgman = WinAPI.FindWindow("Progman", null);
-                IntPtr hWnd = WinAPI.FindWindowEx(hWndProgman, IntPtr.Zero, "SHELLDLL_DefView", null);
+                IntPtr hWnd = fnGetDesktopListView();
                 if (hWnd == IntPtr.Zero)
-                    throw new Exception("Null handle");
+                    throw new Exception("Cannot find desktop ListView");
 
-                bool bVisible = WinAPI.IsWindowVisible(hWnd);
-                (code, msg) = bVisible ? HideDesktopIcon() : ShowDesktopIcon();
+                bool hidden = bHideDesktopIcon;
+                (code, msg) = hidden ? ShowDesktopIcon() : HideDesktopIcon();
             }
             catch (Exception ex)
             {
                 code = 0;
-                msg = ex.Message;
+                msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
             return (code, msg);
@@ -685,7 +765,8 @@ namespace winClient48
 
             try
             {
-                WinAPI.ShowCursor(false);
+                while (WinAPI.ShowCursor(false) >= 0) ;
+
                 nCode = 1;
             }
             catch (Exception ex)
@@ -702,7 +783,8 @@ namespace winClient48
 
             try
             {
-                WinAPI.ShowCursor(true);
+                while (WinAPI.ShowCursor(true) < 0) ;
+
                 nCode = 1;
             }
             catch (Exception ex)
@@ -713,24 +795,35 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        public bool IsMouseVisible()
+        {
+            int count = WinAPI.ShowCursor(true); // +1
+            bool visible = count >= 0;
+
+            WinAPI.ShowCursor(false); // -1
+
+            return visible;
+        }
+
         public (int, string) FlipFlopHideMouse()
         {
-            int code = 0;
+            int code = 1;
             string msg = string.Empty;
 
             try
             {
-                if (m_bMouseVisible)
+                int count = WinAPI.ShowCursor(true);
+                bool visible = count >= 0;
+                WinAPI.ShowCursor(false);
+
+                if (visible)
+                {
                     while (WinAPI.ShowCursor(false) >= 0) ;
+                }
                 else
+                {
                     while (WinAPI.ShowCursor(true) < 0) ;
-
-                m_bMouseVisible = !m_bMouseVisible;
-
-                /*
-                bool bVisible = bMouseVisible;
-                WinAPI.ShowCursor(!bVisible);
-                */
+                }
             }
             catch (Exception ex)
             {
@@ -765,8 +858,8 @@ namespace winClient48
                             Screen screen = Screen.PrimaryScreen;
                             Rectangle rtArea = screen.WorkingArea;
 
-                            int nNewX = new Random().Next(0, rtArea.Width);
-                            int nNewY = new Random().Next(0, rtArea.Height);
+                            int nNewX = rng.Next(0, rtArea.Width);
+                            int nNewY = rng.Next(0, rtArea.Height);
 
                             WinAPI.SetCursorPos(nNewX, nNewY);
 
@@ -791,39 +884,43 @@ namespace winClient48
 
             try
             {
-                //Edit registry
+                uint uLength = 5u;
+
+                uLength = m_bMouseTrail ? 0u : uLength;
+
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Mouse", true))
                 {
                     if (key == null)
-                        throw new Exception("Null registry key");
+                        throw new Exception("Null registry key"); 
 
                     if (m_bMouseTrail)
-                    {
+                    { 
                         //set false
-                        key.SetValue("MouseTrails", "0");
-                    }
-                    else
-                    {
+                        key.SetValue("MouseTrails", "0"); 
+                    } 
+                    else 
+                    { 
                         //set true
-                        key.SetValue("MouseTrails", "5");
-                    }
+                        key.SetValue("MouseTrails", uLength.ToString()); 
+                    } 
                 }
 
-                //Refresh cursor setting.
                 bool bResult = WinAPI.SystemParametersInfo(
-                    WinAPI.SPI_SETCURSORS,
-                    0,
-                    IntPtr.Zero,
-                    WinAPI.SPIF_UPDATEINIFILE | WinAPI.SPIF_SENDCHANGE
+                    0x005D,
+                    uLength,
+                    (uint)IntPtr.Zero,
+                    0x01 | 0x02
                 );
 
                 if (!bResult)
-                    throw new Exception("SystemParametersInfo() error");
+                    throw new Exception($"SystemParametersInfo() error: {WinAPI.GetLastError()}");
             }
             catch (Exception ex)
             {
                 code = 0;
                 msg = ex.Message;
+
+                MessageBox.Show(ex.Message);
             }
 
             return (code, msg);

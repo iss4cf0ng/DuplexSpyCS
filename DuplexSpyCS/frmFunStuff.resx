@@ -123,7 +123,29 @@
   <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <metadata name="menuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>417, 17</value>
+  </metadata>
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>298, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAICAQAAEABADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAwMDAAICAgAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAIeAAAAAdwAAAAAAAAAABwAAB4AAEQdwAAAAAAAACHAIAA
+        AREJkAdwAAAAAAAAAAAAAAGZAAEQdwAAAAAAAAgAAAAAABEJkAdwAAAAAAgAAAAAGRCZAAEQdwAAAAAH
+        AAAAABmQAJEJkQdwAAAACABwAAABGRCZAACAdwAAAAAIAAAAABmQAJEAiAdwAAAAAAAAAAABGRCZEIgA
+        dwAAAIAAAAAAABmZCQiAkQdwAAAAAAAAd3dxEACIgJkQcIiICIiIiAd3d4f3eAEJkQCHdwd3d3iAd3d4
+        fwCZEJkAh3dwd3d4iAd3d4CRCZERAId3cId3eIgAAAABmRCZEACHd3iHd3iIAAAAABmRCZAAh3d3d3d4
+        iAAAAAABmQEQAId3d3d3eIgAAAAAABEAAACHd3d3d3iIAAAAAAAAAAAAj///////iAAAAAAAAAAAAAh3
+        d3d3d/gAAAAAAAAAAAAAh3cAAIiPAAAAAAAAAAAAAAiIOzCIiIAAAAAAAAAAAAAAADswAAAAAAAAAAAA
+        AAAAAAA7MAAAAAAAAAAAAAAAAAAAOzAAAAAAAAAAAAAAAAAAADswAAAAAAAAAAAAAAAAAAALMAAAAAAA
+        AAAAAAAAADO7u7u7MAAAAAAAAAAAAAADMzMzMzAAAAAAAAAAAAD/j////AOH//CwA//iOAH/43gA/+n4
+        AH/D8AA/z/AAH8H4AA/J/AAH4/4AA+f/AAEAAAABAAAAAQAAAAEAAAADAAH4AwAB/AMAAf4HAAH/PwAB
+        //8AAf//gAH//8AB///gAf///D////w////8P////D///+AH///AA///4Af//wAAAAAAAAAAAAAAAAAA
+        AAAAAAAA
+</value>
+  </data>
 </root>

@@ -44,6 +44,7 @@
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripProgressBar1 = new ToolStripProgressBar();
             statusStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
@@ -52,7 +53,7 @@
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripProgressBar1, toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 539);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(512, 24);
@@ -163,6 +164,11 @@
             toolStripMenuItem3.Text = "Next";
             toolStripMenuItem3.Click += toolStripMenuItem3_Click;
             // 
+            // toolStripProgressBar1
+            // 
+            toolStripProgressBar1.Name = "toolStripProgressBar1";
+            toolStripProgressBar1.Size = new Size(200, 18);
+            // 
             // frmFileTransferState
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -203,5 +209,6 @@
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripProgressBar toolStripProgressBar1;
     }
 }

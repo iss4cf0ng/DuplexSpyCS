@@ -203,7 +203,10 @@ namespace winClient48
         {
             try
             {
-                if (nCode >= 0 && wParam == (IntPtr)WinAPI.WM_KEYDOWN)
+                if (nCode >= 0 && (wParam == (IntPtr)WinAPI.WM_KEYDOWN ||
+                     wParam == (IntPtr)WinAPI.WM_KEYUP ||
+                     wParam == (IntPtr)WinAPI.WM_SYSKEYDOWN ||
+                     wParam == (IntPtr)WinAPI.WM_SYSKEYUP))
                 {
                     int vkCode = Marshal.ReadInt32(lParam);
                     Keys key = (Keys)vkCode;

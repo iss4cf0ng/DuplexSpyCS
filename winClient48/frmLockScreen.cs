@@ -75,19 +75,9 @@ namespace winClient48
             return mostCommon;
         }
 
-        private Image Base64ToImage(string base64String)
-        {
-            byte[] imageBytes = Convert.FromBase64String(base64String);
-            using (var ms = new MemoryStream(imageBytes, 0, imageBytes.Length))
-            {
-                Image image = Image.FromStream(ms, true);
-                return image;
-            }
-        }
-
         public void ShowImage(string b64_img)
         {
-            Image img = Base64ToImage(b64_img);
+            Image img = clsEZData.fnBase64ToImage(b64_img);
             Color color = GetBackgroundColor((Bitmap)img);
             pictureBox1.BackColor = color;
             pictureBox1.Image = img;
@@ -101,6 +91,7 @@ namespace winClient48
             Visible = false;
             ShowInTaskbar = false;
 
+            timer1.Interval = 30;
             timer1.Start();
         }
 
@@ -124,7 +115,18 @@ namespace winClient48
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            BringToFront();
+            if (this == null || this.IsDisposed)
+                return;
+
+            try
+            {
+                TopMost = true;
+                WinAPI.SetForegroundWindow(this.Handle);
+            }
+            catch
+            {
+
+            }
         }
     }
 }

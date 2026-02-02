@@ -90,18 +90,6 @@
             toolStripMenuItem5 = new ToolStripMenuItem();
             toolStripButton4 = new ToolStripButton();
             toolStripButton7 = new ToolStripButton();
-            listView1 = new ListView();
-            columnHeader11 = new ColumnHeader();
-            columnHeader1 = new ColumnHeader();
-            columnHeader2 = new ColumnHeader();
-            columnHeader3 = new ColumnHeader();
-            columnHeader4 = new ColumnHeader();
-            columnHeader10 = new ColumnHeader();
-            columnHeader5 = new ColumnHeader();
-            columnHeader6 = new ColumnHeader();
-            columnHeader7 = new ColumnHeader();
-            columnHeader8 = new ColumnHeader();
-            columnHeader9 = new ColumnHeader();
             timer1 = new System.Windows.Forms.Timer(components);
             toolStrip2 = new ToolStrip();
             toolStripButton5 = new ToolStripButton();
@@ -128,7 +116,6 @@
             toolStrip1.SuspendLayout();
             toolStrip2.SuspendLayout();
             tabControl1.SuspendLayout();
-            tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             contextMenuStrip2.SuspendLayout();
             SuspendLayout();
@@ -581,79 +568,6 @@
             toolStripButton7.Text = "Help";
             toolStripButton7.Click += toolStripButton7_Click;
             // 
-            // listView1
-            // 
-            listView1.Columns.AddRange(new ColumnHeader[] { columnHeader11, columnHeader1, columnHeader2, columnHeader3, columnHeader4, columnHeader10, columnHeader5, columnHeader6, columnHeader7, columnHeader8, columnHeader9 });
-            listView1.ContextMenuStrip = contextMenuStrip1;
-            listView1.Dock = DockStyle.Fill;
-            listView1.FullRowSelect = true;
-            listView1.Location = new Point(3, 3);
-            listView1.Margin = new Padding(4);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(1001, 317);
-            listView1.TabIndex = 3;
-            listView1.UseCompatibleStateImageBehavior = false;
-            listView1.View = View.Details;
-            listView1.ColumnWidthChanged += listView1_ColumnWidthChanged;
-            listView1.ColumnWidthChanging += listView1_ColumnWidthChanging;
-            listView1.DrawColumnHeader += listView1_DrawColumnHeader;
-            listView1.DrawItem += listView1_DrawItem;
-            listView1.DrawSubItem += listView1_DrawSubItem;
-            // 
-            // columnHeader11
-            // 
-            columnHeader11.Text = "Screen";
-            // 
-            // columnHeader1
-            // 
-            columnHeader1.Text = "OnlineID";
-            columnHeader1.Width = 150;
-            // 
-            // columnHeader2
-            // 
-            columnHeader2.Text = "Username";
-            columnHeader2.Width = 150;
-            // 
-            // columnHeader3
-            // 
-            columnHeader3.Text = "IP Address";
-            columnHeader3.Width = 150;
-            // 
-            // columnHeader4
-            // 
-            columnHeader4.Text = "Admin";
-            columnHeader4.Width = 100;
-            // 
-            // columnHeader10
-            // 
-            columnHeader10.Text = "OS";
-            columnHeader10.Width = 180;
-            // 
-            // columnHeader5
-            // 
-            columnHeader5.Text = "Ping";
-            columnHeader5.Width = 80;
-            // 
-            // columnHeader6
-            // 
-            columnHeader6.Text = "CPU";
-            columnHeader6.Width = 80;
-            // 
-            // columnHeader7
-            // 
-            columnHeader7.Text = "Monitor";
-            columnHeader7.Width = 100;
-            // 
-            // columnHeader8
-            // 
-            columnHeader8.Text = "Webcam";
-            columnHeader8.Width = 100;
-            // 
-            // columnHeader9
-            // 
-            columnHeader9.Text = "ActiveForm";
-            columnHeader9.Width = 200;
-            // 
             // timer1
             // 
             timer1.Tick += timer1_Tick;
@@ -725,7 +639,6 @@
             // 
             // tabPage1
             // 
-            tabPage1.Controls.Add(listView1);
             tabPage1.Location = new Point(4, 4);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -835,7 +748,6 @@
             toolStrip2.ResumeLayout(false);
             toolStrip2.PerformLayout();
             tabControl1.ResumeLayout(false);
-            tabPage1.ResumeLayout(false);
             tabPage2.ResumeLayout(false);
             contextMenuStrip2.ResumeLayout(false);
             ResumeLayout(false);
@@ -845,26 +757,14 @@
         #endregion
         private ContextMenuStrip contextMenuStrip1;
         private ToolStrip toolStrip1;
-        private ListView listView1;
-        private ColumnHeader columnHeader1;
-        private ColumnHeader columnHeader2;
-        private ColumnHeader columnHeader3;
-        private ColumnHeader columnHeader4;
-        private ColumnHeader columnHeader5;
-        private ColumnHeader columnHeader6;
-        private ColumnHeader columnHeader7;
-        private ColumnHeader columnHeader8;
-        private ColumnHeader columnHeader9;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripButton toolStripButton1;
         private ToolStripButton toolStripButton2;
         private ToolStripButton toolStripButton3;
         private ToolStripButton toolStripButton4;
-        private ColumnHeader columnHeader10;
         private ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.Timer timer1;
-        private ColumnHeader columnHeader11;
         private ToolStripDropDownButton toolStripDropDownButton1;
         private ToolStripMenuItem toolStripMenuItem4;
         private ToolStripMenuItem toolStripMenuItem5;

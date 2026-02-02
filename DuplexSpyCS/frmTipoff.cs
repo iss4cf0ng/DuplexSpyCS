@@ -528,5 +528,10 @@ namespace DuplexSpyCS
                 }
             });
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Tipoff\\Tipoff").Show();
+        }
     }
 }

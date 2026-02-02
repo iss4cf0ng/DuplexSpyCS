@@ -53,6 +53,8 @@ namespace DuplexSpyCS
                 if (string.Equals(i.SubItems[1].Text, "OK"))
                 {
                     cnt_ok++;
+                    toolStripProgressBar1.Increment(1);
+
                     if (cnt_ok == files.Count)
                     {
                         toolStripStatusLabel1.Text = "All file transferd successfully !";
@@ -78,6 +80,9 @@ namespace DuplexSpyCS
                 item.Tag = file;
                 listView1.Items.Add(item);
             }
+
+            toolStripProgressBar1.Value = 0;
+            toolStripProgressBar1.Maximum = files.Count;
         }
 
         private void frmFileTransferStatus_Load(object sender, EventArgs e)

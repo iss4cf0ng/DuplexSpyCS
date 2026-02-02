@@ -49,5 +49,10 @@ namespace DuplexSpyCS
         {
             v.SendCommand("power|sl");
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\PcPower").Show();
+        }
     }
 }

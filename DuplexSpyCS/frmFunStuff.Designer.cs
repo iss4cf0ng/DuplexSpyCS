@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFunStuff));
             groupBox1 = new GroupBox();
             button3 = new Button();
             button2 = new Button();
@@ -100,6 +101,10 @@
             miHWndClock = new ToolStripMenuItem();
             miHWndStartOrb = new ToolStripMenuItem();
             tabPage3 = new TabPage();
+            groupBox4 = new GroupBox();
+            pictureBox1 = new PictureBox();
+            menuStrip2 = new MenuStrip();
+            toolStripMenuItem6 = new ToolStripMenuItem();
             menuStrip1 = new MenuStrip();
             toolStripMenuItem5 = new ToolStripMenuItem();
             groupBox1.SuspendLayout();
@@ -113,6 +118,9 @@
             statusStrip1.SuspendLayout();
             contextMenuStrip1.SuspendLayout();
             tabPage3.SuspendLayout();
+            groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            menuStrip2.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -311,14 +319,14 @@
             groupBox3.Controls.Add(label9);
             groupBox3.Location = new Point(8, 3);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(589, 91);
+            groupBox3.Size = new Size(686, 91);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
             groupBox3.Text = "Image";
             // 
             // button24
             // 
-            button24.Location = new Point(494, 52);
+            button24.Location = new Point(591, 52);
             button24.Name = "button24";
             button24.Size = new Size(89, 27);
             button24.TabIndex = 13;
@@ -328,7 +336,7 @@
             // 
             // button25
             // 
-            button25.Location = new Point(399, 21);
+            button25.Location = new Point(496, 21);
             button25.Name = "button25";
             button25.Size = new Size(89, 27);
             button25.TabIndex = 12;
@@ -338,7 +346,7 @@
             // 
             // button13
             // 
-            button13.Location = new Point(494, 21);
+            button13.Location = new Point(591, 21);
             button13.Name = "button13";
             button13.Size = new Size(89, 27);
             button13.TabIndex = 6;
@@ -348,7 +356,7 @@
             // 
             // button14
             // 
-            button14.Location = new Point(399, 52);
+            button14.Location = new Point(496, 52);
             button14.Name = "button14";
             button14.Size = new Size(89, 27);
             button14.TabIndex = 9;
@@ -360,12 +368,12 @@
             // 
             textBox4.Location = new Point(107, 53);
             textBox4.Name = "textBox4";
-            textBox4.Size = new Size(195, 27);
+            textBox4.Size = new Size(292, 27);
             textBox4.TabIndex = 8;
             // 
             // button15
             // 
-            button15.Location = new Point(308, 52);
+            button15.Location = new Point(405, 52);
             button15.Name = "button15";
             button15.Size = new Size(85, 27);
             button15.TabIndex = 7;
@@ -377,12 +385,12 @@
             // 
             textBox3.Location = new Point(107, 22);
             textBox3.Name = "textBox3";
-            textBox3.Size = new Size(195, 27);
+            textBox3.Size = new Size(292, 27);
             textBox3.TabIndex = 5;
             // 
             // button12
             // 
-            button12.Location = new Point(308, 21);
+            button12.Location = new Point(405, 21);
             button12.Name = "button12";
             button12.Size = new Size(85, 27);
             button12.TabIndex = 4;
@@ -399,7 +407,7 @@
             tabControl1.Location = new Point(0, 27);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new Size(710, 371);
+            tabControl1.Size = new Size(710, 383);
             tabControl1.SizeMode = TabSizeMode.Fixed;
             tabControl1.TabIndex = 6;
             // 
@@ -410,7 +418,7 @@
             tabPage1.Location = new Point(4, 28);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
-            tabPage1.Size = new Size(702, 339);
+            tabPage1.Size = new Size(702, 351);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Message";
             tabPage1.UseVisualStyleBackColor = true;
@@ -561,19 +569,19 @@
             tabPage2.Controls.Add(textBox5);
             tabPage2.Controls.Add(label6);
             tabPage2.Controls.Add(listView1);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(702, 339);
+            tabPage2.Size = new Size(702, 355);
             tabPage2.TabIndex = 1;
-            tabPage2.Text = "Switch";
+            tabPage2.Text = "Toggle";
             tabPage2.UseVisualStyleBackColor = true;
             // 
             // statusStrip1
             // 
             statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(3, 312);
+            statusStrip1.Location = new Point(3, 328);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(696, 24);
             statusStrip1.TabIndex = 12;
@@ -628,7 +636,7 @@
             listView1.ContextMenuStrip = contextMenuStrip1;
             listView1.Location = new Point(0, 45);
             listView1.Name = "listView1";
-            listView1.Size = new Size(702, 264);
+            listView1.Size = new Size(702, 276);
             listView1.TabIndex = 7;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -763,13 +771,51 @@
             // 
             // tabPage3
             // 
+            tabPage3.Controls.Add(groupBox4);
             tabPage3.Controls.Add(groupBox3);
-            tabPage3.Location = new Point(4, 28);
+            tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(702, 339);
+            tabPage3.Size = new Size(702, 355);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Image";
             tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Controls.Add(pictureBox1);
+            groupBox4.Controls.Add(menuStrip2);
+            groupBox4.Location = new Point(8, 100);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(686, 231);
+            groupBox4.TabIndex = 5;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Wallpaper";
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.Dock = DockStyle.Fill;
+            pictureBox1.Location = new Point(3, 50);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(680, 178);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            // 
+            // menuStrip2
+            // 
+            menuStrip2.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip2.Items.AddRange(new ToolStripItem[] { toolStripMenuItem6 });
+            menuStrip2.Location = new Point(3, 23);
+            menuStrip2.Name = "menuStrip2";
+            menuStrip2.Size = new Size(680, 27);
+            menuStrip2.TabIndex = 1;
+            menuStrip2.Text = "menuStrip2";
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new Size(54, 23);
+            toolStripMenuItem6.Text = "Save";
+            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
             // 
             // menuStrip1
             // 
@@ -793,16 +839,18 @@
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(710, 398);
+            ClientSize = new Size(710, 410);
             Controls.Add(tabControl1);
             Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmFunStuff";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmFunStuff";
+            FormClosed += frmFunStuff_FormClosed;
             Load += frmFunStuff_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
@@ -820,6 +868,11 @@
             statusStrip1.PerformLayout();
             contextMenuStrip1.ResumeLayout(false);
             tabPage3.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
+            groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            menuStrip2.ResumeLayout(false);
+            menuStrip2.PerformLayout();
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             ResumeLayout(false);
@@ -901,5 +954,9 @@
         private ToolStripMenuItem miMouseTrails;
         private MenuStrip menuStrip1;
         private ToolStripMenuItem toolStripMenuItem5;
+        private GroupBox groupBox4;
+        private PictureBox pictureBox1;
+        private MenuStrip menuStrip2;
+        private ToolStripMenuItem toolStripMenuItem6;
     }
 }

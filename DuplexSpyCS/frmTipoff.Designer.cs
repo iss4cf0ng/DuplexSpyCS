@@ -74,6 +74,8 @@
             label7 = new Label();
             label6 = new Label();
             textBox2 = new TextBox();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
             groupBox1.SuspendLayout();
@@ -84,13 +86,14 @@
             ((System.ComponentModel.ISupportInitialize)numericUpDown4).BeginInit();
             groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).BeginInit();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(12, 507);
+            button1.Location = new Point(12, 528);
             button1.Name = "button1";
-            button1.Size = new Size(542, 75);
+            button1.Size = new Size(542, 71);
             button1.TabIndex = 0;
             button1.Text = "Send Request";
             button1.UseVisualStyleBackColor = true;
@@ -174,7 +177,7 @@
             groupBox1.Controls.Add(textBox1);
             groupBox1.Controls.Add(numericUpDown2);
             groupBox1.Controls.Add(label4);
-            groupBox1.Location = new Point(12, 12);
+            groupBox1.Location = new Point(12, 33);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(542, 98);
             groupBox1.TabIndex = 11;
@@ -227,7 +230,7 @@
             groupBox2.Controls.Add(comboBox1);
             groupBox2.Controls.Add(numericUpDown1);
             groupBox2.Controls.Add(label3);
-            groupBox2.Location = new Point(12, 116);
+            groupBox2.Location = new Point(12, 137);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(542, 385);
             groupBox2.TabIndex = 12;
@@ -534,16 +537,35 @@
             textBox2.TabIndex = 15;
             textBox2.TextChanged += textBox2_TextChanged;
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(566, 27);
+            menuStrip1.TabIndex = 13;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
             // frmTipoff
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(566, 594);
+            ClientSize = new Size(566, 611);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(button1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmTipoff";
@@ -565,7 +587,10 @@
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown3).EndInit();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -616,5 +641,7 @@
         private NumericUpDown numericUpDown3;
         private NumericUpDown numericUpDown4;
         private NumericUpDown numericUpDown5;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

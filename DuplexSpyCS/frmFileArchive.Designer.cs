@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFileArchive));
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             button1 = new Button();
@@ -50,10 +51,12 @@
             tabPage3 = new TabPage();
             richTextBox1 = new RichTextBox();
             toolStrip1 = new ToolStrip();
+            toolStripButton1 = new ToolStripButton();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             tabPage2.SuspendLayout();
             tabPage3.SuspendLayout();
+            toolStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // tabControl1
@@ -142,10 +145,10 @@
             tabPage2.Controls.Add(label2);
             tabPage2.Controls.Add(button2);
             tabPage2.Controls.Add(listView2);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(460, 405);
+            tabPage2.Size = new Size(460, 409);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "UnZipFile";
             tabPage2.UseVisualStyleBackColor = true;
@@ -227,9 +230,9 @@
             // tabPage3
             // 
             tabPage3.Controls.Add(richTextBox1);
-            tabPage3.Location = new Point(4, 28);
+            tabPage3.Location = new Point(4, 24);
             tabPage3.Name = "tabPage3";
-            tabPage3.Size = new Size(460, 405);
+            tabPage3.Size = new Size(460, 409);
             tabPage3.TabIndex = 2;
             tabPage3.Text = "Run Logs";
             tabPage3.UseVisualStyleBackColor = true;
@@ -239,17 +242,29 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(460, 405);
+            richTextBox1.Size = new Size(460, 409);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
             // toolStrip1
             // 
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton1 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(468, 25);
+            toolStrip1.Size = new Size(468, 26);
             toolStrip1.TabIndex = 2;
             toolStrip1.Text = "toolStrip1";
+            // 
+            // toolStripButton1
+            // 
+            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
+            toolStripButton1.ImageTransparentColor = Color.Magenta;
+            toolStripButton1.Name = "toolStripButton1";
+            toolStripButton1.Size = new Size(45, 23);
+            toolStripButton1.Text = "Help";
+            toolStripButton1.Click += toolStripButton1_Click;
             // 
             // frmFileArchive
             // 
@@ -272,6 +287,8 @@
             tabPage2.ResumeLayout(false);
             tabPage2.PerformLayout();
             tabPage3.ResumeLayout(false);
+            toolStrip1.ResumeLayout(false);
+            toolStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -300,5 +317,6 @@
         private Label label2;
         private ColumnHeader columnHeader5;
         private CheckBox checkBox1;
+        private ToolStripButton toolStripButton1;
     }
 }

@@ -34,12 +34,15 @@
             label1 = new Label();
             numericUpDown1 = new NumericUpDown();
             button4 = new Button();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // button1
             // 
-            button1.Location = new Point(12, 47);
+            button1.Location = new Point(11, 76);
             button1.Name = "button1";
             button1.Size = new Size(161, 48);
             button1.TabIndex = 0;
@@ -49,7 +52,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(179, 47);
+            button2.Location = new Point(178, 76);
             button2.Name = "button2";
             button2.Size = new Size(161, 48);
             button2.TabIndex = 1;
@@ -59,7 +62,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(12, 101);
+            button3.Location = new Point(11, 130);
             button3.Name = "button3";
             button3.Size = new Size(161, 48);
             button3.TabIndex = 2;
@@ -70,7 +73,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(12, 15);
+            label1.Location = new Point(11, 44);
             label1.Name = "label1";
             label1.Size = new Size(68, 19);
             label1.TabIndex = 3;
@@ -78,7 +81,7 @@
             // 
             // numericUpDown1
             // 
-            numericUpDown1.Location = new Point(87, 13);
+            numericUpDown1.Location = new Point(86, 42);
             numericUpDown1.Margin = new Padding(4);
             numericUpDown1.Name = "numericUpDown1";
             numericUpDown1.Size = new Size(86, 27);
@@ -86,7 +89,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(179, 101);
+            button4.Location = new Point(178, 130);
             button4.Name = "button4";
             button4.Size = new Size(161, 48);
             button4.TabIndex = 6;
@@ -94,25 +97,46 @@
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(351, 27);
+            menuStrip1.TabIndex = 7;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
             // frmPower
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(351, 156);
+            ClientSize = new Size(351, 190);
             Controls.Add(button4);
             Controls.Add(numericUpDown1);
             Controls.Add(label1);
             Controls.Add(button3);
             Controls.Add(button2);
             Controls.Add(button1);
+            Controls.Add(menuStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             MaximizeBox = false;
             Name = "frmPower";
             Text = "frmPower";
             Load += frmPower_Load;
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -125,5 +149,7 @@
         private Label label1;
         private NumericUpDown numericUpDown1;
         private Button button4;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }
