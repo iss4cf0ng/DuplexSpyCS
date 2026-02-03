@@ -94,6 +94,7 @@
     <Compile Include="clsCrypto.cs" />
     <Compile Include="clsfnLoader.cs" />
     <Compile Include="clsDSP.cs" />
+    <Compile Include="clsSocks5.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>

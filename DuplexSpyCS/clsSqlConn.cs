@@ -98,6 +98,11 @@ namespace DuplexSpyCS
             Error,
         };
 
+        public enum enProxyProtocol
+        {
+            Socks5,
+        };
+
         public string ConnectionString { get; set; } //SQL DATABASE CONNECTION STRING
         public string DatabasePath { get; set; } //SQL DATABASE FILE
 

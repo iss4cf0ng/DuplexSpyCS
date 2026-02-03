@@ -231,16 +231,16 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
-            FileCompress();
-
             tabControl1.SelectedIndex = 2;
+
+            FileCompress();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            FileExtract();
-
             tabControl1.SelectedIndex = 2;
+
+            FileExtract();
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)

