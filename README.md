@@ -4,8 +4,8 @@
 - DLL Injection. 
   - Completed function.
 
-- Simple Ransomware Plugin.
 - QA (Quality Assurance)
+- Write the completed documents and wiki.
 
 # Debug
 - DLL Injection
