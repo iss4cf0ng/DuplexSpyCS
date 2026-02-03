@@ -60,36 +60,38 @@
             toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripLabel1, toolStripComboBox1, toolStripSeparator1, toolStripLabel2, toolStripTextBox1, toolStripButton1, toolStripButton3, toolStripSeparator2, toolStripButton2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(631, 26);
+            toolStrip1.Size = new Size(631, 27);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
             // toolStripLabel1
             // 
             toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(74, 23);
+            toolStripLabel1.Size = new Size(74, 24);
             toolStripLabel1.Text = "Protocol :";
             // 
             // toolStripComboBox1
             // 
+            toolStripComboBox1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             toolStripComboBox1.Name = "toolStripComboBox1";
-            toolStripComboBox1.Size = new Size(121, 26);
+            toolStripComboBox1.Size = new Size(121, 27);
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 26);
+            toolStripSeparator1.Size = new Size(6, 27);
             // 
             // toolStripLabel2
             // 
             toolStripLabel2.Name = "toolStripLabel2";
-            toolStripLabel2.Size = new Size(45, 23);
+            toolStripLabel2.Size = new Size(45, 24);
             toolStripLabel2.Text = "Port :";
             // 
             // toolStripTextBox1
             // 
+            toolStripTextBox1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             toolStripTextBox1.Name = "toolStripTextBox1";
-            toolStripTextBox1.Size = new Size(100, 26);
+            toolStripTextBox1.Size = new Size(100, 27);
             toolStripTextBox1.KeyDown += toolStripTextBox1_KeyDown;
             // 
             // toolStripButton1
@@ -98,7 +100,7 @@
             toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
             toolStripButton1.ImageTransparentColor = Color.Magenta;
             toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(46, 23);
+            toolStripButton1.Size = new Size(46, 24);
             toolStripButton1.Text = "Start";
             toolStripButton1.Click += toolStripButton1_Click;
             // 
@@ -108,14 +110,14 @@
             toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
             toolStripButton3.ImageTransparentColor = Color.Magenta;
             toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(45, 23);
+            toolStripButton3.Size = new Size(45, 24);
             toolStripButton3.Text = "Stop";
             toolStripButton3.Click += toolStripButton3_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(6, 26);
+            toolStripSeparator2.Size = new Size(6, 27);
             // 
             // toolStripButton2
             // 
@@ -123,16 +125,17 @@
             toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
             toolStripButton2.ImageTransparentColor = Color.Magenta;
             toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(45, 23);
+            toolStripButton2.Size = new Size(45, 24);
             toolStripButton2.Text = "Help";
             toolStripButton2.Click += toolStripButton2_Click;
             // 
             // statusStrip1
             // 
+            statusStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
-            statusStrip1.Location = new Point(0, 468);
+            statusStrip1.Location = new Point(0, 466);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new Size(631, 22);
+            statusStrip1.Size = new Size(631, 24);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -146,7 +149,7 @@
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.FixedPanel = FixedPanel.Panel2;
-            splitContainer1.Location = new Point(0, 26);
+            splitContainer1.Location = new Point(0, 27);
             splitContainer1.Margin = new Padding(4);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Orientation = Orientation.Horizontal;
@@ -158,8 +161,8 @@
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
-            splitContainer1.Size = new Size(631, 442);
-            splitContainer1.SplitterDistance = 292;
+            splitContainer1.Size = new Size(631, 439);
+            splitContainer1.SplitterDistance = 288;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 2;
             // 
@@ -170,7 +173,7 @@
             listView1.FullRowSelect = true;
             listView1.Location = new Point(0, 0);
             listView1.Name = "listView1";
-            listView1.Size = new Size(631, 292);
+            listView1.Size = new Size(631, 288);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -189,7 +192,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(631, 145);
+            richTextBox1.Size = new Size(631, 146);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -202,6 +205,7 @@
             Controls.Add(statusStrip1);
             Controls.Add(toolStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmProxy";
             StartPosition = FormStartPosition.CenterScreen;

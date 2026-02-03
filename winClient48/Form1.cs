@@ -2843,6 +2843,14 @@ namespace winClient48
                                 int nPort = int.Parse(cmd[5]);
 
                                 clsSocks5 socks5 = new clsSocks5(v, nStreamId, szIPv4, nPort);
+                                if (m_dicSocks5.ContainsKey(nStreamId))
+                                {
+                                    m_dicSocks5[nStreamId].fnClose();
+                                    m_dicSocks5[nStreamId].Dispose();
+
+                                    m_dicSocks5.Remove(nStreamId);
+                                }
+
                                 m_dicSocks5.Add(nStreamId, socks5);
 
                                 bool bResult = socks5.fnOpen();

