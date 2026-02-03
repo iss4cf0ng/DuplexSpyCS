@@ -11,7 +11,7 @@
 - DLL Injection
 
 # ✅ New
-- Reverse Socks5 proxy.
+- Socks5 proxy (Your youtube or ssh stream will pass through the compromised machine).
 - UAC Prompt.
 - Maximum files/folders warning.
 - TaskMgr -> Regex search bar.
