@@ -235,6 +235,8 @@ public class clsVictim
                 {
                     await m_sslClnt.WriteAsync(data, 0, data.Length, ct);
                     await m_sslClnt.FlushAsync(ct);
+
+                    clsStore.sent_bytes += data.Length;
                 }
                 catch (Exception ex)
                 {

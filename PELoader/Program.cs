@@ -12,6 +12,7 @@ namespace PELoader
             Console.WriteLine(args.Length);
             Console.WriteLine(args[0]);
             string peAsString = Convert.ToBase64String(File.ReadAllBytes(args[0]));
+            Console.WriteLine(peAsString);
 
             byte[] unpacked = System.Convert.FromBase64String(peAsString);
 

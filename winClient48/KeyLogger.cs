@@ -246,7 +246,7 @@ namespace winClient48
                     if (disable_keyboard)
                         return (IntPtr)1;
 
-                    if (smile_key && (char.IsDigit((char)keyOutput[0]) || char.IsLetter((char)keyOutput[0])))
+                    if (smile_key && wParam == (IntPtr)WinAPI.WM_KEYDOWN && (char.IsDigit((char)keyOutput[0]) || char.IsLetter((char)keyOutput[0])))
                     {
                         SendKeys.Send(char_smile.ToString());
                         return (IntPtr)1;
@@ -255,7 +255,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                //MessageBox.Show(ex.Message);
             }
 
             return WinAPI.CallNextHookEx(_hookID, nCode, wParam, lParam);

