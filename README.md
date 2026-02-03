@@ -11,6 +11,7 @@
 - DLL Injection
 
 # ✅ New
+- Reverse Socks5 proxy.
 - UAC Prompt.
 - Maximum files/folders warning.
 - TaskMgr -> Regex search bar.
