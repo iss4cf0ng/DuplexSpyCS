@@ -23,6 +23,10 @@ namespace DuplexSpyCS
 
         void fnSetup()
         {
+            //Invoke password char.
+            checkBox1.Checked = true;
+            checkBox1.Checked = false;
+
             textBox1.Text = "CN=MyTestServer";
 
             comboBox1.SelectedIndex = 0;
@@ -68,7 +72,11 @@ namespace DuplexSpyCS
                 );
 
                 byte[] abPFX = cert.Export(X509ContentType.Pfx, szPassword);
+
                 SaveFileDialog sfd = new SaveFileDialog();
+                sfd.InitialDirectory = Application.StartupPath;
+                sfd.Filter = "PFX file (*.pfx)|*.pfx";
+
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
                     File.WriteAllBytes(sfd.FileName, abPFX);
@@ -83,8 +91,7 @@ namespace DuplexSpyCS
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            textBox2.UseSystemPasswordChar = true;
-            textBox2.PasswordChar = '*';
+            textBox2.UseSystemPasswordChar = !checkBox1.Checked;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,18 +69,34 @@ namespace DuplexSpyCS
                 var lListener = m_sqlConn.fnlsGetAllListener();
                 foreach (var config in lListener)
                 {
-                    ListViewItem item = new ListViewItem(config.szName);
-                    item.SubItems.Add(config.enProtocol.ToString());
-                    item.SubItems.Add(config.nPort.ToString());
-                    item.SubItems.Add(config.szDescription);
-                    item.SubItems.Add(config.dtCreationDate.ToString("F"));
-                    item.SubItems.Add("Closed");
+                    try
+                    {
+                        ListViewItem item = new ListViewItem(config.szName);
+                        item.SubItems.Add(config.enProtocol.ToString());
+                        item.SubItems.Add(config.nPort.ToString());
+                        item.SubItems.Add(config.szDescription);
+                        item.SubItems.Add(config.dtCreationDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
+                        item.SubItems.Add("Closed");
 
-                    item.Tag = config;
+                        item.Tag = config;
+                        item.ImageKey = "no";
+                        item.ToolTipText = "Unavailable";
 
-                    listView1.Items.Add(item);
+                        listView1.Items.Add(item);
 
-                    fnAddListener(config);
+                        fnAddListener(config);
+
+                        item.ImageKey = "ok";
+                        item.ToolTipText = "Available";
+                    }
+                    catch (InvalidOperationException)
+                    {
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
             else
@@ -89,6 +106,17 @@ namespace DuplexSpyCS
                 {
                     try
                     {
+                        ListViewItem item = new ListViewItem(config.szName);
+                        item.SubItems.Add(config.enProtocol.ToString());
+                        item.SubItems.Add(config.nPort.ToString());
+                        item.SubItems.Add(config.szDescription);
+                        item.SubItems.Add(config.dtCreationDate.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
+
+                        item.Tag = config;
+
+                        item.ImageKey = "no";
+                        item.ToolTipText = "Unavailable";
+
                         clsListener listener = null;
                         m_dicListener.TryGetValue(config.szName, out listener);
                         if (listener == null)
@@ -96,21 +124,20 @@ namespace DuplexSpyCS
                             fnAddListener(config);
                         }
 
-                        ListViewItem item = new ListViewItem(config.szName);
-                        item.SubItems.Add(config.enProtocol.ToString());
-                        item.SubItems.Add(config.nPort.ToString());
-                        item.SubItems.Add(config.szDescription);
-                        item.SubItems.Add(config.dtCreationDate.ToString("F"));
-
                         item.SubItems.Add((listener != null && listener.m_bIslistening) ? "Opened" : "Closed");
 
-                        item.Tag = config;
+                        item.ImageKey = "ok";
+                        item.ToolTipText = "Available";
 
                         listView1.Items.Add(item);
                     }
                     catch (InvalidOperationException)
                     {
 
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
@@ -141,6 +168,10 @@ namespace DuplexSpyCS
                 {
 
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -164,7 +195,6 @@ namespace DuplexSpyCS
         void fnSetup()
         {
             fnLoadListener();
-
             timer1.Start();
         }
 
@@ -200,12 +230,24 @@ namespace DuplexSpyCS
         //Start
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            if (listView1.Items.Count == 0)
+            {
+                MessageBox.Show("You don't have any listener.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             Task.Run(() => fnStartAll());
         }
 
         //Stop
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
+            if (listView1.Items.Count == 0)
+            {
+                MessageBox.Show("You don't have any listener.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             Task.Run(() => fnStopAll());
         }
 
@@ -245,6 +287,16 @@ namespace DuplexSpyCS
         {
             foreach (ListViewItem item in listView1.SelectedItems)
             {
+                if (string.Equals(item.ImageKey, "no"))
+                {
+                    if (!m_sqlConn.fnbDeleteListener(item.Text))
+                    {
+                        MessageBox.Show("Cannot delete listener: " + item.Text, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+
+                    continue;
+                }
+
                 var listener = m_dicListener[item.Text];
                 if (listener.m_bIslistening)
                     listener.fnStop();
@@ -360,6 +412,18 @@ namespace DuplexSpyCS
         private void toolStripButton5_Click(object sender, EventArgs e)
         {
             new frmBoxHelper("Listener\\Listener").Show();
+        }
+
+        private void toolStripMenuItem9_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Selected = string.Equals(item.ImageKey, "ok");
+        }
+
+        private void toolStripMenuItem10_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listView1.Items)
+                item.Selected = string.Equals(item.ImageKey, "no");
         }
     }
 }

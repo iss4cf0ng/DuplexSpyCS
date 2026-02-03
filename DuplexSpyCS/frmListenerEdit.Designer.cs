@@ -96,6 +96,7 @@
             comboBox1.Size = new Size(281, 27);
             comboBox1.TabIndex = 1;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox1.SelectionChangeCommitted += comboBox1_SelectionChangeCommitted;
             // 
             // tabControl1
             // 
@@ -202,9 +203,9 @@
             // tabPage4
             // 
             tabPage4.Controls.Add(tabControl2);
-            tabPage4.Location = new Point(4, 28);
+            tabPage4.Location = new Point(4, 24);
             tabPage4.Name = "tabPage4";
-            tabPage4.Size = new Size(336, 190);
+            tabPage4.Size = new Size(336, 194);
             tabPage4.TabIndex = 3;
             tabPage4.Text = "HTTP";
             tabPage4.UseVisualStyleBackColor = true;
@@ -217,7 +218,7 @@
             tabControl2.Location = new Point(0, 0);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(336, 190);
+            tabControl2.Size = new Size(336, 194);
             tabControl2.SizeMode = TabSizeMode.Fixed;
             tabControl2.TabIndex = 25;
             // 
@@ -234,7 +235,7 @@
             tabPage3.Location = new Point(4, 28);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
-            tabPage3.Size = new Size(328, 158);
+            tabPage3.Size = new Size(328, 162);
             tabPage3.TabIndex = 0;
             tabPage3.Text = "Request";
             tabPage3.UseVisualStyleBackColor = true;

@@ -1481,7 +1481,7 @@ namespace DuplexSpyCS
         void fnSetup()
         {
             //Remove this if implant is implemented.
-            tabControl1.Appearance = TabAppearance.FlatButtons;
+            //tabControl1.Appearance = TabAppearance.FlatButtons;
             tabControl1.ItemSize = new Size(0, 1);
             tabControl1.SizeMode = TabSizeMode.Fixed;
 
@@ -1671,6 +1671,8 @@ namespace DuplexSpyCS
                 }
             };
 
+            
+
             newListView1.Columns[0].Width = newListView1.Font.Height;
             screen_width = newListView1.Columns[0].Width;
 
@@ -1781,28 +1783,9 @@ namespace DuplexSpyCS
             Text = $"DuplexSpyCS v2.0.0 by ISSAC | " +
                 $"Port[{szPorts}] | " +
                 $"Online[{newListView1.Items.Count}] - " +
-                $"Implant[{listView2.Items.Count}] - " +
+                //$"Implant[{listView2.Items.Count}] - " +
                 $"Total[{(newListView1.Items.Count + listView2.Items.Count)}] | " +
                 $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? newListView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
-        }
-
-        private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
-        {
-            return;
-            if (e.ColumnIndex != 0)
-                return;
-
-            int width = newListView1.Columns[0].Width;
-            if (width < 25)
-            {
-                width = 25;
-            }
-
-            if (width < 256)
-            {
-                il_screen.ImageSize = new Size(width, width);
-                screen_width = width;
-            }
         }
 
         //VIEW - LARGE ICON
@@ -2026,47 +2009,6 @@ namespace DuplexSpyCS
 
             frmMultiLockScreen f = new frmMultiLockScreen(lsVictim);
             f.Show();
-        }
-
-        private void listView1_DrawColumnHeader(object sender, DrawListViewColumnHeaderEventArgs e)
-        {
-            return;
-            using (SolidBrush brush = new SolidBrush(Color.Black))
-            {
-                e.Graphics.FillRectangle(brush, e.Bounds);
-            }
-
-            TextRenderer.DrawText(
-                e.Graphics,
-                e.Header.Text,
-                e.Font,
-                e.Bounds,
-                Color.White,
-                TextFormatFlags.VerticalCenter | TextFormatFlags.Left);
-
-            using (Pen pen = new Pen(Color.Gray))
-            {
-                e.Graphics.DrawRectangle(pen, e.Bounds);
-            }
-        }
-
-        private void listView1_DrawItem(object sender, DrawListViewItemEventArgs e)
-        {
-            return;
-            e.DrawDefault = true;
-        }
-
-        private void listView1_DrawSubItem(object sender, DrawListViewSubItemEventArgs e)
-        {
-            return;
-            Color backColor = e.ColumnIndex % 2 == 0 ? Color.LightYellow : Color.LightGreen;
-
-            using (SolidBrush brush = new SolidBrush(backColor))
-            {
-                e.Graphics.FillRectangle(brush, e.Bounds);
-            }
-
-            e.Graphics.DrawString(e.SubItem.Text, e.Item.Font, Brushes.Black, e.Bounds);
         }
 
         //REMOTE SHELL
