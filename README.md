@@ -4,14 +4,14 @@
 - DLL Injection. 
   - Completed function.
 
-- Simple Ransomware Plugin.
 - QA (Quality Assurance)
+- Write the completed documents and wiki.
 
 # Debug
 - DLL Injection
 
 # ✅ New
-- Reverse Socks5 proxy.
+- Socks5 proxy (Your youtube or ssh stream will pass through the compromised machine).
 - UAC Prompt.
 - Maximum files/folders warning.
 - TaskMgr -> Regex search bar.
@@ -20,9 +20,12 @@
 
 # ✅ Done
 - Plugin
-  - Decrypting Chrome cookies.
-  - Extracting Mobzilla history records.
-  - Extracting Mobzilla cookies.
+  - Chrome
+    - Decrypting Chrome cookies.
+  - Firefox
+    - Extracting history records.
+    - Extracting cookies.
+    - Extracting credentials.
   - Simple MobaXterm dumper.
 
 - Shellcode Injection
@@ -38,8 +41,9 @@
 - Shellcode Loader
 - DLL Loader
 
-- PELoader
+- PELoader (Fileless Execution)
   - x64 PE.
+  - x86 PE.
 
 - DNS Resolution (Use the first IPv4 address of DNS resolution result)
 - Virtual Terminal (Interactive Shell)
