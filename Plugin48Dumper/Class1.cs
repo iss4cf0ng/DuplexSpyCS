@@ -105,6 +105,12 @@ namespace Plugin48Dumper
                 if (szTarget == "chrome")
                 {
                     var module = (clsChromeDumper)m_dicModule[szTarget];
+                    if (lsKey.Count < 3)
+                    {
+                        clsTools.fnPrintTable(module.dtHelp);
+                        return string.Empty;
+                    }
+
                     string szAction = lsKey[2];
 
                     clsTools.fnLogInfo("Action => " + szAction);
@@ -206,6 +212,12 @@ namespace Plugin48Dumper
                 else if (szTarget == "firefox")
                 {
                     var module = (clsFirefoxDumper)m_dicModule[szTarget];
+                    if (lsKey.Count < 3)
+                    {
+                        clsTools.fnPrintTable(module.dtHelp);
+                        return string.Empty;
+                    }
+
                     string szAction = lsKey[2];
 
                     clsTools.fnLogInfo("Action => " + szAction);
@@ -269,15 +281,25 @@ namespace Plugin48Dumper
                         clsTools.fnLogOK("[Summary]");
                         clsTools.fnLogOK($"Total: {ls.Count} records");
                     }
+                    else
+                    {
+                        clsTools.fnLogError("Unknown action: " + szAction);
+                    }
                 }
                 else if (szTarget == "xterm")
                 {
                     var xterm = new clsMobaXtermDumper();
+                    if (lsKey.Count < 3)
+                    {
+                        clsTools.fnPrintTable(xterm.dtHelp);
+                        return string.Empty;
+                    }
+
                     string szAction = lsKey[2];
 
                     if (szAction == "help")
                     {
-
+                        clsTools.fnPrintTable(xterm.dtHelp);
                     }
                     else if (szAction == "cred")
                     {

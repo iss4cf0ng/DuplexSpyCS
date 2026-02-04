@@ -477,14 +477,159 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
-        public (int nCode, string szMsg) fnLoadPeIntoMemory(byte[] abFileBytes)
+        public (int nCode, string szMsg) fnX86PELoader(byte[] abFileBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
 
             try
             {
-                PELoader pe = new PELoader(abFileBytes);
+                x86PELoader loader = new x86PELoader(abFileBytes);
+                if (!loader.Is32Bit)
+                    throw new Exception("This loader only supports x86 PE");
+
+                IntPtr imageBase = NativeDeclarations.VirtualAlloc(
+                    IntPtr.Zero,
+                    loader.OptionalHeader.SizeOfImage,
+                    NativeDeclarations.MEM_COMMIT | NativeDeclarations.MEM_RESERVE,
+                    NativeDeclarations.PAGE_EXECUTE_READWRITE
+                );
+
+                // copy headers
+                Marshal.Copy(loader.RawBytes, 0, imageBase, (int)loader.OptionalHeader.SizeOfHeaders);
+
+                // copy sections
+                foreach (var sec in loader.Sections)
+                {
+                    IntPtr dest = IntPtr.Add(imageBase, (int)sec.VirtualAddress);
+                    Marshal.Copy(
+                        loader.RawBytes,
+                        (int)sec.PointerToRawData,
+                        dest,
+                        (int)sec.SizeOfRawData
+                    );
+                }
+
+                // relocation
+                long delta = imageBase.ToInt64() - loader.OptionalHeader.ImageBase;
+                if (delta != 0)
+                {
+                    var dir1 = loader.OptionalHeader.BaseRelocationTable;
+                    if (dir1.Size == 0)
+                        throw new Exception("Size is zero!");
+
+                    IntPtr relocBase = IntPtr.Add(imageBase, (int)dir1.VirtualAddress);
+                    int offset = 0;
+
+                    while (true)
+                    {
+                        NativeDeclarations.IMAGE_BASE_RELOCATION block =
+                            Marshal.PtrToStructure<NativeDeclarations.IMAGE_BASE_RELOCATION>(IntPtr.Add(relocBase, offset));
+
+                        if (block.SizeOfBlock == 0) break;
+
+                        int count = (int)((block.SizeOfBlock - 8) / 2);
+                        IntPtr fixupBase = IntPtr.Add(imageBase, (int)block.VirtualAddress);
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            ushort value = (ushort)Marshal.ReadInt16(
+                                relocBase, offset + 8 + i * 2);
+
+                            ushort type = (ushort)(value >> 12);
+                            ushort rva = (ushort)(value & 0xFFF);
+
+                            if (type == 0x3) // IMAGE_REL_BASED_HIGHLOW
+                            {
+                                IntPtr patch = IntPtr.Add(fixupBase, rva);
+                                int original = Marshal.ReadInt32(patch);
+                                Marshal.WriteInt32(patch, original + (int)delta);
+                            }
+                        }
+
+                        offset += (int)block.SizeOfBlock;
+                    }
+                }
+
+                // imports
+
+                var dir2 = loader.OptionalHeader.ImportTable;
+                if (dir2.Size == 0)
+                    throw new Exception("Size is zero.");
+
+                int descSize = Marshal.SizeOf<NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR>();
+                IntPtr descPtr = IntPtr.Add(imageBase, (int)dir2.VirtualAddress);
+
+                while (true)
+                {
+                    NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR desc =
+                        Marshal.PtrToStructure<NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR>(descPtr);
+
+                    if (desc.Name == 0) break;
+
+                    string dllName = Marshal.PtrToStringAnsi(
+                        IntPtr.Add(imageBase, (int)desc.Name));
+
+                    IntPtr hDll = NativeDeclarations.LoadLibrary(dllName);
+
+                    IntPtr thunkRef = IntPtr.Add(imageBase,
+                        (int)(desc.OriginalFirstThunk != 0
+                            ? desc.OriginalFirstThunk
+                            : desc.FirstThunk));
+
+                    IntPtr funcRef = IntPtr.Add(imageBase, (int)desc.FirstThunk);
+
+                    while (true)
+                    {
+                        int thunkData = Marshal.ReadInt32(thunkRef);
+                        if (thunkData == 0) break;
+
+                        IntPtr funcAddr;
+
+                        if ((thunkData & 0x80000000) != 0)
+                        {
+                            // ordinal
+                            funcAddr = NativeDeclarations.GetProcAddress(hDll, (IntPtr)(thunkData & 0xFFFF));
+                        }
+                        else
+                        {
+                            IntPtr namePtr = IntPtr.Add(imageBase, thunkData);
+                            string name = Marshal.PtrToStringAnsi(IntPtr.Add(namePtr, 2));
+                            funcAddr = NativeDeclarations.GetProcAddress(hDll, name);
+                        }
+
+                        Marshal.WriteInt32(funcRef, funcAddr.ToInt32());
+
+                        thunkRef = IntPtr.Add(thunkRef, 4);
+                        funcRef = IntPtr.Add(funcRef, 4);
+                    }
+
+                    descPtr = IntPtr.Add(descPtr, descSize);
+                }
+
+                // jump to OEP
+                IntPtr entry = IntPtr.Add(imageBase, (int)loader.OptionalHeader.AddressOfEntryPoint);
+                IntPtr hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, entry, IntPtr.Zero, 0, IntPtr.Zero);
+                NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
+
+                nCode = 1;
+            }
+            catch (Exception ex)
+            {
+                szMsg = ex.Message;
+            }
+
+            return (nCode, szMsg);
+        }
+
+        public (int nCode, string szMsg) fnX64PELoader(byte[] abFileBytes)
+        {
+            int nCode = 0;
+            string szMsg = string.Empty;
+
+            try
+            {
+                x64PELoader pe = new x64PELoader(abFileBytes);
 
                 Console.WriteLine("Preferred Load Address = {0}", pe.OptionalHeader64.ImageBase.ToString("X4"));
 
@@ -539,7 +684,7 @@ namespace winClient48
                     relocationNextEntry = (NativeDeclarations.IMAGE_BASE_RELOCATION)Marshal.PtrToStructure(x, typeof(NativeDeclarations.IMAGE_BASE_RELOCATION));
 
 
-                    IntPtr dest = IntPtr.Add(codebase, (int)relocationEntry.VirtualAdress);
+                    IntPtr dest = IntPtr.Add(codebase, (int)relocationEntry.VirtualAddress);
 
 
                     //Console.WriteLine("Section Has {0} Entires",(int)(relocationEntry.SizeOfBlock - imageSizeOfBaseRelocation) /2);
@@ -686,7 +831,169 @@ namespace winClient48
 
         #endregion
 
-        public class PELoader
+        class x86PELoader
+        {
+            [StructLayout(LayoutKind.Sequential)]
+            struct IMAGE_BASE_RELOCATION
+            {
+                public uint VirtualAddress;
+                public uint SizeOfBlock;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            struct IMAGE_IMPORT_DESCRIPTOR
+            {
+                public uint OriginalFirstThunk;
+                public uint TimeDateStamp;
+                public uint ForwarderChain;
+                public uint Name;
+                public uint FirstThunk;
+            }
+
+            [StructLayout(LayoutKind.Sequential, Pack = 1)]
+            public struct IMAGE_OPTIONAL_HEADER32
+            {
+                public UInt16 Magic;
+                public Byte MajorLinkerVersion;
+                public Byte MinorLinkerVersion;
+                public UInt32 SizeOfCode;
+                public UInt32 SizeOfInitializedData;
+                public UInt32 SizeOfUninitializedData;
+                public UInt32 AddressOfEntryPoint;
+                public UInt32 BaseOfCode;
+                public UInt32 BaseOfData;
+                public UInt32 ImageBase;
+                public UInt32 SectionAlignment;
+                public UInt32 FileAlignment;
+                public UInt16 MajorOperatingSystemVersion;
+                public UInt16 MinorOperatingSystemVersion;
+                public UInt16 MajorImageVersion;
+                public UInt16 MinorImageVersion;
+                public UInt16 MajorSubsystemVersion;
+                public UInt16 MinorSubsystemVersion;
+                public UInt32 Win32VersionValue;
+                public UInt32 SizeOfImage;
+                public UInt32 SizeOfHeaders;
+                public UInt32 CheckSum;
+                public UInt16 Subsystem;
+                public UInt16 DllCharacteristics;
+                public UInt32 SizeOfStackReserve;
+                public UInt32 SizeOfStackCommit;
+                public UInt32 SizeOfHeapReserve;
+                public UInt32 SizeOfHeapCommit;
+                public UInt32 LoaderFlags;
+                public UInt32 NumberOfRvaAndSizes;
+
+                public IMAGE_DATA_DIRECTORY ExportTable;
+                public IMAGE_DATA_DIRECTORY ImportTable;
+                public IMAGE_DATA_DIRECTORY ResourceTable;
+                public IMAGE_DATA_DIRECTORY ExceptionTable;
+                public IMAGE_DATA_DIRECTORY CertificateTable;
+                public IMAGE_DATA_DIRECTORY BaseRelocationTable;
+                public IMAGE_DATA_DIRECTORY Debug;
+                public IMAGE_DATA_DIRECTORY Architecture;
+                public IMAGE_DATA_DIRECTORY GlobalPtr;
+                public IMAGE_DATA_DIRECTORY TLSTable;
+                public IMAGE_DATA_DIRECTORY LoadConfigTable;
+                public IMAGE_DATA_DIRECTORY BoundImport;
+                public IMAGE_DATA_DIRECTORY IAT;
+                public IMAGE_DATA_DIRECTORY DelayImportDescriptor;
+                public IMAGE_DATA_DIRECTORY CLRRuntimeHeader;
+                public IMAGE_DATA_DIRECTORY Reserved;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            public struct IMAGE_DATA_DIRECTORY
+            {
+                public UInt32 VirtualAddress;
+                public UInt32 Size;
+            }
+
+            [StructLayout(LayoutKind.Explicit)]
+            public struct IMAGE_SECTION_HEADER
+            {
+                [FieldOffset(0)]
+                [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
+                public char[] Name;
+                [FieldOffset(8)]
+                public UInt32 VirtualSize;
+                [FieldOffset(12)]
+                public UInt32 VirtualAddress;
+                [FieldOffset(16)]
+                public UInt32 SizeOfRawData;
+                [FieldOffset(20)]
+                public UInt32 PointerToRawData;
+                [FieldOffset(24)]
+                public UInt32 PointerToRelocations;
+                [FieldOffset(28)]
+                public UInt32 PointerToLinenumbers;
+                [FieldOffset(32)]
+                public UInt16 NumberOfRelocations;
+                [FieldOffset(34)]
+                public UInt16 NumberOfLinenumbers;
+                [FieldOffset(36)]
+                public DataSectionFlags Characteristics;
+
+                public string Section
+                {
+                    get { return new string(Name); }
+                }
+            }
+
+            [Flags]
+            public enum DataSectionFlags : uint
+            {
+
+                Stub = 0x00000000,
+
+            }
+
+            [StructLayout(LayoutKind.Sequential, Pack = 1)]
+            public struct IMAGE_FILE_HEADER
+            {
+                public UInt16 Machine;
+                public UInt16 NumberOfSections;
+                public UInt32 TimeDateStamp;
+                public UInt32 PointerToSymbolTable;
+                public UInt32 NumberOfSymbols;
+                public UInt16 SizeOfOptionalHeader;
+                public UInt16 Characteristics;
+            }
+
+            public IMAGE_OPTIONAL_HEADER32 OptionalHeader;
+            public IMAGE_SECTION_HEADER[] Sections;
+            public byte[] RawBytes;
+            public bool Is32Bit => OptionalHeader.Magic == 0x10B;
+
+            public x86PELoader(byte[] bytes)
+            {
+                RawBytes = bytes;
+                using (var br = new BinaryReader(new MemoryStream(bytes)))
+                {
+                    br.ReadBytes(0x3C);
+                    int ntOffset = br.ReadInt32();
+                    br.BaseStream.Position = ntOffset + 4;
+
+                    IMAGE_FILE_HEADER fh = Read<IMAGE_FILE_HEADER>(br);
+                    OptionalHeader = Read<IMAGE_OPTIONAL_HEADER32>(br);
+
+                    Sections = new IMAGE_SECTION_HEADER[fh.NumberOfSections];
+                    for (int i = 0; i < Sections.Length; i++)
+                        Sections[i] = Read<IMAGE_SECTION_HEADER>(br);
+                }
+            }
+
+            static T Read<T>(BinaryReader br)
+            {
+                byte[] data = br.ReadBytes(Marshal.SizeOf<T>());
+                GCHandle h = GCHandle.Alloc(data, GCHandleType.Pinned);
+                T obj = Marshal.PtrToStructure<T>(h.AddrOfPinnedObject());
+                h.Free();
+                return obj;
+            }
+        }
+
+        public class x64PELoader
         {
             //Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
 
@@ -918,7 +1225,7 @@ namespace winClient48
 
 
 
-            public PELoader(string filePath)
+            public x64PELoader(string filePath)
             {
                 // Read in the DLL or EXE and get the timestamp
                 using (FileStream stream = new FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
@@ -953,7 +1260,7 @@ namespace winClient48
                 }
             }
 
-            public PELoader(byte[] fileBytes)
+            public x64PELoader(byte[] fileBytes)
             {
                 // Read in the DLL or EXE and get the timestamp
                 using (MemoryStream stream = new MemoryStream(fileBytes, 0, fileBytes.Length))
@@ -1062,7 +1369,6 @@ namespace winClient48
 
         }//End Class
 
-
         unsafe class NativeDeclarations
         {
 
@@ -1074,7 +1380,7 @@ namespace winClient48
             [StructLayout(LayoutKind.Sequential)]
             public unsafe struct IMAGE_BASE_RELOCATION
             {
-                public uint VirtualAdress;
+                public uint VirtualAddress;
                 public uint SizeOfBlock;
             }
 
@@ -1086,6 +1392,9 @@ namespace winClient48
 
             [DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
             public static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
+
+            [DllImport("kernel32.dll", SetLastError = true)]
+            public static extern IntPtr GetProcAddress(IntPtr hModule, IntPtr ordinal);
 
             [DllImport("kernel32")]
             public static extern IntPtr CreateThread(

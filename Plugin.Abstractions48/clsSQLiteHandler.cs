@@ -23,7 +23,7 @@ namespace Plugin.Abstractions48
             if (File.Exists(baseName))
             {
                 this.db_bytes = File.ReadAllBytes(baseName);
-                if (Encoding.Default.GetString(this.db_bytes, 0, 15).CompareTo("SQLite format 3") != 0)
+                if (GetTextEncoding().GetString(this.db_bytes, 0, 15).CompareTo("SQLite format 3") != 0)
                 {
                     throw new Exception("Not a valid SQLite 3 Database File");
                 }
@@ -42,6 +42,21 @@ namespace Plugin.Abstractions48
                     this.encoding = 1L;
                 }
                 this.ReadMasterTable(100L);
+            }
+        }
+
+        private Encoding GetTextEncoding()
+        {
+            switch (encoding)
+            {
+                case 1:
+                    return Encoding.UTF8;
+                case 2:
+                    return Encoding.Unicode;          //UTF-16 LE
+                case 3:
+                    return Encoding.BigEndianUnicode; //UTF-16 BE
+                default:
+                    return Encoding.UTF8;
             }
         }
 
@@ -241,40 +256,40 @@ namespace Plugin.Abstractions48
                     while (index <= 4);
                     if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
                     {
-                        this.master_table_entries[length + i].item_type = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                        this.master_table_entries[length + i].item_type = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
                     {
-                        this.master_table_entries[length + i].item_type = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                        this.master_table_entries[length + i].item_type = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
                     {
-                        this.master_table_entries[length + i].item_type = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
+                        this.master_table_entries[length + i].item_type = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(new decimal(num), new decimal(num5))), (int)numArray[0]);
                     }
                     if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
                     {
-                        this.master_table_entries[length + i].item_name = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
+                        this.master_table_entries[length + i].item_name = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
                     {
-                        this.master_table_entries[length + i].item_name = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
+                        this.master_table_entries[length + i].item_name = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
                     {
-                        this.master_table_entries[length + i].item_name = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
+                        this.master_table_entries[length + i].item_name = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0]))), (int)numArray[1]);
                     }
                     this.master_table_entries[length + i].root_num = (long)this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2]))), (int)numArray[3]);
                     if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
                     {
-                        this.master_table_entries[length + i].sql_statement = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                        this.master_table_entries[length + i].sql_statement = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
                     {
-                        this.master_table_entries[length + i].sql_statement = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                        this.master_table_entries[length + i].sql_statement = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
                     }
                     else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
                     {
-                        this.master_table_entries[length + i].sql_statement = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
+                        this.master_table_entries[length + i].sql_statement = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(decimal.Add(decimal.Add(decimal.Add(new decimal(num), new decimal(num5)), new decimal(numArray[0])), new decimal(numArray[1])), new decimal(numArray[2])), new decimal(numArray[3]))), (int)numArray[4]);
                     }
                 }
             }
@@ -402,20 +417,20 @@ namespace Plugin.Abstractions48
                             {
                                 if (decimal.Compare(new decimal(this.encoding), decimal.One) == 0)
                                 {
-                                    this.table_entries[length + i].content[k] = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
+                                    this.table_entries[length + i].content[k] = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
                                 }
                                 else if (decimal.Compare(new decimal(this.encoding), 2M) == 0)
                                 {
-                                    this.table_entries[length + i].content[k] = Encoding.Unicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
+                                    this.table_entries[length + i].content[k] = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
                                 }
                                 else if (decimal.Compare(new decimal(this.encoding), 3M) == 0)
                                 {
-                                    this.table_entries[length + i].content[k] = Encoding.BigEndianUnicode.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
+                                    this.table_entries[length + i].content[k] = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
                                 }
                             }
                             else
                             {
-                                this.table_entries[length + i].content[k] = Encoding.Default.GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
+                                this.table_entries[length + i].content[k] = GetTextEncoding().GetString(this.db_bytes, Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size);
                             }
                         }
                         else

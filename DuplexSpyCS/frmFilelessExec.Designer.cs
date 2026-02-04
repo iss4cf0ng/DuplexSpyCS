@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFilelessExec));
             splitContainer1 = new SplitContainer();
+            radioButton3 = new RadioButton();
             groupBox1 = new GroupBox();
             label2 = new Label();
             textBox1 = new TextBox();
@@ -45,6 +46,7 @@
             button2 = new Button();
             listView1 = new ListView();
             columnHeader1 = new ColumnHeader();
+            columnHeader3 = new ColumnHeader();
             columnHeader2 = new ColumnHeader();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
@@ -69,6 +71,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(radioButton3);
             splitContainer1.Panel1.Controls.Add(groupBox1);
             splitContainer1.Panel1.Controls.Add(radioButton2);
             splitContainer1.Panel1.Controls.Add(radioButton1);
@@ -85,9 +88,21 @@
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 365;
+            splitContainer1.SplitterDistance = 362;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
+            // 
+            // radioButton3
+            // 
+            radioButton3.AutoSize = true;
+            radioButton3.Location = new Point(17, 12);
+            radioButton3.Name = "radioButton3";
+            radioButton3.Size = new Size(120, 23);
+            radioButton3.TabIndex = 17;
+            radioButton3.TabStop = true;
+            radioButton3.Text = "x86 PE (*.exe)";
+            radioButton3.UseVisualStyleBackColor = true;
+            radioButton3.CheckedChanged += radioButton3_CheckedChanged;
             // 
             // groupBox1
             // 
@@ -148,7 +163,7 @@
             // radioButton2
             // 
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(184, 10);
+            radioButton2.Location = new Point(269, 12);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(147, 23);
             radioButton2.TabIndex = 15;
@@ -159,7 +174,7 @@
             // radioButton1
             // 
             radioButton1.AutoSize = true;
-            radioButton1.Location = new Point(43, 10);
+            radioButton1.Location = new Point(143, 12);
             radioButton1.Name = "radioButton1";
             radioButton1.Size = new Size(120, 23);
             radioButton1.TabIndex = 14;
@@ -221,10 +236,10 @@
             // listView1
             // 
             listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader2 });
+            listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader3, columnHeader2 });
             listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 167);
+            listView1.Size = new Size(632, 164);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -234,15 +249,20 @@
             columnHeader1.Text = "OnlineID";
             columnHeader1.Width = 300;
             // 
+            // columnHeader3
+            // 
+            columnHeader3.Text = "Process";
+            columnHeader3.Width = 150;
+            // 
             // columnHeader2
             // 
             columnHeader2.Text = "State";
-            columnHeader2.Width = 300;
+            columnHeader2.Width = 150;
             // 
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 341);
+            statusStrip1.Location = new Point(0, 338);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -267,7 +287,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 182);
+            richTextBox1.Size = new Size(638, 185);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -320,5 +340,7 @@
         private RadioButton radioButton2;
         private RadioButton radioButton1;
         private GroupBox groupBox1;
+        private RadioButton radioButton3;
+        private ColumnHeader columnHeader3;
     }
 }

