@@ -5,7 +5,8 @@
   - Completed function.
 
 - QA (Quality Assurance)
-- Write the completed documents and wiki.
+- Simple ransomware plugin.
+- Write documents and wiki for this tool.
 
 # Debug
 - DLL Injection
