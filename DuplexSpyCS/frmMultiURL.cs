@@ -52,6 +52,8 @@ namespace DuplexSpyCS
                             {
                                 item.SubItems[1].Text = "Command is executed, please check.";
                             }
+
+                            fnLogs(v, item.SubItems[1].Text);
                         }));
                     }
                     else if (cmd[2] == "run")

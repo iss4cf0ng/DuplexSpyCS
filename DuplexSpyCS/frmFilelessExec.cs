@@ -43,7 +43,7 @@ namespace DuplexSpyCS
                     if (lsMsg[1] == "init")
                     {
                         string szPlatform = lsMsg[2];
-                        item.SubItems[1].Text = szPlatform;
+                        item.SubItems[2].Text = szPlatform;
 
                         return;
                     }
@@ -54,6 +54,8 @@ namespace DuplexSpyCS
                     string szMsg = clsCrypto.b64D2Str(lsMsg[3]);
 
                     richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {szMsg}");
+                    richTextBox1.AppendText(Environment.NewLine);
+
                     item.SubItems[2].Text = nCode == 0 ? "Failed" : szMsg;
                 }));
             }
@@ -196,6 +198,12 @@ namespace DuplexSpyCS
             }
 
             List<ListViewItem> items = listView1.CheckedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please check a item.", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             List<string> lsProc = items.Select(x => x.SubItems[1].Text).Where(y => !string.Equals(y, "?")).ToList();
             if (lsProc.Count == 0 && !radioButton2.Checked)
             {

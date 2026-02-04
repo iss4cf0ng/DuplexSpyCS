@@ -238,6 +238,13 @@ namespace DuplexSpyCS
                             ListViewItem k = listView2.FindItemWithText(online_id);
                             if (k != null)
                                 GetVictim(k).fnDisconnect();
+
+                            List<clsVictim> victims = newListView1.Items.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList().Where(x => string.Equals(x.ID, v.ID)).ToList();
+                            if (victims.Count > 1)
+                            {
+                                for (int i = 1; i < victims.Count; i++)
+                                    fnDisconnected(victims[i]);
+                            }
                         }));
 
                         MakeNewPortfolio(v);
@@ -274,7 +281,17 @@ namespace DuplexSpyCS
                         string szGuid = Guid.NewGuid().ToString();
 
                         v.img_LastDesktop = bmp;
-                        Invoke(new Action(() => fnUpdateScreenshot(v.ID, bmp)));
+                        Invoke(new Action(() =>
+                        {
+                            List<clsVictim> victims = newListView1.Items.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList().Where(x => string.Equals(x.ID, v.ID)).ToList();
+                            if (victims.Count > 1)
+                            {
+                                for (int i = 1; i < victims.Count; i++)
+                                    fnDisconnected(victims[i]);
+                            }
+
+                            fnUpdateScreenshot(v.ID, bmp);
+                        }));
                     }
                 }
 
@@ -1527,7 +1544,7 @@ namespace DuplexSpyCS
 
             clsStore.sql_conn = m_sqlConn;
 
-            ilRowHack.ImageSize = new Size(1, 200);
+            ilRowHack.ImageSize = new Size(Font.Height, Font.Height);
 
             if (newListView1 == null)
                 newListView1 = new NewListView();

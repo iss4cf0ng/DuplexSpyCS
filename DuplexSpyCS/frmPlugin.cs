@@ -523,10 +523,6 @@ namespace DuplexSpyCS
                     fnSendUnload(szOption);
                 }
             }
-            else if (lsArgs[0] == "help")
-            {
-                //todo: print usage.
-            }
             else if (lsArgs[0] == "clear")
             {
                 richTextBox1.Clear();

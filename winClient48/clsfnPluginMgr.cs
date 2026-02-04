@@ -110,9 +110,6 @@ namespace winClient48
             if (!_plugins.TryGetValue(pluginName, out var plugin))
                 throw new KeyNotFoundException($"Plugin '{pluginName}' not loaded");
 
-            if (args.TryGetValue("help", out _))
-                return fnPrintHelp(plugin.Attribute.Description, plugin.Attribute.Usage, plugin.HelpTable);
-
             StringBuilder sb = new StringBuilder();
             var writer = new PluginConsoleWriter(s =>
             {

