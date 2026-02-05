@@ -1,11 +1,5 @@
 # Todo List
-- Shellcode Injection
-  - Completed function.
-- DLL Injection. 
-  - Completed function.
-
 - QA (Quality Assurance)
-- Simple ransomware plugin.
 - Write documents and wiki for this tool.
 
 # Debug
@@ -33,11 +27,15 @@
   - APC
   - EarlyBird
   - CreateRemoteThread
+  - NtCreateThreadEx
+  - ZwCreateThreadEx
 
 - DLL Injection
   - APC
   - EarlyBird
   - CreateRemoteThread
+  - NtCreateThreadEx
+  - ZwCreateThreadEx
 
 - Shellcode Loader
 - DLL Loader
