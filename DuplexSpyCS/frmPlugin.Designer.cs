@@ -195,10 +195,10 @@
             // 
             tabPage2.Controls.Add(richTextBox1);
             tabPage2.Controls.Add(textBox1);
-            tabPage2.Location = new Point(4, 28);
+            tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(901, 395);
+            tabPage2.Size = new Size(901, 399);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Console";
             tabPage2.UseVisualStyleBackColor = true;
@@ -210,7 +210,7 @@
             richTextBox1.ForeColor = Color.White;
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(895, 362);
+            richTextBox1.Size = new Size(895, 366);
             richTextBox1.TabIndex = 1;
             richTextBox1.Text = "";
             richTextBox1.TextChanged += richTextBox1_TextChanged;
@@ -220,7 +220,7 @@
             textBox1.BackColor = Color.Black;
             textBox1.Dock = DockStyle.Bottom;
             textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(3, 365);
+            textBox1.Location = new Point(3, 369);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(895, 27);
             textBox1.TabIndex = 0;
@@ -234,6 +234,7 @@
             Controls.Add(tabControl1);
             Controls.Add(statusStrip1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Margin = new Padding(4);
             Name = "frmPlugin";
             StartPosition = FormStartPosition.CenterScreen;

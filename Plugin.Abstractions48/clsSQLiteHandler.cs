@@ -10,6 +10,13 @@ namespace Plugin.Abstractions48
 {
     public class clsSQLiteHandler
     {
+        /// <summary>
+        /// Acknowledgements: Quasar RAT.
+        /// Repositry: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Utilities/SQLiteHandler.cs
+        /// 
+        /// I have modified the encoding.
+        /// </summary>
+
         private byte[] db_bytes;
         private ulong encoding;
         private string[] field_names = new string[1];

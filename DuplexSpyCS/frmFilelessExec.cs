@@ -43,7 +43,7 @@ namespace DuplexSpyCS
                     if (lsMsg[1] == "init")
                     {
                         string szPlatform = lsMsg[2];
-                        item.SubItems[2].Text = szPlatform;
+                        item.SubItems[1].Text = szPlatform;
 
                         return;
                     }
@@ -128,9 +128,11 @@ namespace DuplexSpyCS
 
         void fnInit()
         {
+            listView1.Items.Clear();
+
             foreach (clsVictim v in m_lsVictim)
             {
-                ListViewItem item = new ListViewItem(v.ID);
+                ListViewItem item = item = new ListViewItem(v.ID);
                 item.SubItems.Add("?");
                 item.SubItems.Add("?");
                 item.Tag = v;

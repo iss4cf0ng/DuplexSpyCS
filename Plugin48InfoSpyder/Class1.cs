@@ -64,11 +64,25 @@ namespace Plugin48InfoSpyder
         {
             List<string> lsKey = args.Keys.ToList();
             if (lsKey.Count == 0)
-                throw new Exception(Attribute.Usage);
+            {
+                clsTools.fnLogInfo(Attribute.Description);
+                clsTools.fnLogInfo($"Author: {Attribute.Author}");
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+
+                return string.Empty;
+            }
 
             string szCmd = lsKey[0];
 
-            if (szCmd == "ls")
+            if (szCmd == "help")
+            {
+                clsTools.fnLogInfo(Attribute.Description);
+                clsTools.fnLogInfo($"Author: {Attribute.Author}");
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+            }
+            else if (szCmd == "ls")
             {
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Module");

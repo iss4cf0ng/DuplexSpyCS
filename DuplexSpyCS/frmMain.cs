@@ -2268,7 +2268,10 @@ namespace DuplexSpyCS
         {
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
+            {
+                MessageBox.Show("Please select a compromised machine.", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
+            }
 
             frmMultiURL f = new frmMultiURL(lsVictim);
             f.Show();
@@ -2424,7 +2427,7 @@ namespace DuplexSpyCS
                 return;
             else if (lsVictim.Count > 1)
             {
-                MessageBox.Show("You selected more than one client, the first client will be used automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("You have selected more than one client, the first client will be used automatically.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
             clsVictim victim = lsVictim.First();

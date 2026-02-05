@@ -99,6 +99,8 @@
     <Compile Include="clsEdgeDumper.cs" />
     <Compile Include="clsFirefoxDumper.cs" />
     <Compile Include="clsMobaXtermDumper.cs" />
+    <Compile Include="clsOperaDumper.cs" />
+    <Compile Include="clsOperaGXDumper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

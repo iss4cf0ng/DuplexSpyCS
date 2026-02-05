@@ -25,8 +25,15 @@ namespace DuplexSpyCS
         {
             InitializeComponent();
 
+            Text = $@"Plugin\\{victim.ID}";
+
             m_victim = victim;
             m_szPluginDirectory = Path.Combine(Application.StartupPath, "Plugins");
+            if (!Directory.Exists(m_szPluginDirectory))
+            {
+                MessageBox.Show("Plugin directory not found: " + m_szPluginDirectory, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
         }
 
         private clsPlugin.stPluginInfo fnGetPluginInfoFromItem(ListViewItem item) => item.Tag == null ? new clsPlugin.stPluginInfo() : (clsPlugin.stPluginInfo)item.Tag;
@@ -533,12 +540,6 @@ namespace DuplexSpyCS
                 if (!m_victim.m_dicCommandRegistry.ContainsKey(szEntry))
                 {
                     fnPrintError("Cannot find command: " + szEntry);
-                    return;
-                }
-
-                if (lsArgs.Count == 1)
-                {
-                    //todo: print usage message.
                     return;
                 }
 

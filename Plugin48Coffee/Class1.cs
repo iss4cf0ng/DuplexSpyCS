@@ -94,9 +94,26 @@ namespace Plugin48Coffee
         public object Execute(IDictionary<string, object> args)
         {
             List<string> lsKey = args.Keys.ToList();
+            if (lsKey.Count == 0)
+            {
+                clsTools.fnLogInfo(Attribute.Description);
+                clsTools.fnLogInfo($"Author: {Attribute.Author}");
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+
+                return string.Empty;
+            }
+
             string szCmd = lsKey[0];
 
-            if (szCmd == "print")
+            if (szCmd == "help")
+            {
+                clsTools.fnLogInfo(Attribute.Description);
+                clsTools.fnLogInfo($"Author: {Attribute.Author}");
+                clsTools.fnLogInfo(Attribute.Usage);
+                clsTools.fnPrintTable(_table);
+            }
+            else if (szCmd == "print")
             {
                 int nIdx = int.Parse(args[szCmd].ToString());
                 if (nIdx >= Coffee.Length)

