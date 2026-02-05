@@ -11,11 +11,19 @@ namespace Plugin48InfoSpyder
 {
     public class clsSpyMachine : clsSpy
     {
+        private DataTable dtHelp = new DataTable();
+
         public clsSpyMachine()
         {
             szName = "InfoSpyder.Machine";
             szEntry = "machine";
             szDescription = "Information on this machine.";
+
+            dtHelp.Columns.Add("Command");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("help", "Print help message.");
+            dtHelp.Rows.Add("ls", "Show information.");
         }
 
         private DataTable fnWQL(string szQuery)
@@ -56,7 +64,19 @@ namespace Plugin48InfoSpyder
 
         public override void fnRun(string szModule, List<string> lsArgs)
         {
-            if (lsArgs[0] == "ls")
+            if (lsArgs.Count == 0)
+            {
+                Console.WriteLine("<...> machine <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+                return;
+            }
+
+            if (lsArgs[0] == "help")
+            {
+                Console.WriteLine("<...> machine <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+            }
+            else if (lsArgs[0] == "ls")
             {
                 clsTools.fnLogInfo($"Computer Name: {Environment.MachineName}");
                 clsTools.fnLogInfo($"Username: {Environment.UserName}");
@@ -64,13 +84,12 @@ namespace Plugin48InfoSpyder
                 clsTools.fnLogInfo($"Is64: {(Environment.Is64BitOperatingSystem ? "Yes" : "No")}");
                 clsTools.fnLogInfo($"Processor Count: {Environment.ProcessorCount}");
 
-                clsTools.fnPrintTable(fnWQL("SELECT Name FROM Win32_Processor"));
-                clsTools.fnPrintTable(fnWQL("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem"));
-                clsTools.fnPrintTable(fnWQL("SELECT Manufacturer, Product"));
-                clsTools.fnPrintTable(fnWQL("SELECT Model, Size FROM Win32_DiskDrive"));
-                clsTools.fnPrintTable(fnWQL("SELECT Name FROM Win32_VideoController"));
-                clsTools.fnPrintTable(fnWQL("SELECT Caption, Version FROM Win32_OperatingSystem"));
-                clsTools.fnPrintTable(fnWQL("SELECT * FROM Win32_ComputerSystem"));
+                clsTools.fnLogInfo($"Name: {fnWQL("SELECT Name FROM Win32_Processor").Rows[0]["Name"].ToString()}");
+                clsTools.fnLogInfo($"TotalPhysicalMemory: {fnWQL("SELECT TotalPhysicalMemory FROM Win32_ComputerSystem").Rows[0]["TotalPhysicalMemory"].ToString()}");
+                clsTools.fnLogInfo($"DiskDrive Size: {fnWQL("SELECT Size FROM Win32_DiskDrive").Rows[0]["Model"].ToString()}");
+                clsTools.fnLogInfo($"VideoController Name: {fnWQL("SELECT Name FROM Win32_VideoController").Rows[0]["Name"]}");
+                clsTools.fnLogInfo($"OS Caption: {fnWQL("SELECT Caption FROM Win32_OperatingSystem").Rows[0]["Caption"]}");
+                clsTools.fnLogInfo($"OS Version: {fnWQL("SELECT Version FROM Win32_OperatingSystem").Rows[0]["Version"]}");
             }
         }
     }

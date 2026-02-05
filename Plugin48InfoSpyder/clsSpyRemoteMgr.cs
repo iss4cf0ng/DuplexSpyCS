@@ -1,6 +1,7 @@
 ﻿using Plugin.Abstractions48;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -29,16 +30,36 @@ namespace Plugin48InfoSpyder
             "sqlyog",           // MySQL management tool
         };
 
+        private DataTable dtHelp = new DataTable();
+
         public clsSpyRemoteMgr()
         {
             szName = "InfoSpyder.RemoteManager";
             szEntry = "manager";
             szDescription = "Remote manager tools.";
+
+            dtHelp.Columns.Add("Command");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("help", "Print help message.");
+            dtHelp.Rows.Add("ls", "Show information.");
         }
 
         public override void fnRun(string szModule, List<string> lsArgs)
         {
-            if (lsArgs[0] == "ls")
+            if (lsArgs.Count == 0)
+            {
+                Console.WriteLine("<...> manager <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+                return;
+            }
+
+            if (lsArgs[0] == "help")
+            {
+                Console.WriteLine("<...> manager <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+            }
+            else if (lsArgs[0] == "ls")
             {
                 clsTools.fnLogInfo(new string('-', 50));
 
@@ -48,8 +69,6 @@ namespace Plugin48InfoSpyder
                     {
                         if (Regex.IsMatch(app.Name, szPattern, RegexOptions.IgnoreCase))
                         {
-                            clsTools.fnLogInfo(new string('-', 50));
-
                             clsTools.fnLogInfo($"[Name]: {app.Name}");
                             clsTools.fnLogInfo($"[Path]: {app.AppFolder}");
                             clsTools.fnLogInfo($"[Version]: {app.Version}");

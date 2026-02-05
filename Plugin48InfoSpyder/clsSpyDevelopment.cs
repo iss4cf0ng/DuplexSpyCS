@@ -1,6 +1,7 @@
 ﻿using Plugin.Abstractions48;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,19 +29,38 @@ namespace Plugin48InfoSpyder
             "intellij",         // Java IDE
             "pycharm",          // Python IDE
             "eclipse",          // Java IDE
-            "notepad++",        // Code editor
         };
+
+        private DataTable dtHelp = new DataTable();
 
         public clsSpyDevelopment()
         {
             szName = "InfoSpyder.Development";
             szEntry = "devtool";
             szDescription = "Development tools.";
+
+            dtHelp.Columns.Add("Command");
+            dtHelp.Columns.Add("Description");
+
+            dtHelp.Rows.Add("help", "Print help message.");
+            dtHelp.Rows.Add("ls", "Show information.");
         }
 
         public override void fnRun(string szModule, List<string> lsArgs)
         {
-            if (lsArgs[0] == "ls")
+            if (lsArgs.Count == 0)
+            {
+                Console.WriteLine("<...> devtool <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+                return;
+            }
+
+            if (lsArgs[0] == "help")
+            {
+                Console.WriteLine("<...> devtool <help | ls>");
+                clsTools.fnPrintTable(dtHelp);
+            }
+            else if (lsArgs[0] == "ls")
             {
                 clsTools.fnLogInfo(new string('-', 50));
 
@@ -54,6 +74,8 @@ namespace Plugin48InfoSpyder
                             clsTools.fnLogInfo($"[Path]: {app.AppFolder}");
                             clsTools.fnLogInfo($"[Version]: {app.Version}");
                             clsTools.fnLogInfo($"[Install Date]: {app.InstallDate}");
+
+                            clsTools.fnLogInfo(new string('-', 50));
                         }
                     }
                 }

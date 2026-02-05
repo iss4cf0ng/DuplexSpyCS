@@ -65,6 +65,21 @@ namespace Plugin48InfoSpyder
                     }
                 }
             }
+
+            List<string> lsDirPath = m_lsApp.Select(x => x.AppFolder).ToList();
+            foreach (string szDirPath in Directory.GetDirectories(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)))
+            {
+                if (!lsDirPath.Contains(szDirPath))
+                {
+                    m_lsApp.Add(new clsInstalledApp
+                    {
+                        Name = Path.GetDirectoryName(szDirPath),
+                        Version = "Unknown",
+                        InstallDate = new DirectoryInfo(szDirPath).CreationTime.ToString("F"),
+                        AppFolder = szDirPath,
+                    });
+                }
+            }
         }
 
         public virtual void fnRun(string szModule, List<string> lsArgs)
