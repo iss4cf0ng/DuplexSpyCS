@@ -52,6 +52,7 @@
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
             richTextBox1 = new RichTextBox();
+            button7 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -71,6 +72,7 @@
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(button7);
             splitContainer1.Panel1.Controls.Add(radioButton3);
             splitContainer1.Panel1.Controls.Add(groupBox1);
             splitContainer1.Panel1.Controls.Add(radioButton2);
@@ -88,7 +90,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 362;
+            splitContainer1.SplitterDistance = 361;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
             // 
@@ -215,9 +217,9 @@
             // 
             // button3
             // 
-            button3.Location = new Point(247, 138);
+            button3.Location = new Point(166, 138);
             button3.Name = "button3";
-            button3.Size = new Size(227, 27);
+            button3.Size = new Size(148, 27);
             button3.TabIndex = 8;
             button3.Text = "Uncheck All";
             button3.UseVisualStyleBackColor = true;
@@ -227,7 +229,7 @@
             // 
             button2.Location = new Point(12, 138);
             button2.Name = "button2";
-            button2.Size = new Size(227, 27);
+            button2.Size = new Size(148, 27);
             button2.TabIndex = 7;
             button2.Text = "Check All";
             button2.UseVisualStyleBackColor = true;
@@ -239,7 +241,7 @@
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader3, columnHeader2 });
             listView1.Location = new Point(3, 173);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 164);
+            listView1.Size = new Size(632, 163);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -262,7 +264,7 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 338);
+            statusStrip1.Location = new Point(0, 337);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -287,9 +289,19 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 185);
+            richTextBox1.Size = new Size(638, 186);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
+            // 
+            // button7
+            // 
+            button7.Location = new Point(320, 138);
+            button7.Name = "button7";
+            button7.Size = new Size(154, 27);
+            button7.TabIndex = 18;
+            button7.Text = "Refresh";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
             // 
             // frmFilelessExec
             // 
@@ -342,5 +354,6 @@
         private GroupBox groupBox1;
         private RadioButton radioButton3;
         private ColumnHeader columnHeader3;
+        private Button button7;
     }
 }

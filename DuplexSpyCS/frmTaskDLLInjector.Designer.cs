@@ -157,7 +157,7 @@
             tabPage2.Location = new Point(4, 24);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
-            tabPage2.Size = new Size(407, 362);
+            tabPage2.Size = new Size(407, 337);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Logs";
             tabPage2.UseVisualStyleBackColor = true;
@@ -167,7 +167,7 @@
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(3, 3);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(401, 356);
+            richTextBox1.Size = new Size(401, 331);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
             // 
@@ -182,6 +182,7 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "APC", "EarlyBird", "CreateRemoteThread", "NtCreateThreadEx", "ZwCreateThreadEx" });
             comboBox1.Location = new Point(94, 33);

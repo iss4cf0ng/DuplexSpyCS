@@ -45,16 +45,8 @@ namespace DuplexSpyCS
                     int nCode = int.Parse(lsMsg[3]);
                     Invoke(new Action(() =>
                     {
-                        if (nCode == 0)
-                        {
-                            richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {nProc} => {clsCrypto.b64D2Str(lsMsg[4])}");
-                            richTextBox1.AppendText(Environment.NewLine);
-                        }
-                        else
-                        {
-                            richTextBox1.AppendText($"OK");
-                            richTextBox1.AppendText(Environment.NewLine);
-                        }
+                        richTextBox1.AppendText($"[{DateTime.Now.ToString("F")}] {nProc} => {clsCrypto.b64D2Str(lsMsg[4])}");
+                        richTextBox1.AppendText(Environment.NewLine);
                     }));
                 }
             }
@@ -63,6 +55,8 @@ namespace DuplexSpyCS
         private void fnSetup()
         {
             toolStripStatusLabel1.Text = $"Process[{listView1.Items.Count}]";
+            comboBox1.SelectedIndex = 2;
+
             foreach (var p in m_lsProc)
             {
                 ListViewItem item = new ListViewItem(p.Item1);
@@ -70,8 +64,6 @@ namespace DuplexSpyCS
 
                 listView1.Items.Add(item);
             }
-
-            comboBox1.SelectedIndex = 0;
 
             m_victim.m_listener.ReceivedDecoded += fnRecv;
         }

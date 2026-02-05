@@ -60,6 +60,8 @@ namespace DuplexSpyCS
             string hexString = richTextBox1.Text;
             List<byte> bytes = new List<byte>();
 
+            toolStripComboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
+
             foreach (Match m in Regex.Matches(hexString, @"\\x([0-9a-fA-F]{2})"))
             {
                 bytes.Add(Convert.ToByte(m.Groups[1].Value, 16));

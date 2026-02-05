@@ -387,10 +387,10 @@ public class WinAPI
     [DllImport("kernel32.dll", SetLastError = true)]
     public static extern bool VirtualFree(IntPtr lpAddress, uint dwSize, uint dwFreeType);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, uint nSize, out uint uNumberOfBytesWritten);
 
     [DllImport("kernel32.dll", SetLastError = true)]
@@ -515,7 +515,7 @@ public class WinAPI
         public IntPtr lpAttributeList;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct PROCESS_INFORMATION
     {
         public IntPtr hProcess;
@@ -606,17 +606,17 @@ public class WinAPI
         out PROCESS_INFORMATION lpProcessInformation
     );
 
-    [DllImport("kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     public static extern bool CreateProcess(
-        string lpApplicationName, 
-        string lpCommandLine, 
-        IntPtr lpProcessAttributes, 
-        IntPtr lpThreadAttributes, 
-        bool bInheritHandles, 
-        CreationFlags dwCreationFlags, 
-        IntPtr lpEnvironment, 
-        string lpCurrentDirectory, 
-        ref STARTUPINFO lpStartupInfo, 
+        string lpApplicationName,
+        StringBuilder lpCommandLine,
+        IntPtr lpProcessAttributes,
+        IntPtr lpThreadAttributes,
+        bool bInheritHandles,
+        CreationFlags dwCreationFlags,
+        IntPtr lpEnvironment,
+        string lpCurrentDirectory,
+        ref STARTUPINFO lpStartupInfo,
         out PROCESS_INFORMATION lpProcessInformation
     );
 

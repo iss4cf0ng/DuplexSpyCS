@@ -203,8 +203,9 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "APC", "EarlyBird", "CreateRemoteThread" });
+            comboBox1.Items.AddRange(new object[] { "APC", "EarlyBird", "CreateRemoteThread", "NtCreateThreadEx", "ZwCreateThreadEx" });
             comboBox1.Location = new Point(93, 6);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(314, 27);
