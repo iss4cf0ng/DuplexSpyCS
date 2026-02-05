@@ -479,6 +479,7 @@ namespace DuplexSpyCS
                 {
                     foreach (var plugin in m_dicPluginInfo.Values)
                     {
+                        MessageBox.Show($"{plugin.Meta.Name}, {plugin.Meta.Entry}");
                         fnSendLoad(plugin.Meta.Name);
                     }
                 }
@@ -558,7 +559,7 @@ namespace DuplexSpyCS
                 {
                     "plugin",
                     "run",
-                    szEntry,
+                    spec.PluginName,
                     string.Join(",", lsPayload.Select(x => clsCrypto.b64E2Str(x)))
                 });
             }

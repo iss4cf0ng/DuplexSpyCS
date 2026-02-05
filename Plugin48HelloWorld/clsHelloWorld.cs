@@ -14,7 +14,7 @@ namespace Plugin48HelloWorld
         private IPluginContext _ctx;
         private DataTable _table;
 
-        public string Name => "InfoSpyder";
+        public string Name => "HelloWorld";
         public Version Version => new Version(1, 0, 0);
         public PluginAttribute Attribute { get; set; }
 
@@ -34,7 +34,12 @@ namespace Plugin48HelloWorld
             _ctx = context;
             _ctx.Log("Plugin Init");
 
-
+            Attribute = new PluginAttribute()
+            {
+                Author = "ISSAC",
+                Description = "Demonstration.",
+                Usage = "hello <Entry> <Command>",
+            };
         }
 
         public object Execute(IDictionary<string, object> args)
