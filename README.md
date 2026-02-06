@@ -27,6 +27,9 @@ Please do NOT use this tool for any illegal activities.
   <img src="https://iss4cf0ng.github.io/images/meme/mika_punch.jpg" width="500">
 </p>
 
+# Warning
+Your antivirus software may detect and automatically delete certain files (such as shellcode text files used for demonstration purposes). This behavior is expected.
+
 # Murmur
 As a college student, developing a GUI-based remote access tool entirely on my own—and performing proper quality assurance (QA)—has been a significant challenge for me.  
 Due to limited time, experience, and resources, this project may still contain defects or design flaws that I have not yet discovered.  
@@ -198,4 +201,5 @@ This RAT is able to view image file.
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/article/tools/duplexspy/plugin/2.png" width="700">
 </p>
+
 
