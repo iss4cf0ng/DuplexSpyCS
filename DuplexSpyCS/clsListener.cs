@@ -68,12 +68,12 @@ namespace DuplexSpyCS
 
         }
 
-        public virtual void fnStart()
+        public virtual async Task fnStart()
         {
 
         }
 
-        public virtual void fnStop()
+        public virtual async Task fnStop()
         {
 
         }

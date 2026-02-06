@@ -38,12 +38,12 @@ namespace DuplexSpyCS
             Dispose(false);
         }
 
-        public async virtual void fnStart()
+        public async virtual Task fnStart()
         {
 
         }
 
-        public async virtual void fnStop()
+        public async virtual Task fnStop()
         {
 
         }

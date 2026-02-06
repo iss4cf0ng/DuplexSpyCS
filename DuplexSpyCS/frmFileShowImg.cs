@@ -26,7 +26,7 @@ namespace DuplexSpyCS
         public void ShowImage(string filename, Image img)
         {
             ListViewItem item = new ListViewItem(Path.GetFileName(filename));
-            item.Tag = new object[] 
+            item.Tag = new object[]
             {
                 filename, //FULL PATH
                 img, //IMAGE
@@ -85,7 +85,7 @@ namespace DuplexSpyCS
             il = new ImageList();
             il.ImageSize = new Size(250, 250);
             listView1.LargeImageList = il;
-            
+
             toolStripProgressBar1.Maximum = m_nTotalImage;
             toolStripProgressBar1.Value = 0;
         }
@@ -205,6 +205,11 @@ namespace DuplexSpyCS
             {
                 tabControl1.TabPages.Remove(tabControl1.TabPages[i]);
             }
+        }
+
+        private void toolStripButton4_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\FileMgrImage").Show();
         }
     }
 }

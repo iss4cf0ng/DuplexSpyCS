@@ -300,7 +300,7 @@ namespace DuplexSpyCS
         /// Build client exe file.
         /// </summary>
         /// <param name="filePath"></param>
-        void Build(string filePath)
+        async void Build(string filePath)
         {
             tabControl1.SelectedIndex = tabControl1.TabPages.Count - 1; //Select Last Page
 
@@ -493,7 +493,6 @@ namespace DuplexSpyCS
 
                     //General
                     string szIP = "127.0.0.1"; //Server IP address.
-                    int dwPort = int.Parse(ReadIni("General", "listen_port")); //Server listening port.
 
                     int dwTimeout = int.Parse(ReadIni("Build", "timeout")); //ms
                     int dwRetry = int.Parse(ReadIni("Build", "retry")); //ms
@@ -651,6 +650,7 @@ namespace DuplexSpyCS
                 return;
 
             var listener = m_lsConfig[comboBox3.SelectedIndex];
+            textBox8.Text = Enum.GetName(typeof(enListenerProtocol), listener.enProtocol);
             numericUpDown1.Value = listener.nPort;
         }
 

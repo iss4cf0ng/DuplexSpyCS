@@ -62,7 +62,7 @@ namespace DuplexSpyCS
             base.Dispose(disposing);
         }
 
-        public async override void fnStart()
+        public async override Task fnStart()
         {
             if (m_bIsRunning)
                 return;
@@ -86,7 +86,7 @@ namespace DuplexSpyCS
             }
         }
 
-        public async override void fnStop()
+        public async override Task fnStop()
         {
             m_bIsRunning = false;
             if (_mTcpListener == null)

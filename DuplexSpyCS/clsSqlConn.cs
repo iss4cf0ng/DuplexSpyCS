@@ -644,7 +644,11 @@ namespace DuplexSpyCS
                     throw new Exception($"Port[{config.nPort}] is assigned for Listener[{l.szName}]");
             }
 
-            if (config.enProtocol == enListenerProtocol.TLS)
+            if (config.enProtocol == enListenerProtocol.TCP)
+            {
+
+            }
+            else if (config.enProtocol == enListenerProtocol.TLS)
             {
                 if (string.IsNullOrEmpty(config.szCertPath))
                     throw new Exception("Certificate path is null or empty.");
@@ -690,6 +694,13 @@ namespace DuplexSpyCS
             return true;
         }
 
+        public bool fnbSaveListener(stListenerConfig config, stListenerConfig oldConfig)
+        {
+            if (!string.IsNullOrEmpty(oldConfig.szName) && !fnbDeleteListener(oldConfig.szName))
+                throw new Exception("Cannot delete: " + oldConfig.szName);
+
+            return fnbSaveListener(config);
+        }
         public bool fnbSaveListener(stListenerConfig config)
         {
             try

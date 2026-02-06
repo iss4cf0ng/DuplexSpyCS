@@ -46,8 +46,8 @@ namespace DuplexSpyCS
                         listener = new clsHttpListener(config.szName, config.nPort, config.szDescription);
                         break;
                     default:
-
-                        break;
+                        MessageBox.Show($"Unexpected protocol: {config.enProtocol.ToString()}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
                 }
 
                 listener.ReceivedDecoded += m_frmMain.fnReceived;
@@ -146,17 +146,17 @@ namespace DuplexSpyCS
             toolStripStatusLabel1.Text = $"Listener[{listView1.Items.Count}]";
         }
 
-        void fnStartAll()
+        async void fnStartAll()
         {
             foreach (string szName in m_dicListener.Keys)
             {
-                var listener = m_dicListener[szName];
-
-                if (!listener.m_bIslistening)
-                    listener.fnStart();
-
                 try
                 {
+                    var listener = m_dicListener[szName];
+
+                    if (!listener.m_bIslistening)
+                        await listener.fnStart();
+
                     Invoke(new Action(() =>
                     {
                         ListViewItem item = listView1.FindItemWithText(szName);
@@ -175,14 +175,14 @@ namespace DuplexSpyCS
             }
         }
 
-        void fnStopAll()
+        async void fnStopAll()
         {
             foreach (string szName in m_dicListener.Keys)
             {
                 var listener = m_dicListener[szName];
 
                 if (listener.m_bIslistening)
-                    listener.fnStop();
+                    await listener.fnStop();
 
                 Invoke(new Action(() =>
                 {
@@ -222,7 +222,21 @@ namespace DuplexSpyCS
             if (lConfig.Count == 0)
                 return;
 
-            frmListenerEdit f = new frmListenerEdit(this, lConfig.First(), m_sqlConn);
+            var config = lConfig.First();
+            if (m_dicListener[config.szName].m_bIslistening)
+            {
+                MessageBox.Show(
+                    $"Listener[{config.szName}] is listening.\n" +
+                    $"Please stop it before edit.",
+                    "Warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                return;
+            }
+
+            frmListenerEdit f = new frmListenerEdit(this, config, m_sqlConn);
 
             f.ShowDialog();
         }
@@ -274,6 +288,19 @@ namespace DuplexSpyCS
 
             foreach (var config in lConfig)
             {
+                if (m_dicListener[config.szName].m_bIslistening)
+                {
+                    MessageBox.Show(
+                        $"Listener[{config.szName}] is listening.\n" +
+                        $"Please stop it before edit.",
+                        "Warning",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+
+                    continue;
+                }
+
                 frmListenerEdit f = new frmListenerEdit(this, config, m_sqlConn);
 
                 f.ShowDialog();

@@ -97,7 +97,7 @@ namespace DuplexSpyCS
         }
 
         //START LISTEN
-        public override void fnStart()
+        public override async Task fnStart()
         {
             if (m_bIslistening)
             {
@@ -122,7 +122,7 @@ namespace DuplexSpyCS
         }
 
         //STOP LISTEN
-        public override void fnStop()
+        public override async Task fnStop()
         {
             if (m_nPort == -1)
             {

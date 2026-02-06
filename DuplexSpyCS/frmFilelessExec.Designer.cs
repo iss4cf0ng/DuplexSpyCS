@@ -30,6 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFilelessExec));
             splitContainer1 = new SplitContainer();
+            button7 = new Button();
             radioButton3 = new RadioButton();
             groupBox1 = new GroupBox();
             label2 = new Label();
@@ -51,14 +52,16 @@
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
+            menuStrip1 = new MenuStrip();
+            toolStripMenuItem1 = new ToolStripMenuItem();
             richTextBox1 = new RichTextBox();
-            button7 = new Button();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             groupBox1.SuspendLayout();
             statusStrip1.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // splitContainer1
@@ -84,20 +87,31 @@
             splitContainer1.Panel1.Controls.Add(button2);
             splitContainer1.Panel1.Controls.Add(listView1);
             splitContainer1.Panel1.Controls.Add(statusStrip1);
+            splitContainer1.Panel1.Controls.Add(menuStrip1);
             splitContainer1.Panel1.Paint += splitContainer1_Panel1_Paint;
             // 
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(richTextBox1);
             splitContainer1.Size = new Size(638, 552);
-            splitContainer1.SplitterDistance = 361;
+            splitContainer1.SplitterDistance = 386;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 0;
+            // 
+            // button7
+            // 
+            button7.Location = new Point(320, 156);
+            button7.Name = "button7";
+            button7.Size = new Size(154, 27);
+            button7.TabIndex = 18;
+            button7.Text = "Refresh";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
             // 
             // radioButton3
             // 
             radioButton3.AutoSize = true;
-            radioButton3.Location = new Point(17, 12);
+            radioButton3.Location = new Point(17, 30);
             radioButton3.Name = "radioButton3";
             radioButton3.Size = new Size(120, 23);
             radioButton3.TabIndex = 17;
@@ -113,7 +127,7 @@
             groupBox1.Controls.Add(button1);
             groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(textBox2);
-            groupBox1.Location = new Point(12, 35);
+            groupBox1.Location = new Point(12, 53);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(477, 97);
             groupBox1.TabIndex = 16;
@@ -165,7 +179,7 @@
             // radioButton2
             // 
             radioButton2.AutoSize = true;
-            radioButton2.Location = new Point(269, 12);
+            radioButton2.Location = new Point(269, 30);
             radioButton2.Name = "radioButton2";
             radioButton2.Size = new Size(147, 23);
             radioButton2.TabIndex = 15;
@@ -176,7 +190,7 @@
             // radioButton1
             // 
             radioButton1.AutoSize = true;
-            radioButton1.Location = new Point(143, 12);
+            radioButton1.Location = new Point(143, 30);
             radioButton1.Name = "radioButton1";
             radioButton1.Size = new Size(120, 23);
             radioButton1.TabIndex = 14;
@@ -187,7 +201,7 @@
             // 
             // button6
             // 
-            button6.Location = new Point(495, 93);
+            button6.Location = new Point(495, 111);
             button6.Name = "button6";
             button6.Size = new Size(131, 27);
             button6.TabIndex = 13;
@@ -197,7 +211,7 @@
             // 
             // button5
             // 
-            button5.Location = new Point(495, 125);
+            button5.Location = new Point(495, 143);
             button5.Name = "button5";
             button5.Size = new Size(131, 27);
             button5.TabIndex = 12;
@@ -207,7 +221,7 @@
             // 
             // button4
             // 
-            button4.Location = new Point(495, 60);
+            button4.Location = new Point(495, 78);
             button4.Name = "button4";
             button4.Size = new Size(131, 27);
             button4.TabIndex = 9;
@@ -217,7 +231,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(166, 138);
+            button3.Location = new Point(166, 156);
             button3.Name = "button3";
             button3.Size = new Size(148, 27);
             button3.TabIndex = 8;
@@ -227,7 +241,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(12, 138);
+            button2.Location = new Point(12, 156);
             button2.Name = "button2";
             button2.Size = new Size(148, 27);
             button2.TabIndex = 7;
@@ -239,9 +253,9 @@
             // 
             listView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             listView1.Columns.AddRange(new ColumnHeader[] { columnHeader1, columnHeader3, columnHeader2 });
-            listView1.Location = new Point(3, 173);
+            listView1.Location = new Point(3, 189);
             listView1.Name = "listView1";
-            listView1.Size = new Size(632, 163);
+            listView1.Size = new Size(632, 172);
             listView1.TabIndex = 4;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -264,7 +278,7 @@
             // statusStrip1
             // 
             statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
-            statusStrip1.Location = new Point(0, 337);
+            statusStrip1.Location = new Point(0, 362);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(638, 24);
             statusStrip1.TabIndex = 0;
@@ -284,24 +298,31 @@
             toolStripStatusLabel2.Size = new Size(158, 19);
             toolStripStatusLabel2.Text = "toolStripStatusLabel2";
             // 
+            // menuStrip1
+            // 
+            menuStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            menuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1 });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(638, 27);
+            menuStrip1.TabIndex = 19;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(53, 23);
+            toolStripMenuItem1.Text = "Help";
+            toolStripMenuItem1.Click += toolStripMenuItem1_Click;
+            // 
             // richTextBox1
             // 
             richTextBox1.Dock = DockStyle.Fill;
             richTextBox1.Location = new Point(0, 0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(638, 186);
+            richTextBox1.Size = new Size(638, 161);
             richTextBox1.TabIndex = 0;
             richTextBox1.Text = "";
-            // 
-            // button7
-            // 
-            button7.Location = new Point(320, 138);
-            button7.Name = "button7";
-            button7.Size = new Size(154, 27);
-            button7.TabIndex = 18;
-            button7.Text = "Refresh";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += button7_Click;
             // 
             // frmFilelessExec
             // 
@@ -311,6 +332,7 @@
             Controls.Add(splitContainer1);
             Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MainMenuStrip = menuStrip1;
             Margin = new Padding(4);
             Name = "frmFilelessExec";
             StartPosition = FormStartPosition.CenterScreen;
@@ -326,6 +348,8 @@
             groupBox1.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -355,5 +379,7 @@
         private RadioButton radioButton3;
         private ColumnHeader columnHeader3;
         private Button button7;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem toolStripMenuItem1;
     }
 }

@@ -1513,6 +1513,8 @@ namespace DuplexSpyCS
             }
             catch (FileNotFoundException ex)
             {
+                MessageBox.Show($"INI config file not found. DuplexSpy will be terminated.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                /*
                 DialogResult dr = MessageBox.Show("config.ini not found.\nDo you want to open existed ini file? Click no to build ini file automatically.", "File Not Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.Yes)
                 {
@@ -1534,6 +1536,7 @@ namespace DuplexSpyCS
                     //Todo: Build ini file automatically.
                     //Release default ini file from resource.
                 }
+                */
             }
 
             m_sqlConn = new clsSqlConn("data.db"); //Set database.
@@ -1802,7 +1805,7 @@ namespace DuplexSpyCS
                 $"Port[{szPorts}] | " +
                 $"Online[{newListView1.Items.Count}] - " +
                 //$"Implant[{listView2.Items.Count}] - " +
-                $"Total[{(newListView1.Items.Count + listView2.Items.Count)}] | " +
+                //$"Total[{(newListView1.Items.Count + listView2.Items.Count)}] | " +
                 $"Selected({tabControl1.SelectedTab.Text}) [{(tabControl1.SelectedIndex == 0 ? newListView1.SelectedItems.Count : listView2.SelectedItems.Count)}]";
         }
 
