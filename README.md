@@ -5,11 +5,11 @@ Continuously update: [Branch-Version2.0.0](https://github.com/iss4cf0ng/DuplexSp
 
 ## Documents
 
-The online documents are here:
-[DuplexSpy](https://iss4cf0ng.github.io/2026/01/28/2026-1-28-ToolsDuplexSpy-v2-0-0/)
-[Fileless Execution](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyFilelessExec/)
-[DLL and shellcode injector and loader](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyDllAndShellcode/)
-[Remote Plugin](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyPlugin/)
+The online documents are here:  
+[DuplexSpy](https://iss4cf0ng.github.io/2026/01/28/2026-1-28-ToolsDuplexSpy-v2-0-0/)  
+[Fileless Execution](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyFilelessExec/)  
+[DLL and shellcode injector and loader](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyDllAndShellcode/)  
+[Remote Plugin](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyPlugin/)  
 [Proxy](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyProxy/)
 
 # Introduction
@@ -198,3 +198,4 @@ This RAT is able to view image file.
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/article/tools/duplexspy/plugin/2.png" width="700">
 </p>
+
