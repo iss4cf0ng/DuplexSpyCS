@@ -13,8 +13,8 @@ The online documents are here:
 [Proxy](https://iss4cf0ng.github.io/2026/02/03/2026-2-3-DuplexSpyProxy/)
 
 # Introduction
-DuplexSpy incorporates features inspired by other tools as well as my own personal experience.  
-Compared to the previous version, I removed several features that I considered unnecessary and added a number of new ones.  
+DuplexSpy is a open-source Windows RAT for learning offensive security techniques.  
+It incorporates features inspired by other tools as well as my own personal experience. Compared to the previous version, I removed several features that I considered unnecessary and added a number of new ones.  
 Throughout this development process, I learned a great deal, and I sincerely hope that this project can be useful to others who are interested in offensive security or malware research.
 
 If you encounter any issues or have suggestions, please feel free to open an issue on the repository page.
@@ -201,5 +201,6 @@ This RAT is able to view image file.
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/article/tools/duplexspy/plugin/2.png" width="700">
 </p>
+
 
 
