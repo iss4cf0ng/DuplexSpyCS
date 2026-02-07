@@ -21,7 +21,8 @@ If you encounter any issues or have suggestions, please feel free to open an iss
 
 # Disclaimer
 This project was developed as part of my personal interest in studying cybersecurity. However, it may potentially be misused for malicious purposes.  
-Please do NOT use this tool for any illegal activities.
+Please do NOT use this tool for any illegal activities.  
+The author is not responsible for any misuse of this software.
 
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/meme/mika_punch.jpg" width="500">
@@ -201,6 +202,7 @@ This RAT is able to view image file.
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/article/tools/duplexspy/plugin/2.png" width="700">
 </p>
+
 
 
 
