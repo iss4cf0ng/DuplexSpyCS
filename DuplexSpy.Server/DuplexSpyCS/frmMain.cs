@@ -2254,7 +2254,7 @@ namespace DuplexSpyCS
             
         }
 
-        //Highlight - yes
+        //Highlight - Yes
         private void toolStripMenuItem30_Click(object sender, EventArgs e)
         {
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
@@ -2274,12 +2274,18 @@ namespace DuplexSpyCS
             }
 
             newListView1.Invalidate();
+            items.ForEach(x => x.Selected = false);
         }
-        //Highlight - no
+
+        //Highlight - No
         private void toolStripMenuItem31_Click(object sender, EventArgs e)
         {
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
-
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select at least one online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             foreach (ListViewItem item in items)
             {
@@ -2291,7 +2297,7 @@ namespace DuplexSpyCS
             }
 
             newListView1.Invalidate();
-
+            items.ForEach(x => x.Selected = false);
         }
 
         //Multi-URL
