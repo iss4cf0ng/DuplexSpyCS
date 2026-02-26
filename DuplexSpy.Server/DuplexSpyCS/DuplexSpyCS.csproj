@@ -6,7 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
 	<ImplicitUsings>enable</ImplicitUsings>
+	<ApplicationIcon>nrl3y-9kw29-001.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="nrl3y-9kw29-001.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Include="bin\Debug\net6.0-windows\Config\Image\NoSignal.png" />

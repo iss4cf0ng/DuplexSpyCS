@@ -34,13 +34,8 @@ namespace DuplexSpyCS
          * 
          * Done:
          * - winClient48
-         * - MessageBox
-         * - Copy to specified directory.
-         * - Copy to startup.
-         * - Set "Run" registry.
          * 
          * Todo:
-         * - UAC prompt
          * - Small
          * - Tipoff
          * 
