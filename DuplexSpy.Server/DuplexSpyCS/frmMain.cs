@@ -1051,7 +1051,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "wmi")
                 {
-                    frmWMI f = clsTools.fnFindForm<frmWMI>(v);
+                    frmWMI? f = clsTools.fnFindForm<frmWMI>(v);
                     if (f == null)
                         return;
 
@@ -1064,7 +1064,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "desktop")
                 {
-                    frmDesktop f = clsTools.fnFindForm<frmDesktop>(v);
+                    frmDesktop? f = clsTools.fnFindForm<frmDesktop>(v);
                     if (f == null)
                         return;
                     if (cmd[1] == "init")
@@ -1641,6 +1641,9 @@ namespace DuplexSpyCS
                 if (newListView1.View != View.Details)
                     return;
 
+                if (e.Item == null)
+                    return;
+
                 bool selected = e.Item.Selected;
 
                 using var bg = new SolidBrush(selected ? SystemColors.Highlight : e.SubItem.BackColor);
@@ -1678,6 +1681,9 @@ namespace DuplexSpyCS
                 {
 
                 }
+
+                if (e.SubItem == null)
+                    return;
 
                 TextRenderer.DrawText(
                     e.Graphics,

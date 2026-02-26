@@ -69,14 +69,17 @@ namespace DuplexSpyCS
         /// <param name="v">class Victim</param>
         /// <param name="func">enum Function</param>
         /// <returns></returns>
-        public static Form GetFormByVictim(clsVictim v, Function func)
+        public static Form? GetFormByVictim(clsVictim v, Function func)
         {
             Form form = null;
             try
             {
                 foreach (Form f in Application.OpenForms)
                 {
-                    FieldInfo field = f.GetType().GetField("v", BindingFlags.Public | BindingFlags.Instance);
+                    FieldInfo? field = f.GetType().GetField("v", BindingFlags.Public | BindingFlags.Instance);
+                    if (field == null)
+                        return null;
+
                     bool has_victim_field = field != null && field.FieldType == typeof(clsVictim);
                     if (has_victim_field && f.Tag != null)
                     {
@@ -97,14 +100,14 @@ namespace DuplexSpyCS
             return form;
         }
 
-        public static T fnFindForm<T>(clsVictim victim) where T : Form
+        public static T? fnFindForm<T>(clsVictim victim) where T : Form
         {
             foreach (Form f in Application.OpenForms)
             {
                 if (f.GetType() == typeof(T))
                 {
-                    PropertyInfo ptyVictim = f.GetType().GetProperty("m_victim", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-                    PropertyInfo ptyV = f.GetType().GetProperty("v", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    PropertyInfo? ptyVictim = f.GetType().GetProperty("m_victim", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+                    PropertyInfo? ptyV = f.GetType().GetProperty("v", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
                     
                     if (ptyVictim != null)
                     {
