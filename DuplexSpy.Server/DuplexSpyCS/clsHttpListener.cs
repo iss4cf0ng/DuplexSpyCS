@@ -11,6 +11,9 @@ using System.Windows.Forms;
 
 namespace DuplexSpyCS
 {
+    /// <summary>
+    /// C2 HTTP Listener.
+    /// </summary>
     public class clsHttpListener : clsListener
     {
         private TcpListener m_listener { get; set; }

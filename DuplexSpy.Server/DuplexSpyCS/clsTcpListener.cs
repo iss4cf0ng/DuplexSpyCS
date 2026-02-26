@@ -9,6 +9,9 @@ using System.IO.Compression;
 
 namespace DuplexSpyCS
 {
+    /// <summary>
+    /// C2 TCP Listener.
+    /// </summary>
     public class clsTcpListener : clsListener
     {
         //Listener
