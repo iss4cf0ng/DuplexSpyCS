@@ -54,16 +54,18 @@
             // 
             // textBox1
             // 
+            textBox1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             textBox1.BackColor = Color.Black;
             textBox1.ForeColor = Color.White;
             textBox1.Location = new Point(0, 28);
             textBox1.Margin = new Padding(4);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(655, 27);
+            textBox1.Size = new Size(668, 27);
             textBox1.TabIndex = 1;
             // 
             // button1
             // 
+            button1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             button1.BackColor = Color.Black;
             button1.ForeColor = Color.White;
             button1.Location = new Point(676, 26);
