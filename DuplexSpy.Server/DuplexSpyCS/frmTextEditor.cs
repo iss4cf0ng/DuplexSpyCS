@@ -13,12 +13,15 @@ namespace DuplexSpyCS
 {
     public partial class frmTextEditor : Form
     {
-        public clsVictim v;
-        public string currentDir;
+        public clsVictim v { get; init; }
+        public string currentDir { get; init; }
 
-        public frmTextEditor()
+        public frmTextEditor(clsVictim victim, string szCurrentDir)
         {
             InitializeComponent();
+
+            v = victim;
+            currentDir = szCurrentDir;
         }
 
         public void ConfirmFileSave(string path)
@@ -207,9 +210,17 @@ namespace DuplexSpyCS
             return (editor, tb_path, ss);
         }
 
+        void fnSetup()
+        {
+            tabControl1.DrawMode = TabDrawMode.OwnerDrawFixed;
+            tabControl1.Padding = new Point(20, 4);
+
+            tabControl1.TabPages.Clear();
+        }
+
         private void frmTextEditor_Load(object sender, EventArgs e)
         {
-
+            fnSetup();
         }
 
         private void tabControl1_KeyDown(object sender, KeyEventArgs e)
@@ -348,6 +359,66 @@ namespace DuplexSpyCS
                 }
 
                 tabControl1.TabPages.Remove(page);
+            }
+        }
+
+        private void tabControl1_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            if (e == null || e.Font == null)
+                return;
+
+            var tab = tabControl1.TabPages[e.Index];
+            var rect = e.Bounds;
+
+            Color backColor = tab.BackColor;
+
+            if ((e.State & DrawItemState.Selected) == DrawItemState.Selected)
+            {
+                backColor = Color.LightBlue; // selected tab color
+            }
+
+            using (Brush backgroundBrush = new SolidBrush(backColor))
+            {
+                e.Graphics.FillRectangle(backgroundBrush, rect);
+            }
+
+            TextRenderer.DrawText(
+                e.Graphics,
+                tab.Text,
+                tab.Font,
+                rect,
+                tab.ForeColor,
+                TextFormatFlags.Left | TextFormatFlags.VerticalCenter
+            );
+
+            Rectangle rectClose = new Rectangle(
+                rect.Right - 20,
+                rect.Top + (rect.Height - 12) / 2,
+                12,
+                12
+            );
+
+            
+            e.Graphics.DrawString("X", e.Font, Brushes.Black, rectClose.Location);
+        }
+
+        private void tabControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            for (int i = 0; i < tabControl1.TabPages.Count; i++)
+            {
+                var rect = tabControl1.GetTabRect(i);
+                Rectangle closeRect = new Rectangle(
+                    rect.Right - 15,
+                    rect.Top + (rect.Height - 12) / 2,
+                    12,
+                    12
+                );
+
+                if (closeRect.Contains(e.Location))
+                {
+                    tabControl1.TabPages.RemoveAt(i);
+                    break;
+                }
             }
         }
     }
