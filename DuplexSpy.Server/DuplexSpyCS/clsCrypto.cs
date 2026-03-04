@@ -4,12 +4,19 @@ using System.Security.Cryptography;
 
 namespace DuplexSpyCS
 {
+    /// <summary>
+    /// Provide hybrid cryptography algorithm.
+    /// </summary>
     internal class clsCrypto
     {
         static int rsa_keySize = 4096;
         static int aes_keySize = 256;
         static int block_size = 128;
 
+        /// <summary>
+        /// Create RSA key pair (public and private)
+        /// </summary>
+        /// <returns></returns>
         public static string[] CreateRSAKey()
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
@@ -20,6 +27,13 @@ namespace DuplexSpyCS
 
             return new string[] { publicKey, privateKey };
         }
+
+        /// <summary>
+        /// Perform RSA encryption.
+        /// </summary>
+        /// <param name="data">Plain text data.</param>
+        /// <param name="publicKey">RSA public key.</param>
+        /// <returns></returns>
         public static byte[] RSAEncrypt(string data, string publicKey)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
@@ -30,6 +44,13 @@ namespace DuplexSpyCS
 
             return eVal;
         }
+
+        /// <summary>
+        /// Perform RSA decryption.
+        /// </summary>
+        /// <param name="data">Cipher bytes.</param>
+        /// <param name="privateKey">RSA private key.</param>
+        /// <returns></returns>
         public static byte[] RSADecrypt(byte[] data, string privateKey)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
@@ -40,6 +61,13 @@ namespace DuplexSpyCS
             return dVal;
         }
 
+        /// <summary>
+        /// Perform AES encryption.
+        /// </summary>
+        /// <param name="plain_text">Plain text.</param>
+        /// <param name="key">AES key.</param>
+        /// <param name="iv">AES initialization vector.</param>
+        /// <returns></returns>
         public static string AESEncrypt(string plain_text, byte[] key, byte[] iv)
         {
             byte[] cipher_bytes = null;
@@ -67,6 +95,14 @@ namespace DuplexSpyCS
 
             return Convert.ToBase64String(cipher_bytes);
         }
+
+        /// <summary>
+        /// Perform AES decryption
+        /// </summary>
+        /// <param name="cipher_bytes">Cipher bytes.</param>
+        /// <param name="key">AES key.</param>
+        /// <param name="iv">Aes initialization vector.</param>
+        /// <returns></returns>
         public static string AESDecrypt(byte[] cipher_bytes, byte[] key, byte[] iv)
         {
             string plain_text = null;

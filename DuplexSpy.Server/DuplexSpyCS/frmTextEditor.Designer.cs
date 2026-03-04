@@ -39,10 +39,10 @@
             toolStripSeparator2 = new ToolStripSeparator();
             toolStripMenuItem1 = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
-            tabControl1 = new TabControl();
-            toolStripMenuItem5 = new ToolStripMenuItem();
             toolStripSeparator3 = new ToolStripSeparator();
+            toolStripMenuItem5 = new ToolStripMenuItem();
             toolStripMenuItem6 = new ToolStripMenuItem();
+            tabControl1 = new TabControl();
             statusStrip1.SuspendLayout();
             toolStrip1.SuspendLayout();
             SuspendLayout();
@@ -86,39 +86,58 @@
             // toolStripMenuItem3
             // 
             toolStripMenuItem3.Name = "toolStripMenuItem3";
-            toolStripMenuItem3.Size = new Size(180, 24);
+            toolStripMenuItem3.Size = new Size(170, 24);
             toolStripMenuItem3.Text = "New Text File";
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(167, 6);
             // 
             // toolStripMenuItem4
             // 
             toolStripMenuItem4.Name = "toolStripMenuItem4";
-            toolStripMenuItem4.Size = new Size(180, 24);
+            toolStripMenuItem4.Size = new Size(170, 24);
             toolStripMenuItem4.Text = "Download";
             toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(177, 6);
+            toolStripSeparator2.Size = new Size(167, 6);
             // 
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
-            toolStripMenuItem1.Size = new Size(180, 24);
+            toolStripMenuItem1.Size = new Size(170, 24);
             toolStripMenuItem1.Text = "Save This";
             toolStripMenuItem1.Click += toolStripMenuItem1_Click;
             // 
             // toolStripMenuItem2
             // 
             toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(180, 24);
+            toolStripMenuItem2.Size = new Size(170, 24);
             toolStripMenuItem2.Text = "Save All";
             toolStripMenuItem2.Click += toolStripMenuItem2_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(167, 6);
+            // 
+            // toolStripMenuItem5
+            // 
+            toolStripMenuItem5.Name = "toolStripMenuItem5";
+            toolStripMenuItem5.Size = new Size(170, 24);
+            toolStripMenuItem5.Text = "Remote This";
+            toolStripMenuItem5.Click += toolStripMenuItem5_Click;
+            // 
+            // toolStripMenuItem6
+            // 
+            toolStripMenuItem6.Name = "toolStripMenuItem6";
+            toolStripMenuItem6.Size = new Size(170, 24);
+            toolStripMenuItem6.Text = "Remote All";
+            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
             // 
             // tabControl1
             // 
@@ -128,26 +147,9 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(1029, 520);
             tabControl1.TabIndex = 2;
+            tabControl1.DrawItem += tabControl1_DrawItem;
             tabControl1.KeyDown += tabControl1_KeyDown;
-            // 
-            // toolStripMenuItem5
-            // 
-            toolStripMenuItem5.Name = "toolStripMenuItem5";
-            toolStripMenuItem5.Size = new Size(180, 24);
-            toolStripMenuItem5.Text = "Remote This";
-            toolStripMenuItem5.Click += toolStripMenuItem5_Click;
-            // 
-            // toolStripSeparator3
-            // 
-            toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new Size(177, 6);
-            // 
-            // toolStripMenuItem6
-            // 
-            toolStripMenuItem6.Name = "toolStripMenuItem6";
-            toolStripMenuItem6.Size = new Size(180, 24);
-            toolStripMenuItem6.Text = "Remote All";
-            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
+            tabControl1.MouseDown += tabControl1_MouseDown;
             // 
             // frmTextEditor
             // 

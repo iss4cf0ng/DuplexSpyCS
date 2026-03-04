@@ -35,7 +35,11 @@ namespace DuplexSpyCS
 
             if (lsMsg[0] == "xterm")
             {
-                if (lsMsg[1] == "output")
+                if (lsMsg[1] == "start")
+                {
+
+                }
+                else if (lsMsg[1] == "output")
                 {
                     Invoke(new Action(() =>
                     {
@@ -93,6 +97,8 @@ namespace DuplexSpyCS
                 @textBox1.Text,
                 m_szInitDir,
             });
+
+
         }
 
         private void frmXterm_Load(object sender, EventArgs e)

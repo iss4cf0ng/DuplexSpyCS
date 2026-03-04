@@ -1123,20 +1123,21 @@ namespace DuplexSpyCS
             string path = clsCrypto.b64D2Str(d1);
             string text = clsCrypto.b64D2Str(d2);
 
-            frmTextEditor f_editor = (frmTextEditor)clsTools.GetFormByVictim(m_victim, Function.TextEditor);
+            frmTextEditor? f_editor = clsTools.fnFindForm<frmTextEditor>(m_victim);
 
             if (f_editor == null || f_editor.IsDisposed)
             {
                 Invoke(new Action(() =>
                 {
-                    f_editor = new frmTextEditor();
+                    f_editor = new frmTextEditor(m_victim, current_path);
                     f_editor.Tag = Function.TextEditor;
-                    f_editor.v = m_victim;
                     f_editor.Text = $@"TextEditor\\{m_victim.ID}";
-                    f_editor.currentDir = (string)textBox1.Tag;
                     f_editor.Show();
                 }));
             }
+
+            if (f_editor == null)
+                return;
 
             f_editor.ShowTextFile(path, text);
         }
@@ -1152,7 +1153,7 @@ namespace DuplexSpyCS
             string msg = clsCrypto.b64D2Str(data);
             if (code == "1") //OK
             {
-                frmTextEditor f = (frmTextEditor)clsTools.GetFormByVictim(m_victim, Function.TextEditor);
+                frmTextEditor? f = clsTools.fnFindForm<frmTextEditor>(m_victim);
                 if (f == null)
                     return;
 
@@ -1327,7 +1328,7 @@ namespace DuplexSpyCS
 
                 }));
 
-                Form tmp = clsTools.GetFormByVictim(m_victim, Function.FileImage);
+                Form? tmp = clsTools.GetFormByVictim(m_victim, Function.FileImage);
                 frmFileShowImg f;
                 if (tmp == null)
                 {
@@ -1454,7 +1455,7 @@ namespace DuplexSpyCS
         /// <param name="d2">Folder state.</param>
         private void File_ShowDeleteState(string d1, string d2)
         {
-            frmFileDelState f = (frmFileDelState)clsTools.GetFormByVictim(m_victim, Function.FileDelState);
+            frmFileDelState? f = (frmFileDelState)clsTools.GetFormByVictim(m_victim, Function.FileDelState);
             if (f == null)
                 return;
 
