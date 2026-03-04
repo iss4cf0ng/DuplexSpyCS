@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Plugin48Krypt0n
 {
     public class PluginKrypt0n : IPlugin
