@@ -1,8 +1,12 @@
 # DuplexSpy
+
 <p align="center">
   <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/iss4cf0ng/DuplexSpyCS/total">
   <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/iss4cf0ng/DuplexSpyCS">
   <img alt="GitHub Release" src="https://img.shields.io/github/v/release/iss4cf0ng/DuplexSpyCS">
+  <img alt="Language" src="https://img.shields.io/badge/language-C%23-green">
+  <img alt="Development" src="https://img.shields.io/badge/status-development-orange">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
 <p align="center">
@@ -212,6 +216,7 @@ This RAT is able to view image file.
 <p align="center">
   <img src="https://iss4cf0ng.github.io/images/article/tools/duplexspy/plugin/2.png" width="700">
 </p>
+
 
 
 
