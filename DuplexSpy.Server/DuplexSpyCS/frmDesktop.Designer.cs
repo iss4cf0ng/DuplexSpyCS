@@ -42,7 +42,6 @@
             toolStripButton7 = new ToolStripButton();
             toolStripButton8 = new ToolStripButton();
             toolStripSeparator4 = new ToolStripSeparator();
-            toolStripLabel1 = new ToolStripLabel();
             toolStripComboBox1 = new ToolStripComboBox();
             toolStripSeparator2 = new ToolStripSeparator();
             toolStripLabel2 = new ToolStripLabel();
@@ -57,6 +56,7 @@
             toolStripButton2 = new ToolStripButton();
             pictureBox1 = new PictureBox();
             timer1 = new System.Windows.Forms.Timer(components);
+            toolStripButton5 = new ToolStripButton();
             toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
@@ -64,7 +64,7 @@
             // toolStrip1
             // 
             toolStrip1.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton2, toolStripDropDownButton1, toolStripSeparator1, toolStripButton7, toolStripButton8, toolStripSeparator4, toolStripLabel1, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator7, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton6, toolStripButton1, toolStripSeparator6, toolStripButton2 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripDropDownButton2, toolStripDropDownButton1, toolStripSeparator1, toolStripButton7, toolStripButton8, toolStripSeparator4, toolStripButton5, toolStripComboBox1, toolStripSeparator2, toolStripLabel2, toolStripComboBox2, toolStripSeparator7, toolStripButton3, toolStripButton4, toolStripSeparator3, toolStripButton6, toolStripButton1, toolStripSeparator6, toolStripButton2 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new Size(1036, 27);
@@ -155,12 +155,6 @@
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
             toolStripSeparator4.Size = new Size(6, 27);
-            // 
-            // toolStripLabel1
-            // 
-            toolStripLabel1.Name = "toolStripLabel1";
-            toolStripLabel1.Size = new Size(65, 24);
-            toolStripLabel1.Text = "Monitor";
             // 
             // toolStripComboBox1
             // 
@@ -277,6 +271,18 @@
             timer1.Interval = 1000;
             timer1.Tick += timer1_Tick;
             // 
+            // toolStripButton5
+            // 
+            toolStripButton5.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButton5.ForeColor = Color.Blue;
+            toolStripButton5.Image = (Image)resources.GetObject("toolStripButton5.Image");
+            toolStripButton5.ImageTransparentColor = Color.Magenta;
+            toolStripButton5.Name = "toolStripButton5";
+            toolStripButton5.Size = new Size(76, 24);
+            toolStripButton5.Text = "Monitor :";
+            toolStripButton5.ToolTipText = "Refresh";
+            toolStripButton5.Click += toolStripButton5_Click_1;
+            // 
             // frmDesktop
             // 
             AutoScaleDimensions = new SizeF(9F, 19F);
@@ -307,7 +313,6 @@
 
         private ToolStrip toolStrip1;
         private ToolStripSeparator toolStripSeparator1;
-        private ToolStripLabel toolStripLabel1;
         private ToolStripComboBox toolStripComboBox1;
         private PictureBox pictureBox1;
         private ToolStripButton toolStripButton3;
@@ -332,5 +337,6 @@
         private ToolStripComboBox toolStripComboBox2;
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripButton toolStripButton1;
+        private ToolStripButton toolStripButton5;
     }
 }

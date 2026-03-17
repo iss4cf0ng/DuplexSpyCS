@@ -571,5 +571,10 @@ namespace DuplexSpyCS
         {
 
         }
+
+        private void toolStripButton5_Click_1(object sender, EventArgs e)
+        {
+            v.fnSendCommand("desktop|init");
+        }
     }
 }
