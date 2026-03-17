@@ -87,6 +87,7 @@
   <ItemGroup>
     <Compile Include="AntiProcess.cs" />
     <Compile Include="clsEZData.cs" />
+    <Compile Include="clsfnHvncSession.cs" />
     <Compile Include="clsfnXterm.cs" />
     <Compile Include="clsHttpReq.cs" />
     <Compile Include="clsIRemotePlugin.cs" />

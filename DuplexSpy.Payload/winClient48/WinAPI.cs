@@ -114,6 +114,21 @@ public class WinAPI
         uint dwRop
     );
 
+    [DllImport("user32.dll")]
+    public static extern IntPtr CreateDesktop(string lpszDesktop, IntPtr lpszDevice, IntPtr pDevMode, int dwFlags, uint dwDesiredAccess, IntPtr lpsa);
+
+    [DllImport("user32.dll")]
+    public static extern bool SetThreadDesktop(IntPtr hDesktop);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr WindowFromPoint(Point point);
+
+    [DllImport("user32.dll")]
+    public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
+
+    [DllImport("user32.dll")]
+    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
     public delegate bool EnumWindowProc(IntPtr hWnd, IntPtr lParam);
 
     #endregion
