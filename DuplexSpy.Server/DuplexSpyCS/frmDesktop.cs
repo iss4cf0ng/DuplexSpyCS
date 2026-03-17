@@ -291,7 +291,7 @@ namespace DuplexSpyCS
             if (capture && toolStripButton4.Checked)
             {
                 int amount = e.Delta;
-                v.fnSendCommand("mouse|btn|SC|" + $"|{m_ptCursor.X}|{m_ptCursor.Y}|{amount}", true);
+                v.fnSendCommand("mouse|btn|SC|" + $"{m_ptCursor.X}|{m_ptCursor.Y}|{amount}", true);
             }
         }
 
@@ -357,7 +357,7 @@ namespace DuplexSpyCS
                 double loc_x = (e.Location.X - screen_LB) * tgt_wfactor;
                 double loc_y = (e.Location.Y - screen_TB) * tgt_hfactor;
 
-                v.fnSendCommand($"mouse|move|{(int)loc_x}|{(int)loc_y}", true);
+                v.fnSendCommand($"mouse|move|{(int)loc_x}|{(int)loc_y}|0", true);
 
                 m_ptCursor.X = (int)loc_x;
                 m_ptCursor.Y = (int)loc_y;

@@ -120,6 +120,9 @@ public class WinAPI
     [DllImport("user32.dll")]
     public static extern IntPtr CreateDesktop(string lpszDesktop, IntPtr lpszDevice, IntPtr pDevMode, int dwFlags, uint dwDesiredAccess, IntPtr lpsa);
 
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool CloseDesktop(IntPtr hDesktop);
+
     [DllImport("user32.dll")]
     public static extern bool SetThreadDesktop(IntPtr hDesktop);
 
@@ -130,10 +133,19 @@ public class WinAPI
     public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
     [DllImport("user32.dll")]
-    public static extern IntPtr WindowFromPoint(Point point);
+    public static extern IntPtr RealChildWindowFromPoint(IntPtr hwndParent, Point ptParentClientCoords);
+
+    [DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
+    public static extern IntPtr WindowFromPoint(int x, int y);
+
+    [DllImport("user32.dll")]
+    public static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
     [DllImport("user32.dll")]
     public static extern IntPtr ChildWindowFromPoint(IntPtr hWndParent, Point pt);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr ChildWindowFromPointEx(IntPtr hwndParent, POINT pt, uint flags);
 
     [DllImport("user32.dll")]
     public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);

