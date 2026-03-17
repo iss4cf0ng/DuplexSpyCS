@@ -40,6 +40,9 @@ public class WinAPI
     }
 
     [DllImport("user32.dll")]
+    public static extern IntPtr SetFocus(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
     public static extern bool SetForegroundWindow(IntPtr hWnd);
 
     [DllImport("user32.dll")]
@@ -121,13 +124,25 @@ public class WinAPI
     public static extern bool SetThreadDesktop(IntPtr hDesktop);
 
     [DllImport("user32.dll")]
+    public static extern IntPtr GetDesktopWindow();
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
     public static extern IntPtr WindowFromPoint(Point point);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr ChildWindowFromPoint(IntPtr hWndParent, Point pt);
 
     [DllImport("user32.dll")]
     public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
 
     [DllImport("user32.dll")]
-    static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+    public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumWindowProc lpEnumCallbackFunction, IntPtr lParam);
 
     public delegate bool EnumWindowProc(IntPtr hWnd, IntPtr lParam);
 

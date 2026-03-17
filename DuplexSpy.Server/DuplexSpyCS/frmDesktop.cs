@@ -31,6 +31,8 @@ namespace DuplexSpyCS
         private Label fps_label = new Label();
         private bool capture = false;
 
+        private (int X, int Y) m_ptCursor = (0, 0);
+
         //RECORD
         private clsImageWriter imgWriter;
         private int mp4FrameRate = 30;
@@ -289,7 +291,7 @@ namespace DuplexSpyCS
             if (capture && toolStripButton4.Checked)
             {
                 int amount = e.Delta;
-                v.fnSendCommand("mouse|btn|SC|" + amount.ToString(), true);
+                v.fnSendCommand("mouse|btn|SC|" + $"|{m_ptCursor.X}|{m_ptCursor.Y}|{amount}", true);
             }
         }
 
@@ -356,6 +358,9 @@ namespace DuplexSpyCS
                 double loc_y = (e.Location.Y - screen_TB) * tgt_hfactor;
 
                 v.fnSendCommand($"mouse|move|{(int)loc_x}|{(int)loc_y}", true);
+
+                m_ptCursor.X = (int)loc_x;
+                m_ptCursor.Y = (int)loc_y;
             }
         }
 
@@ -434,7 +439,7 @@ namespace DuplexSpyCS
                 if (string.IsNullOrEmpty(btn))
                     return;
 
-                v.fnSendCommand("mouse|btn|" + btn, true);
+                v.fnSendCommand("mouse|btn|" + btn + $"|{m_ptCursor.X}|{m_ptCursor.Y}|0", true);
             }
         }
 
@@ -449,7 +454,7 @@ namespace DuplexSpyCS
                 if (string.IsNullOrEmpty(btn))
                     return;
 
-                v.fnSendCommand("mouse|btn|" + btn, true);
+                v.fnSendCommand("mouse|btn|" + btn + $"|{m_ptCursor.X}|{m_ptCursor.Y}|0", true);
             }
         }
 
