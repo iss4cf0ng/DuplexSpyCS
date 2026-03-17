@@ -1641,6 +1641,7 @@ namespace winClient48
                 }
                 #endregion
                 #region Mouse Control
+
                 else if (cmd[0] == "mouse")
                 {
                     if (funcMouse == null)
@@ -1682,6 +1683,7 @@ namespace winClient48
                         }
                     }
                 }
+
                 #endregion
                 #region Keyboard Control
 

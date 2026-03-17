@@ -3489,5 +3489,23 @@ namespace DuplexSpyCS
 
             f.BringToFront();
         }
+
+        //File.Info.CopyValue
+        private void toolStripMenuItem80_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //File.Info.ExpandAll
+        private void toolStripMenuItem81_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        //File.Info.CollapseAll
+        private void toolStripMenuItem82_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

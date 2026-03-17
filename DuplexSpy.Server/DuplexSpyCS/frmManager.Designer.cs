@@ -30,14 +30,14 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmManager));
-            TreeNode treeNode1 = new TreeNode("Type");
-            TreeNode treeNode2 = new TreeNode("Count[0]");
-            TreeNode treeNode3 = new TreeNode("State", new TreeNode[] { treeNode1, treeNode2 });
-            TreeNode treeNode4 = new TreeNode("Folder");
-            TreeNode treeNode5 = new TreeNode("File");
-            TreeNode treeNode6 = new TreeNode("Type");
-            TreeNode treeNode7 = new TreeNode("Key");
-            TreeNode treeNode8 = new TreeNode("Value");
+            TreeNode treeNode9 = new TreeNode("Type");
+            TreeNode treeNode10 = new TreeNode("Count[0]");
+            TreeNode treeNode11 = new TreeNode("State", new TreeNode[] { treeNode9, treeNode10 });
+            TreeNode treeNode12 = new TreeNode("Folder");
+            TreeNode treeNode13 = new TreeNode("File");
+            TreeNode treeNode14 = new TreeNode("Type");
+            TreeNode treeNode15 = new TreeNode("Key");
+            TreeNode treeNode16 = new TreeNode("Value");
             menuStrip1 = new MenuStrip();
             toolStripMenuItem46 = new ToolStripMenuItem();
             toolStripMenuItem47 = new ToolStripMenuItem();
@@ -47,6 +47,11 @@
             tabControl2 = new TabControl();
             tabPage10 = new TabPage();
             treeView5 = new TreeView();
+            contextMenuStrip4 = new ContextMenuStrip(components);
+            toolStripMenuItem80 = new ToolStripMenuItem();
+            toolStripSeparator13 = new ToolStripSeparator();
+            toolStripMenuItem81 = new ToolStripMenuItem();
+            toolStripMenuItem82 = new ToolStripMenuItem();
             tabPage7 = new TabPage();
             treeView1 = new TreeView();
             fileTvExplorerMenu = new ContextMenuStrip(components);
@@ -245,6 +250,7 @@
             splitContainer1.SuspendLayout();
             tabControl2.SuspendLayout();
             tabPage10.SuspendLayout();
+            contextMenuStrip4.SuspendLayout();
             tabPage7.SuspendLayout();
             fileTvExplorerMenu.SuspendLayout();
             tabPage8.SuspendLayout();
@@ -365,7 +371,7 @@
             // 
             splitContainer1.Panel2.Controls.Add(listView1);
             splitContainer1.Size = new Size(1056, 434);
-            splitContainer1.SplitterDistance = 339;
+            splitContainer1.SplitterDistance = 308;
             splitContainer1.SplitterWidth = 8;
             splitContainer1.TabIndex = 2;
             // 
@@ -380,7 +386,7 @@
             tabControl2.Location = new Point(0, 0);
             tabControl2.Name = "tabControl2";
             tabControl2.SelectedIndex = 0;
-            tabControl2.Size = new Size(339, 434);
+            tabControl2.Size = new Size(308, 434);
             tabControl2.TabIndex = 1;
             // 
             // tabPage10
@@ -388,18 +394,52 @@
             tabPage10.Controls.Add(treeView5);
             tabPage10.Location = new Point(4, 4);
             tabPage10.Name = "tabPage10";
-            tabPage10.Size = new Size(331, 402);
+            tabPage10.Size = new Size(300, 402);
             tabPage10.TabIndex = 3;
             tabPage10.Text = "Info";
             tabPage10.UseVisualStyleBackColor = true;
             // 
             // treeView5
             // 
+            treeView5.ContextMenuStrip = contextMenuStrip4;
             treeView5.Dock = DockStyle.Fill;
             treeView5.Location = new Point(0, 0);
             treeView5.Name = "treeView5";
-            treeView5.Size = new Size(331, 402);
+            treeView5.Size = new Size(300, 402);
             treeView5.TabIndex = 0;
+            // 
+            // contextMenuStrip4
+            // 
+            contextMenuStrip4.Font = new Font("Microsoft JhengHei UI", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            contextMenuStrip4.Items.AddRange(new ToolStripItem[] { toolStripMenuItem80, toolStripSeparator13, toolStripMenuItem81, toolStripMenuItem82 });
+            contextMenuStrip4.Name = "contextMenuStrip4";
+            contextMenuStrip4.Size = new Size(160, 82);
+            // 
+            // toolStripMenuItem80
+            // 
+            toolStripMenuItem80.Name = "toolStripMenuItem80";
+            toolStripMenuItem80.Size = new Size(159, 24);
+            toolStripMenuItem80.Text = "Copy Value";
+            toolStripMenuItem80.Click += toolStripMenuItem80_Click;
+            // 
+            // toolStripSeparator13
+            // 
+            toolStripSeparator13.Name = "toolStripSeparator13";
+            toolStripSeparator13.Size = new Size(156, 6);
+            // 
+            // toolStripMenuItem81
+            // 
+            toolStripMenuItem81.Name = "toolStripMenuItem81";
+            toolStripMenuItem81.Size = new Size(159, 24);
+            toolStripMenuItem81.Text = "Expand All";
+            toolStripMenuItem81.Click += toolStripMenuItem81_Click;
+            // 
+            // toolStripMenuItem82
+            // 
+            toolStripMenuItem82.Name = "toolStripMenuItem82";
+            toolStripMenuItem82.Size = new Size(159, 24);
+            toolStripMenuItem82.Text = "Collapse All";
+            toolStripMenuItem82.Click += toolStripMenuItem82_Click;
             // 
             // tabPage7
             // 
@@ -407,7 +447,7 @@
             tabPage7.Location = new Point(4, 4);
             tabPage7.Name = "tabPage7";
             tabPage7.Padding = new Padding(3);
-            tabPage7.Size = new Size(331, 402);
+            tabPage7.Size = new Size(300, 402);
             tabPage7.TabIndex = 0;
             tabPage7.Text = "Explorer";
             tabPage7.UseVisualStyleBackColor = true;
@@ -422,7 +462,7 @@
             treeView1.Margin = new Padding(5);
             treeView1.Name = "treeView1";
             treeView1.SelectedImageIndex = 0;
-            treeView1.Size = new Size(325, 396);
+            treeView1.Size = new Size(294, 396);
             treeView1.TabIndex = 0;
             treeView1.AfterSelect += treeView1_AfterSelect;
             // 
@@ -462,7 +502,7 @@
             tabPage8.Location = new Point(4, 4);
             tabPage8.Name = "tabPage8";
             tabPage8.Padding = new Padding(3);
-            tabPage8.Size = new Size(331, 402);
+            tabPage8.Size = new Size(300, 402);
             tabPage8.TabIndex = 1;
             tabPage8.Text = "FastDir";
             tabPage8.UseVisualStyleBackColor = true;
@@ -472,7 +512,7 @@
             treeView6.Dock = DockStyle.Fill;
             treeView6.Location = new Point(3, 3);
             treeView6.Name = "treeView6";
-            treeView6.Size = new Size(325, 396);
+            treeView6.Size = new Size(294, 396);
             treeView6.TabIndex = 0;
             treeView6.AfterSelect += treeView6_AfterSelect;
             // 
@@ -481,7 +521,7 @@
             tabPage9.Controls.Add(treeView7);
             tabPage9.Location = new Point(4, 4);
             tabPage9.Name = "tabPage9";
-            tabPage9.Size = new Size(331, 402);
+            tabPage9.Size = new Size(300, 402);
             tabPage9.TabIndex = 2;
             tabPage9.Text = "Clipboard";
             tabPage9.UseVisualStyleBackColor = true;
@@ -491,18 +531,18 @@
             treeView7.Dock = DockStyle.Fill;
             treeView7.Location = new Point(0, 0);
             treeView7.Name = "treeView7";
-            treeNode1.Name = "Node3";
-            treeNode1.Text = "Type";
-            treeNode2.Name = "Node4";
-            treeNode2.Text = "Count[0]";
-            treeNode3.Name = "Node2";
-            treeNode3.Text = "State";
-            treeNode4.Name = "Node0";
-            treeNode4.Text = "Folder";
-            treeNode5.Name = "Node1";
-            treeNode5.Text = "File";
-            treeView7.Nodes.AddRange(new TreeNode[] { treeNode3, treeNode4, treeNode5 });
-            treeView7.Size = new Size(331, 402);
+            treeNode9.Name = "Node3";
+            treeNode9.Text = "Type";
+            treeNode10.Name = "Node4";
+            treeNode10.Text = "Count[0]";
+            treeNode11.Name = "Node2";
+            treeNode11.Text = "State";
+            treeNode12.Name = "Node0";
+            treeNode12.Text = "Folder";
+            treeNode13.Name = "Node1";
+            treeNode13.Text = "File";
+            treeView7.Nodes.AddRange(new TreeNode[] { treeNode11, treeNode12, treeNode13 });
+            treeView7.Size = new Size(300, 402);
             treeView7.TabIndex = 0;
             // 
             // listView1
@@ -514,7 +554,7 @@
             listView1.Location = new Point(0, 0);
             listView1.Margin = new Padding(5);
             listView1.Name = "listView1";
-            listView1.Size = new Size(709, 434);
+            listView1.Size = new Size(740, 434);
             listView1.TabIndex = 0;
             listView1.UseCompatibleStateImageBehavior = false;
             listView1.View = View.Details;
@@ -1253,13 +1293,13 @@
             treeView8.Dock = DockStyle.Fill;
             treeView8.Location = new Point(0, 0);
             treeView8.Name = "treeView8";
-            treeNode6.Name = "Node0";
-            treeNode6.Text = "Type";
-            treeNode7.Name = "Node1";
-            treeNode7.Text = "Key";
-            treeNode8.Name = "Node2";
-            treeNode8.Text = "Value";
-            treeView8.Nodes.AddRange(new TreeNode[] { treeNode6, treeNode7, treeNode8 });
+            treeNode14.Name = "Node0";
+            treeNode14.Text = "Type";
+            treeNode15.Name = "Node1";
+            treeNode15.Text = "Key";
+            treeNode16.Name = "Node2";
+            treeNode16.Text = "Value";
+            treeView8.Nodes.AddRange(new TreeNode[] { treeNode14, treeNode15, treeNode16 });
             treeView8.Size = new Size(301, 410);
             treeView8.TabIndex = 0;
             // 
@@ -1949,6 +1989,7 @@
             splitContainer1.ResumeLayout(false);
             tabControl2.ResumeLayout(false);
             tabPage10.ResumeLayout(false);
+            contextMenuStrip4.ResumeLayout(false);
             tabPage7.ResumeLayout(false);
             fileTvExplorerMenu.ResumeLayout(false);
             tabPage8.ResumeLayout(false);
@@ -2211,5 +2252,10 @@
         private ToolStripDropDownButton toolStripDropDownButton1;
         private ToolStripMenuItem toolStripMenuItem78;
         private ToolStripMenuItem toolStripMenuItem79;
+        private ContextMenuStrip contextMenuStrip4;
+        private ToolStripMenuItem toolStripMenuItem80;
+        private ToolStripSeparator toolStripSeparator13;
+        private ToolStripMenuItem toolStripMenuItem81;
+        private ToolStripMenuItem toolStripMenuItem82;
     }
 }
