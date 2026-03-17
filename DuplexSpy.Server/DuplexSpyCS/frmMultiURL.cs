@@ -155,7 +155,7 @@ namespace DuplexSpyCS
         {
             if (checkBox1.Checked)
             {
-                MessageBox.Show("This is used for downloading an executable from remote host on the disk and execute it.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("This is used for downloading an executable from remote host on the disk and executing it.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
