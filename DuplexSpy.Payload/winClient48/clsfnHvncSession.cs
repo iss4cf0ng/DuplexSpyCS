@@ -8,7 +8,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.IO;
-using IWshRuntimeLibrary;
 
 namespace winClient48
 {
@@ -34,6 +33,22 @@ namespace winClient48
                 throw new Exception("Create window failed.");
         }
 
+        private IntPtr GetDeepestChild(IntPtr hWndParent, int x, int y)
+        {
+            Point pt = new Point(x, y);
+            WinAPI.ScreenToClient(hWndParent, ref pt);
+
+            IntPtr hWndChild = WinAPI.ChildWindowFromPointEx(hWndParent, pt, 0x0000); // CWP_ALL
+
+            if (hWndChild != IntPtr.Zero && hWndChild != hWndParent)
+            {
+                IntPtr hRecursiveChild = GetDeepestChild(hWndChild, x, y);
+                return hRecursiveChild != IntPtr.Zero ? hRecursiveChild : hWndChild;
+            }
+
+            return hWndParent;
+        }
+
         public void fnStartExplorer()
         {
             WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
@@ -44,6 +59,7 @@ namespace winClient48
 
             WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
 
+            //"explorer.exe /separate"
             StringBuilder sb = new StringBuilder("explorer.exe /separate");
 
             bool success = WinAPI.CreateProcess(
@@ -73,7 +89,7 @@ namespace winClient48
             Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format32bppPArgb);
             using (Graphics g = Graphics.FromImage(bmp))
             {
-                g.Clear(Color.FromArgb(45, 45, 45)); // 背景色
+                g.Clear(Color.FromArgb(45, 45, 45));
                 IntPtr hdc = g.GetHdc();
 
                 List<IntPtr> windowList = new List<IntPtr>();
@@ -103,10 +119,25 @@ namespace winClient48
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
 
-            IntPtr hWnd = WinAPI.WindowFromPoint(x, y);
-            if (hWnd == IntPtr.Zero) return;
+            IntPtr hTopWnd = WinAPI.WindowFromPoint(x, y);
 
+            IntPtr hWnd = GetDeepestChild(hTopWnd, x, y);
             m_hLastWnd = hWnd;
+
+            if (IntPtr.Zero == hWnd)
+            {
+                //File.WriteAllText("nothing.txt", "nothing");
+                return;
+            }
+
+            /*
+
+            StringBuilder sb = new StringBuilder(256);
+            WinAPI.GetClassName(hWnd, sb, 256);
+            File.WriteAllText("something.txt", sb.ToString());
+
+            */
+
             Point p = new Point(x, y);
             WinAPI.ScreenToClient(hWnd, ref p);
             IntPtr lParam = (IntPtr)((p.Y << 16) | (p.X & 0xFFFF));
@@ -117,10 +148,14 @@ namespace winClient48
                     WinAPI.PostMessage(hWnd, 0x0200, IntPtr.Zero, lParam);
                     break;
                 case "LD":
-                    WinAPI.SetForegroundWindow(hWnd);
-                    WinAPI.PostMessage(hWnd, 0x0006, (IntPtr)1, IntPtr.Zero); // WM_ACTIVATE
-                    WinAPI.SetFocus(hWnd);
-                    WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)1, lParam);
+                    WinAPI.PostMessage(hWnd, 0x0200, IntPtr.Zero, lParam); // WM_MOUSEMOVE
+
+                    WinAPI.SendMessage(hWnd, 0x0021, hTopWnd, (IntPtr)((0x0201 << 16) | 1)); // WM_MOUSEACTIVATE
+                    WinAPI.SendMessage(hWnd, 0x0020, hWnd, (IntPtr)((0x0201 << 16) | 1));    // WM_SETCURSOR
+
+                    WinAPI.SendMessage(hWnd, 0x0006, 1, 0); // WM_ACTIVATE
+                    WinAPI.SendMessage(hWnd, 0x0007, 0, 0); // WM_SETFOCUS
+                    WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)0x0001, lParam); // WM_LBUTTONDOWN
                     break;
                 case "LU":
                     WinAPI.PostMessage(hWnd, 0x0202, IntPtr.Zero, lParam);
@@ -131,6 +166,11 @@ namespace winClient48
                 case "RU":
                     WinAPI.PostMessage(hWnd, 0x0205, IntPtr.Zero, lParam);
                     break;
+            }
+
+            if (type != "MOVE")
+            {
+                File.WriteAllText("action.txt", $"{type},{x},{y}");
             }
         }
 

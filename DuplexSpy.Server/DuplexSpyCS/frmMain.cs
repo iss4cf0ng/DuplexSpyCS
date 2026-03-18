@@ -1595,7 +1595,7 @@ namespace DuplexSpyCS
             };
             newListView1.DrawItem += (s, e) =>
             {
-                
+
 
                 if (newListView1.View != View.LargeIcon)
                     return;
@@ -1732,7 +1732,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1779,37 +1779,7 @@ namespace DuplexSpyCS
         //DESKTOP
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
-            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
-            if (items.Count == 0)
-            {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
 
-            foreach (ListViewItem item in items)
-            {
-                if (item.SubItems[8].Text == "0")
-                {
-                    MessageBox.Show("Count of monitor is zero.", "Monitor not found.", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    continue;
-                }
-
-                clsVictim v = GetVictim(item);
-                frmDesktop? f = clsTools.fnFindForm<frmDesktop>(v);
-                if (f == null)
-                {
-                    f = new frmDesktop(v);
-                    f.Text = $@"Desktop\\{v.ID}";
-                    f.Tag = Function.Desktop;
-                    f.v = v;
-
-                    f.Show();
-                }
-                else
-                {
-                    f.BringToFront();
-                }
-            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -1862,7 +1832,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -1897,7 +1867,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1926,7 +1896,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -1974,7 +1944,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2003,7 +1973,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2032,7 +2002,7 @@ namespace DuplexSpyCS
         {
             if (newListView1.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2054,7 +2024,7 @@ namespace DuplexSpyCS
         {
             if (newListView1.SelectedItems.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2083,7 +2053,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2097,7 +2067,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2126,7 +2096,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2155,7 +2125,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2184,7 +2154,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2213,7 +2183,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2227,7 +2197,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2256,7 +2226,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2297,7 +2267,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2313,7 +2283,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2330,7 +2300,7 @@ namespace DuplexSpyCS
             List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
             if (items.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2361,7 +2331,7 @@ namespace DuplexSpyCS
             {
                 MessageBox.Show("Please select at least one online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }    
+            }
 
             foreach (ListViewItem item in newListView1.SelectedItems)
             {
@@ -2372,7 +2342,7 @@ namespace DuplexSpyCS
 
         private void toolStripMenuItem19_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         //Highlight - Yes
@@ -2384,7 +2354,7 @@ namespace DuplexSpyCS
                 MessageBox.Show("Please select at least one online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             foreach (ListViewItem item in items)
             {
                 item.BackColor = Color.IndianRed;
@@ -2441,7 +2411,7 @@ namespace DuplexSpyCS
             List<clsVictim> victims = GetAllVictim();
             if (victims.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2459,7 +2429,7 @@ namespace DuplexSpyCS
             List<clsVictim> victims = GetAllVictim();
             if (victims.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2477,7 +2447,7 @@ namespace DuplexSpyCS
             List<clsVictim> victims = GetAllVictim();
             if (victims.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2551,7 +2521,7 @@ namespace DuplexSpyCS
             List<clsVictim> ls = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (ls.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2572,7 +2542,7 @@ namespace DuplexSpyCS
             List<clsVictim> ls = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => (clsVictim)x.Tag).ToList();
             if (ls.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2595,7 +2565,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2608,7 +2578,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -2626,7 +2596,7 @@ namespace DuplexSpyCS
             List<clsVictim> lsVictim = newListView1.SelectedItems.Cast<ListViewItem>().Select(x => GetVictim(x)).ToList();
             if (lsVictim.Count == 0)
             {
-                MessageBox.Show("Please select a online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select an online machine.", "Nothing is selected!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             else if (lsVictim.Count > 1)
@@ -2637,6 +2607,67 @@ namespace DuplexSpyCS
             clsVictim victim = lsVictim.First();
             frmProxy f = new frmProxy(victim);
             f.ShowDialog();
+        }
+
+        private void toolStripMenuItem49_Click(object sender, EventArgs e)
+        {
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select an online machine.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            foreach (ListViewItem item in items)
+            {
+                if (item.SubItems[8].Text == "0")
+                {
+                    MessageBox.Show("Count of monitor is zero.", "Monitor not found.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    continue;
+                }
+
+                clsVictim v = GetVictim(item);
+                frmDesktop? f = clsTools.fnFindForm<frmDesktop>(v);
+                if (f == null)
+                {
+                    f = new frmDesktop(v);
+                    f.Text = $@"Desktop\\{v.ID}";
+                    f.Tag = Function.Desktop;
+                    f.v = v;
+
+                    f.Show();
+                }
+                else
+                {
+                    f.BringToFront();
+                }
+            }
+        }
+
+        private void toolStripMenuItem50_Click(object sender, EventArgs e)
+        {
+            List<ListViewItem> items = newListView1.SelectedItems.Cast<ListViewItem>().ToList();
+            if (items.Count == 0)
+            {
+                MessageBox.Show("Please select an online.", "Nothing is selected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            foreach (ListViewItem item in items)
+            {
+                clsVictim? victim = GetVictim(item);
+                if (victim == null)
+                    continue;
+
+                frmHVNC? f = clsTools.fnFindForm<frmHVNC>(victim);
+                if (f == null)
+                {
+                    f = new frmHVNC(victim);
+                    f.Show();
+                }
+
+                f.BringToFront();
+            }
         }
     }
 }

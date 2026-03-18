@@ -42,6 +42,8 @@
             toolStripSeparator7 = new ToolStripSeparator();
             toolStripMenuItem22 = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
+            toolStripMenuItem49 = new ToolStripMenuItem();
+            toolStripMenuItem50 = new ToolStripMenuItem();
             toolStripMenuItem8 = new ToolStripMenuItem();
             toolStripMenuItem24 = new ToolStripMenuItem();
             toolStripMenuItem7 = new ToolStripMenuItem();
@@ -203,11 +205,26 @@
             // 
             // toolStripMenuItem3
             // 
+            toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem49, toolStripMenuItem50 });
             toolStripMenuItem3.Image = (Image)resources.GetObject("toolStripMenuItem3.Image");
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(169, 24);
             toolStripMenuItem3.Text = "Desktop";
             toolStripMenuItem3.Click += toolStripMenuItem3_Click;
+            // 
+            // toolStripMenuItem49
+            // 
+            toolStripMenuItem49.Name = "toolStripMenuItem49";
+            toolStripMenuItem49.Size = new Size(180, 24);
+            toolStripMenuItem49.Text = "Monitor";
+            toolStripMenuItem49.Click += toolStripMenuItem49_Click;
+            // 
+            // toolStripMenuItem50
+            // 
+            toolStripMenuItem50.Name = "toolStripMenuItem50";
+            toolStripMenuItem50.Size = new Size(180, 24);
+            toolStripMenuItem50.Text = "HVNC";
+            toolStripMenuItem50.Click += toolStripMenuItem50_Click;
             // 
             // toolStripMenuItem8
             // 
@@ -828,5 +845,7 @@
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripButton toolStripButton7;
         private ToolStripMenuItem toolStripMenuItem48;
+        private ToolStripMenuItem toolStripMenuItem49;
+        private ToolStripMenuItem toolStripMenuItem50;
     }
 }
