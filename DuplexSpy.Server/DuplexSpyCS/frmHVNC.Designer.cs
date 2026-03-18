@@ -122,6 +122,7 @@
             treeView1.Name = "treeView1";
             treeView1.Size = new Size(274, 270);
             treeView1.TabIndex = 0;
+            treeView1.AfterSelect += treeView1_AfterSelect;
             // 
             // listView1
             // 
@@ -156,6 +157,7 @@
             tabControl1.SelectedIndex = 0;
             tabControl1.Size = new Size(659, 462);
             tabControl1.TabIndex = 0;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
             // 
             // tabPage1
             // 

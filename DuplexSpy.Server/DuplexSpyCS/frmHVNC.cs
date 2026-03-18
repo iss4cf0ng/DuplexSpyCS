@@ -27,11 +27,23 @@ namespace DuplexSpyCS
             public string szExeFilePath;
             public string szArguments;
             public bool bMaximized;
+            public TabPage page;
 
-            public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName); } }
+            public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName) || page == null; } }
         }
 
         private stHvncSession fnGetSession(TabPage page) => page == null ? new stHvncSession() : (stHvncSession)page.Tag;
+        private stHvncSession fnGetSession(string szName)
+        {
+            foreach (TabPage page in tabControl1.TabPages)
+            {
+                stHvncSession session = fnGetSession(page);
+                if (string.Equals(szName, session.szDesktopName))
+                    return session;
+            }
+
+            return new stHvncSession();
+        }
 
         void fnRecv(clsListener ltn, clsVictim victim, List<string> lsMsg)
         {
@@ -66,6 +78,7 @@ namespace DuplexSpyCS
             TabPage page = new TabPage();
             tabControl1.TabPages.Add(page);
             page.Tag = session;
+            session.page = page;
 
             /* Layout:
              *      | [Start] [Stop] [Close] | Delay: [Combobox(miliseconds)] | [Mouse] [Keyboard] [FPS] [Timestamp] |
@@ -149,6 +162,48 @@ namespace DuplexSpyCS
         private void frmHVNC_FormClosed(object sender, FormClosedEventArgs e)
         {
             m_victim.m_listener.ReceivedDecoded -= fnRecv;
+        }
+
+        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            TreeNode selectedNode = treeView1.SelectedNode;
+            if (selectedNode == null)
+                return;
+
+            string szName = selectedNode.Text;
+            var session = fnGetSession(szName);
+            if (session.bIsNull)
+                return;
+
+            tabControl1.SelectedTab = session.page;
+        }
+
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            TabPage page = tabControl1.SelectedTab;
+            if (page == null)
+                return;
+
+            var session = fnGetSession(page);
+            
+            listView1.Items.Clear();
+
+            List<(string prop, string val)> ls = new List<(string prop, string val)>();
+            ls.AddRange(new[]
+            {
+                ("Desktop", session.szDesktopName),
+                ("Executable", session.szExeFilePath),
+                ("Arguments", session.szArguments),
+                ("Maximized", session.bMaximized ? "True" : "False"),
+            });
+
+            foreach (var prop in ls)
+            {
+                ListViewItem item = new ListViewItem(prop.prop);
+                item.SubItems.Add(prop.val);
+
+                listView1.Items.Add(item);
+            }
         }
     }
 }
