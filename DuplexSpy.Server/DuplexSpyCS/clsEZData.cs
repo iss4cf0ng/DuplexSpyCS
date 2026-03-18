@@ -17,6 +17,22 @@ namespace DuplexSpyCS
         public static List<string> fnListDecFromB64(List<string> lsInput) => lsInput.Select(x => clsCrypto.b64D2Str(x)).ToList();
         public static string fnListStrToStr(List<string> lsInput, string szSplitter = ",") => string.Join(szSplitter, fnListEncToB64(lsInput));
         public static List<string> fnStrToListStr(string szInput, string szSplitter = ",") => fnListDecFromB64(szInput.Split(szSplitter).ToList());
+        public static List<List<string>> fnStrTo2dList(string szInput, string szSplitter = ",")
+        {
+            if (string.IsNullOrEmpty(szInput)) return new List<List<string>>();
+
+            return szSplitter.Split(new[] { szSplitter }, StringSplitOptions.None)
+                .Select(rowEncoded =>
+                {
+                    string rowDecoded = clsCrypto.b64D2Str(rowEncoded);
+
+                    return rowDecoded.Split(new[] { szSplitter }, StringSplitOptions.None)
+                        .Select(cellEncoded =>
+                        {
+                            return clsCrypto.b64D2Str(cellEncoded);
+                        }).ToList();
+                }).ToList();
+        }
 
         public static string fnGenerateRandomStr(int nLength = 10)
         {

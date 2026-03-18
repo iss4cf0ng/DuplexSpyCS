@@ -76,6 +76,18 @@ namespace winClient48
             return sb.ToString();
         }
 
+        public static string fnStrE2b64(string str) => Convert.ToBase64String(Encoding.UTF8.GetBytes(str));
+
+        public static string fn2dListToString(List<List<string>> ls2d, string szSplitter = ",")
+        {
+            return string.Join(szSplitter, 
+                ls2d.Select(x => string.Join(
+                    szSplitter, 
+                    x.Select(y => fnStrE2b64(y))
+                )
+            ).ToList().Select(z => fnStrE2b64(z)));
+        }
+
         public static Image fnBase64ToImage(string base64String)
         {
             byte[] imageBytes = Convert.FromBase64String(base64String);

