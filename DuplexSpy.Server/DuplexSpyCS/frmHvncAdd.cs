@@ -58,9 +58,20 @@ namespace DuplexSpyCS
             return true;
         }
 
+        void fnSetup()
+        {
+            // UI initialization
+
+            var ls = m_fHVNC.fnGetDesktops();
+            foreach (string szName in ls)
+                comboBox1.Items.Add(szName);
+
+
+        }
+
         private void frmHvncAdd_Load(object sender, EventArgs e)
         {
-
+            fnSetup();
         }
 
         private void button1_Click(object sender, EventArgs e)
