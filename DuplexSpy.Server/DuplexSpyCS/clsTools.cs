@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO.Compression;
 using System.Linq;
@@ -393,6 +394,17 @@ namespace DuplexSpyCS
         public static bool fnbVictimEquals(clsVictim v1, clsVictim v2)
         {
             return v1 == v2;
+        }
+
+        public static TreeNode? fnFindTreeNode(TreeNodeCollection nodes, string szName)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                if (string.Equals(node.Text, szName))
+                    return node;
+            }
+
+            return null;
         }
     }
 }

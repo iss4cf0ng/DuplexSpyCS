@@ -132,12 +132,14 @@
             toolStripMenuItem4.Name = "toolStripMenuItem4";
             toolStripMenuItem4.Size = new Size(180, 24);
             toolStripMenuItem4.Text = "Start";
+            toolStripMenuItem4.Click += toolStripMenuItem4_Click;
             // 
             // toolStripMenuItem5
             // 
             toolStripMenuItem5.Name = "toolStripMenuItem5";
             toolStripMenuItem5.Size = new Size(180, 24);
             toolStripMenuItem5.Text = "Start All";
+            toolStripMenuItem5.Click += toolStripMenuItem5_Click;
             // 
             // toolStripSeparator2
             // 
@@ -149,12 +151,14 @@
             toolStripMenuItem6.Name = "toolStripMenuItem6";
             toolStripMenuItem6.Size = new Size(180, 24);
             toolStripMenuItem6.Text = "Stop";
+            toolStripMenuItem6.Click += toolStripMenuItem6_Click;
             // 
             // toolStripMenuItem7
             // 
             toolStripMenuItem7.Name = "toolStripMenuItem7";
             toolStripMenuItem7.Size = new Size(180, 24);
             toolStripMenuItem7.Text = "Stop All";
+            toolStripMenuItem7.Click += toolStripMenuItem7_Click;
             // 
             // toolStripButton1
             // 
