@@ -177,6 +177,7 @@ namespace DuplexSpyCS
                 RegexSearch(tb_search, regOption, idx_start, tb_search.Text);
             }
         }
+
         private void textboxSearch_TextChanged(object sender, EventArgs e)
         {
             ToolStripTextBox tb_search = (ToolStripTextBox)sender;

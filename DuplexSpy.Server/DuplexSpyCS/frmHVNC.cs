@@ -16,7 +16,7 @@ namespace DuplexSpyCS
         /// HVNC (Hidden Virtual Network Computing) control panel.
         /// Author: iss4cf0ng/ISSAC
         /// 
-        /// Obrain victim's machien hidden desktop.
+        /// 
         /// </summary>
 
         private clsVictim m_victim { get; init; }
@@ -29,6 +29,9 @@ namespace DuplexSpyCS
             Text = $@"HVNC\\{m_victim.ID}";
         }
 
+        /// <summary>
+        /// Session structure
+        /// </summary>
         public struct stHvncSession
         {
             public string szDesktopName;
@@ -95,14 +98,17 @@ namespace DuplexSpyCS
                         }
                         else if (lsMsg[2] == "start")
                         {
+                            // Start HVNC
 
                         }
                         else if (lsMsg[2] == "stop")
                         {
+                            // Stop HVNC
 
                         }
                         else if (lsMsg[2] == "close")
                         {
+                            // Close HVNC
 
                         }
                     }
@@ -311,9 +317,9 @@ namespace DuplexSpyCS
             List<(string prop, string val)> ls = new List<(string prop, string val)>();
             ls.AddRange(new[]
             {
-                ("Desktop", session.szDesktopName),
-                ("Executable", session.szExeFilePath),
-                ("Arguments", session.szArguments),
+                ("Desktop", session.szDesktopName),    // Name of hidden desktop
+                ("Executable", session.szExeFilePath), // Executable (application)
+                ("Arguments", session.szArguments),    // Input arguments
             });
 
             foreach (var prop in ls)
@@ -328,7 +334,7 @@ namespace DuplexSpyCS
         // Help
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-
+            new frmBoxHelper("Function\\HVNC").Show();
         }
 
         // Add
