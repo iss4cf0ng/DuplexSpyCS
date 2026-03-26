@@ -49,12 +49,6 @@ namespace winClient48
                 RegRun();
             }
 
-            string szCurrentPath = Assembly.GetExecutingAssembly().Location;
-            if (!string.Equals(szCurrentPath, m_szCopyPath))
-            {
-                Environment.Exit(0);
-            }
-
             if (m_bUAC)
                 UAC();
         }

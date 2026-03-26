@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -98,5 +99,22 @@ namespace winClient48
             }
         }
 
+        public static string fnBitmapToBase64(Bitmap bmp)
+        {
+            try
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    bmp.Save(ms, ImageFormat.Png);
+                    byte[] image_bytes = ms.ToArray();
+
+                    return Convert.ToBase64String(image_bytes);
+                }
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
     }
 }

