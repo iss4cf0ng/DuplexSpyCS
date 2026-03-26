@@ -172,49 +172,52 @@ public class WinAPI
         uint dwRop
     );
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr CreateDesktop(string lpszDesktop, IntPtr lpszDevice, IntPtr pDevMode, int dwFlags, uint dwDesiredAccess, IntPtr lpsa);
 
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool CloseDesktop(IntPtr hDesktop);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern bool SetThreadDesktop(IntPtr hDesktop);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr GetDesktopWindow();
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr RealChildWindowFromPoint(IntPtr hwndParent, Point ptParentClientCoords);
 
     [DllImport("user32.dll", EntryPoint = "WindowFromPoint")]
     public static extern IntPtr WindowFromPoint(int x, int y);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern uint MapVirtualKey(uint uCode, uint uMapType);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr ChildWindowFromPoint(IntPtr hWndParent, Point pt);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr ChildWindowFromPointEx(IntPtr hwndParent, POINT pt, uint flags);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr ChildWindowFromPointEx(IntPtr hwndParent, Point pt, uint flags);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern bool ScreenToClient(IntPtr hWnd, ref Point lpPoint);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-    [DllImport("user32.dll")]
+    [DllImport("user32.dll", SetLastError = true)]
     public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumWindowProc lpEnumCallbackFunction, IntPtr lParam);
 
     public delegate bool EnumWindowProc(IntPtr hWnd, IntPtr lParam);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    public static extern bool SetProcessDPIAware();
 
     #endregion
     #region Console

