@@ -189,17 +189,36 @@ namespace DuplexSpyCS
                             if (nCode == 1)
                             {
                                 MessageBox.Show("Start HVNC session successfully.", "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                return;
                             }
                         }
                         else if (lsMsg[2] == "stop")
                         {
                             // Stop HVNC
+                            string szName = lsMsg[3];
+                            int nCode = int.Parse(lsMsg[4]);
 
+                            if (nCode == 0)
+                            {
+                                MessageBox.Show(lsMsg[5], "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            MessageBox.Show("Stopped HVNC session: " + szName, "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                         else if (lsMsg[2] == "close")
                         {
                             // Close HVNC
+                            string szName = lsMsg[3];
+                            int nCode = int.Parse(lsMsg[4]);
 
+                            if (nCode == 0)
+                            {
+                                MessageBox.Show(lsMsg[5], "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                return;
+                            }
+
+                            MessageBox.Show("Closed HVNC session: " + szName, "OK", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
                     else if (lsMsg[1] == "mouse")

