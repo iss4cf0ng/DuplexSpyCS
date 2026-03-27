@@ -86,8 +86,8 @@ namespace winClient48
             WinAPI.STARTUPINFO si = new WinAPI.STARTUPINFO();
             si.cb = Marshal.SizeOf(si);
             si.lpDesktop = m_szDesktopName;
-            //si.dwFlags = 0x00000001;
-            //si.wShowWindow = (short)SW_MAXIMIZE;
+            si.dwFlags = 0x00000001;
+            si.wShowWindow = SW_MAXIMIZE;
 
             WinAPI.PROCESS_INFORMATION pi = new WinAPI.PROCESS_INFORMATION();
 
@@ -189,11 +189,17 @@ namespace winClient48
         /// <param name="y"></param>
         public void fnHandleMouseInput(string type, int x, int y)
         {
+            File.WriteAllText("coord.txt", $"{type},{x},{y}");
+
             WinAPI.SetThreadDesktop(m_hDesktop);
 
-            IntPtr hTopWnd = WinAPI.WindowFromPoint(x, y);
+            Point p = new Point(x, y);
 
-            IntPtr hWnd = GetDeepestChild(hTopWnd, x, y);
+            IntPtr hWnd = WinAPI.WindowFromPoint(x, y);
+            IntPtr hChild = WinAPI.ChildWindowFromPoint(hWnd, p);
+            if (IntPtr.Zero != hChild && hChild != hWnd)
+                hWnd = hChild;
+
             m_hLastWnd = hWnd;
 
             if (IntPtr.Zero == hWnd)
@@ -202,15 +208,10 @@ namespace winClient48
                 return;
             }
 
-            /*
-
             StringBuilder sb = new StringBuilder(256);
             WinAPI.GetClassName(hWnd, sb, 256);
-            File.WriteAllText("something.txt", sb.ToString());
+            File.WriteAllText("something.txt", sb.ToString() + "|" + type);
 
-            */
-
-            Point p = new Point(x, y);
             WinAPI.ScreenToClient(hWnd, ref p);
             IntPtr lParam = (IntPtr)((p.Y << 16) | (p.X & 0xFFFF));
 
@@ -220,14 +221,10 @@ namespace winClient48
                     WinAPI.PostMessage(hWnd, 0x0200, IntPtr.Zero, lParam);
                     break;
                 case "LD":
-                    WinAPI.PostMessage(hWnd, 0x0200, IntPtr.Zero, lParam); // WM_MOUSEMOVE
-
-                    WinAPI.SendMessage(hWnd, 0x0021, hTopWnd, (IntPtr)((0x0201 << 16) | 1)); // WM_MOUSEACTIVATE
-                    WinAPI.SendMessage(hWnd, 0x0020, hWnd, (IntPtr)((0x0201 << 16) | 1));    // WM_SETCURSOR
-
-                    WinAPI.SendMessage(hWnd, 0x0006, 1, 0); // WM_ACTIVATE
-                    WinAPI.SendMessage(hWnd, 0x0007, 0, 0); // WM_SETFOCUS
-                    WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)0x0001, lParam); // WM_LBUTTONDOWN
+                    WinAPI.SetForegroundWindow(hWnd);
+                    WinAPI.PostMessage(hWnd, 0x0006, (IntPtr)1, IntPtr.Zero); // WM_ACTIVATE
+                    WinAPI.SetFocus(hWnd);
+                    WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)1, lParam);
                     break;
                 case "LU":
                     WinAPI.PostMessage(hWnd, 0x0202, IntPtr.Zero, lParam);
@@ -254,32 +251,31 @@ namespace winClient48
         public void fnHandleKeyboardInput(string action, int vk)
         {
             WinAPI.SetThreadDesktop(m_hDesktop);
+
             IntPtr hWnd = (m_hLastWnd != IntPtr.Zero) ? m_hLastWnd : WinAPI.GetForegroundWindow();
 
-            if (hWnd != IntPtr.Zero)
+            if (IntPtr.Zero == hWnd)
             {
-                uint scanCode = WinAPI.MapVirtualKey((uint)vk, 0);
-                uint lParam;
+                MessageBox.Show("X");
+                return;
+            }
 
-                if (action.ToLower() == "down")
-                {
-                    lParam = 0x00000001 | (scanCode << 16);
-                    WinAPI.PostMessage(hWnd, 0x0100, (IntPtr)vk, (IntPtr)lParam);
+            uint scanCode = WinAPI.MapVirtualKey((uint)vk, 0);
+            uint lParam;
 
-                    if (IsTextKey(vk))
-                    {
-                        WinAPI.PostMessage(hWnd, 0x0102, (IntPtr)vk, (IntPtr)lParam);
-                    }
-                }
-                else
-                {
-                    lParam = 0xC0000001 | (scanCode << 16);
-                    WinAPI.PostMessage(hWnd, 0x0101, (IntPtr)vk, (IntPtr)lParam);
-                }
+            if (action.ToLower() == "down")
+            {
+                lParam = 0x00000001 | (scanCode << 16);
+                WinAPI.PostMessage(hWnd, 0x0100, (IntPtr)vk, (IntPtr)lParam);
+            }
+            else
+            {
+                lParam = 0xC0000001 | (scanCode << 16);
+                WinAPI.PostMessage(hWnd, 0x0101, (IntPtr)vk, (IntPtr)lParam);
             }
         }
 
-        private bool IsTextKey(int vk) => (vk >= 65 && vk <= 90) || (vk >= 48 && vk <= 57) || vk == 32 || vk == 13;
+        private bool fnIsTextKey(int vk) => (vk >= 65 && vk <= 90) || (vk >= 48 && vk <= 57) || vk == 32 || vk == 13;
 
         public void Dispose()
         {
