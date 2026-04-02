@@ -219,6 +219,13 @@ public class WinAPI
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool SetProcessDPIAware();
 
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto, ExactSpelling = true)]
+    public static extern short GetKeyState(int nVirtKey);
+
+    public const int VK_SHIFT = 0x10;
+    public const int VK_CTRL = 0x11;
+    public const int VK_MENU = 0x12;
+
     #endregion
     #region Console
 

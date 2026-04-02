@@ -17,7 +17,6 @@ namespace DuplexSpyCS
         /// HVNC (Hidden Virtual Network Computing) control panel.
         /// Author: iss4cf0ng/ISSAC
         /// 
-        /// 
         /// </summary>
 
         private clsVictim m_victim { get; init; }
@@ -260,6 +259,11 @@ namespace DuplexSpyCS
 
                     }
                 }
+            }
+            catch (InvalidOperationException)
+            {
+                // do something
+
             }
             catch (Exception ex)
             {

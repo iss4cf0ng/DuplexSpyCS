@@ -22,6 +22,7 @@ namespace winClient48
 
         private bool m_disposed = false;
         public bool m_bRunning = false;
+        private bool m_bIsShiftDown = false;
 
         private const uint GENERIC_ALL = 0x10000000;
         private const int UOI_NAME = 2;
@@ -189,16 +190,19 @@ namespace winClient48
         /// <param name="y"></param>
         public void fnHandleMouseInput(string type, int x, int y)
         {
-            File.WriteAllText("coord.txt", $"{type},{x},{y}");
+            //File.WriteAllText("coord.txt", $"{type},{x},{y}");
 
             WinAPI.SetThreadDesktop(m_hDesktop);
 
             Point p = new Point(x, y);
 
             IntPtr hWnd = WinAPI.WindowFromPoint(x, y);
+
+            /*
             IntPtr hChild = WinAPI.ChildWindowFromPoint(hWnd, p);
             if (IntPtr.Zero != hChild && hChild != hWnd)
                 hWnd = hChild;
+            */
 
             m_hLastWnd = hWnd;
 
@@ -208,9 +212,11 @@ namespace winClient48
                 return;
             }
 
+            /*
             StringBuilder sb = new StringBuilder(256);
             WinAPI.GetClassName(hWnd, sb, 256);
             File.WriteAllText("something.txt", sb.ToString() + "|" + type);
+            */
 
             WinAPI.ScreenToClient(hWnd, ref p);
             IntPtr lParam = (IntPtr)((p.Y << 16) | (p.X & 0xFFFF));
@@ -222,7 +228,6 @@ namespace winClient48
                     break;
                 case "LD":
                     WinAPI.SetForegroundWindow(hWnd);
-                    WinAPI.PostMessage(hWnd, 0x0006, (IntPtr)1, IntPtr.Zero); // WM_ACTIVATE
                     WinAPI.SetFocus(hWnd);
                     WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)1, lParam);
                     break;
@@ -253,29 +258,83 @@ namespace winClient48
             WinAPI.SetThreadDesktop(m_hDesktop);
 
             IntPtr hWnd = (m_hLastWnd != IntPtr.Zero) ? m_hLastWnd : WinAPI.GetForegroundWindow();
-
-            if (IntPtr.Zero == hWnd)
-            {
-                MessageBox.Show("X");
+            if (hWnd == IntPtr.Zero)
                 return;
+
+            bool isDown = action.ToLower() == "down";
+
+            if (vk == 0x10)
+            {
+                m_bIsShiftDown = isDown;
             }
 
             uint scanCode = WinAPI.MapVirtualKey((uint)vk, 0);
-            uint lParam;
 
-            if (action.ToLower() == "down")
+            if (isDown)
             {
-                lParam = 0x00000001 | (scanCode << 16);
-                WinAPI.PostMessage(hWnd, 0x0100, (IntPtr)vk, (IntPtr)lParam);
+                if (fnIsTextKey(vk) || (vk >= 0xBA && vk <= 0xBF) || (vk >= 0xDB && vk <= 0xDE))
+                {
+                    int charCode = GetConvertedChar(vk, m_bIsShiftDown);
+
+                    if (charCode != -1)
+                    {
+                        WinAPI.PostMessage(hWnd, 0x0102, (IntPtr)charCode, IntPtr.Zero); // WM_CHAR
+                        return;
+                    }
+                }
+
+                uint lParam = 0x00000001 | (scanCode << 16);
+                WinAPI.PostMessage(hWnd, 0x0100, (IntPtr)vk, (IntPtr)lParam); // WM_KEYDOWN
             }
             else
             {
-                lParam = 0xC0000001 | (scanCode << 16);
-                WinAPI.PostMessage(hWnd, 0x0101, (IntPtr)vk, (IntPtr)lParam);
+                uint lParam = 0xC0000001 | (scanCode << 16);
+                WinAPI.PostMessage(hWnd, 0x0101, (IntPtr)vk, (IntPtr)lParam); // WM_KEYUP
             }
         }
 
         private bool fnIsTextKey(int vk) => (vk >= 65 && vk <= 90) || (vk >= 48 && vk <= 57) || vk == 32 || vk == 13;
+
+        private int GetConvertedChar(int vk, bool shift)
+        {
+            // A-Z
+            if (vk >= 65 && vk <= 90) return shift ? vk : vk + 32;
+
+            if (vk >= 48 && vk <= 57)
+            {
+                if (!shift) return vk;
+                switch (vk)
+                {
+                    case 48: return 41; // )
+                    case 49: return 33; // !
+                    case 50: return 64; // @
+                    case 51: return 35; // #
+                    case 52: return 36; // $
+                    case 53: return 37; // %
+                    case 54: return 94; // ^
+                    case 55: return 38; // &
+                    case 56: return 42; // *
+                    case 57: return 40; // (
+                }
+            }
+
+            switch (vk)
+            {
+                case 0xBA: return shift ? 58 : 59;   // : ;
+                case 0xBB: return shift ? 43 : 61;   // + =
+                case 0xBC: return shift ? 60 : 44;   // < ,
+                case 0xBD: return shift ? 95 : 45;   // _ -
+                case 0xBE: return shift ? 62 : 46;   // > .
+                case 0xBF: return shift ? 63 : 47;   // ? /
+                case 0xC0: return shift ? 126 : 96;  // ~ `
+                case 0xDB: return shift ? 123 : 91;  // { [
+                case 0xDC: return shift ? 124 : 92;  // | \
+                case 0xDD: return shift ? 125 : 93;  // } ]
+                case 0xDE: return shift ? 34 : 39;   // " '
+            }
+
+            return -1;
+        }
 
         public void Dispose()
         {
