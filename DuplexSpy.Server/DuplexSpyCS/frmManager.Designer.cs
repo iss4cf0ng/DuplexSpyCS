@@ -30,14 +30,14 @@
         {
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmManager));
-            TreeNode treeNode9 = new TreeNode("Type");
-            TreeNode treeNode10 = new TreeNode("Count[0]");
-            TreeNode treeNode11 = new TreeNode("State", new TreeNode[] { treeNode9, treeNode10 });
-            TreeNode treeNode12 = new TreeNode("Folder");
-            TreeNode treeNode13 = new TreeNode("File");
-            TreeNode treeNode14 = new TreeNode("Type");
-            TreeNode treeNode15 = new TreeNode("Key");
-            TreeNode treeNode16 = new TreeNode("Value");
+            TreeNode treeNode1 = new TreeNode("Type");
+            TreeNode treeNode2 = new TreeNode("Count[0]");
+            TreeNode treeNode3 = new TreeNode("State", new TreeNode[] { treeNode1, treeNode2 });
+            TreeNode treeNode4 = new TreeNode("Folder");
+            TreeNode treeNode5 = new TreeNode("File");
+            TreeNode treeNode6 = new TreeNode("Type");
+            TreeNode treeNode7 = new TreeNode("Key");
+            TreeNode treeNode8 = new TreeNode("Value");
             menuStrip1 = new MenuStrip();
             toolStripMenuItem46 = new ToolStripMenuItem();
             toolStripMenuItem47 = new ToolStripMenuItem();
@@ -531,17 +531,17 @@
             treeView7.Dock = DockStyle.Fill;
             treeView7.Location = new Point(0, 0);
             treeView7.Name = "treeView7";
-            treeNode9.Name = "Node3";
-            treeNode9.Text = "Type";
-            treeNode10.Name = "Node4";
-            treeNode10.Text = "Count[0]";
-            treeNode11.Name = "Node2";
-            treeNode11.Text = "State";
-            treeNode12.Name = "Node0";
-            treeNode12.Text = "Folder";
-            treeNode13.Name = "Node1";
-            treeNode13.Text = "File";
-            treeView7.Nodes.AddRange(new TreeNode[] { treeNode11, treeNode12, treeNode13 });
+            treeNode1.Name = "Node3";
+            treeNode1.Text = "Type";
+            treeNode2.Name = "Node4";
+            treeNode2.Text = "Count[0]";
+            treeNode3.Name = "Node2";
+            treeNode3.Text = "State";
+            treeNode4.Name = "Node0";
+            treeNode4.Text = "Folder";
+            treeNode5.Name = "Node1";
+            treeNode5.Text = "File";
+            treeView7.Nodes.AddRange(new TreeNode[] { treeNode3, treeNode4, treeNode5 });
             treeView7.Size = new Size(300, 402);
             treeView7.TabIndex = 0;
             // 
@@ -1172,7 +1172,7 @@
             tabPage12.Location = new Point(4, 4);
             tabPage12.Name = "tabPage12";
             tabPage12.Padding = new Padding(3);
-            tabPage12.Size = new Size(301, 410);
+            tabPage12.Size = new Size(301, 406);
             tabPage12.TabIndex = 1;
             tabPage12.Text = "Explorer";
             tabPage12.UseVisualStyleBackColor = true;
@@ -1186,7 +1186,7 @@
             treeView3.Location = new Point(3, 3);
             treeView3.Name = "treeView3";
             treeView3.SelectedImageIndex = 0;
-            treeView3.Size = new Size(295, 404);
+            treeView3.Size = new Size(295, 400);
             treeView3.TabIndex = 0;
             treeView3.AfterSelect += treeView3_AfterSelect;
             treeView3.KeyDown += treeView3_KeyDown;
@@ -1273,7 +1273,7 @@
             // 
             tabPage13.Location = new Point(4, 4);
             tabPage13.Name = "tabPage13";
-            tabPage13.Size = new Size(301, 410);
+            tabPage13.Size = new Size(301, 406);
             tabPage13.TabIndex = 2;
             tabPage13.Text = "ShortCuts";
             tabPage13.UseVisualStyleBackColor = true;
@@ -1283,7 +1283,7 @@
             tabPage14.Controls.Add(treeView8);
             tabPage14.Location = new Point(4, 4);
             tabPage14.Name = "tabPage14";
-            tabPage14.Size = new Size(301, 410);
+            tabPage14.Size = new Size(301, 406);
             tabPage14.TabIndex = 3;
             tabPage14.Text = "Clipboard";
             tabPage14.UseVisualStyleBackColor = true;
@@ -1293,14 +1293,14 @@
             treeView8.Dock = DockStyle.Fill;
             treeView8.Location = new Point(0, 0);
             treeView8.Name = "treeView8";
-            treeNode14.Name = "Node0";
-            treeNode14.Text = "Type";
-            treeNode15.Name = "Node1";
-            treeNode15.Text = "Key";
-            treeNode16.Name = "Node2";
-            treeNode16.Text = "Value";
-            treeView8.Nodes.AddRange(new TreeNode[] { treeNode14, treeNode15, treeNode16 });
-            treeView8.Size = new Size(301, 410);
+            treeNode6.Name = "Node0";
+            treeNode6.Text = "Type";
+            treeNode7.Name = "Node1";
+            treeNode7.Text = "Key";
+            treeNode8.Name = "Node2";
+            treeNode8.Text = "Value";
+            treeView8.Nodes.AddRange(new TreeNode[] { treeNode6, treeNode7, treeNode8 });
+            treeView8.Size = new Size(301, 406);
             treeView8.TabIndex = 0;
             // 
             // listView6

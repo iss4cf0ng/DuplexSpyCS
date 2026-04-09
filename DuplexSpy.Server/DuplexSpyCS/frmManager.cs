@@ -2195,17 +2195,6 @@ namespace DuplexSpyCS
             treeView3.SelectedImageIndex = 10;
             tabControl3.SelectedIndex = 1;
 
-            string[] payload = new string[]
-            {
-                "file",
-                "task",
-                "reg",
-                "serv",
-                "conn",
-                "window",
-                "user",
-            };
-
             fnFileInit();
             //m_victim.fnSendCommand($"task|init|{clsCrypto.b64E2Str($"select {string.Join(",", dic_fields["task"])} from win32_process")}");
             Task_ReqInit();
