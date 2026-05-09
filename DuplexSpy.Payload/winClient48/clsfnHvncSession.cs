@@ -223,21 +223,21 @@ namespace winClient48
 
             switch (type.ToUpper())
             {
-                case "MOVE":
+                case "MOVE": // Cursor move
                     WinAPI.PostMessage(hWnd, 0x0200, IntPtr.Zero, lParam);
                     break;
-                case "LD":
+                case "LD": // Left down
                     WinAPI.SetForegroundWindow(hWnd);
                     WinAPI.SetFocus(hWnd);
                     WinAPI.PostMessage(hWnd, 0x0201, (IntPtr)1, lParam);
                     break;
-                case "LU":
+                case "LU": // Left up
                     WinAPI.PostMessage(hWnd, 0x0202, IntPtr.Zero, lParam);
                     break;
-                case "RD":
+                case "RD": // Right down
                     WinAPI.PostMessage(hWnd, 0x0204, (IntPtr)2, lParam);
                     break;
-                case "RU":
+                case "RU": // Right up
                     WinAPI.PostMessage(hWnd, 0x0205, IntPtr.Zero, lParam);
                     break;
             }

@@ -17,6 +17,13 @@ namespace DuplexSpyCS
         /// HVNC (Hidden Virtual Network Computing) control panel.
         /// Author: iss4cf0ng/ISSAC
         /// 
+        /// Todo:
+        ///     Refining the existed functionalities
+        /// 
+        /// Done:
+        ///     Mouse click
+        ///     Keyboard event
+        /// 
         /// </summary>
 
         private clsVictim m_victim { get; init; }
@@ -416,10 +423,10 @@ namespace DuplexSpyCS
             ToolStrip ts = new ToolStrip();
             ts.Items.AddRange(new ToolStripItem[]
             {
-                btnScreenshot,
-                btnStart,
-                btnStop,
-                btnClose,
+                btnScreenshot, // Screenshot
+                btnStart, // Start HVNC session
+                btnStop, // Stop HVNC session
+                btnClose, // Close HVNC session
 
                 new ToolStripSplitButton(),
 

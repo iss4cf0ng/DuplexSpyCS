@@ -34,6 +34,11 @@ namespace DuplexSpyCS
                 }).ToList();
         }
 
+        /// <summary>
+        /// Generate random string pattern.
+        /// </summary>
+        /// <param name="nLength"></param>
+        /// <returns></returns>
         public static string fnGenerateRandomStr(int nLength = 10)
         {
             StringBuilder result = new StringBuilder(nLength);
@@ -47,6 +52,11 @@ namespace DuplexSpyCS
             return result.ToString();
         }
 
+        /// <summary>
+        /// Convert string data to datatable object.
+        /// </summary>
+        /// <param name="szData"></param>
+        /// <returns></returns>
         public static DataTable fnStringToDataTable(string szData)
         {
             DataTable dt = new DataTable();

