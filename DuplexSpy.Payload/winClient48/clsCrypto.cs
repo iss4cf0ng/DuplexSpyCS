@@ -14,6 +14,12 @@ namespace winClient48
         static int aes_keySize = 256;
         static int block_size = 128;
 
+        public class clsAesData
+        {
+            public string key;
+            public string iv;
+        }
+
         //RSA CRYPTO METHOD
         public static string[] CreateRSAKey()
         {
@@ -100,7 +106,7 @@ namespace winClient48
 
             return plain_text;
         }
-        public static (string key, string iv) AES_GenerateKeyAndIV()
+        public static clsAesData AES_GenerateKeyAndIV()
         {
             string key = null;
             string iv = null;
@@ -114,7 +120,7 @@ namespace winClient48
                 iv = b64E2Str(aes.IV);
             }
 
-            return (key, iv);
+            return new clsAesData { key = key, iv = iv };
         }
 
         //BASE-64 FUNCTION

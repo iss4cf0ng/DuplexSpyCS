@@ -27,8 +27,8 @@ namespace winClient48
         public int server_port;
 
         //CRYPTOGRAPHY
-        public (string public_key, string private_key) key_pairs;
-        public (byte[] key, byte[] iv) _AES;
+        public clsRSA key_pairs = new clsRSA();
+        public clsAES _AES = new clsAES();
 
         public enProtocol m_protocol { get; set; }
 
@@ -80,6 +80,17 @@ namespace winClient48
                 _tlsSendQueue.CompleteAdding();
                 _tlsCts.Cancel();
             }
+        }
+
+        public class clsRSA
+        {
+            public string szPubKey = string.Empty;
+            public string szPrivKey = string.Empty;
+        }
+        public class clsAES
+        {
+            public byte[] abKey = Array.Empty<byte>();
+            public byte[] abIV = Array.Empty<byte>();
         }
 
         public enum enProtocol
@@ -155,7 +166,7 @@ namespace winClient48
         /// <param name="mode">Message mode.</param>
         public void encSend(int cmd, int param, string data, SendMode mode = SendMode.RAW)
         {
-            string enc_data = clsCrypto.AESEncrypt(data, _AES.key, _AES.iv);
+            string enc_data = clsCrypto.AESEncrypt(data, _AES.abKey, _AES.abIV);
             Send(cmd, param, enc_data);
         }
 
@@ -175,7 +186,7 @@ namespace winClient48
                     fnSslSendRAW(2, 0, Encoding.UTF8.GetBytes(payload));
                     break;
                 case enProtocol.HTTP:
-                    fnHttpSend(clsCrypto.AESEncrypt(payload, _AES.key, _AES.iv));
+                    fnHttpSend(clsCrypto.AESEncrypt(payload, _AES.abKey, _AES.abIV));
                     break;
             }
         }

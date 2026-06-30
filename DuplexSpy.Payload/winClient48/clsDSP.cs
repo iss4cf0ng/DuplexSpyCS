@@ -63,6 +63,21 @@ namespace winClient48
             _DataLength = msg.Length;
         }
 
+        public class clsMsg
+        {
+            public byte cmd;
+            public byte para;
+            public int len;
+            public byte[] msg;
+        }
+
+        public class clsHeader
+        {
+            public byte cmd;
+            public byte para;
+            public int len;
+        }
+
         /// <summary>
         /// Get the entire byte array.
         /// </summary>
@@ -94,14 +109,15 @@ namespace winClient48
         /// Get message.
         /// </summary>
         /// <returns></returns>
-        public (byte cmd, byte para, int len, byte[] msg) GetMsg()
+        public clsMsg GetMsg()
         {
-            (byte cmd, byte para, int len, byte[] msg) ret = (
-                _Command,
-                _Param,
-                _MessageData.Length,
-                _MessageData
-                );
+            clsMsg ret = new clsMsg
+            {
+                cmd = _Command,
+                para = _Param,
+                len = _MessageData.Length,
+                msg = _MessageData
+            };
 
             return ret;
         }
@@ -111,9 +127,9 @@ namespace winClient48
         /// </summary>
         /// <param name="buf">Data bytes.</param>
         /// <returns></returns>
-        public static (byte cmd, byte para, int len) GetHeader(byte[] buf)
+        public static clsHeader GetHeader(byte[] buf)
         {
-            (byte cmd, byte para, int len) ret = (0, 0, 0);
+            clsHeader ret = new clsHeader { cmd = 0, len = 0, para = 0 };
             if (buf == null || buf.Length < HEADER_SIZE)
                 return ret;
 

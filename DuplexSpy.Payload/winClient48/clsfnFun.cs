@@ -194,7 +194,7 @@ namespace winClient48
         /// Return current wallpaper image object.
         /// </summary>
         /// <returns></returns>
-        public (int, string, Image) GetWallpaper()
+        public clsFunWallpaper GetWallpaper()
         {
             int code = 1;
             string msg = string.Empty;
@@ -211,14 +211,14 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg, img);
+            return new clsFunWallpaper { nCode = code, szMsg = msg, img = img };
         }
 
         /// <summary>
         /// Change wallpaper from input image object.
         /// </summary>
         /// <returns></returns>
-        public (int, string) SetWallpaper(Image img)
+        public clsRetValue SetWallpaper(Image img)
         {
             int code = 1;
             string msg = string.Empty;
@@ -272,12 +272,12 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #region Monitor
 
-        public (int, string) LockScreen(Image img)
+        public clsRetValue LockScreen(Image img)
         {
             int code = 1;
             string msg = string.Empty;
@@ -292,10 +292,10 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) UnlockScreen()
+        public clsRetValue UnlockScreen()
         {
             int code = 1;
             string msg = string.Empty;
@@ -310,10 +310,10 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) SetMonitorOrientation()
+        public clsRetValue SetMonitorOrientation()
         {
             int code = 1;
             string msg = string.Empty;
@@ -328,14 +328,14 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #endregion
 
         #region HWND
 
-        public (int, string) HideTray()
+        public clsRetValue HideTray()
         {
             int code = 1;
             string msg = string.Empty;
@@ -351,9 +351,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) ShowTray()
+        public clsRetValue ShowTray()
         {
             int code = 1;
             string msg = string.Empty;
@@ -369,9 +369,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) FlipFlopTray()
+        public clsRetValue FlipFlopTray()
         {
             int code = 1;
             string msg = string.Empty;
@@ -383,7 +383,10 @@ namespace winClient48
                     throw new Exception("Null handle");
 
                 bool bVisible = WinAPI.IsWindowVisible(hWnd);
-                (code, msg) = bVisible ? HideTray() : ShowTray();
+                var ret = bVisible ? HideTray() : ShowTray();
+
+                code = ret.nCode;
+                msg = ret.szMsg;
             }
             catch (Exception ex)
             {
@@ -391,10 +394,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) HideTaskbar()
+        public clsRetValue HideTaskbar()
         {
             int code = 1;
             string msg = string.Empty;
@@ -419,9 +422,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) ShowTaskbar()
+        public clsRetValue ShowTaskbar()
         {
             int code = 1;
             string msg = string.Empty;
@@ -446,9 +449,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) FlipFlopTaskbar()
+        public clsRetValue FlipFlopTaskbar()
         {
             int code = 1;
             string msg = string.Empty;
@@ -469,7 +472,10 @@ namespace winClient48
                     throw new Exception("Null handle");
 
                 bool bVisible = WinAPI.IsWindowVisible(hWnd);
-                (code, msg) = bVisible ? HideTaskbar() : ShowTaskbar();
+                var ret = bVisible ? HideTaskbar() : ShowTaskbar();
+
+                code = ret.nCode;
+                msg = ret.szMsg;
             }
             catch (Exception ex)
             {
@@ -477,10 +483,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) HideStartOrb()
+        public clsRetValue HideStartOrb()
         {
             int code = 1;
             string msg = string.Empty;
@@ -505,9 +511,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) ShowStartOrb()
+        public clsRetValue ShowStartOrb()
         {
             int code = 1;
             string msg = string.Empty;
@@ -532,9 +538,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) FlipFlopStartOrb()
+        public clsRetValue FlipFlopStartOrb()
         {
             int code = 1;
             string msg = string.Empty;
@@ -555,7 +561,10 @@ namespace winClient48
                     throw new Exception("Null handle");
 
                 bool bVisible = WinAPI.IsWindowVisible(hWnd);
-                (code, msg) = bVisible ? HideStartOrb() : ShowStartOrb();
+                var ret = bVisible ? HideStartOrb() : ShowStartOrb();
+
+                ret.nCode = code;
+                ret.szMsg = msg;
             }
             catch (Exception ex)
             {
@@ -563,10 +572,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) HideClock()
+        public clsRetValue HideClock()
         {
             int code = 1;
             string msg = string.Empty;
@@ -594,9 +603,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) ShowClock()
+        public clsRetValue ShowClock()
         {
             int code = 1;
             string msg = string.Empty;
@@ -624,9 +633,9 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) FlipFlopClock()
+        public clsRetValue FlipFlopClock()
         {
             int code = 1;
             string msg = string.Empty;
@@ -649,7 +658,10 @@ namespace winClient48
                     throw new Exception("Null handle");
 
                 bool bVisible = WinAPI.IsWindowVisible(hWnd);
-                (code, msg) = bVisible ? HideClock() : ShowClock();
+                var ret = bVisible ? HideClock() : ShowClock();
+
+                code = ret.nCode;
+                msg = ret.szMsg;
             }
             catch (Exception ex)
             {
@@ -657,10 +669,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) HideDesktopIcon()
+        public clsRetValue HideDesktopIcon()
         {
             int code = 1;
             string msg = string.Empty;
@@ -680,10 +692,10 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) ShowDesktopIcon()
+        public clsRetValue ShowDesktopIcon()
         {
             int code = 1;
             string msg = string.Empty;
@@ -703,10 +715,10 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) FlipFlopDesktopIcon()
+        public clsRetValue FlipFlopDesktopIcon()
         {
             int code = 1;
             string msg = string.Empty;
@@ -718,7 +730,10 @@ namespace winClient48
                     throw new Exception("Cannot find desktop ListView");
 
                 bool hidden = bHideDesktopIcon;
-                (code, msg) = hidden ? ShowDesktopIcon() : HideDesktopIcon();
+                var ret = hidden ? ShowDesktopIcon() : HideDesktopIcon();
+
+                code = ret.nCode;
+                msg = ret.szMsg;
             }
             catch (Exception ex)
             {
@@ -726,13 +741,13 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #endregion
         #region Message
 
-        public (int, string) ShowBalloonTip(Icon sysIcon, ToolTipIcon toolIcon, int nTimeout, string szCaption, string szText)
+        public clsRetValue ShowBalloonTip(Icon sysIcon, ToolTipIcon toolIcon, int nTimeout, string szCaption, string szText)
         {
             int code = 1;
             string msg = string.Empty;
@@ -752,13 +767,13 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #endregion
         #region Cursor
 
-        public (int, string) HideMouse()
+        public clsRetValue HideMouse()
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -774,9 +789,9 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
-        public (int, string) ShowMouse()
+        public clsRetValue ShowMouse()
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -792,7 +807,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         public bool IsMouseVisible()
@@ -805,7 +820,7 @@ namespace winClient48
             return visible;
         }
 
-        public (int, string) FlipFlopHideMouse()
+        public clsRetValue FlipFlopHideMouse()
         {
             int code = 1;
             string msg = string.Empty;
@@ -831,10 +846,10 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) FlipFlopMouseCrazy()
+        public clsRetValue FlipFlopMouseCrazy()
         {
             int code = 1;
             string msg = string.Empty;
@@ -874,10 +889,10 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) FlipFlopMouseTrails()
+        public clsRetValue FlipFlopMouseTrails()
         {
             int code = 1;
             string msg = string.Empty;
@@ -923,10 +938,10 @@ namespace winClient48
                 MessageBox.Show(ex.Message);
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) FlipFlopMouseLock()
+        public clsRetValue FlipFlopMouseLock()
         {
             int code = 1;
             string msg = string.Empty;
@@ -964,7 +979,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         public (int, string, Bitmap) GetCursorIcon()
@@ -996,7 +1011,7 @@ namespace winClient48
 
             return (code, msg, bmp);
         }
-        public (int, string) SetCursorIcon(Image img)
+        public clsRetValue SetCursorIcon(Image img)
         {
             int code = 1;
             string msg = string.Empty;
@@ -1011,10 +1026,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) GetCursorSize()
+        public clsRetValue GetCursorSize()
         {
             int code = 1;
             string msg = string.Empty;
@@ -1029,9 +1044,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) SetCursorSize()
+        public clsRetValue SetCursorSize()
         {
             int code = 1;
             string msg = string.Empty;
@@ -1046,7 +1061,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #endregion

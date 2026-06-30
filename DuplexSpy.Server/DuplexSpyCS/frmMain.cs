@@ -144,7 +144,7 @@ namespace DuplexSpyCS
         /// </summary>
         /// <param name="v">Class Victim</param>
         /// <returns></returns>
-        int MakeNewPortfolio(clsVictim v)
+        int fnMakeNewPortfolio(clsVictim v)
         {
             try
             {
@@ -255,7 +255,7 @@ namespace DuplexSpyCS
                             }
                         }));
 
-                        MakeNewPortfolio(v);
+                        fnMakeNewPortfolio(v);
 
                         clsStore.sql_conn.NewVictim(v, v.remoteOS, v.socket.RemoteEndPoint.ToString());
                         clsStore.sql_conn.WriteSystemLogs($"New accessible client: {online_id}({cmd[4]})"); //Write system log.

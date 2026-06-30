@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace winClient48
 {
-    internal class clsfnSystem
+    public class clsfnSystem
     {
         private string regKey_uninstall = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall";
         private string query_device = "SELECT * FROM Win32_PnpEntity";
@@ -64,7 +64,7 @@ namespace winClient48
 
             return devices;
         }
-        public (int, string) DeviceEnable(string id, bool enable)
+        public clsRetValue DeviceEnable(string id, bool enable)
         {
             string query = $"SELECT * FROM Win32_PnpEntity WHERE DeviceID = '{id}'"; ;
             int code = 0;
@@ -86,9 +86,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string, DeviceInfo) DeviceGetInfo(string szDeviceName)
+        public clsSysDeviceInfo DeviceGetInfo(string szDeviceName)
         {
             int code = 1;
             string msg = string.Empty;
@@ -114,7 +114,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg, deviceInfo);
+            return new clsSysDeviceInfo { nCode = code, szMsg = msg, device = deviceInfo }; ;
         }
 
         #endregion
@@ -252,18 +252,19 @@ namespace winClient48
 
         #region Environment Variables
 
-        public (int, string, List<(string, EnvironmentVariableTarget, string)>) GetEnvironmentVariables()
+        public clsRetEnvVariables GetEnvironmentVariables()
         {
             int code = 1;
             string msg = string.Empty;
-            List<(string, EnvironmentVariableTarget, string)> variables = new List<(string, EnvironmentVariableTarget, string)>();
+            List<clsRetEnvVariables.clsEnvItems> variables = new List<clsRetEnvVariables.clsEnvItems>();
 
             try
             {
                 IDictionary GetEV(EnvironmentVariableTarget target) => Environment.GetEnvironmentVariables(target);
                 foreach (EnvironmentVariableTarget x in Enum.GetValues(typeof(EnvironmentVariableTarget)))
                     foreach (DictionaryEntry entry in GetEV(x))
-                        variables.Add((entry.Key.ToString(), x, entry.Value.ToString()));
+                        variables.Add(new clsRetEnvVariables.clsEnvItems { szKey = entry.Key.ToString(), target = x, szValue = entry.Value.ToString() });
+                    //variables.Add((entry.Key.ToString(), x, entry.Value.ToString()));
             }
             catch (Exception ex)
             {
@@ -271,9 +272,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg, variables);
+            return new clsRetEnvVariables { nCode = code, szMsg = msg, lsItems = variables };
         }
-        public (int, string) SetEnvironmentVariables(string szKey, EnvironmentVariableTarget target, string szValue)
+        public clsRetValue SetEnvironmentVariables(string szKey, EnvironmentVariableTarget target, string szValue)
         {
             int code = 1;
             string msg = string.Empty;
@@ -289,7 +290,7 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         #endregion

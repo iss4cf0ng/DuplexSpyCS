@@ -194,7 +194,7 @@ namespace winClient48
             return key != null;
         }
 
-        public (int, string) AddNewKey(string regFullPath, string keyName)
+        public clsRetValue AddNewKey(string regFullPath, string keyName)
         {
             int code = 1;
             string msg = string.Empty;
@@ -234,9 +234,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) RenameKey(string srcFullPath, string dstFullPath)
+        public clsRetValue RenameKey(string srcFullPath, string dstFullPath)
         {
             int code = 1;
             string msg = string.Empty;
@@ -254,9 +254,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) CopyKey(string srcFullPath, string dstFullPath)
+        public clsRetValue CopyKey(string srcFullPath, string dstFullPath)
         {
             int code = 1;
             string msg = string.Empty;
@@ -312,9 +312,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) CopyValue(string srcFullPath, string srcValName, string dstFullPath, string dstValName)
+        public clsRetValue CopyValue(string srcFullPath, string srcValName, string dstFullPath, string dstValName)
         {
             int code = 1;
             string msg = string.Empty;
@@ -343,9 +343,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) AddNewValue(string regFullPath, string valName, RegistryValueKind valKind)
+        public clsRetValue AddNewValue(string regFullPath, string valName, RegistryValueKind valKind)
         {
             //No initial value.
             int code = 1;
@@ -404,9 +404,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) EditValue(string regFullPath, string valName, object valData)
+        public clsRetValue EditValue(string regFullPath, string valName, object valData)
         {
             int code = 1;
             string msg = string.Empty;
@@ -435,9 +435,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) RenameValue(string regFullPath, string oldValName, string newValName)
+        public clsRetValue RenameValue(string regFullPath, string oldValName, string newValName)
         {
             int code = 1;
             string msg = string.Empty;
@@ -457,9 +457,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) DeleteKey(string regFullPath)
+        public clsRetValue DeleteKey(string regFullPath)
         {
             int code = 1;
             string msg = string.Empty;
@@ -487,9 +487,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) DeleteValue(string regFullPath, string valName)
+        public clsRetValue DeleteValue(string regFullPath, string valName)
         {
             int code = 1;
             string msg = string.Empty;
@@ -518,10 +518,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) Import(string regFile)
+        public clsRetValue Import(string regFile)
         {
             int code = 1;
             string msg = string.Empty;
@@ -555,9 +555,9 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) Export(string regFullPath, string servPath)
+        public clsRetValue Export(string regFullPath, string servPath)
         {
             int code = 1;
             string msg = string.Empty;
@@ -599,7 +599,7 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         /// <summary>
@@ -612,7 +612,7 @@ namespace winClient48
         /// <param name="itemType"></param>
         /// <param name="keyKind"></param>
         /// <returns>Item1: type(k/v, key or value), Item2: Name, Item3: Path</returns>
-        public List<(string, string, string)> Find(string[] paths, string[] patterns, int method, bool bIgnoreCase, int itemType, RegistryValueKind keyKind = RegistryValueKind.None)
+        public List<clsRegFind> Find(string[] paths, string[] patterns, int method, bool bIgnoreCase, int itemType, RegistryValueKind keyKind = RegistryValueKind.None)
         {
             //method: 0: Name Only, 1: Full Path
             //itemType: 0: Key, 1: Value, 2: Bot
@@ -631,7 +631,7 @@ namespace winClient48
                 }
             }
 
-            List<(string, string, string)> results = new List<(string, string, string)>();
+            List<clsRegFind> results = new List<clsRegFind>();
 
             foreach (string path in paths)
             {
@@ -651,7 +651,9 @@ namespace winClient48
                                 foreach (string pattern in patterns)
                                 {
                                     if (Regex.IsMatch(InputProcess(subKeyName), pattern))
-                                        results.Add(("k", subKeyName, subKeyName));
+                                        results.Add(new clsRegFind { szType = "k", szName = subKeyName, szKeyName = subKeyName });
+
+                                    //results.Add(("k", subKeyName, subKeyName));
                                 }
 
                                 //Recurrence
@@ -666,7 +668,8 @@ namespace winClient48
                                 foreach (string pattern in patterns)
                                 {
                                     if (Regex.IsMatch(InputProcess(valName), pattern))
-                                        results.Add(("v", valName, subKey.Name));
+                                        results.Add(new clsRegFind { szType = "v", szName = valName, szKeyName = subKey.Name });
+                                    //results.Add(("v", valName, subKey.Name));
                                 }
                             }
                         }

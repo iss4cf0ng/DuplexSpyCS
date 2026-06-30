@@ -139,7 +139,7 @@ namespace winClient48
             }
         }
 
-        public (int, string) StopCmd()
+        public clsRetValue StopCmd()
         {
             int code = 1;
             string msg = string.Empty;
@@ -157,7 +157,7 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         public void SendCmd(string cmd)
@@ -203,7 +203,7 @@ namespace winClient48
             }
         }
 
-        public (int, string) SendCtrlKey(ShellCtrl ctrl)
+        public clsRetValue SendCtrlKey(ShellCtrl ctrl)
         {
             int code = 0;
             string msg = string.Empty;
@@ -231,7 +231,7 @@ namespace winClient48
                 msg = $"{ex.GetType().Name}|{ex.Message}";
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
     }
 }

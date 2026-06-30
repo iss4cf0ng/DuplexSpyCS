@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -214,6 +215,87 @@ namespace winClient48
                 return Convert.ToBase64String(buffer);
             }
         }
+    }
+
+    public class clsRetValue
+    {
+        public int nCode;
+        public string szMsg;
+    }
+
+    public class clsRetScanDir
+    {
+        public int nCode;
+        public string szMsg;
+        public List<string[]> lsDir;
+        public List<string[]> lsFile;
+        public int nTotalDir;
+        public int nTotalFile;
+    }
+    public class clsRetFileWget
+    {
+        public int nCode;
+        public string szMsg;
+        public string szSaveFileName;
+    }
+    public class clsRetFileArchiveCompress
+    {
+        public List<string[]> lsFolderInfo;
+        public List<string[]> lsFileInfo;
+    }
+    public class clsRetFileFind
+    {
+        public string szType;
+        public string szPath;
+    }
+    public class clsFunWallpaper
+    {
+        public int nCode;
+        public string szMsg;
+        public Image img;
+    }
+    public class clsRegFind
+    {
+        public string szType;
+        public string szName;
+        public string szKeyName; // or subKeyname
+    }
+    public class clsRetTask
+    {
+        public int nPid;
+        public int nCode;
+        public string szMsg;
+    }
+    public class clsSysDeviceInfo
+    {
+        public int nCode;
+        public string szMsg;
+        public clsfnSystem.DeviceInfo device;
+    }
+    public class clsRetEnvVariables
+    {
+        public int nCode;
+        public string szMsg;
+        public List<clsEnvItems> lsItems;
+
+        public class clsEnvItems
+        {
+            public string szKey;
+            public EnvironmentVariableTarget target;
+            public string szValue;
+        }
+    }
+    public class clsRetWindow
+    {
+        public int nCode;
+        public string szMsg;
+        public List<WindowInfo> lsWindow;
+    }
+    public class clsRetBitmap
+    {
+        public int nCode;
+        public string szMsg;
+        public Bitmap bmp;
     }
 
     public enum ShellCtrl

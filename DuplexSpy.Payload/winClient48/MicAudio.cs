@@ -97,7 +97,7 @@ namespace winClient48
             };
         }
 
-        public (int, string) StartMicRecord(string szMp3FileName = null, bool bOffline = false)
+        public clsRetValue StartMicRecord(string szMp3FileName = null, bool bOffline = false)
         {
             int code = 1;
             string msg = string.Empty;
@@ -123,9 +123,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) StopMicRecord()
+        public clsRetValue StopMicRecord()
         {
             int code = 1;
             string msg = string.Empty;
@@ -143,10 +143,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) StartSysRecord(string szMp3FileName = null, bool bOffline = false)
+        public clsRetValue StartSysRecord(string szMp3FileName = null, bool bOffline = false)
         {
             int code = 1;
             string msg = string.Empty;
@@ -172,9 +172,9 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) StopSysRecord()
+        public clsRetValue StopSysRecord()
         {
             int code = 1;
             string msg = string.Empty;
@@ -192,7 +192,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         
@@ -205,7 +205,7 @@ namespace winClient48
             return speaker_devices;
         }
 
-        public (int, string) StartWiretapping(string tap_type, int idx)
+        public clsRetValue StartWiretapping(string tap_type, int idx)
         {
             int code = 1;
             string msg = string.Empty;
@@ -233,9 +233,9 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
-        public (int, string) StopWiretapping(string tap_type, int idx)
+        public clsRetValue StopWiretapping(string tap_type, int idx)
         {
             int code = 1;
             string msg = string.Empty;
@@ -265,7 +265,7 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
         public void StopRecord(string tap_type)

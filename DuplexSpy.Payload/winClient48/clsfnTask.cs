@@ -16,7 +16,7 @@ namespace winClient48
             return null;
         }
 
-        public (int, string) Kill(string name)
+        public clsRetValue Kill(string name)
         {
             int code = 1;
             string msg = string.Empty;
@@ -33,10 +33,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) Kill(int id)
+        public clsRetValue Kill(int id)
         {
             int code = 1;
             string msg = string.Empty;
@@ -52,10 +52,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) KillDelete(int id)
+        public clsRetValue KillDelete(int id)
         {
             int code = 1;
             string msg = string.Empty;
@@ -74,10 +74,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) Start(string filename, string argv, string work_dir)
+        public clsRetValue Start(string filename, string argv, string work_dir)
         {
             int code = 1;
             string msg = string.Empty;
@@ -106,10 +106,10 @@ namespace winClient48
                 msg = ex.Message;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) Resume(int nProcessID)
+        public clsRetValue Resume(int nProcessID)
         {
             int code = 1;
             string msg = string.Empty;
@@ -133,10 +133,10 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
 
-        public (int, string) Suspend(int nProcessID)
+        public clsRetValue Suspend(int nProcessID)
         {
             int code = 1;
             string msg = string.Empty;
@@ -160,7 +160,7 @@ namespace winClient48
                 code = 0;
             }
 
-            return (code, msg);
+            return new clsRetValue { nCode = code, szMsg = msg };
         }
     }
 }

